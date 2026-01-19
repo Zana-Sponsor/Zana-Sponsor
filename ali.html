@@ -14,6 +14,7 @@
             align-items: center;
             padding: 40px 20px;
             margin: 0;
+            min-height: 100vh;
         }
         .profile-container {
             text-align: center;
@@ -60,9 +61,9 @@
             filter: brightness(1.1);
         }
 
-        /* بەشی سپۆنسەر */
         .sponsor-section {
-            margin-top: 60px;
+            margin-top: auto; /* ئەمە وادەکات بچێتە خوارەوەی خوارەوە */
+            padding-top: 40px;
             text-align: center;
         }
         .sponsor-text {
@@ -78,6 +79,12 @@
             font-size: 16px;
             display: inline-block;
         }
+        .copyright-text {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #bbb;
+            direction: ltr; /* بۆ ئەوەی ئینگلیزییەکە ڕێک بێت */
+        }
     </style>
 </head>
 <body>
@@ -88,7 +95,7 @@
         <p>بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</p>
     </div>
 
-    <a href="https://wa.me/+9647511936095?text=سڵاو،%20ئایا%20دەتوانی%20زانیاری%20زیاترم%20پێبدەی%20!" class="link-card whatsapp">
+    <a href="https://wa.me/+9647511936095?text=سڵاو" class="link-card whatsapp">
         واتساپ <i class="fab fa-whatsapp"></i>
     </a>
 
@@ -104,6 +111,9 @@
         <div class="sponsor-text">سپۆنسەرکراوە لەلایەن</div>
         <div class="footer-tag">
             Zana Sponsor
+        </div>
+        <div class="copyright-text">
+            Produced By Zana Sponsor © 2026
         </div>
     </div>
 
