@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart POS - سیستەمی کاشێری ژیر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700&display=swap');
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #f3f4f6; }
+        .tab-content { display: none; }
+        .active-tab { display: block; }
+        .nav-active { color: #2563eb; border-top: 3px solid #2563eb; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <div class="bg-blue-600 text-white p-4 text-center shadow-lg">
+        <h1 class="text-xl font-bold">Smart POS 💳</h1>
+    </div>
+
+    <div class="p-4">
+        
+        <div id="sales" class="tab-content active-tab">
+            <h2 class="text-lg font-bold mb-4"><i class="fas fa-shopping-cart"></i> بەشی فرۆشتن</h2>
+            <div id="pos-items" class="grid grid-cols-2 gap-3 mb-6">
+                </div>
+            <div class="bg-white p-4 rounded-xl shadow-md">
+                <h3 class="font-bold border-b pb-2 mb-2">سەبەتەی کڕین</h3>
+                <div id="cart-list" class="space-y-2 max-h-40 overflow-y-auto mb-4"></div>
+                <div class="flex justify-between items-center font-bold text-xl text-blue-700">
+                    <span>کۆی گشتی:</span>
+                    <span id="total-price">0 د.ع</span>
+                </div>
+                <button onclick="processSale()" class="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 font-bold shadow-lg active:scale-95 transition">تەواوکردنی فرۆشتن</button>
+            </div>
+        </div>
+
+        <div id="inventory" class="tab-content">
+            <h2 class="text-lg font-bold mb-4"><i class="fas fa-box"></i> بەڕێوەبردنی کۆگا</h2>
+            <div class="bg-white p-4 rounded-xl shadow-md mb-6">
+                <input type="text" id="itemName" placeholder="ناوی کاڵا" class="w-full border p-2 rounded mb-2">
+                <input type="number" id="itemPrice" placeholder="نرخ (دینار)" class="w-full border p-2 rounded mb-2">
+                <button onclick="addItem()" class="w-full bg-green-500 text-white py-2 rounded font-bold">زیادکردن بۆ کۆگا</button>
+            </div>
+            <div id="inventory-list" class="space-y-2"></div>
+        </div>
+
+        <div id="reports" class="tab-content">
+            <h2 class="text-lg font-bold mb-4"><i class="fas fa-chart-line"></i> ڕاپۆرتی فرۆشتن</h2>
+            <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                <p class="text-gray-500">کۆی فرۆشی ئەمڕۆ</p>
+                <h3 id="daily-sales" class="text-3xl font-bold text-green-600">0 د.ع</h3>
+                <button onclick="clearReports()" class="mt-10 text-red-500 text-sm underline">سڕینەوەی هەموو داتاکان</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-2 shadow-2xl">
+        <button onclick="showTab('sales', this)" class="flex flex-col items-center nav-active px-4 py-1">
+            <i class="fas fa-cash-register text-xl"></i>
+            <span class="text-xs">فرۆشتن</span>
+        </button>
+        <button onclick="showTab('inventory', this)" class="flex flex-col items-center text-gray-400 px-4 py-1">
+            <i class="fas fa-boxes text-xl"></i>
+            <span class="text-xs">کۆگا</span>
+        </button>
+        <button onclick="showTab('reports', this)" class="flex flex-col items-center text-gray-400 px-4 py-1">
+            <i class="fas fa-file-invoice-dollar text-xl"></i>
+            <span class="text-xs">ڕاپۆرت</span>
+        </button>
+    </div>
+
+    <script>
+        let db = JSON.parse(localStorage.getItem('pos_db')) || { products: [], sales: 0 };
+        let cart = [];
+
+        function showTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
+            document.getElementById(tabId).classList.add('active-tab');
+            document.querySelectorAll('nav button, .fixed button').forEach(b => b.classList.remove('nav-active', 'text-blue-600'));
+            el.classList.add('nav-active');
+            renderAll();
+        }
+
+        function addItem() {
+            const name = document.getElementById('itemName').value;
+            const price = parseInt(document.getElementById('itemPrice').value);
+            if (name && price) {
+                db.products.push({ id: Date.now(), name, price });
+                save();
+                renderAll();
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemPrice').value = '';
+            }
+        }
+
+        function deleteItem(id) {
+            db.products = db.products.filter(p => p.id !== id);
+            save();
+            renderAll();
+        }
+
+        function addToCart(product) {
+            cart.push(product);
+            renderCart();
+        }
+
+        function renderCart() {
+            const list = document.getElementById('cart-list');
+            const totalEl = document.getElementById('total-price');
+            list.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price;
+                list.innerHTML += `<div class="flex justify-between text-sm bg-gray-50 p-2 rounded">
+                    <span>${item.name}</span>
+                    <span>${item.price.toLocaleString()} د.ع</span>
+                </div>`;
+            });
+            totalEl.innerText = total.toLocaleString() + " د.ع";
+        }
+
+        function processSale() {
+            if (cart.length === 0) return;
+            let total = cart.reduce((sum, item) => sum + item.price, 0);
+            db.sales += total;
+            save();
+            cart = [];
+            renderCart();
+            alert("پسوڵە بڕدرا و فرۆشتن تۆمارکرا!");
+        }
+
+        function renderAll() {
+            // Render Inventory
+            const invList = document.getElementById('inventory-list');
+            invList.innerHTML = '';
+            db.products.forEach(p => {
+                invList.innerHTML += `<div class="flex justify-between items-center bg-white p-3 rounded-lg shadow-sm">
+                    <span>${p.name} - <b>${p.price}</b></span>
+                    <button onclick="deleteItem(${p.id})" class="text-red-500"><i class="fas fa-trash"></i></button>
+                </div>`;
+            });
+
+            // Render POS Buttons
+            const posItems = document.getElementById('pos-items');
+            posItems.innerHTML = '';
+            db.products.forEach(p => {
+                posItems.innerHTML += `<button onclick='addToCart(${JSON.stringify(p)})' class="bg-white p-4 rounded-xl shadow active:bg-blue-100 text-center border-b-4 border-blue-500">
+                    <div class="font-bold text-gray-800">${p.name}</div>
+                    <div class="text-blue-600 text-sm">${p.price.toLocaleString()}</div>
+                </button>`;
+            });
+
+            // Render Reports
+            document.getElementById('daily-sales').innerText = db.sales.toLocaleString() + " د.ع";
+        }
+
+        function save() { localStorage.setItem('pos_db', JSON.stringify(db)); }
+        function clearReports() { if(confirm("ئایا دڵنیایت لە سڕینەوەی هەموو داتا و ڕاپۆرتەکان؟")) { localStorage.clear(); location.reload(); } }
+
+        renderAll();
+    </script>
+</body>
+</html>
