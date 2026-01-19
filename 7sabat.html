@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zana Store - Pro Tracking</title>
+    <link href="https://fonts.cdnfonts.com/css/rabar" rel="stylesheet">
+    <style>
+        :root { --p: #2563eb; --s: #16a34a; --bg: #f8fafc; --r: #dc2626; --fp: #e31e24; }
+        body { font-family: 'Rabar', sans-serif; background: var(--bg); margin: 0; padding: 10px; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Rabar'; box-sizing: border-box; }
+        .btn { padding: 12px; border: none; border-radius: 12px; cursor: pointer; font-family: 'Rabar'; width: 100%; font-weight: bold; color: white; transition: 0.3s; }
+        .btn-p { background: var(--p); } .btn-s { background: var(--s); } .btn-r { background: var(--r); }
+        .item { border-bottom: 1px solid #f1f5f9; padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 12px; }
+        .pending { background: #fef3c7; color: #92400e; }
+        .completed { background: #dcfce7; color: #15803d; }
+        #modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; padding:15px; z-index:99; overflow-y: auto; }
+        .img-preview { width: 100px; height: 100px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+<div style="max-width: 500px; margin: auto;">
+    <div id="auth-box" class="card">
+        <h2 style="text-align:center; color:var(--p);">ZANA STORE</h2>
+        <input type="number" id="phone" placeholder="ژمارەی مۆبایل">
+        <button class="btn btn-p" onclick="login()">چوونە ژوورەوە</button>
+    </div>
+
+    <div id="store-box" style="display:none;">
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>📞 <b id="user-display"></b></span>
+            <button class="btn btn-r" style="width:auto; padding:5px 10px;" onclick="location.reload()">دەرچوون</button>
+        </div>
+        <div class="card"><h3>🎮 کاڵاکان</h3><div id="prods"></div></div>
+        <div class="card"><h3>📜 مێژووی داواکاری</h3><div id="orders"></div></div>
+    </div>
+
+    <div id="admin-box" style="display:none;">
+        <div class="card" style="background:var(--p); color:white;"><h3>پانێڵی ئادمین</h3></div>
+        <div class="card">
+            <h4>➕ زیادکردنی کاڵا</h4>
+            <input id="pn" placeholder="ناوی کاڵا">
+            <input id="pp" placeholder="نرخ">
+            <button class="btn btn-s" onclick="addP()">زیادکردن</button>
+        </div>
+        <div id="admin-prods" class="card"><h4>📦 بەڕێوەبردنی کاڵاکان</h4><div id="p-list"></div></div>
+        <div id="admin-orders"><h4>📥 داواکارییە نوێیەکان</h4><div id="o-list"></div></div>
+    </div>
+</div>
+
+<div id="modal">
+    <div class="card" style="width:100%; text-align:center;">
+        <h3 style="color:var(--fp);">FastPay: 07510074008</h3>
+        <p id="m-info"></p>
+        <input id="m-details" placeholder="ناوی یاری + ئایدی">
+        <p style="font-size: 13px; color: #666;">وێنەی وەسڵەکە هەڵبژێرە:</p>
+        <input type="file" id="m-img" accept="image/*" style="border:none;">
+        <button class="btn btn-s" id="sendBtn" onclick="confirmOrder()">ناردنی داواکاری</button>
+        <button onclick="document.getElementById('modal').style.display='none'" style="border:none; background:none; color:gray; margin-top:15px; cursor:pointer;">پاشگەزبوونەوە</button>
+    </div>
+</div>
+
+<script>
+    const FB = "https://zana-store-default-rtdb.firebaseio.com/";
+    const TG_TOKEN = "7959366034:AAG0nCQqcG3YsImPf53SViggiUnlWkNFh1o";
+    const TG_CHAT = "6259019006";
+    const TIKTOK_TOKEN = "B7986f58cd368f851e31003a48ee70e439c75907";
+    const TIKTOK_PIXEL_ID = "7597026457533104144";
+
+    let user = "", selected = null, receiptBase64 = "";
+
+    async function login() {
+        user = document.getElementById('phone').value;
+        if(user.length < 10) return;
+        document.getElementById('auth-box').style.display = 'none';
+        if(user === '07510074008') {
+            document.getElementById('admin-box').style.display = 'block';
+            loadAdmin();
+        } else {
+            document.getElementById('store-box').style.display = 'block';
+            document.getElementById('user-display').innerText = user;
+            loadProds(); loadOrders();
+        }
+    }
+
+    async function addP() {
+        const name = document.getElementById('pn').value, price = document.getElementById('pp').value;
+        if(!name || !price) return;
+        await fetch(`${FB}/prods.json`, {method:'POST', body:JSON.stringify({name, price})});
+        loadAdmin();
+    }
+
+    async function loadProds() {
+        const r = await fetch(`${FB}/prods.json`), d = await r.json();
+        let h = ""; for(let id in d) h += `<div class="item"><span>${d[id].name} - <b>${d[id].price}</b></span><button class="btn btn-s" style="width:auto; padding:5px 15px;" onclick="openBuy('${d[id].name}','${d[id].price}')">کڕین</button></div>`;
+        document.getElementById('prods').innerHTML = h || "کاڵا نییە";
+    }
+
+    function openBuy(n, p) {
+        selected = {n, p}; receiptBase64 = "";
+        document.getElementById('m-info').innerText = `بڕی ${p} بنێرە بۆ ژمارەی سەرەوە`;
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    document.getElementById('m-img').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => { receiptBase64 = reader.result; };
+        reader.readAsDataURL(file);
+    });
+
+    async function confirmOrder() {
+        const det = document.getElementById('m-details').value;
+        if(!det || !receiptBase64) return alert("تکایە ئایدی و وێنەی وەسڵەکە دابنێ");
+        
+        document.getElementById('sendBtn').disabled = true;
+        document.getElementById('sendBtn').innerText = "خەریکە دەنێردرێت...";
+        
+        const o = {phone:user, item:selected.n, det, img:receiptBase64, status:'pending', time:new Date().toLocaleString()};
+        
+        // 1. Save to Firebase
+        await fetch(`${FB}/orders.json`, {method:'POST', body:JSON.stringify(o)});
+        
+        // 2. Send TikTok Event (Tracking)
+        sendTikTokEvent(o);
+
+        // 3. Telegram Notification
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT}&text=${encodeURIComponent("📦 داواکاری: "+o.item+"\n👤 کڕیار: "+o.phone+"\n🆔 ئایدی: "+det)}`);
+        
+        alert("داواکاری نێردرا ✅"); location.reload();
+    }
+
+    async function sendTikTokEvent(order) {
+        const payload = {
+            "event_source": "web",
+            "event_source_id": TIKTOK_PIXEL_ID,
+            "data": [{
+                "event": "CompletePayment",
+                "event_time": Math.floor(Date.now() / 1000),
+                "user": { "phone": [order.phone] },
+                "contents": [{ "content_name": order.item }]
+            }]
+        };
+
+        try {
+            await fetch('https://business-api.tiktok.com/open_api/v1.3/event/track/', {
+                method: 'POST',
+                headers: {
+                    'Access-Token': TIKTOK_TOKEN,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+        } catch (e) { console.log("TikTok Error", e); }
+    }
+
+    async function loadOrders() {
+        const r = await fetch(`${FB}/orders.json`), d = await r.json();
+        let h = ""; for(let id in d) if(d[id].phone === user) h += `<div class="item"><span>${d[id].item}</span><span class="badge ${d[id].status}">${d[id].status}</span></div>`;
+        document.getElementById('orders').innerHTML = h || "مێژوو نییە";
+    }
+
+    async function loadAdmin() {
+        const rp = await fetch(`${FB}/prods.json`), dp = await rp.json();
+        let hp = ""; for(let id in dp) hp += `<div class="item"><span>${dp[id].name}</span><button class="btn-r" style="border:none; padding:5px; border-radius:5px;" onclick="delP('${id}')">سڕینەوە</button></div>`;
+        document.getElementById('p-list').innerHTML = hp;
+
+        const ro = await fetch(`${FB}/orders.json`), do_ = await ro.json();
+        let ho = ""; for(let id in do_) if(do_[id].status === 'pending') ho += `<div class="card"><b>${do_[id].phone}</b><br>${do_[id].item}<br>${do_[id].det}<br><img src="${do_[id].img}" class="img-preview" onclick="window.open(this.src)"><hr><button class="btn btn-s" onclick="upd('${id}','completed')">وەرگرتن</button></div>`;
+        document.getElementById('o-list').innerHTML = ho || "داواکاری نییە";
+    }
+
+    async function delP(id) { if(confirm("بڕوا بکەم؟")) { await fetch(`${FB}/prods/${id}.json`, {method:'DELETE'}); loadAdmin(); } }
+    async function upd(id, s) { await fetch(`${FB}/orders/${id}.json`, {method:'PATCH', body:JSON.stringify({status:s})}); loadAdmin(); }
+</script>
+</body>
+</html>
