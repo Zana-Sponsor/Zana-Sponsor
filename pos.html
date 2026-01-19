@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AHMAD PHONE - PRO POS</title>
+    <title>AHMAD PHONE - کاشێر</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -17,60 +17,62 @@
         .tab-content { display: none; }
         .active-tab { display: block; }
         .nav-active { color: #2563eb; border-top: 4px solid #2563eb; background: #eff6ff; }
-        
-        /* دیزاینی ڕاپۆرتەکە کە تەنها کاتی داگرتن دەردەکەوێت */
-        #report-template { 
-            width: 500px; 
-            background: white; 
-            padding: 30px; 
-            position: fixed; 
-            top: 0; 
-            left: -2000px; /* شاردراوەیە لە دەرەوەی شاشە */
-            z-index: -1;
-        }
+        #report-template { width: 500px; background: white; padding: 30px; position: fixed; left: -2000px; z-index: -1; }
     </style>
 </head>
 <body class="pb-24">
 
     <div id="login-screen" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center">
-            <h2 class="text-3xl font-black text-blue-800 mb-6 italic">AHMAD PHONE</h2>
-            <input type="text" id="username" placeholder="ناوی بەکارهێنەر" class="w-full border p-4 rounded-2xl mb-4 text-center outline-none focus:ring-2 ring-blue-500">
-            <input type="password" id="password" placeholder="وشەی تێپەڕ" class="w-full border p-4 rounded-2xl mb-6 text-center outline-none focus:ring-2 ring-blue-500">
+            <h2 class="text-2xl font-black text-blue-800 mb-6 italic">AHMAD PHONE</h2>
+            <input type="text" id="username" placeholder="ناوی بەکارهێنەر" class="w-full border p-4 rounded-2xl mb-4 text-center outline-none">
+            <input type="password" id="password" placeholder="وشەی تێپەڕ" class="w-full border p-4 rounded-2xl mb-6 text-center outline-none">
             <button onclick="handleLogin()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold">چوونە ژوورەوە</button>
         </div>
     </div>
 
     <div id="main-system" class="hidden">
-        <div class="bg-blue-800 text-white p-5 text-center shadow-xl flex justify-between items-center sticky top-0 z-50">
-            <button onclick="handleLogout()" class="opacity-70"><i class="fas fa-sign-out-alt text-xl"></i></button>
-            <h1 class="text-xl font-black italic">AHMAD PHONE</h1>
-            <div id="user-display" class="text-[10px] bg-blue-700 px-3 py-1 rounded-full"></div>
+        <div class="bg-blue-800 text-white p-5 text-center shadow-xl sticky top-0 z-50">
+            <h1 class="text-xl font-black">AHMAD PHONE - سیستەمی کاشێری</h1>
+            <div class="flex justify-between items-center mt-2 px-2">
+                <button onclick="handleLogout()" class="opacity-70"><i class="fas fa-sign-out-alt"></i> چوونە دەرەوە</button>
+                <div id="user-display" class="text-[10px] bg-blue-700 px-3 py-1 rounded-full uppercase"></div>
+            </div>
         </div>
 
         <div class="p-4 max-w-lg mx-auto">
             <div id="sales" class="tab-content active-tab">
-                <input type="text" id="searchInput" oninput="renderPOS()" placeholder="گەڕان بۆ کاڵا..." class="w-full border-2 border-blue-100 p-4 rounded-2xl mb-4 shadow-sm outline-none">
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="searchInput" oninput="renderPOS()" placeholder="گەڕان یان بارکۆد..." class="flex-1 border-2 border-blue-100 p-3 rounded-2xl outline-none">
+                    <button onclick="toggleScanner('sales')" class="bg-blue-600 text-white px-5 rounded-2xl shadow-lg active:scale-90"><i class="fas fa-camera"></i></button>
+                </div>
+                <div id="scanner-area" class="hidden bg-black p-2 rounded-2xl mb-4 overflow-hidden"><div id="reader"></div></div>
+                
                 <div id="pos-items" class="grid grid-cols-2 gap-3 mb-6"></div>
                 
                 <div class="bg-white p-5 rounded-3xl shadow-xl border-t-8 border-blue-600">
-                    <div id="cart-list" class="space-y-3 mb-4"></div>
+                    <div id="cart-list" class="space-y-3 mb-4 max-h-48 overflow-y-auto"></div>
                     <div class="flex justify-between items-center font-bold text-2xl border-t pt-4 text-blue-900">
-                        <span>کۆی گشتی:</span>
+                        <span>کۆ:</span>
                         <span id="total-price">0 د.ع</span>
                     </div>
-                    <button onclick="processSale()" class="w-full bg-blue-700 text-white py-4 rounded-2xl mt-5 font-bold shadow-lg active:scale-95 transition">تۆمارکردن و کەمکردن لە ستۆک</button>
+                    <button onclick="processSale()" class="w-full bg-blue-700 text-white py-4 rounded-2xl mt-5 font-bold shadow-lg">تەواوکردنی فرۆشتن</button>
                 </div>
             </div>
 
             <div id="inventory" class="tab-content">
-                <div class="bg-white p-5 rounded-2xl shadow-lg mb-6">
-                    <h3 class="font-bold mb-4 text-blue-700 border-b pb-2">زیادکردنی کاڵا</h3>
+                <div class="bg-white p-5 rounded-2xl shadow-lg mb-6 border-2 border-blue-50">
+                    <h3 class="font-bold mb-4 text-blue-700 border-b pb-2">زیادکردن یان ئەپدێتی کاڵا</h3>
                     <input type="text" id="itemName" placeholder="ناوی کاڵا" class="w-full border p-3 rounded-xl mb-3">
                     <div class="grid grid-cols-2 gap-2 mb-3">
                         <input type="number" id="itemPrice" placeholder="نرخ" class="border p-3 rounded-xl">
-                        <input type="number" id="itemQty" placeholder="بڕی ستۆک" class="border p-3 rounded-xl">
+                        <input type="number" id="itemQty" placeholder="بڕ (ستۆک)" class="border p-3 rounded-xl">
                     </div>
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="itemBarcode" placeholder="بارکۆد" class="flex-1 border p-3 rounded-xl">
+                        <button onclick="toggleScanner('inventory')" class="bg-gray-800 text-white px-4 rounded-xl"><i class="fas fa-camera"></i></button>
+                    </div>
+                    <div id="scanner-area-inv" class="hidden bg-black p-2 rounded-2xl mb-4"><div id="reader-inv"></div></div>
                     <button onclick="addItem()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold">پاشەکەوتکردن</button>
                 </div>
                 <div id="inventory-list" class="space-y-2"></div>
@@ -79,7 +81,7 @@
             <div id="reports" class="tab-content">
                 <div class="bg-white p-8 rounded-3xl shadow-xl text-center">
                     <p class="text-gray-400 text-sm">کۆی گشتی فرۆشی ئەمڕۆ</p>
-                    <h3 id="daily-sales" class="text-4xl font-black text-green-600 mb-8">0 د.ع</h3>
+                    <h3 id="daily-sales" class="text-4xl font-black text-green-600 mb-8 font-mono">0 د.ع</h3>
                     <button onclick="generateKurdishPDF()" id="pdf-btn" class="w-full bg-red-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2">
                         <i class="fas fa-file-pdf"></i> داگرتنی ڕاپۆرتی کوردی
                     </button>
@@ -87,41 +89,37 @@
             </div>
         </div>
 
-        <div class="text-center text-gray-400 text-[10px] py-4">
+        <div class="text-center text-gray-400 text-[10px] pb-6">
             Producted By Zana Adam ⓒ 2026
         </div>
 
-        <div id="report-template" dir="rtl" style="font-family: 'Vazirmatn', sans-serif;">
+        <div id="report-template" dir="rtl">
             <div style="text-align: center; border-bottom: 5px solid #1e3a8a; padding-bottom: 20px;">
-                <h1 style="font-size: 35px; color: #1e3a8a; margin: 0;">AHMAD PHONE</h1>
-                <p style="font-size: 16px; margin: 5px 0;">بۆ فرۆشتن و چاککردنەوەی مۆبایل</p>
-                <p style="font-size: 12px;">0775 888 7488 | 0750 399 1323</p>
+                <h1 style="font-size: 30px; color: #1e3a8a; margin: 0;">AHMAD PHONE</h1>
+                <p style="font-size: 14px; margin: 5px 0;">ڕاپۆرتی فرۆشتنی سیستەمی کاشێری</p>
             </div>
-            <div style="margin-top: 40px;">
-                <h2 style="background: #f1f5f9; padding: 15px; border-radius: 10px;">ڕاپۆرتی فرۆشتنی ڕۆژانە</h2>
-                <div style="font-size: 18px; margin-top: 20px; line-height: 2;">
-                    <p>● <b>ڕێکەوت:</b> <span id="pdf-date"></span></p>
-                    <p>● <b>کارمەندی بەرپرس:</b> <span id="pdf-user"></span></p>
-                    <div style="margin-top: 30px; background: #eff6ff; border: 2px dashed #2563eb; padding: 30px; border-radius: 20px; text-align: center;">
-                        <span style="font-size: 20px; color: #1e3a8a;">کۆی گشتی فرۆشراوی ئەمڕۆ:</span><br>
-                        <span id="pdf-total" style="font-size: 40px; font-weight: 900; color: #16a34a;"></span>
-                    </div>
+            <div style="margin-top: 30px; font-size: 16px;">
+                <p>● <b>ڕێکەوت:</b> <span id="pdf-date"></span></p>
+                <p>● <b>کارمەند:</b> <span id="pdf-user"></span></p>
+                <div style="margin-top: 30px; background: #f8fafc; border: 2px solid #2563eb; padding: 25px; border-radius: 15px; text-align: center;">
+                    <span style="font-size: 18px;">کۆی گشتی فرۆشراوی ئەمڕۆ</span><br>
+                    <span id="pdf-total" style="font-size: 35px; font-weight: bold; color: #16a34a;"></span>
                 </div>
             </div>
-            <div style="margin-top: 150px; text-align: center; border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #888;">
+            <div style="margin-top: 100px; text-align: center; font-size: 10px; color: #aaa;">
                 Producted By Zana Adam ⓒ 2026
             </div>
         </div>
 
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 shadow-2xl z-50">
-            <button onclick="showTab('sales', this)" class="flex flex-col items-center nav-active px-6 py-2 rounded-2xl"><i class="fas fa-cash-register"></i><span class="text-[10px] mt-1">فرۆشتن</span></button>
-            <button onclick="showTab('inventory', this)" class="flex flex-col items-center text-gray-400 px-6 py-2 rounded-2xl"><i class="fas fa-boxes"></i><span class="text-[10px] mt-1">کۆگا</span></button>
-            <button onclick="showTab('reports', this)" class="flex flex-col items-center text-gray-400 px-6 py-2 rounded-2xl"><i class="fas fa-chart-line"></i><span class="text-[10px] mt-1">ڕاپۆرت</span></button>
+            <button onclick="showTab('sales', this)" class="flex flex-col items-center nav-active px-6 py-2 rounded-2xl transition-all"><i class="fas fa-cash-register text-lg"></i><span class="text-[10px] font-bold mt-1">فرۆشتن</span></button>
+            <button onclick="showTab('inventory', this)" class="flex flex-col items-center text-gray-400 px-6 py-2 rounded-2xl transition-all"><i class="fas fa-boxes text-lg"></i><span class="text-[10px] font-bold mt-1">کۆگا</span></button>
+            <button onclick="showTab('reports', this)" class="flex flex-col items-center text-gray-400 px-6 py-2 rounded-2xl transition-all"><i class="fas fa-chart-line text-lg"></i><span class="text-[10px] font-bold mt-1">ڕاپۆرت</span></button>
         </div>
     </div>
 
     <script>
-        const USERS = { "ahmad": "1234", "zana": "2026", "admin": "admin" };
+        const USERS = { "ahmad": "1234", "zana": "2026", "staff": "1122" };
         let currentUser = sessionStorage.getItem('loggedUser') || "";
         const firebaseConfig = { databaseURL: "https://ahmad-phone-pos-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
@@ -130,15 +128,16 @@
         let products = [];
         let cart = [];
         let totalSales = 0;
+        let scanner;
 
         function handleLogin() {
-            const user = document.getElementById('username').value.toLowerCase();
-            const pass = document.getElementById('password').value;
-            if (USERS[user] && USERS[user] === pass) {
+            const u = document.getElementById('username').value.toLowerCase();
+            const p = document.getElementById('password').value;
+            if (USERS[u] && USERS[u] === p) {
                 sessionStorage.setItem('isLoggedIn', 'true');
-                sessionStorage.setItem('loggedUser', user);
+                sessionStorage.setItem('loggedUser', u);
                 location.reload();
-            } else { alert("بەکارهێنەر یان وشەی تێپەڕ هەڵەیە!"); }
+            } else { alert("هەڵەیە!"); }
         }
 
         function handleLogout() { sessionStorage.clear(); location.reload(); }
@@ -146,7 +145,7 @@
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').classList.remove('hidden');
-            document.getElementById('user-display').innerText = currentUser.toUpperCase();
+            document.getElementById('user-display').innerText = currentUser;
             initData();
         }
 
@@ -163,106 +162,4 @@
 
         function renderPOS() {
             const q = document.getElementById('searchInput').value.toLowerCase();
-            const list = document.getElementById('pos-items');
-            list.innerHTML = '';
-            products.filter(p => p.name.toLowerCase().includes(q)).forEach(p => {
-                const noStock = p.qty <= 0;
-                list.innerHTML += `
-                <button onclick="${noStock ? '' : `addToCart(${JSON.stringify(p)})`}" 
-                        class="bg-white p-4 rounded-2xl border ${noStock ? 'opacity-40 grayscale' : 'active:scale-95'} shadow-sm text-center relative">
-                    <div class="font-bold text-xs truncate">${p.name}</div>
-                    <div class="text-blue-600 font-black text-sm">${p.price.toLocaleString()}</div>
-                    <div class="text-[10px] ${p.qty < 5 ? 'text-red-500 font-bold' : 'text-gray-400'}">بڕ: ${p.qty}</div>
-                    ${noStock ? '<div class="absolute inset-0 flex items-center justify-center font-bold text-red-600 bg-white/50">نەماوە</div>' : ''}
-                </button>`;
-            });
-        }
-
-        function addToCart(p) {
-            cart.push({ ...p, cartId: Date.now() });
-            renderCart();
-        }
-
-        function renderCart() {
-            const list = document.getElementById('cart-list');
-            list.innerHTML = ''; let total = 0;
-            cart.forEach((item, i) => {
-                total += item.price;
-                list.innerHTML += `<div class="flex justify-between bg-blue-50 p-3 rounded-xl">
-                    <span class="font-bold text-xs">${item.name}</span>
-                    <span onclick="const n=prompt('نرخ:');if(n){cart[${i}].price=parseInt(n);renderCart();}" class="bg-white text-blue-700 px-2 rounded-lg font-black underline cursor-pointer">${item.price.toLocaleString()}</span>
-                </div>`;
-            });
-            document.getElementById('total-price').innerText = total.toLocaleString() + " د.ع";
-        }
-
-        function processSale() {
-            if (cart.length === 0) return;
-            cart.forEach(item => {
-                database.ref('products/' + item.id).update({ qty: item.qty - 1 });
-            });
-            database.ref('totalSales').set(totalSales + cart.reduce((s, i) => s + i.price, 0));
-            cart = []; renderCart();
-            alert("فرۆشتنەکە بە سەرکەوتوویی تۆمارکرا");
-        }
-
-        function addItem() {
-            const name = document.getElementById('itemName').value;
-            const price = parseInt(document.getElementById('itemPrice').value);
-            const qty = parseInt(document.getElementById('itemQty').value);
-            if (name && price && qty) {
-                const id = Date.now().toString();
-                database.ref('products/' + id).set({ id, name, price, qty });
-                document.querySelectorAll('#inventory input').forEach(i => i.value = '');
-            }
-        }
-
-        function renderInventory() {
-            const invList = document.getElementById('inventory-list');
-            invList.innerHTML = '';
-            products.forEach(p => {
-                invList.innerHTML += `<div class="flex justify-between bg-white p-3 rounded-xl shadow-sm text-sm">
-                    <span>${p.name} (بڕ: ${p.qty})</span>
-                    <button onclick="database.ref('products/${p.id}').remove()" class="text-red-400"><i class="fas fa-trash"></i></button>
-                </div>`;
-            });
-        }
-
-        function showTab(tabId, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
-            document.getElementById(tabId).classList.add('active-tab');
-            document.querySelectorAll('.fixed button').forEach(b => b.classList.remove('nav-active'));
-            el.classList.add('nav-active');
-        }
-
-        // چارەسەری پەڕەی سپی بۆ PDF
-        async function generateKurdishPDF() {
-            const btn = document.getElementById('pdf-btn');
-            btn.innerText = "خەریکە دروست دەبێت...";
-            btn.disabled = true;
-
-            document.getElementById('pdf-date').innerText = new Date().toLocaleDateString('ku-IQ') + " " + new Date().toLocaleTimeString('ku-IQ');
-            document.getElementById('pdf-user').innerText = currentUser.toUpperCase();
-            document.getElementById('pdf-total').innerText = totalSales.toLocaleString() + " دینار";
-
-            const element = document.getElementById('report-template');
-            // کاتی دەدەینێ تا فۆنتەکان بار ببن
-            setTimeout(async () => {
-                const canvas = await html2canvas(element, { 
-                    scale: 2,
-                    useCORS: true,
-                    logging: false,
-                    backgroundColor: "#ffffff"
-                });
-                const imgData = canvas.toDataURL('image/png');
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
-                pdf.save(`Ahmad_Phone_Report.pdf`);
-                btn.innerText = "داگرتنی ڕاپۆرتی کوردی";
-                btn.disabled = false;
-            }, 500);
-        }
-    </script>
-</body>
-</html>
+            const
