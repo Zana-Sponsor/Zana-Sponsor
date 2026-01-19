@@ -70,6 +70,7 @@
             color: #888;
             margin-bottom: 10px;
         }
+        /* گۆڕانکاری لێرە کراوە بۆ ئەوەی وەک لینک دەربکەوێت */
         .footer-tag {
             padding: 8px 45px;
             border: 2px solid #42e36d;
@@ -78,6 +79,12 @@
             font-size: 16px;
             display: inline-block;
             font-weight: bold;
+            text-decoration: none; /* لادانی هێڵی ژێر نوسین */
+            transition: all 0.3s ease;
+        }
+        .footer-tag:hover {
+            background-color: #42e36d;
+            color: white;
         }
         .copyright-text {
             margin-top: 15px;
@@ -109,9 +116,11 @@
 
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەرکراوە لەلایەن</div>
-        <div class="footer-tag">
+        
+        <a href="https://wa.me/+9647758887488?text=سڵاو+زانا+سپۆنسەر،+دەمەوێت+ڕیکلام+دروست+بکەم" class="footer-tag">
             Zana Sponsor
-        </div>
+        </a>
+        
         <div class="copyright-text">
             Produced By Zana Sponsor © 2026
         </div>
