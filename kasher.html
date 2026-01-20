@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AHMAD PHONE - POS</title>
+    <title>AHMAD PHONE - POS SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -99,7 +99,8 @@
     </div>
 
     <script>
-        const scanSound = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
+        // دەنگێکی کورت و بێ بێزارکەر
+        const scanSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
         const firebaseConfig = { databaseURL: "https://ahmad-phone-pos-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
@@ -141,7 +142,7 @@
 
         function addToCartByID(id) {
             const p = products.find(x => x.id === id);
-            if (cart.filter(c => c.id === id).length + 1 > p.qty) return alert("ستۆک تەواو بووە!");
+            if (cart.filter(c => c.id === id).length + 1 > p.qty) return alert("ستۆک نەماوە!");
             scanSound.play();
             cart.push({ ...p });
             renderCart();
@@ -172,7 +173,7 @@
                 batchTotal += summary[id].total;
             }
             database.ref('totalSales').set(totalSales + batchTotal);
-            cart = []; renderCart(); alert("تۆمارکرا ✅");
+            cart = []; renderCart(); alert("فرۆشتن تۆمارکرا ✅");
         }
 
         function renderHistory() {
@@ -192,7 +193,7 @@
         function addItem() {
             const id = document.getElementById('edit-id').value || document.getElementById('itemBarcode').value || "ID_" + Date.now();
             const n = document.getElementById('itemName').value, p = parseInt(document.getElementById('itemPrice').value), q = parseInt(document.getElementById('itemQty').value), b = document.getElementById('itemBarcode').value;
-            if (n && p) { database.ref('products/' + id).set({ id, name: n, price: p, qty: q, barcode: b || id }); resetInvForm(); alert("پاشەکەوتکرا"); }
+            if (n && p) { database.ref('products/' + id).set({ id, name: n, price: p, qty: q, barcode: b || id }); resetInvForm(); alert("کۆگا نوێکرایەوە"); }
         }
 
         function renderInventory() {
@@ -200,7 +201,7 @@
             list.innerHTML = '';
             products.forEach(p => {
                 list.innerHTML += `<div class="bg-white p-3 rounded-xl shadow-sm flex justify-between items-center text-xs">
-                    <div><b>${p.name}</b><br><span class="text-blue-600 font-bold">${p.price.toLocaleString()} | بڕ: ${p.qty}</span></div>
+                    <div><b>${p.name}</b><br><span class="text-blue-600 font-bold">${p.price.toLocaleString()} | ستۆک: ${p.qty}</span></div>
                     <div class="flex gap-2"><i onclick="editItem('${p.id}')" class="fas fa-edit text-blue-400 cursor-pointer p-2 bg-blue-50 rounded-lg"></i><i onclick="if(confirm('سڕینەوە؟')){database.ref('products/${p.id}').remove()}" class="fas fa-trash-alt text-red-200 cursor-pointer p-2 bg-red-50 rounded-lg"></i></div>
                 </div>`;
             });
@@ -234,7 +235,7 @@
             doc.text("AHMAD PHONE REPORT", 105, 15, null, null, "center");
             const data = history.map(h => [h.item, h.qty, h.price.toLocaleString(), h.time, h.date]);
             doc.autoTable({ head: [['Item', 'Qty', 'Price', 'Time', 'Date']], body: data, startY: 35 });
-            doc.save(`AhmadPhone_${cashier}.pdf`);
+            doc.save(`Report_${cashier}.pdf`);
         }
 
         function showTab(t, el) {
@@ -248,7 +249,6 @@
             const areaId = type === 'sales' ? 'scanner-area' : 'scanner-area-inv';
             const readerId = type === 'sales' ? 'reader' : 'reader-inv';
             const el = document.getElementById(areaId);
-            
             if (el.classList.contains('hidden')) {
                 el.classList.remove('hidden');
                 scanner = new Html5Qrcode(readerId);
@@ -257,25 +257,15 @@
                     if (type === 'sales') {
                         const p = products.find(i => i.barcode === text);
                         if (p) addToCartByID(p.id);
-                        // لە بەشی فرۆشتن کامێراەکە داناخرێت بۆ ئەوەی خێرا بیت
                     } else {
-                        // لە بەشی کۆگا تەنها یەکجار دەخوێنێتەوە و دادەخرێت
                         document.getElementById('itemBarcode').value = text;
-                        stopScanner(); 
-                        el.classList.add('hidden');
+                        stopScanner(); el.classList.add('hidden');
                     }
-                }).catch(err => { alert("Error: Camera not found!"); el.classList.add('hidden'); });
-            } else { 
-                stopScanner(); 
-                el.classList.add('hidden'); 
-            }
+                }).catch(() => { el.classList.add('hidden'); });
+            } else { stopScanner(); el.classList.add('hidden'); }
         }
 
-        function stopScanner() { 
-            if (scanner) { 
-                scanner.stop().then(() => { scanner = null; }).catch(() => { scanner = null; }); 
-            } 
-        }
+        function stopScanner() { if (scanner) { scanner.stop().then(() => { scanner = null; }).catch(() => { scanner = null; }); } }
     </script>
 </body>
 </html>
