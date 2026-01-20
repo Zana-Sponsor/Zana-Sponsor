@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zana Sponsor - Links</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .profile-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            object-fit: cover;
+        }
+        h1 { margin: 15px 0 5px; font-size: 26px; color: #333; font-weight: bold; }
+        p { color: #777; font-size: 15px; margin-bottom: 30px; }
+        
+        .link-card {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            margin-bottom: 18px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .link-card i {
+            margin-right: 15px; 
+            font-size: 28px;
+        }
+        
+        .whatsapp { background: #42e36d; }
+        .viber { background: #8d7df7; }
+        .phone { background: #4096ff; }
+
+        .link-card:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+
+        .sponsor-section {
+            margin-top: 50px;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .sponsor-text {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        .footer-tag {
+            padding: 8px 45px;
+            border: 2px solid #42e36d;
+            border-radius: 25px;
+            color: #42e36d;
+            font-size: 16px;
+            display: inline-block;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .footer-tag:hover {
+            background-color: #42e36d;
+            color: white;
+            transform: translateY(-3px);
+        }
+        .copyright-text {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #bbb;
+            direction: ltr;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        <img src="https://ibb.co/934Bxqsg.png" alt="مطعم ماسی بوکی شەقلاوە" class="profile-img">
+        <h1>ماسی بوکی شەقلاوە</h1>
+        <p>بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</p>
+    </div>
+
+    <a href="https://wa.me/+9647501901913?text=سڵاو👋، ئایا دەتوانی زانیاری زیاترم پێبدەی؟" class="link-card whatsapp">
+        واتساپ <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <a href="viber://chat?number=+9647501901913" class="link-card viber">
+        ڤایبەر <i class="fab fa-viber"></i>
+    </a>
+
+    <a href="tel:+9647501901913" class="link-card phone">
+        ژمارەی مۆبایل <i class="fas fa-phone-alt"></i>
+    </a>
+
+    <div class="sponsor-section">
+        <div class="sponsor-text">سپۆنسەرکراوە لەلایەن</div>
+        
+        <a href="https://wa.me/+9647758887488?text=سڵاو بەڕێز، دەمەوێت سپۆنسەر بۆ کاڵاکەم بکەم !" class="footer-tag">
+            Zana Sponsor
+        </a>
+        
+        <div class="copyright-text">
+            Produced By Zana Sponsor © 2026
+        </div>
+    </div>
+
+</body>
+</html>
