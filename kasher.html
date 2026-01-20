@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AHMAD PHONE - POS SYSTEM</title>
+    <title>AHMAD PHONE - POS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -24,9 +24,9 @@
 
     <div class="bg-blue-800 text-white p-4 text-center shadow-xl sticky top-0 z-50">
         <h1 class="text-2xl font-black">AHMAD PHONE</h1>
-        <div class="flex justify-center gap-6 text-[11px] mt-2 opacity-95">
-            <span class="phone-number"><i class="fas fa-phone-alt mr-1"></i> 0775 888 7488</span>
-            <span class="phone-number"><i class="fas fa-phone-alt mr-1"></i> 0750 399 1323</span>
+        <div class="flex justify-center gap-4 text-[10px] mt-2 opacity-90">
+            <span class="phone-number">0775 888 7488</span>
+            <span class="phone-number">0750 399 1323</span>
         </div>
     </div>
 
@@ -34,13 +34,13 @@
         <div id="sales" class="tab-content active-tab">
             <div class="flex gap-2 mb-4">
                 <input type="text" id="searchInput" oninput="renderPOS()" placeholder="گەڕان یان بارکۆد..." class="flex-1 border-2 border-blue-100 p-3 rounded-2xl outline-none shadow-sm">
-                <button onclick="toggleScanner('sales')" class="bg-blue-600 text-white px-5 rounded-2xl shadow-lg active:scale-90"><i class="fas fa-barcode text-xl"></i></button>
+                <button onclick="toggleScanner('sales')" class="bg-blue-600 text-white px-5 rounded-2xl shadow-lg active:scale-90 transition"><i class="fas fa-barcode text-xl"></i></button>
             </div>
             <div id="scanner-area" class="hidden bg-black p-2 rounded-2xl mb-4 overflow-hidden"><div id="reader"></div></div>
             <div id="pos-items" class="grid grid-cols-2 gap-3 mb-6"></div>
             
             <div class="bg-white p-5 rounded-3xl shadow-xl border-t-8 border-blue-600">
-                <div id="cart-list" class="space-y-2 mb-4 max-h-48 overflow-y-auto text-sm"></div>
+                <div id="cart-list" class="space-y-2 mb-4 max-h-48 overflow-y-auto text-xs"></div>
                 <div class="flex justify-between items-center font-bold text-2xl border-t pt-4 text-blue-900">
                     <span>کۆی گشتی:</span>
                     <span id="total-price">0 د.ع</span>
@@ -55,14 +55,15 @@
                 <input type="hidden" id="edit-id">
                 <input type="text" id="itemName" placeholder="ناوی کاڵا" class="w-full border p-3 rounded-xl mb-3 outline-none">
                 <div class="grid grid-cols-2 gap-2 mb-3">
-                    <input type="number" id="itemPrice" placeholder="نرخی فرۆشتن" class="border p-3 rounded-xl outline-none">
-                    <input type="number" id="itemQty" placeholder="بڕی ستۆک" class="border p-3 rounded-xl outline-none">
+                    <input type="number" id="itemPrice" placeholder="نرخ" class="border p-3 rounded-xl outline-none">
+                    <input type="number" id="itemQty" placeholder="بڕ (ستۆک)" class="border p-3 rounded-xl outline-none">
                 </div>
                 <div class="flex gap-2 mb-4">
                     <input type="text" id="itemBarcode" placeholder="بارکۆد" class="flex-1 border p-3 rounded-xl outline-none bg-gray-50">
                     <button onclick="toggleScanner('inventory')" class="bg-gray-800 text-white px-4 rounded-xl active:scale-90"><i class="fas fa-camera"></i></button>
                 </div>
-                <button id="add-btn" onclick="addItem()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">پاشەکەوتکردن</button>
+                <div id="scanner-area-inv" class="hidden bg-black p-2 rounded-2xl mb-4 overflow-hidden"><div id="reader-inv"></div></div>
+                <button onclick="addItem()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold">پاشەکەوتکردن</button>
                 <button id="cancel-edit" onclick="resetInvForm()" class="hidden w-full bg-gray-400 text-white py-2 rounded-xl mt-2 font-bold text-xs">لابردن</button>
             </div>
             <div id="inventory-list" class="space-y-2"></div>
@@ -70,25 +71,21 @@
 
         <div id="history" class="tab-content">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h3 class="font-bold text-lg text-blue-800">مێژووی فرۆشتنەکان</h3>
-                <button onclick="clearAllHistory()" class="bg-red-100 text-red-600 text-[10px] px-3 py-1 rounded-lg border border-red-200 font-bold hover:bg-red-600 hover:text-white transition">سڕینەوەی هەمووی</button>
+                <h3 class="font-bold text-lg text-blue-800">مێژوو</h3>
+                <button onclick="clearAllHistory()" class="bg-red-50 text-red-600 text-[10px] px-3 py-1 rounded-lg border border-red-200 font-bold">سڕینەوەی هەمووی</button>
             </div>
-            <div id="sales-history-list" class="space-y-3"></div>
+            <div id="sales-history-list" class="space-y-2"></div>
         </div>
 
         <div id="reports" class="tab-content">
-            <div class="bg-white p-8 rounded-3xl shadow-xl text-center">
-                <input type="text" id="cashierName" placeholder="ناوی کاشێر بنووسە" class="w-full border p-3 rounded-xl mb-4 text-center outline-none focus:border-blue-500">
-                <p class="text-gray-400 text-[10px] mb-1 uppercase tracking-wider">Total Sales Today</p>
+            <div class="bg-white p-6 rounded-3xl shadow-xl text-center">
+                <input type="text" id="cashierName" placeholder="ناوی کاشێر" class="w-full border p-3 rounded-xl mb-6 text-center outline-none">
+                <p class="text-gray-400 text-[10px] mb-1">کۆی گشتی ئەمڕۆ</p>
                 <h3 id="daily-sales" class="text-4xl font-black text-green-600 mb-8 font-mono">0 د.ع</h3>
                 
-                <div class="grid grid-cols-1 gap-3">
-                    <button onclick="downloadPDF()" class="bg-red-600 text-white py-4 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2 active:scale-95 transition">
-                        <i class="fas fa-file-pdf"></i> داگرتنی ڕاپۆرتی PDF
-                    </button>
-                    <button onclick="sendToWhatsApp()" class="bg-green-500 text-white py-4 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2 active:scale-95 transition">
-                        <i class="fab fa-whatsapp text-xl"></i> ناردن بۆ واتسئاپ
-                    </button>
+                <div class="flex flex-col gap-3">
+                    <button onclick="downloadPDF()" class="bg-red-600 text-white py-4 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2"><i class="fas fa-file-pdf"></i> داگرتنی PDF</button>
+                    <button onclick="sendToWhatsApp()" class="bg-green-500 text-white py-4 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2"><i class="fab fa-whatsapp"></i> ناردن بۆ واتسئاپ</button>
                 </div>
             </div>
         </div>
@@ -102,14 +99,13 @@
     </div>
 
     <script>
-        const scannerBeep = new Audio('https://www.soundjay.com/buttons/beep-07.wav');
+        const scanSound = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
         const firebaseConfig = { databaseURL: "https://ahmad-phone-pos-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
         let products = [], cart = [], totalSales = 0, history = [], scanner;
 
-        // Firebase Sync
         database.ref('products').on('value', snap => {
             const data = snap.val();
             products = data ? Object.keys(data).map(key => ({ ...data[key], id: key })) : [];
@@ -127,27 +123,26 @@
             renderHistory();
         });
 
-        // POS Functions
         function renderPOS() {
             const q = document.getElementById('searchInput').value.toLowerCase();
             const list = document.getElementById('pos-items');
             list.innerHTML = '';
-            const barcodeFound = products.find(p => p.barcode === q && q !== "");
-            if(barcodeFound) { addToCartByID(barcodeFound.id); document.getElementById('searchInput').value = ''; return; }
+            const bc = products.find(p => p.barcode === q && q !== "");
+            if(bc) { addToCartByID(bc.id); document.getElementById('searchInput').value = ''; return; }
             products.filter(p => p.name.toLowerCase().includes(q)).forEach(p => {
                 const noStock = p.qty <= 0;
-                list.innerHTML += `<div onclick="${noStock ? '' : `addToCartByID('${p.id}')`}" class="bg-white p-4 rounded-2xl border ${noStock?'opacity-40':'shadow-sm active:scale-95 cursor-pointer'} text-center transition">
+                list.innerHTML += `<div onclick="${noStock ? '' : `addToCartByID('${p.id}')`}" class="bg-white p-4 rounded-2xl border ${noStock?'opacity-40':'shadow-sm active:scale-95 cursor-pointer'} text-center">
                     <div class="font-bold text-[11px] truncate">${p.name}</div>
-                    <div class="text-blue-600 font-black text-sm">${p.price.toLocaleString()}</div>
-                    <div class="text-[9px] text-gray-400 font-bold">ستۆک: ${p.qty}</div>
+                    <div class="text-blue-600 font-black text-xs">${p.price.toLocaleString()}</div>
+                    <div class="text-[8px] text-gray-400">ستۆک: ${p.qty}</div>
                 </div>`;
             });
         }
 
         function addToCartByID(id) {
             const p = products.find(x => x.id === id);
-            if (cart.filter(c => c.id === id).length + 1 > p.qty) return alert("ستۆک بەشی ئەم بڕە ناکات!");
-            scannerBeep.play();
+            if (cart.filter(c => c.id === id).length + 1 > p.qty) return alert("ستۆک تەواو بووە!");
+            scanSound.play();
             cart.push({ ...p });
             renderCart();
         }
@@ -155,77 +150,57 @@
         function renderCart() {
             const list = document.getElementById('cart-list');
             list.innerHTML = ''; let t = 0;
-            cart.forEach((item, i) => { t += item.price; list.innerHTML += `<div class="flex justify-between items-center bg-blue-50 p-2 rounded-xl border-r-4 border-blue-500 mb-1"><span class="font-bold truncate w-32">${item.name}</span><div class="flex items-center gap-2"><span>${item.price.toLocaleString()}</span><i onclick="cart.splice(${i},1); renderCart();" class="fas fa-trash-alt text-red-500 cursor-pointer p-1"></i></div></div>`; });
+            cart.forEach((item, i) => { t += item.price; list.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl mb-1 border-r-4 border-blue-500"><span>${item.name}</span><div class="flex gap-2 font-bold"><span>${item.price.toLocaleString()}</span><i onclick="cart.splice(${i},1); renderCart();" class="fas fa-trash-alt text-red-400 cursor-pointer"></i></div></div>`; });
             document.getElementById('total-price').innerText = t.toLocaleString() + " د.ع";
         }
 
         function processSale() {
             if (cart.length === 0) return;
-            const time = new Date().toLocaleString('ku-IQ');
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ku-IQ');
+            const timeStr = now.toLocaleTimeString('ku-IQ');
             const summary = {};
-            
             cart.forEach(item => {
-                if(!summary[item.id]) summary[item.id] = { name: item.name, qty: 0, totalPrice: 0 };
+                if(!summary[item.id]) summary[item.id] = { name: item.name, qty: 0, total: 0 };
                 summary[item.id].qty++;
-                summary[item.id].totalPrice += item.price;
-                // کەمکردنەوەی بڕ لە کۆگا
+                summary[item.id].total += item.price;
                 database.ref('products/' + item.id).transaction(p => { if (p) p.qty--; return p; });
             });
-
-            let finalTotal = 0;
+            let batchTotal = 0;
             for(let id in summary) {
-                database.ref('salesHistory').push({ 
-                    itemText: `${summary[id].name} x ${summary[id].qty}`, 
-                    totalPrice: summary[id].totalPrice, 
-                    date: time 
-                });
-                finalTotal += summary[id].totalPrice;
+                database.ref('salesHistory').push({ item: summary[id].name, qty: summary[id].qty, price: summary[id].total, date: dateStr, time: timeStr });
+                batchTotal += summary[id].total;
             }
-
-            database.ref('totalSales').set(totalSales + finalTotal);
-            cart = []; renderCart(); alert("فرۆشتن ئەنجامدرا و ستۆک کەمکرایەوە ✅");
+            database.ref('totalSales').set(totalSales + batchTotal);
+            cart = []; renderCart(); alert("تۆمارکرا ✅");
         }
 
-        // History
         function renderHistory() {
             const list = document.getElementById('sales-history-list');
             list.innerHTML = '';
             history.forEach(h => {
-                list.innerHTML += `<div class="bg-white p-3 rounded-xl shadow-sm border-l-4 border-green-500 flex justify-between items-center text-sm">
-                    <div class="w-3/5"><div class="font-bold text-[10px] text-gray-700">${h.itemText}</div><div class="text-[8px] text-gray-400 mt-1">${h.date}</div></div>
-                    <div class="flex items-center gap-3">
-                        <div class="font-black text-blue-600 text-xs">${h.totalPrice.toLocaleString()}</div>
-                        <i onclick="deleteHistoryItem('${h.hid}', ${h.totalPrice})" class="fas fa-trash-alt text-red-300 cursor-pointer p-2"></i>
-                    </div>
+                list.innerHTML += `<div class="bg-white p-3 rounded-xl shadow-sm border-l-4 border-green-500 flex justify-between items-center text-[10px]">
+                    <div><b>${h.item} x ${h.qty}</b><br><span class="text-gray-400">${h.date} | ${h.time}</span></div>
+                    <div class="flex items-center gap-3"><span class="font-black text-blue-600">${h.price.toLocaleString()}</span><i onclick="deleteHistoryItem('${h.hid}', ${h.price})" class="fas fa-trash-alt text-red-200 cursor-pointer"></i></div>
                 </div>`;
             });
         }
 
-        function deleteHistoryItem(hid, amount) {
-            if(confirm("ئەم وەسڵە بسڕێتەوە؟")) {
-                database.ref('salesHistory/' + hid).remove();
-                database.ref('totalSales').set(totalSales - amount);
-            }
-        }
-
+        function deleteHistoryItem(hid, amount) { if(confirm("بسڕێتەوە؟")) { database.ref('salesHistory/' + hid).remove(); database.ref('totalSales').set(totalSales - amount); } }
         function clearAllHistory() { if(confirm("هەموو مێژوو پاکببێتەوە؟")) { database.ref('salesHistory').remove(); database.ref('totalSales').set(0); } }
 
-        // Inventory
         function addItem() {
             const id = document.getElementById('edit-id').value || document.getElementById('itemBarcode').value || "ID_" + Date.now();
             const n = document.getElementById('itemName').value, p = parseInt(document.getElementById('itemPrice').value), q = parseInt(document.getElementById('itemQty').value), b = document.getElementById('itemBarcode').value;
-            if (n && p) {
-                database.ref('products/' + id).set({ id, name: n, price: p, qty: q, barcode: b || id });
-                resetInvForm(); alert("پاشەکەوتکرا ✅");
-            }
+            if (n && p) { database.ref('products/' + id).set({ id, name: n, price: p, qty: q, barcode: b || id }); resetInvForm(); alert("پاشەکەوتکرا"); }
         }
 
         function renderInventory() {
             const list = document.getElementById('inventory-list');
             list.innerHTML = '';
             products.forEach(p => {
-                list.innerHTML += `<div class="bg-white p-3 rounded-xl shadow-sm flex justify-between items-center border border-gray-100">
-                    <div class="text-xs"><div class="font-bold">${p.name}</div><div class="text-blue-600 font-bold">${p.price.toLocaleString()} د.ع | <span class="text-gray-400">بڕ: ${p.qty}</span></div></div>
+                list.innerHTML += `<div class="bg-white p-3 rounded-xl shadow-sm flex justify-between items-center text-xs">
+                    <div><b>${p.name}</b><br><span class="text-blue-600 font-bold">${p.price.toLocaleString()} | بڕ: ${p.qty}</span></div>
                     <div class="flex gap-2"><i onclick="editItem('${p.id}')" class="fas fa-edit text-blue-400 cursor-pointer p-2 bg-blue-50 rounded-lg"></i><i onclick="if(confirm('سڕینەوە؟')){database.ref('products/${p.id}').remove()}" class="fas fa-trash-alt text-red-200 cursor-pointer p-2 bg-red-50 rounded-lg"></i></div>
                 </div>`;
             });
@@ -238,47 +213,30 @@
             document.getElementById('itemPrice').value = p.price;
             document.getElementById('itemQty').value = p.qty;
             document.getElementById('itemBarcode').value = p.barcode;
-            document.getElementById('inv-title').innerText = "دەستکاری کردنی کاڵا";
             document.getElementById('cancel-edit').classList.remove('hidden');
             window.scrollTo(0,0);
         }
 
-        function resetInvForm() {
-            document.querySelectorAll('#inventory input').forEach(i => i.value = '');
-            document.getElementById('inv-title').innerText = "بەڕێوەبردنی کۆگا";
-            document.getElementById('cancel-edit').classList.add('hidden');
-        }
-
-        // PDF & WhatsApp
-        function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const cashier = document.getElementById('cashierName').value || "کاشێری گشتی";
-            const date = new Date().toLocaleString('ku-IQ');
-
-            doc.text("AHMAD PHONE - SALES REPORT", 105, 15, null, null, "center");
-            doc.text(`Cashier: ${cashier}`, 20, 25);
-            doc.text(`Date: ${date}`, 20, 32);
-
-            const tableData = history.map(h => [h.itemText, h.totalPrice.toLocaleString(), h.date]);
-            doc.autoTable({
-                head: [['Item Name', 'Price', 'Date']],
-                body: tableData,
-                startY: 40,
-                theme: 'grid'
-            });
-
-            doc.text(`Total Sales: ${totalSales.toLocaleString()} IQD`, 20, doc.lastAutoTable.finalY + 10);
-            doc.save(`Report_${cashier}.pdf`);
-        }
+        function resetInvForm() { document.querySelectorAll('#inventory input').forEach(i => i.value = ''); document.getElementById('cancel-edit').classList.add('hidden'); }
 
         function sendToWhatsApp() {
             const cashier = document.getElementById('cashierName').value || "دیاری نەکراو";
-            const msg = `*ڕاپۆرتی ئەحمەد فۆن*%0Aکاشێر: ${cashier}%0Aکۆی گشتی فرۆش: ${totalSales.toLocaleString()} د.ع%0Aڕێکەوت: ${new Date().toLocaleDateString('ku-IQ')}`;
-            window.open(`https://wa.me/9647503991323?text=${msg}`, '_blank');
+            let details = `*ڕاپۆرتی فرۆشتنی ئەحمەد فۆن*%0Aکاشێر: ${cashier}%0A----------------------------%0A`;
+            history.forEach(h => { details += `• ${h.item} (x${h.qty}) - ${h.price.toLocaleString()} د.ع%0A  🕒 ${h.time} | ${h.date}%0A`; });
+            details += `----------------------------%0A*کۆی گشتی: ${totalSales.toLocaleString()} د.ع*`;
+            window.open(`https://wa.me/9647503991323?text=${details}`, '_blank');
         }
 
-        // Tab Management & Scanner
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const cashier = document.getElementById('cashierName').value || "General";
+            doc.text("AHMAD PHONE REPORT", 105, 15, null, null, "center");
+            const data = history.map(h => [h.item, h.qty, h.price.toLocaleString(), h.time, h.date]);
+            doc.autoTable({ head: [['Item', 'Qty', 'Price', 'Time', 'Date']], body: data, startY: 35 });
+            doc.save(`AhmadPhone_${cashier}.pdf`);
+        }
+
         function showTab(t, el) {
             document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active-tab'));
             document.getElementById(t).classList.add('active-tab');
@@ -290,23 +248,34 @@
             const areaId = type === 'sales' ? 'scanner-area' : 'scanner-area-inv';
             const readerId = type === 'sales' ? 'reader' : 'reader-inv';
             const el = document.getElementById(areaId);
+            
             if (el.classList.contains('hidden')) {
                 el.classList.remove('hidden');
                 scanner = new Html5Qrcode(readerId);
                 scanner.start({ facingMode: "environment" }, { fps: 30, qrbox: 250 }, (text) => {
-                    scannerBeep.play();
+                    scanSound.play();
                     if (type === 'sales') {
                         const p = products.find(i => i.barcode === text);
                         if (p) addToCartByID(p.id);
+                        // لە بەشی فرۆشتن کامێراەکە داناخرێت بۆ ئەوەی خێرا بیت
                     } else {
+                        // لە بەشی کۆگا تەنها یەکجار دەخوێنێتەوە و دادەخرێت
                         document.getElementById('itemBarcode').value = text;
-                        stopScanner(); el.classList.add('hidden');
+                        stopScanner(); 
+                        el.classList.add('hidden');
                     }
-                });
-            } else { stopScanner(); el.classList.add('hidden'); }
+                }).catch(err => { alert("Error: Camera not found!"); el.classList.add('hidden'); });
+            } else { 
+                stopScanner(); 
+                el.classList.add('hidden'); 
+            }
         }
 
-        function stopScanner() { if (scanner) { scanner.stop().then(() => { scanner = null; }).catch(() => {}); } }
+        function stopScanner() { 
+            if (scanner) { 
+                scanner.stop().then(() => { scanner = null; }).catch(() => { scanner = null; }); 
+            } 
+        }
     </script>
 </body>
 </html>
