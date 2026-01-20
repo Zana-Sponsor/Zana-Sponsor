@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AHMAD PHONE - POS SYSTEM</title>
+    <title>AHMAD PHONE - POS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -35,7 +35,7 @@
         <div id="sales" class="tab-content active-tab">
             <div class="flex gap-2 mb-4">
                 <input type="text" id="searchInput" oninput="renderPOS()" placeholder="گەڕان یان بارکۆد..." class="flex-1 border-2 border-blue-100 p-3 rounded-2xl outline-none shadow-sm">
-                <button onclick="toggleScanner('sales')" class="bg-blue-600 text-white px-5 rounded-2xl shadow-lg"><i class="fas fa-barcode text-xl"></i></button>
+                <button onclick="toggleScanner('sales')" class="bg-blue-600 text-white px-5 rounded-2xl shadow-lg active:scale-90"><i class="fas fa-barcode text-xl"></i></button>
             </div>
             <div id="scanner-area" class="hidden bg-black p-2 rounded-2xl mb-4 overflow-hidden"><div id="reader"></div></div>
             <div id="pos-items" class="grid grid-cols-2 gap-3 mb-6"></div>
@@ -46,14 +46,14 @@
                     <span>کۆی گشتی:</span>
                     <span id="total-price">0 د.ع</span>
                 </div>
-                <button onclick="processSale()" class="w-full bg-blue-700 text-white py-4 rounded-2xl mt-5 font-bold shadow-lg">تەواوکردنی فرۆشتن</button>
+                <button onclick="processSale()" class="w-full bg-blue-700 text-white py-4 rounded-2xl mt-5 font-bold shadow-lg active:scale-95 transition">تەواوکردنی فرۆشتن</button>
             </div>
         </div>
 
         <div id="inventory" class="tab-content">
             <div class="bg-white p-5 rounded-2xl shadow-lg mb-6 border-b-4 border-blue-600">
                 <h3 class="font-bold mb-4 text-blue-700">کۆگا و نوێکردنەوە</h3>
-                <button onclick="preLoadStock()" class="w-full bg-blue-100 text-blue-800 py-2 rounded-xl mb-4 font-bold text-xs">تازەکردنەوەی لیستی کاڵاکان (Default)</button>
+                <button onclick="preLoadStock()" class="w-full bg-blue-100 text-blue-800 py-2 rounded-xl mb-4 font-bold text-xs">بارکردنی لیستی کاڵاکان (Default)</button>
                 <input type="text" id="itemName" placeholder="ناوی کاڵا" class="w-full border p-3 rounded-xl mb-3 outline-none">
                 <div class="grid grid-cols-2 gap-2 mb-3">
                     <input type="number" id="itemPrice" placeholder="نرخ" class="border p-3 rounded-xl outline-none">
@@ -61,24 +61,30 @@
                 </div>
                 <div class="flex gap-2 mb-4">
                     <input type="text" id="itemBarcode" placeholder="بارکۆد" class="flex-1 border p-3 rounded-xl outline-none bg-gray-50">
-                    <button onclick="toggleScanner('inventory')" class="bg-gray-800 text-white px-4 rounded-xl"><i class="fas fa-camera"></i></button>
+                    <button onclick="toggleScanner('inventory')" class="bg-gray-800 text-white px-4 rounded-xl active:scale-90"><i class="fas fa-camera"></i></button>
                 </div>
                 <div id="scanner-area-inv" class="hidden bg-black p-2 rounded-2xl mb-4 overflow-hidden"><div id="reader-inv"></div></div>
-                <button onclick="addItem()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold">زیادکردنی کاڵا</button>
+                <button onclick="addItem()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">زیادکردنی کاڵا</button>
             </div>
             <div id="inventory-list" class="space-y-2"></div>
         </div>
 
         <div id="history" class="tab-content">
-            <h3 class="font-bold text-lg mb-4 text-blue-800">مێژووی فرۆشتنەکان</h3>
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="font-bold text-lg text-blue-800">مێژووی فرۆشتنەکان</h3>
+                <button onclick="clearAllHistory()" class="bg-red-100 text-red-600 text-[10px] px-3 py-1 rounded-lg font-bold border border-red-200 hover:bg-red-600 hover:text-white transition">سڕینەوەی هەموو مێژوو</button>
+            </div>
             <div id="sales-history-list" class="space-y-3"></div>
         </div>
 
         <div id="reports" class="tab-content">
             <div class="bg-white p-8 rounded-3xl shadow-xl text-center">
-                <input type="text" id="report-staff-name" placeholder="ناوی کاشێر" class="w-full border p-3 rounded-xl mb-6 text-center outline-none">
+                <input type="text" id="report-staff-name" placeholder="ناوی کاشێر بنووسە" class="w-full border p-3 rounded-xl mb-6 text-center outline-none">
+                <p class="text-gray-400 text-[10px] mb-1">کۆی گشتی فرۆشی ئەمڕۆ</p>
                 <h3 id="daily-sales" class="text-4xl font-black text-green-600 mb-8 font-mono">0 د.ع</h3>
-                <button onclick="generateKurdishPDF()" class="w-full bg-red-600 text-white py-4 rounded-2xl font-bold shadow-lg mb-4">ڕاپۆرتی PDF</button>
+                <button onclick="generateKurdishPDF()" class="w-full bg-red-600 text-white py-4 rounded-2xl font-bold shadow-lg mb-4 flex items-center justify-center gap-2">
+                    <i class="fas fa-file-pdf"></i> ڕاپۆرتی PDF
+                </button>
             </div>
         </div>
     </div>
@@ -86,6 +92,7 @@
     <div id="report-template" dir="rtl">
         <div style="text-align: center; border-bottom: 4px solid #1e3a8a; padding-bottom: 10px;">
             <h1 style="font-size: 32px; color: #1e3a8a; margin: 0;">AHMAD PHONE</h1>
+            <p style="font-size: 14px; margin: 5px 0;">بۆ کڕین و فرۆشتنی مۆبایل و پارچەی یەدەگ</p>
             <p style="font-size: 12px; direction: ltr;">0775 888 7488 | 0750 399 1323</p>
         </div>
         <div style="margin-top: 20px;">
@@ -100,8 +107,8 @@
                 </thead>
                 <tbody id="pdf-table-body"></tbody>
             </table>
-            <div style="margin-top: 30px; text-align: center;">
-                <span id="pdf-total" style="font-size: 32px; font-weight: 900; color: #16a34a;"></span>
+            <div style="margin-top: 30px; text-align: center; background: #f8fafc; padding: 15px; border: 2px dashed #1e3a8a;">
+                <span id="pdf-total" style="font-size: 28px; font-weight: 900; color: #16a34a;"></span>
             </div>
         </div>
     </div>
@@ -121,60 +128,7 @@
 
         let products = [], cart = [], totalSales = 0, history = [], scanner;
 
-        // داتای سەرەتایی کە داوات کردبوو
-        const defaultStock = [
-            { barcode: "6926081469953", price: 3000, name: "LK150S TYPE_C" },
-            { barcode: "6926081469953_M", price: 3000, name: "LK150S MICRO" },
-            { barcode: "6975011272217", price: 6000, name: "GERLAX L36T TYPE_C" },
-            { barcode: "6975011272514", price: 6000, name: "GERLAX GD-43 ALL" },
-            { barcode: "6975011278769", price: 5000, name: "GERLAX D7L IPHONE" },
-            { barcode: "6975011272859", price: 5000, name: "GERLAX GD-52L IPHONE" },
-            { barcode: "6975011276406", price: 5000, name: "GERLAX L16 TYPE_C" },
-            { barcode: "6975011278721", price: 3000, name: "GERLAX D7T USB-TYPE_C" },
-            { barcode: "6972573337538", price: 5000, name: "WLIW X213 USB-TYPE_C" },
-            { barcode: "6972573335077", price: 5000, name: "WLIW T66 USB-MICRO" },
-            { barcode: "6976504663871", price: 5000, name: "FLATWIRE USB-IPHONE" },
-            { barcode: "6941950218456", price: 7000, name: "MX-CB307 TYPE-C-IPHONE" },
-            { barcode: "6954176814968", price: 12000, name: "AORAX 106 USB-TYPE C - ADAPTER" },
-            { barcode: "6978652148781", price: 12000, name: "AORAX 886Plus TYPEC-TYPEC" },
-            { barcode: "6977465962140", price: 8000, name: "AORAX JS-02 PD+QC" },
-            { barcode: "195949121319", price: 13000, name: "USB-C 20W ADAPTER" },
-            { barcode: "190198001733", price: 13000, name: "EarPods Lightning" },
-            { barcode: "190198496263", price: 5000, name: "USB-C to Lightining" },
-            { barcode: "194252156926", price: 25000, name: "IPHONE 14 PRO MAX USB-C 25W ADAPTER" },
-            { barcode: "6761546315549_L", price: 7000, name: "AORAX 656 USB TO LIGHTINING" },
-            { barcode: "6761546315549", price: 6000, name: "AORAX 656 USB TO TYPE C" },
-            { barcode: "8655106412015", price: 5000, name: "VJP VI-530" },
-            { barcode: "6987546500550", price: 5000, name: "NR-20" },
-            { barcode: "6972076169247", price: 5000, name: "R12" },
-            { barcode: "6971235000520", price: 5000, name: "BL-06" },
-            { barcode: "6921762247875", price: 5000, name: "Stereo Earphone" },
-            { barcode: "7874154854788", price: 5000, name: "MEO3" },
-            { barcode: "8806090270123", price: 5000, name: "SAMSUNG TYPE C EARPHONES" },
-            { barcode: "945347310231_A", price: 3000, name: "AUX 030-A" },
-            { barcode: "945347310231", price: 5000, name: "3.5 AUX -023" },
-            { barcode: "6954851294023", price: 5000, name: "REMAX RM-711" },
-            { barcode: "6989532512530", price: 5000, name: "P9" },
-            { barcode: "6928760163664", price: 15000, name: "LENOVO HEADPHONE" },
-            { barcode: "8698959111155", price: 15000, name: "B130 VJP" },
-            { barcode: "6973316320718", price: 15000, name: "F21" },
-            { barcode: "6973553370781", price: 25000, name: "P50 PRO" },
-            { barcode: "9678142473313", price: 8000, name: "ULTRAPODS" },
-            { barcode: "8202692080090", price: 25000, name: "P9 SERISES 9" },
-            { barcode: "9318075013353", price: 15000, name: "F09-ULTRA 3" }
-        ];
-
-        function preLoadStock() {
-            if(confirm("ئایا دڵنیایت لە بارکردنی کاڵاکانی ئەحمەد فۆن؟")) {
-                defaultStock.forEach(item => {
-                    database.ref('products/' + item.barcode).set({
-                        id: item.barcode, name: item.name, price: item.price, qty: 100, barcode: item.barcode.split('_')[0]
-                    });
-                });
-                alert("هەموو کاڵاکان بارکران ✅");
-            }
-        }
-
+        // Sync Database
         database.ref('products').on('value', snap => {
             const data = snap.val();
             products = data ? Object.keys(data).map(key => ({ ...data[key], id: key })) : [];
@@ -192,12 +146,12 @@
             renderHistory();
         });
 
+        // Functions
         function renderPOS() {
             const q = document.getElementById('searchInput').value.toLowerCase();
             const list = document.getElementById('pos-items');
             list.innerHTML = '';
             
-            // Check for barcode exact match
             const barcodeFound = products.find(p => p.barcode === q && q !== "");
             if(barcodeFound) {
                 addToCartByID(barcodeFound.id);
@@ -207,7 +161,7 @@
 
             products.filter(p => p.name.toLowerCase().includes(q)).forEach(p => {
                 const noStock = p.qty <= 0;
-                list.innerHTML += `<div onclick="${noStock ? '' : `addToCartByID('${p.id}')`}" class="bg-white p-4 rounded-2xl border ${noStock?'opacity-40':'shadow-sm active:scale-95 cursor-pointer'} text-center transition">
+                list.innerHTML += `<div onclick="${noStock ? '' : `addToCartByID('${p.id}')`}" class="bg-white p-4 rounded-2xl border ${noStock?'opacity-40 shadow-none':'shadow-sm active:scale-95 cursor-pointer'} text-center transition">
                     <div class="font-bold text-[11px] truncate">${p.name}</div>
                     <div class="text-blue-600 font-black text-sm">${p.price.toLocaleString()}</div>
                     <div class="text-[9px] text-gray-400 font-bold">ستۆک: ${p.qty}</div>
@@ -219,7 +173,10 @@
             const p = products.find(x => x.id === id);
             const inCartQty = cart.filter(c => c.id === id).length;
             if (inCartQty + 1 > p.qty) { alert(`ستۆک تەواو بووە!`); return; }
+            
+            // چالاککردنی دەنگ لە کاتی کڕین
             scannerBeep.play();
+            
             cart.push({ ...p, cartId: Date.now() });
             renderCart();
         }
@@ -249,7 +206,36 @@
                 database.ref('salesHistory').push({ name: item.name, price: item.price, date: time });
             });
             database.ref('totalSales').set(totalSales + saleTotal);
-            cart = []; renderCart(); alert("فرۆشتن تۆمارکرا ✅");
+            cart = []; renderCart(); alert("تۆمارکرا ✅");
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('sales-history-list');
+            list.innerHTML = '';
+            history.forEach(h => {
+                list.innerHTML += `<div class="bg-white p-3 rounded-xl shadow-sm border-l-4 border-green-500 flex justify-between items-center text-sm">
+                    <div><div class="font-bold text-xs">${h.name}</div><div class="text-[8px] text-gray-400">${h.date}</div></div>
+                    <div class="flex items-center gap-4">
+                        <div class="font-black text-blue-600 text-xs">${h.price.toLocaleString()}</div>
+                        <i onclick="deleteHistoryItem('${h.hid}', ${h.price})" class="fas fa-trash-alt text-red-300 cursor-pointer"></i>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function deleteHistoryItem(hid, price) {
+            if(confirm("سڕینەوەی ئەم فرۆشتنە؟")) {
+                database.ref('salesHistory/' + hid).remove();
+                database.ref('totalSales').set(totalSales - price);
+            }
+        }
+
+        function clearAllHistory() {
+            if(confirm("ئایا دڵنیایت لە سڕینەوەی هەموو مێژووی فرۆشتن و کۆی گشتی پارە؟")) {
+                database.ref('salesHistory').remove();
+                database.ref('totalSales').set(0);
+                alert("هەموو مێژوو پاککرایەوە ✅");
+            }
         }
 
         function addItem() {
@@ -265,32 +251,11 @@
             const list = document.getElementById('inventory-list');
             list.innerHTML = '';
             products.forEach(p => {
-                list.innerHTML += `<div class="flex justify-between bg-white p-3 rounded-xl shadow-sm items-center text-sm">
-                    <span class="font-bold text-xs">${p.name} (${p.qty})</span>
-                    <button onclick="if(confirm('سڕینەوە؟')){database.ref('products/${p.id}').remove();}" class="text-red-400"><i class="fas fa-trash-alt"></i></button>
+                list.innerHTML += `<div class="flex justify-between bg-white p-3 rounded-xl shadow-sm items-center text-xs">
+                    <span class="font-bold">${p.name} (${p.qty})</span>
+                    <button onclick="if(confirm('سڕینەوە؟')){database.ref('products/${p.id}').remove();}" class="text-red-300"><i class="fas fa-trash-alt"></i></button>
                 </div>`;
             });
-        }
-
-        function renderHistory() {
-            const list = document.getElementById('sales-history-list');
-            list.innerHTML = '';
-            history.forEach(h => {
-                list.innerHTML += `<div class="bg-white p-3 rounded-xl shadow-sm border-l-4 border-green-500 flex justify-between items-center text-sm">
-                    <div><div class="font-bold">${h.name}</div><div class="text-[9px] text-gray-400">${h.date}</div></div>
-                    <div class="flex items-center gap-4">
-                        <div class="font-black text-blue-600">${h.price.toLocaleString()}</div>
-                        <i onclick="deleteHistoryItem('${h.hid}', ${h.price})" class="fas fa-trash-alt text-red-300 cursor-pointer"></i>
-                    </div>
-                </div>`;
-            });
-        }
-
-        function deleteHistoryItem(hid, price) {
-            if(confirm("سڕینەوەی ئەم فرۆشتنە؟")) {
-                database.ref('salesHistory/' + hid).remove();
-                database.ref('totalSales').set(totalSales - price);
-            }
         }
 
         function showTab(t, el) {
@@ -308,8 +273,8 @@
             if (el.classList.contains('hidden')) {
                 el.classList.remove('hidden');
                 scanner = new Html5Qrcode(readerId);
-                scanner.start({ facingMode: "environment" }, { fps: 25, qrbox: 250 }, (text) => {
-                    scannerBeep.play();
+                scanner.start({ facingMode: "environment" }, { fps: 30, qrbox: 250 }, (text) => {
+                    scannerBeep.play(); // دەنگ لە کاتی سکان
                     if (type === 'sales') {
                         const p = products.find(i => i.barcode === text);
                         if (p) addToCartByID(p.id);
@@ -335,15 +300,13 @@
                 summary[h.name].qty++;
             });
             for (const [name, data] of Object.entries(summary)) {
-                tableBody.innerHTML += `<tr><td style="padding:10px;">${name}</td><td style="text-align:center;">${data.qty}</td><td style="text-align:left;">${data.price.toLocaleString()}</td></tr>`;
+                tableBody.innerHTML += `<tr><td style="padding:10px; border-bottom:1px solid #eee;">${name}</td><td style="text-align:center;">${data.qty}</td><td style="text-align:left;">${data.price.toLocaleString()}</td></tr>`;
             }
             const canvas = await html2canvas(document.getElementById('report-template'), { scale: 2 });
             const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
             pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, 190, 0);
             pdf.save("AhmadPhone_Report.pdf");
         }
-
-        function resetSystem() { if(confirm("هەموو داتا پاکدەبێتەوە؟")) { database.ref('/').set({ totalSales: 0 }); location.reload(); } }
     </script>
 </body>
 </html>
