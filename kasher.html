@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AHMAD PHONE - POS Pro</title>
+    <title>AHMAD PHONE - POS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
@@ -34,9 +32,9 @@
         <div id="sales" class="tab-content active-tab">
             <div class="flex gap-2 mb-4">
                 <input type="text" id="searchInput" oninput="renderPOS()" placeholder="گەڕان یان بارکۆد..." class="flex-1 border-2 border-blue-100 p-3 rounded-2xl outline-none shadow-sm">
-                <button onclick="toggleScanner('sales')" class="bg-blue-600 text-white px-5 rounded-2xl shadow-lg"><i class="fas fa-barcode text-xl"></i></button>
+                <button onclick="toggleScanner('sales')" class="bg-blue-600 text-white px-5 rounded-2xl shadow-lg active:scale-90"><i class="fas fa-barcode text-xl"></i></button>
             </div>
-            <div id="scanner-area" class="hidden bg-black p-2 rounded-2xl mb-4"><div id="reader"></div></div>
+            <div id="scanner-area" class="hidden bg-black p-2 rounded-2xl mb-4 overflow-hidden"><div id="reader"></div></div>
             <div id="pos-items" class="grid grid-cols-2 gap-3 mb-6"></div>
             
             <div class="bg-white p-5 rounded-3xl shadow-xl border-t-8 border-blue-600">
@@ -45,7 +43,7 @@
                     <span>کۆی گشتی:</span>
                     <span id="total-price">0 د.ع</span>
                 </div>
-                <button onclick="processSale()" class="w-full bg-blue-700 text-white py-4 rounded-2xl mt-5 font-bold shadow-lg">تەواوکردنی فرۆشتن</button>
+                <button onclick="processSale()" class="w-full bg-blue-700 text-white py-4 rounded-2xl mt-5 font-bold shadow-lg active:scale-95 transition">تەواوکردنی فرۆشتن</button>
             </div>
         </div>
 
@@ -62,9 +60,9 @@
                     <input type="text" id="itemBarcode" placeholder="بارکۆد" class="flex-1 border p-3 rounded-xl outline-none bg-gray-50">
                     <button onclick="toggleScanner('inventory')" class="bg-gray-800 text-white px-4 rounded-xl"><i class="fas fa-camera"></i></button>
                 </div>
-                <div id="scanner-area-inv" class="hidden bg-black p-2 rounded-2xl mb-4"><div id="reader-inv"></div></div>
-                <button id="add-btn" onclick="addItem()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold">پاشەکەوتکردنی گۆڕانکارییەکان</button>
-                <button id="cancel-edit" onclick="resetInvForm()" class="hidden w-full bg-gray-400 text-white py-2 rounded-xl mt-2 font-bold text-xs">لابردن</button>
+                <div id="scanner-area-inv" class="hidden bg-black p-2 rounded-2xl mb-4 overflow-hidden"><div id="reader-inv"></div></div>
+                <button id="add-btn" onclick="addItem()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">پاشەکەوتکردن</button>
+                <button id="cancel-edit" onclick="resetInvForm()" class="hidden w-full bg-gray-400 text-white py-2 rounded-xl mt-2 font-bold text-xs">پەشیمانبوونەوە</button>
             </div>
             <div id="inventory-list" class="space-y-2"></div>
         </div>
@@ -72,19 +70,15 @@
         <div id="history" class="tab-content">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
                 <h3 class="font-bold text-lg text-blue-800">مێژووی فرۆشتنەکان</h3>
-                <button onclick="clearAllHistory()" class="bg-red-100 text-red-600 text-[10px] px-3 py-1 rounded-lg border border-red-200 font-bold hover:bg-red-600 hover:text-white transition">پاککردنەوەی هەمووی</button>
+                <button onclick="clearAllHistory()" class="bg-red-100 text-red-600 text-[10px] px-3 py-1 rounded-lg border border-red-200 font-bold hover:bg-red-600 hover:text-white transition">سڕینەوەی هەموو مێژوو</button>
             </div>
             <div id="sales-history-list" class="space-y-3"></div>
         </div>
-        
+
         <div id="reports" class="tab-content">
-             <div class="bg-white p-8 rounded-3xl shadow-xl text-center">
-                <input type="text" id="report-staff-name" placeholder="ناوی کاشێر" class="w-full border p-3 rounded-xl mb-6 text-center outline-none">
+            <div class="bg-white p-8 rounded-3xl shadow-xl text-center">
                 <p class="text-gray-400 text-[10px] mb-1">کۆی گشتی فرۆشی ئەمڕۆ</p>
                 <h3 id="daily-sales" class="text-4xl font-black text-green-600 mb-8 font-mono">0 د.ع</h3>
-                <button onclick="generateKurdishPDF()" class="w-full bg-red-600 text-white py-4 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2">
-                    <i class="fas fa-file-pdf"></i> داگرتنی ڕاپۆرت
-                </button>
             </div>
         </div>
     </div>
@@ -122,7 +116,6 @@
             renderHistory();
         });
 
-        // POS & Cart
         function renderPOS() {
             const q = document.getElementById('searchInput').value.toLowerCase();
             const list = document.getElementById('pos-items');
@@ -141,67 +134,78 @@
 
         function addToCartByID(id) {
             const p = products.find(x => x.id === id);
-            if (cart.filter(c => c.id === id).length + 1 > p.qty) return alert("بڕی پێویست لە کۆگا نییە!");
+            if (cart.filter(c => c.id === id).length + 1 > p.qty) return alert("ستۆک بەشی ئەم بڕە ناکات!");
             scannerBeep.play();
-            cart.push({ ...p, cartId: Date.now() });
+            cart.push({ ...p });
             renderCart();
         }
 
         function renderCart() {
             const list = document.getElementById('cart-list');
             list.innerHTML = ''; let t = 0;
-            cart.forEach((item, i) => { t += item.price; list.innerHTML += `<div class="flex justify-between items-center bg-blue-50 p-2 rounded-xl text-xs border-r-4 border-blue-500 shadow-sm"><span class="font-bold truncate w-32">${item.name}</span><div class="flex items-center gap-2"><span class="font-black">${item.price.toLocaleString()}</span><i onclick="cart.splice(${i},1); renderCart();" class="fas fa-trash-alt text-red-500 cursor-pointer"></i></div></div>`; });
+            cart.forEach((item, i) => { t += item.price; list.innerHTML += `<div class="flex justify-between items-center bg-blue-50 p-2 rounded-xl text-xs border-r-4 border-blue-500 shadow-sm"><span class="font-bold truncate w-32">${item.name}</span><div class="flex items-center gap-2"><span>${item.price.toLocaleString()}</span><i onclick="cart.splice(${i},1); renderCart();" class="fas fa-trash-alt text-red-500 cursor-pointer"></i></div></div>`; });
             document.getElementById('total-price').innerText = t.toLocaleString() + " د.ع";
         }
 
         function processSale() {
             if (cart.length === 0) return;
             const time = new Date().toLocaleString('ku-IQ');
-            const saleTotal = cart.reduce((s, i) => s + i.price, 0);
-            const itemsSold = cart.map(i => i.name).join(' + ');
-            database.ref('salesHistory').push({ items: itemsSold, total: saleTotal, date: time });
-            cart.forEach(item => database.ref('products/' + item.id).transaction(p => { if (p) p.qty--; return p; }));
-            database.ref('totalSales').set(totalSales + saleTotal);
-            cart = []; renderCart(); alert("فرۆشتن ئەنجامدرا ✅");
+            const summary = {};
+            cart.forEach(item => {
+                if(!summary[item.id]) summary[item.id] = { name: item.name, qty: 0, totalPrice: 0 };
+                summary[item.id].qty++;
+                summary[item.id].totalPrice += item.price;
+                database.ref('products/' + item.id).transaction(p => { if (p) p.qty--; return p; });
+            });
+
+            let finalTotal = 0;
+            for(let id in summary) {
+                database.ref('salesHistory').push({ 
+                    itemText: `${summary[id].name} x ${summary[id].qty}`, 
+                    totalPrice: summary[id].totalPrice, 
+                    date: time 
+                });
+                finalTotal += summary[id].totalPrice;
+            }
+
+            database.ref('totalSales').set(totalSales + finalTotal);
+            cart = []; renderCart(); alert("فرۆشتن تۆمارکرا ✅");
         }
 
-        // History Management
         function renderHistory() {
             const list = document.getElementById('sales-history-list');
             list.innerHTML = '';
             history.forEach(h => {
                 list.innerHTML += `<div class="bg-white p-3 rounded-xl shadow-sm border-l-4 border-green-500 flex justify-between items-center text-sm">
-                    <div class="w-3/5"><div class="font-bold text-[10px] text-gray-700 leading-tight">${h.items}</div><div class="text-[8px] text-gray-400 mt-1">${h.date}</div></div>
+                    <div class="w-3/5"><div class="font-bold text-[10px] text-gray-700">${h.itemText}</div><div class="text-[8px] text-gray-400 mt-1">${h.date}</div></div>
                     <div class="flex items-center gap-3">
-                        <div class="font-black text-blue-600 text-xs">${h.total.toLocaleString()} د.ع</div>
-                        <i onclick="deleteHistoryItem('${h.hid}', ${h.total})" class="fas fa-trash-alt text-red-300 cursor-pointer p-2 hover:text-red-600"></i>
+                        <div class="font-black text-blue-600 text-xs">${h.totalPrice.toLocaleString()} د.ع</div>
+                        <i onclick="deleteHistoryItem('${h.hid}', ${h.totalPrice})" class="fas fa-trash-alt text-red-300 cursor-pointer hover:text-red-600 p-2"></i>
                     </div>
                 </div>`;
             });
         }
 
         function deleteHistoryItem(hid, amount) {
-            if(confirm("ئایا دڵنیایت لە سڕینەوەی ئەم وەسڵە؟")) {
+            if(confirm("ئەم وەسڵە بسڕێتەوە؟")) {
                 database.ref('salesHistory/' + hid).remove();
                 database.ref('totalSales').set(totalSales - amount);
             }
         }
 
         function clearAllHistory() {
-            if(confirm("ئایا دڵنیایت لە سڕینەوەی تەواوی مێژووی فرۆشتنەکان؟")) {
+            if(confirm("هەموو مێژوو و حیسابات سفر دەبێتەوە، دڵنیایت؟")) {
                 database.ref('salesHistory').remove();
                 database.ref('totalSales').set(0);
             }
         }
 
-        // Inventory Management
         function addItem() {
             const id = document.getElementById('edit-id').value || document.getElementById('itemBarcode').value || "ID_" + Date.now();
             const n = document.getElementById('itemName').value, p = parseInt(document.getElementById('itemPrice').value), q = parseInt(document.getElementById('itemQty').value), b = document.getElementById('itemBarcode').value;
             if (n && p) {
                 database.ref('products/' + id).set({ id, name: n, price: p, qty: q, barcode: b || id });
-                resetInvForm();
-                alert("زانیارییەکان پاشەکەوتکران ✅");
+                resetInvForm(); alert("پاشەکەوتکرا ✅");
             }
         }
 
@@ -212,7 +216,7 @@
             document.getElementById('itemPrice').value = p.price;
             document.getElementById('itemQty').value = p.qty;
             document.getElementById('itemBarcode').value = p.barcode;
-            document.getElementById('inv-title').innerText = "دەستکاری کردنی: " + p.name;
+            document.getElementById('inv-title').innerText = "دەستکاری: " + p.name;
             document.getElementById('cancel-edit').classList.remove('hidden');
             window.scrollTo(0,0);
         }
@@ -228,19 +232,12 @@
             list.innerHTML = '';
             products.forEach(p => {
                 list.innerHTML += `<div class="bg-white p-3 rounded-xl shadow-sm flex justify-between items-center border border-gray-100">
-                    <div class="text-xs">
-                        <div class="font-bold">${p.name}</div>
-                        <div class="text-blue-600 font-bold">${p.price.toLocaleString()} د.ع | <span class="text-gray-400">بڕ: ${p.qty}</span></div>
-                    </div>
-                    <div class="flex gap-2">
-                        <i onclick="editItem('${p.id}')" class="fas fa-edit text-blue-400 cursor-pointer p-2 bg-blue-50 rounded-lg"></i>
-                        <i onclick="if(confirm('سڕینەوەی کاڵا؟')){database.ref('products/${p.id}').remove()}" class="fas fa-trash-alt text-red-200 cursor-pointer p-2 bg-red-50 rounded-lg"></i>
-                    </div>
+                    <div class="text-xs"><div class="font-bold">${p.name}</div><div class="text-blue-600 font-bold">${p.price.toLocaleString()} د.ع | <span class="text-gray-400">ستۆک: ${p.qty}</span></div></div>
+                    <div class="flex gap-2"><i onclick="editItem('${p.id}')" class="fas fa-edit text-blue-400 cursor-pointer p-2 bg-blue-50 rounded-lg"></i><i onclick="if(confirm('بسڕێتەوە؟')){database.ref('products/${p.id}').remove()}" class="fas fa-trash-alt text-red-200 cursor-pointer p-2 bg-red-50 rounded-lg"></i></div>
                 </div>`;
             });
         }
 
-        // UI & Scanner
         function toggleScanner(type) {
             const areaId = type === 'sales' ? 'scanner-area' : 'scanner-area-inv';
             const readerId = type === 'sales' ? 'reader' : 'reader-inv';
