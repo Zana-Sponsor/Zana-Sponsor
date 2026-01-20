@@ -254,16 +254,20 @@
                 el.classList.remove('hidden');
                 scanner = new Html5Qrcode(readerId);
                 scanner.start({ facingMode: "environment" }, { fps: 30, qrbox: 250 }, (text) => {
-                    scanSound.play();
                     if (type === 'sales') {
                         const p = products.find(i => i.barcode === text);
                         if (p) {
                             addToCartByID(p.id);
-                            // سکانەرەکە دەوەستێنێت و پەنجەرەکە لادەبات دوای یەک سکان
                             stopScanner();
                             el.classList.add('hidden');
+                        } else {
+                            // ئەگەر بەرهەمەکە نەدۆزرایەوە
+                            stopScanner();
+                            el.classList.add('hidden');
+                            alert("ئەم بەرهەمە نەدۆزرایەوە!");
                         }
                     } else {
+                        scanSound.play();
                         document.getElementById('itemBarcode').value = text;
                         stopScanner(); 
                         el.classList.add('hidden');
