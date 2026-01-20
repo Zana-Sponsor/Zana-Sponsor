@@ -99,7 +99,6 @@
     </div>
 
     <script>
-        // دەنگێکی کورت و بێ بێزارکەر
         const scanSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
         const firebaseConfig = { databaseURL: "https://ahmad-phone-pos-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
@@ -142,6 +141,7 @@
 
         function addToCartByID(id) {
             const p = products.find(x => x.id === id);
+            if (!p) return;
             if (cart.filter(c => c.id === id).length + 1 > p.qty) return alert("ستۆک نەماوە!");
             scanSound.play();
             cart.push({ ...p });
@@ -249,6 +249,7 @@
             const areaId = type === 'sales' ? 'scanner-area' : 'scanner-area-inv';
             const readerId = type === 'sales' ? 'reader' : 'reader-inv';
             const el = document.getElementById(areaId);
+            
             if (el.classList.contains('hidden')) {
                 el.classList.remove('hidden');
                 scanner = new Html5Qrcode(readerId);
@@ -256,16 +257,29 @@
                     scanSound.play();
                     if (type === 'sales') {
                         const p = products.find(i => i.barcode === text);
-                        if (p) addToCartByID(p.id);
+                        if (p) {
+                            addToCartByID(p.id);
+                            // سکانەرەکە دەوەستێنێت و پەنجەرەکە لادەبات دوای یەک سکان
+                            stopScanner();
+                            el.classList.add('hidden');
+                        }
                     } else {
                         document.getElementById('itemBarcode').value = text;
-                        stopScanner(); el.classList.add('hidden');
+                        stopScanner(); 
+                        el.classList.add('hidden');
                     }
                 }).catch(() => { el.classList.add('hidden'); });
-            } else { stopScanner(); el.classList.add('hidden'); }
+            } else { 
+                stopScanner(); 
+                el.classList.add('hidden'); 
+            }
         }
 
-        function stopScanner() { if (scanner) { scanner.stop().then(() => { scanner = null; }).catch(() => { scanner = null; }); } }
+        function stopScanner() { 
+            if (scanner) { 
+                scanner.stop().then(() => { scanner = null; }).catch(() => { scanner = null; }); 
+            } 
+        }
     </script>
 </body>
 </html>
