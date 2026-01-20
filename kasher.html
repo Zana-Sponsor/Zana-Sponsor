@@ -99,7 +99,8 @@
     </div>
 
     <script>
-        const scanSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+        // دەنگی Beepی فەرمی کاشێر
+        const scanSound = new Audio('https://www.soundjay.com/buttons/beep-07a.mp3');
         const firebaseConfig = { databaseURL: "https://ahmad-phone-pos-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
@@ -144,14 +145,36 @@
             if (!p) return;
             if (cart.filter(c => c.id === id).length + 1 > p.qty) return alert("ستۆک نەماوە!");
             scanSound.play();
+            // لێرەدا کۆپییەکی نوێ دروست دەکەین بۆ ئەوەی گۆڕینی نرخ کاریگەری لەسەر ئەسڵی کاڵاکە نەبێت
             cart.push({ ...p });
             renderCart();
+        }
+
+        // فەرمان بۆ گۆڕینی نرخ لە ناو سەبەتەدا
+        function editCartItemPrice(index) {
+            const newPrice = prompt("نرخی نوێ بنووسە:", cart[index].price);
+            if (newPrice !== null && !isNaN(newPrice) && newPrice !== "") {
+                cart[index].price = parseInt(newPrice);
+                renderCart();
+            }
         }
 
         function renderCart() {
             const list = document.getElementById('cart-list');
             list.innerHTML = ''; let t = 0;
-            cart.forEach((item, i) => { t += item.price; list.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl mb-1 border-r-4 border-blue-500"><span>${item.name}</span><div class="flex gap-2 font-bold"><span>${item.price.toLocaleString()}</span><i onclick="cart.splice(${i},1); renderCart();" class="fas fa-trash-alt text-red-400 cursor-pointer"></i></div></div>`; });
+            cart.forEach((item, i) => { 
+                t += item.price; 
+                list.innerHTML += `
+                <div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl mb-1 border-r-4 border-blue-500">
+                    <span>${item.name}</span>
+                    <div class="flex gap-2 font-bold items-center">
+                        <span onclick="editCartItemPrice(${i})" class="bg-blue-100 text-blue-700 px-2 py-1 rounded cursor-pointer hover:bg-blue-200" title="بۆ گۆڕینی نرخ کلیک بکە">
+                            ${item.price.toLocaleString()}
+                        </span>
+                        <i onclick="cart.splice(${i},1); renderCart();" class="fas fa-trash-alt text-red-400 cursor-pointer p-1"></i>
+                    </div>
+                </div>`; 
+            });
             document.getElementById('total-price').innerText = t.toLocaleString() + " د.ع";
         }
 
@@ -160,20 +183,25 @@
             const now = new Date();
             const dateStr = now.toLocaleDateString('ku-IQ');
             const timeStr = now.toLocaleTimeString('ku-IQ');
-            const summary = {};
+            const summary = [];
+            
+            // لەبەر ئەوەی نرخ دەگۆڕدرێت، هەر دانەیەک بە جیا تۆمار دەکەین ئەگەر نرخەکەی جیاواز بوو
             cart.forEach(item => {
-                if(!summary[item.id]) summary[item.id] = { name: item.name, qty: 0, total: 0 };
-                summary[item.id].qty++;
-                summary[item.id].total += item.price;
                 database.ref('products/' + item.id).transaction(p => { if (p) p.qty--; return p; });
+                database.ref('salesHistory').push({ 
+                    item: item.name, 
+                    qty: 1, 
+                    price: item.price, 
+                    date: dateStr, 
+                    time: timeStr 
+                });
+                totalSales += item.price;
             });
-            let batchTotal = 0;
-            for(let id in summary) {
-                database.ref('salesHistory').push({ item: summary[id].name, qty: summary[id].qty, price: summary[id].total, date: dateStr, time: timeStr });
-                batchTotal += summary[id].total;
-            }
-            database.ref('totalSales').set(totalSales + batchTotal);
-            cart = []; renderCart(); alert("فرۆشتن تۆمارکرا ✅");
+
+            database.ref('totalSales').set(totalSales);
+            cart = []; 
+            renderCart(); 
+            alert("فرۆشتن تۆمارکرا ✅");
         }
 
         function renderHistory() {
@@ -261,7 +289,6 @@
                             stopScanner();
                             el.classList.add('hidden');
                         } else {
-                            // ئەگەر بەرهەمەکە نەدۆزرایەوە
                             stopScanner();
                             el.classList.add('hidden');
                             alert("ئەم بەرهەمە نەدۆزرایەوە!");
