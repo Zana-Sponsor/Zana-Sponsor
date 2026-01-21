@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>CV Professional 2026</title>
+    <style>
+        :root {
+            --main-bg: #ffffff;
+            --accent: #1a1a1a; /* ڕەنگی ڕەشی مۆدێرن */
+            --soft-gray: #f8f9fa;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+        }
+
+        body {
+            background-color: #d1d8e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 50px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .cv-wrapper {
+            width: 800px;
+            background: var(--main-bg);
+            padding: 60px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* هێڵی لای ڕاست بۆ جوانی */
+        .cv-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 8px;
+            background: var(--accent);
+        }
+
+        .header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 42px;
+            letter-spacing: -1px;
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        .header p {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin: 5px 0 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .section {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            margin-bottom: 45px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: var(--accent);
+            letter-spacing: 1px;
+        }
+
+        .content h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+            color: var(--text-main);
+        }
+
+        .content .sub {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .content p, .content ul {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #444;
+            margin-top: 5px;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background: var(--soft-gray);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--accent);
+            border: 1px solid #ddd;
+        }
+
+        @media print {
+            body { background: none; padding: 0; }
+            .cv-wrapper { box-shadow: none; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="cv-wrapper">
+    <div class="header">
+        <h1>ناوەکەت لێرە بنووسە</h1>
+        <p>ئەندازیاری نەرمەکاڵا / بەڕێوەبەر</p>
+        <div class="contact-grid">
+            <span>📍 هەولێر، کوردستان</span>
+            <span>📞 ٠٧٥٠ ٠٠٠ ٠٠٠٠</span>
+            <span>✉️ email@example.com</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">پوختەی پیشەیی</div>
+        <div class="content">
+            <p>لێرەدا بە کورتەیەک باس لە گەورەترین دەستکەوتەکانت بکە. هەوڵبدە لە ٣ دێڕ زیاتر نەبێت بۆ ئەوەی سەرنجڕاکێش بێت.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">ئەزموونی کار</div>
+        <div class="content">
+            <div style="margin-bottom: 25px;">
+                <h3>بەڕێوەبەری پڕۆژە</h3>
+                <span class="sub">کۆمپانیای ئاسیا | ٢٠٢٢ — ئێستا</span>
+                <p>• سەرپەرشتیکردنی تیمێکی ١٠ کەسی بۆ جێبەجێکردنی پڕۆژەکان.<br>
+                   • زیادکردنی ڕێژەی فرۆشتن بە ڕێژەی ٢٠٪ لە ماوەی ساڵێکدا.</p>
+            </div>
+            
+            <div>
+                <h3>سەرپەرشتیار</h3>
+                <span class="sub">تەلار گروپ | ٢٠٢٠ — ٢٠٢٢</span>
+                <p>• ڕێکخستنی کاروباری ڕۆژانەی کارمەندانی بەشەکە.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">خوێندن</div>
+        <div class="content">
+            <h3>بەکالۆریۆس لە کارگێڕی</h3>
+            <span class="sub">زانکۆی سەلاحەدین | ٢٠١٦ — ٢٠٢٠</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">تواناکان</div>
+        <div class="content">
+            <div class="skills-container">
+                <span class="skill-tag">بەڕێوەبردن</span>
+                <span class="skill-tag">Microsoft Office</span>
+                <span class="skill-tag">پلاندانان</span>
+                <span class="skill-tag">زمانی ئینگلیزی</span>
+                <span class="skill-tag">گرافیک دیزاین</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
