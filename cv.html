@@ -2,161 +2,95 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Premium Modern CV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دروستکەری CV مۆدێرن</title>
     <style>
-        :root {
-            --glass: rgba(255, 255, 255, 0.9);
-            --primary: #0984e3;
-            --dark: #2d3436;
-            --accent: #6c5ce7;
-        }
-
-        body {
-            background: linear-gradient(135deg, #a8caba 0%, #5d4157 100%);
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 40px 0;
-        }
-
-        .container {
-            width: 850px;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-            display: grid;
-            grid-template-columns: 300px 1fr;
-        }
-
-        /* لای تەنیشت - ڕەنگی تۆخ */
-        .aside {
-            background: var(--dark);
-            color: white;
-            padding: 40px 30px;
-        }
-
-        .profile-box { text-align: center; margin-bottom: 40px; }
-        .profile-img { 
-            width: 120px; height: 120px; 
-            border: 4px solid var(--accent);
-            border-radius: 50%; margin-bottom: 15px;
-        }
-
-        .side-title {
-            color: var(--accent);
-            text-transform: uppercase;
-            font-size: 14px;
-            letter-spacing: 2px;
-            margin: 25px 0 10px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 5px;
-        }
-
-        .contact-info { font-size: 13px; line-height: 2; margin-bottom: 20px; }
-
-        /* لای ناوەڕۆک - ڕەنگی ڕوون */
-        .main { padding: 50px; background: white; }
-
-        .name-header h1 { margin: 0; font-size: 38px; color: var(--dark); }
-        .name-header p { margin: 5px 0 30px; color: var(--primary); font-weight: bold; font-size: 18px; }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            margin: 30px 0 15px;
-        }
-
-        .section-header h2 { font-size: 20px; color: var(--dark); margin: 0; }
-        .line { flex-grow: 1; height: 2px; background: #eee; margin-right: 15px; }
-
-        .job-card { margin-bottom: 25px; position: relative; padding-right: 20px; border-right: 2px solid #eee; }
-        .job-card h3 { margin: 0; font-size: 17px; color: #333; }
-        .job-card span { font-size: 13px; color: #999; }
-        .job-card p { font-size: 14px; color: #666; line-height: 1.6; }
-
-        .skill-bar { margin-bottom: 15px; }
-        .skill-name { font-size: 13px; margin-bottom: 5px; display: block; }
-        .bar-bg { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; }
-        .bar-fill { background: var(--primary); height: 100%; border-radius: 4px; }
-
-        /* بۆ ئەوەی لە PDF جوان دەرچێت */
+        :root { --primary: #2563eb; --dark: #1e293b; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--dark); }
+        .wrapper { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        
+        /* بەشی فۆرمەکە */
+        .form-side { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h2 { border-bottom: 2px solid var(--primary); padding-bottom: 10px; font-size: 1.2rem; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
+        
+        /* بەشی سی ڤییەکە */
+        .preview-side { background: white; padding: 40px; border-radius: 5px; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: sticky; top: 20px; min-height: 800px; }
+        .cv-header { text-align: center; border-bottom: 3px solid var(--primary); padding-bottom: 20px; }
+        .cv-header h1 { margin: 0; color: var(--dark); }
+        .cv-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
+        .section-title { font-weight: bold; color: var(--primary); border-right: 4px solid var(--primary); padding-right: 10px; margin-bottom: 10px; }
+        
         @media print {
+            .form-side, button { display: none; }
             body { background: white; padding: 0; }
-            .container { box-shadow: none; border-radius: 0; grid-template-columns: 250px 1fr; width: 100%; }
-            .aside { background: #f8f9fa !important; color: black !important; }
-            .bar-bg { border: 1px solid #ddd; }
+            .wrapper { display: block; }
+            .preview-side { box-shadow: none; padding: 0; width: 100%; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="aside">
-        <div class="profile-box">
-            <div style="font-size: 80px;">👤</div>
-            <h3>ناوەکەت لێرە بنووسە</h3>
-        </div>
-
-        <div class="side-title">پەیوەندی</div>
-        <div class="contact-info">
-            📍 هەولێر، کوردستان<br>
-            📞 ٠٧٥٠ ٠٠٠ ٠٠٠٠<br>
-            📧 info@example.com
-        </div>
-
-        <div class="side-title">کارامەیی تەکنیکی</div>
-        <div class="skill-bar">
-            <span class="skill-name">بەڕێوەبردن</span>
-            <div class="bar-bg"><div class="bar-fill" style="width: 90%;"></div></div>
-        </div>
-        <div class="skill-bar">
-            <span class="skill-name">بەرنامەکانی Office</span>
-            <div class="bar-bg"><div class="bar-fill" style="width: 85%;"></div></div>
-        </div>
-
-        <div class="side-title">زمانەکان</div>
-        <p style="font-size: 13px;">• کوردی (دایک)<br>• ئینگلیزی (پڕۆفیشناڵ)<br>• عەرەبی (باش)</p>
+<div class="wrapper">
+    <div class="form-side">
+        <h2>زانیارییە کەسییەکان</h2>
+        <input type="text" id="nameIn" placeholder="ناوی تەواو" oninput="updateCV()">
+        <input type="text" id="jobIn" placeholder="پسپۆڕی یان ناونیشانی کار" oninput="updateCV()">
+        <input type="text" id="phoneIn" placeholder="ژمارەی مۆبایل" oninput="updateCV()">
+        <input type="email" id="emailIn" placeholder="ئیمەیڵ" oninput="updateCV()">
+        
+        <h2>خوێندن</h2>
+        <textarea id="eduIn" rows="3" placeholder="بەکالۆریۆس لە... زانکۆی..." oninput="updateCV()"></textarea>
+        
+        <h2>ئەزموونی کار</h2>
+        <textarea id="expIn" rows="5" placeholder="ناوی شوێن - کارەکانت..." oninput="updateCV()"></textarea>
+        
+        <h2>کارامەییەکان</h2>
+        <input type="text" id="skillsIn" placeholder="کارامەییەکان (بە فاریزە جیایان بکەوە)" oninput="updateCV()">
+        
+        <button onclick="window.print()">دابەزاندن وەک PDF</button>
     </div>
 
-    <div class="main">
-        <div class="name-header">
-            <h1>ناوی تەواو</h1>
-            <p>ناونیشانی کار (بۆ نموونە: ئەندازیاری شارستانی)</p>
+    <div class="preview-side" id="cv-print">
+        <div class="cv-header">
+            <h1 id="nameOut">ناوەکەت</h1>
+            <p id="jobOut" style="color: var(--primary); font-weight: bold;">ناونیشانی کار</p>
+            <div style="font-size: 13px; color: #666;">
+                <span id="phoneOut">٠٧٥٠ ٠٠٠ ٠٠٠٠</span> | <span id="emailOut">email@example.com</span>
+            </div>
         </div>
 
-        <div class="section-header">
-            <div class="line"></div>
-            <h2>ئەزموونی کار</h2>
-        </div>
+        <div class="cv-grid">
+            <div>
+                <div class="section-title">خوێندن</div>
+                <div id="eduOut" style="white-space: pre-line;">لێرە دەردەکەوێت...</div>
+            </div>
+            
+            <div>
+                <div class="section-title">ئەزموونی کار</div>
+                <div id="expOut" style="white-space: pre-line;">لێرە دەردەکەوێت...</div>
+            </div>
 
-        <div class="job-card">
-            <h3>بەڕێوەبەری تیمی فرۆشتن</h3>
-            <span>کۆمپانیای فڵان | ٢٠٢٢ - ئێستا</span>
-            <p>لێرەدا باس لەوە بکە کە چۆن پەرەت بە کارەکان داوە و چیت ئەنجامداوە بۆ کۆمپانیاکە.</p>
-        </div>
-
-        <div class="job-card">
-            <h3>سەرپەرشتیاری ته‌کنیکی</h3>
-            <span>گرووپی کۆمپانیاکان | ٢٠١٩ - ٢٠٢١</span>
-            <p>ڕێکخستنی سیستەمی کۆمپانیا و چارەسەرکردنی کێشە تەکنیکییەکان بە شێوەیەکی خێرا.</p>
-        </div>
-
-        <div class="section-header">
-            <div class="line"></div>
-            <h2>خوێندن و بڕوانامە</h2>
-        </div>
-
-        <div class="job-card">
-            <h3>بەکالۆریۆس لە تەکنەلۆژیای زانیاری</h3>
-            <span>زانکۆی کوردستان | ٢٠١٥ - ٢٠١٩</span>
+            <div>
+                <div class="section-title">کارامەییەکان</div>
+                <div id="skillsOut">کارامەییەکان لێرە دەبن</div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function updateCV() {
+        document.getElementById('nameOut').innerText = document.getElementById('nameIn').value || "ناوەکەت";
+        document.getElementById('jobOut').innerText = document.getElementById('jobIn').value || "ناونیشانی کار";
+        document.getElementById('phoneOut').innerText = document.getElementById('phoneIn').value || "٠٧٥٠ ٠٠٠ ٠٠٠٠";
+        document.getElementById('emailOut').innerText = document.getElementById('emailIn').value || "email@example.com";
+        document.getElementById('eduOut').innerText = document.getElementById('eduIn').value || "لێرە دەردەکەوێت...";
+        document.getElementById('expOut').innerText = document.getElementById('expIn').value || "لێرە دەردەکەوێت...";
+        document.getElementById('skillsOut').innerText = document.getElementById('skillsIn').value || "کارامەییەکان لێرە دەبن";
+    }
+</script>
 
 </body>
 </html>
