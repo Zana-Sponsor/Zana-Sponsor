@@ -2,44 +2,62 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Zana Adam - Professional CV Builder 2026</title>
+    <title>Zana Adam - CV Builder 2026</title>
     <style>
-        :root { --primary: #0f172a; --accent: #2563eb; --bg: #f8fafc; --text: #1e293b; --muted: #64748b; }
+        :root { --primary: #0f172a; --accent: #2563eb; --bg: #f8fafc; --text: #1e293b; --muted: #94a3b8; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
         
-        /* Editor Section */
+        /* Editor Panel */
         .editor-box { background: white; width: 850px; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 50px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; border: 1px solid #e2e8f0; }
-        .editor-box h2 { grid-column: span 2; margin: 0; font-size: 22px; color: var(--primary); }
         input, textarea { width: 100%; padding: 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 15px; box-sizing: border-box; }
-        textarea { grid-column: span 2; min-height: 100px; }
+        textarea { grid-column: span 2; min-height: 80px; }
 
-        /* CV Container */
-        .cv-container { width: 210mm; min-height: 297mm; background: white; padding: 80px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); box-sizing: border-box; display: flex; flex-direction: column; position: relative; }
+        /* CV Layout */
+        .cv-container { 
+            width: 210mm; 
+            height: 297mm; /* دیاریکردنی قەبارەی لاپەڕەی یەکەم */
+            background: white; 
+            padding: 70px 80px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1); 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
         
-        .header { border-bottom: 2px solid #f1f5f9; padding-bottom: 40px; margin-bottom: 45px; }
-        .header h1 { margin: 0; font-size: 52px; font-weight: 900; color: var(--primary); letter-spacing: -2px; line-height: 1; }
+        .header h1 { margin: 0; font-size: 52px; font-weight: 900; color: var(--primary); letter-spacing: -2px; }
         
-        .contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 35px; }
-        .contact-item { display: flex; align-items: center; gap: 15px; font-size: 16px; color: var(--text); font-weight: 500; }
+        .contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-top: 30px; padding-bottom: 40px; border-bottom: 2px solid #f1f5f9; }
+        .contact-item { display: flex; align-items: center; gap: 15px; font-size: 16px; font-weight: 500; }
         
-        /* Styled Icons */
         .icon-wrapper { width: 38px; height: 38px; background: #eff6ff; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
         .icon-wrapper svg { width: 20px; height: 20px; stroke-width: 2.5; }
 
-        /* Sections */
-        .section { margin-bottom: 50px; display: grid; grid-template-columns: 220px 1fr; gap: 30px; }
-        .section-title { font-size: 15px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; border-right: 4px solid var(--accent); padding-right: 15px; height: fit-content; }
-        .section-content { font-size: 17.5px; line-height: 1.8; white-space: pre-line; color: var(--text); }
+        .section { margin-top: 35px; display: grid; grid-template-columns: 200px 1fr; gap: 25px; }
+        .section-title { font-size: 15px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; border-right: 4px solid var(--accent); padding-right: 15px; }
+        .section-content { font-size: 17.5px; line-height: 1.7; white-space: pre-line; color: var(--text); }
 
-        .cv-footer { margin-top: auto; padding-top: 30px; text-align: center; font-size: 13px; color: var(--muted); border-top: 1px solid #f1f5f9; letter-spacing: 1px; direction: ltr; font-weight: 600; }
+        /* لێرە نوسینەکە جێگیر کراوە لە بنکەی لاپەڕەی یەکەم */
+        .cv-footer { 
+            position: absolute; 
+            bottom: 40px; 
+            left: 0; 
+            right: 0; 
+            text-align: center; 
+            font-size: 14px; 
+            color: var(--muted); 
+            font-weight: 600;
+            letter-spacing: 1px;
+            direction: ltr;
+        }
 
-        .btn-download { background: var(--primary); color: white; padding: 20px 60px; border-radius: 100px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 40px; font-size: 17px; transition: 0.3s; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        .btn-download { background: var(--primary); color: white; padding: 20px 60px; border-radius: 100px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 40px; font-size: 17px; transition: 0.3s; }
         .btn-download:hover { background: var(--accent); transform: scale(1.05); }
 
         @media print {
             .editor-box, .btn-download { display: none; }
             body { padding: 0; background: white; }
-            .cv-container { box-shadow: none; width: 100%; padding: 60px; }
+            .cv-container { box-shadow: none; border: none; }
         }
     </style>
 </head>
@@ -48,13 +66,12 @@
     <button class="btn-download" onclick="window.print()">📥 پاشەکەوتکردن وەک PDF</button>
 
     <div class="editor-box">
-        <h2>✨ دروستکەری سی ڤی (فۆنتی گەورە)</h2>
+        <h2 style="grid-column: span 2;">✨ دیزاینی تایبەت بۆ زانا ئادەم</h2>
         <input type="text" id="inName" placeholder="ناوی تەواو">
         <input type="text" id="inBirth" placeholder="بەرواری لەدایکبوون">
         <input type="text" id="inAddr" placeholder="ناونیشان">
         <input type="text" id="inPhone" placeholder="ژمارەی مۆبایل">
         <input type="email" id="inEmail" style="grid-column: span 2;" placeholder="ئیمێڵ">
-        
         <textarea id="inAbout" placeholder="پووختەی ئەزموون"></textarea>
         <textarea id="inEdu" placeholder="خوێندن"></textarea>
         <textarea id="inSkills" placeholder="کارامییەکان"></textarea>
@@ -103,11 +120,6 @@
         <div class="section">
             <div class="section-title">زمانەکان</div>
             <div class="section-content" id="outLang">...</div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">تێبینی</div>
-            <div class="section-content" id="outNotes">...</div>
         </div>
 
         <div class="cv-footer">
