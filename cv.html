@@ -2,183 +2,158 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>CV Professional 2026</title>
+    <title>Premium Modern CV</title>
     <style>
         :root {
-            --main-bg: #ffffff;
-            --accent: #1a1a1a; /* ڕەنگی ڕەشی مۆدێرن */
-            --soft-gray: #f8f9fa;
-            --text-main: #2d3436;
-            --text-muted: #636e72;
+            --glass: rgba(255, 255, 255, 0.9);
+            --primary: #0984e3;
+            --dark: #2d3436;
+            --accent: #6c5ce7;
         }
 
         body {
-            background-color: #d1d8e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8caba 0%, #5d4157 100%);
+            min-height: 100vh;
             margin: 0;
-            padding: 50px 0;
             display: flex;
             justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px 0;
         }
 
-        .cv-wrapper {
-            width: 800px;
-            background: var(--main-bg);
-            padding: 60px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        /* هێڵی لای ڕاست بۆ جوانی */
-        .cv-wrapper::before {
-            content: "";
-            position: absolute;
-            top: 0; right: 0; bottom: 0;
-            width: 8px;
-            background: var(--accent);
-        }
-
-        .header {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 30px;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 42px;
-            letter-spacing: -1px;
-            color: var(--accent);
-            font-weight: 800;
-        }
-
-        .header p {
-            font-size: 18px;
-            color: var(--text-muted);
-            margin: 5px 0 15px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            font-size: 14px;
-            color: var(--text-main);
-        }
-
-        .section {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            margin-bottom: 45px;
-        }
-
-        .section-title {
-            font-size: 14px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: var(--accent);
-            letter-spacing: 1px;
-        }
-
-        .content h3 {
-            margin: 0 0 5px 0;
-            font-size: 18px;
-            color: var(--text-main);
-        }
-
-        .content .sub {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .content p, .content ul {
-            font-size: 15px;
-            line-height: 1.7;
-            color: #444;
-            margin-top: 5px;
-        }
-
-        .skills-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .skill-tag {
-            background: var(--soft-gray);
-            padding: 6px 15px;
+        .container {
+            width: 850px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            font-size: 13px;
-            color: var(--accent);
-            border: 1px solid #ddd;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            display: grid;
+            grid-template-columns: 300px 1fr;
         }
 
+        /* لای تەنیشت - ڕەنگی تۆخ */
+        .aside {
+            background: var(--dark);
+            color: white;
+            padding: 40px 30px;
+        }
+
+        .profile-box { text-align: center; margin-bottom: 40px; }
+        .profile-img { 
+            width: 120px; height: 120px; 
+            border: 4px solid var(--accent);
+            border-radius: 50%; margin-bottom: 15px;
+        }
+
+        .side-title {
+            color: var(--accent);
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin: 25px 0 10px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+
+        .contact-info { font-size: 13px; line-height: 2; margin-bottom: 20px; }
+
+        /* لای ناوەڕۆک - ڕەنگی ڕوون */
+        .main { padding: 50px; background: white; }
+
+        .name-header h1 { margin: 0; font-size: 38px; color: var(--dark); }
+        .name-header p { margin: 5px 0 30px; color: var(--primary); font-weight: bold; font-size: 18px; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin: 30px 0 15px;
+        }
+
+        .section-header h2 { font-size: 20px; color: var(--dark); margin: 0; }
+        .line { flex-grow: 1; height: 2px; background: #eee; margin-right: 15px; }
+
+        .job-card { margin-bottom: 25px; position: relative; padding-right: 20px; border-right: 2px solid #eee; }
+        .job-card h3 { margin: 0; font-size: 17px; color: #333; }
+        .job-card span { font-size: 13px; color: #999; }
+        .job-card p { font-size: 14px; color: #666; line-height: 1.6; }
+
+        .skill-bar { margin-bottom: 15px; }
+        .skill-name { font-size: 13px; margin-bottom: 5px; display: block; }
+        .bar-bg { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; }
+        .bar-fill { background: var(--primary); height: 100%; border-radius: 4px; }
+
+        /* بۆ ئەوەی لە PDF جوان دەرچێت */
         @media print {
-            body { background: none; padding: 0; }
-            .cv-wrapper { box-shadow: none; width: 100%; }
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; border-radius: 0; grid-template-columns: 250px 1fr; width: 100%; }
+            .aside { background: #f8f9fa !important; color: black !important; }
+            .bar-bg { border: 1px solid #ddd; }
         }
     </style>
 </head>
 <body>
 
-<div class="cv-wrapper">
-    <div class="header">
-        <h1>ناوەکەت لێرە بنووسە</h1>
-        <p>ئەندازیاری نەرمەکاڵا / بەڕێوەبەر</p>
-        <div class="contact-grid">
-            <span>📍 هەولێر، کوردستان</span>
-            <span>📞 ٠٧٥٠ ٠٠٠ ٠٠٠٠</span>
-            <span>✉️ email@example.com</span>
+<div class="container">
+    <div class="aside">
+        <div class="profile-box">
+            <div style="font-size: 80px;">👤</div>
+            <h3>ناوەکەت لێرە بنووسە</h3>
         </div>
+
+        <div class="side-title">پەیوەندی</div>
+        <div class="contact-info">
+            📍 هەولێر، کوردستان<br>
+            📞 ٠٧٥٠ ٠٠٠ ٠٠٠٠<br>
+            📧 info@example.com
+        </div>
+
+        <div class="side-title">کارامەیی تەکنیکی</div>
+        <div class="skill-bar">
+            <span class="skill-name">بەڕێوەبردن</span>
+            <div class="bar-bg"><div class="bar-fill" style="width: 90%;"></div></div>
+        </div>
+        <div class="skill-bar">
+            <span class="skill-name">بەرنامەکانی Office</span>
+            <div class="bar-bg"><div class="bar-fill" style="width: 85%;"></div></div>
+        </div>
+
+        <div class="side-title">زمانەکان</div>
+        <p style="font-size: 13px;">• کوردی (دایک)<br>• ئینگلیزی (پڕۆفیشناڵ)<br>• عەرەبی (باش)</p>
     </div>
 
-    <div class="section">
-        <div class="section-title">پوختەی پیشەیی</div>
-        <div class="content">
-            <p>لێرەدا بە کورتەیەک باس لە گەورەترین دەستکەوتەکانت بکە. هەوڵبدە لە ٣ دێڕ زیاتر نەبێت بۆ ئەوەی سەرنجڕاکێش بێت.</p>
+    <div class="main">
+        <div class="name-header">
+            <h1>ناوی تەواو</h1>
+            <p>ناونیشانی کار (بۆ نموونە: ئەندازیاری شارستانی)</p>
         </div>
-    </div>
 
-    <div class="section">
-        <div class="section-title">ئەزموونی کار</div>
-        <div class="content">
-            <div style="margin-bottom: 25px;">
-                <h3>بەڕێوەبەری پڕۆژە</h3>
-                <span class="sub">کۆمپانیای ئاسیا | ٢٠٢٢ — ئێستا</span>
-                <p>• سەرپەرشتیکردنی تیمێکی ١٠ کەسی بۆ جێبەجێکردنی پڕۆژەکان.<br>
-                   • زیادکردنی ڕێژەی فرۆشتن بە ڕێژەی ٢٠٪ لە ماوەی ساڵێکدا.</p>
-            </div>
-            
-            <div>
-                <h3>سەرپەرشتیار</h3>
-                <span class="sub">تەلار گروپ | ٢٠٢٠ — ٢٠٢٢</span>
-                <p>• ڕێکخستنی کاروباری ڕۆژانەی کارمەندانی بەشەکە.</p>
-            </div>
+        <div class="section-header">
+            <div class="line"></div>
+            <h2>ئەزموونی کار</h2>
         </div>
-    </div>
 
-    <div class="section">
-        <div class="section-title">خوێندن</div>
-        <div class="content">
-            <h3>بەکالۆریۆس لە کارگێڕی</h3>
-            <span class="sub">زانکۆی سەلاحەدین | ٢٠١٦ — ٢٠٢٠</span>
+        <div class="job-card">
+            <h3>بەڕێوەبەری تیمی فرۆشتن</h3>
+            <span>کۆمپانیای فڵان | ٢٠٢٢ - ئێستا</span>
+            <p>لێرەدا باس لەوە بکە کە چۆن پەرەت بە کارەکان داوە و چیت ئەنجامداوە بۆ کۆمپانیاکە.</p>
         </div>
-    </div>
 
-    <div class="section">
-        <div class="section-title">تواناکان</div>
-        <div class="content">
-            <div class="skills-container">
-                <span class="skill-tag">بەڕێوەبردن</span>
-                <span class="skill-tag">Microsoft Office</span>
-                <span class="skill-tag">پلاندانان</span>
-                <span class="skill-tag">زمانی ئینگلیزی</span>
-                <span class="skill-tag">گرافیک دیزاین</span>
-            </div>
+        <div class="job-card">
+            <h3>سەرپەرشتیاری ته‌کنیکی</h3>
+            <span>گرووپی کۆمپانیاکان | ٢٠١٩ - ٢٠٢١</span>
+            <p>ڕێکخستنی سیستەمی کۆمپانیا و چارەسەرکردنی کێشە تەکنیکییەکان بە شێوەیەکی خێرا.</p>
+        </div>
+
+        <div class="section-header">
+            <div class="line"></div>
+            <h2>خوێندن و بڕوانامە</h2>
+        </div>
+
+        <div class="job-card">
+            <h3>بەکالۆریۆس لە تەکنەلۆژیای زانیاری</h3>
+            <span>زانکۆی کوردستان | ٢٠١٥ - ٢٠١٩</span>
         </div>
     </div>
 </div>
