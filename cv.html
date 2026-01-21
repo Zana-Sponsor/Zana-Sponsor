@@ -2,115 +2,102 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Premium CV Builder 2026</title>
+    <title>Professional CV Builder 2026</title>
     <style>
-        :root { --main: #111827; --accent: #1d4ed8; --border: #f1f5f9; --text-muted: #64748b; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f8fafc; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        :root { --primary: #1a1a1a; --accent: #2563eb; --bg: #f3f4f6; --text: #374151; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
         
-        /* پانێڵی دەستکاری کردن */
-        .editor { background: white; width: 850px; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; border: 1px solid #e2e8f0; }
-        .editor h2 { grid-column: span 3; color: var(--main); font-size: 1.2rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box; transition: 0.3s; }
-        input:focus, textarea:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1); }
-        textarea { grid-column: span 3; min-height: 90px; }
-        .full { grid-column: span 3; }
-        
-        /* دیزاینی سی ڤییەکە */
-        .cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 60px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); box-sizing: border-box; color: var(--main); }
-        .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--main); padding-bottom: 30px; margin-bottom: 40px; }
-        .name-area h1 { margin: 0; font-size: 42px; font-weight: 900; color: var(--main); letter-spacing: -1px; }
-        .name-area p { margin: 5px 0 0; color: var(--accent); font-weight: 700; font-size: 18px; text-transform: uppercase; }
-        
-        .contact-box { text-align: left; font-size: 13px; color: var(--text-muted); line-height: 1.8; }
-        .contact-box span { display: block; }
+        /* بەشی داخڵکردنی زانیاری */
+        .editor-box { background: white; width: 850px; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 50px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .editor-box h2 { grid-column: span 2; margin: 0 0 10px; font-size: 20px; color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        input, textarea { width: 100%; padding: 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; box-sizing: border-box; transition: 0.2s; }
+        input:focus, textarea:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        textarea { grid-column: span 2; min-height: 100px; }
+        .full { grid-column: span 2; }
 
-        .section { display: grid; grid-template-columns: 200px 1fr; margin-bottom: 35px; }
-        .section-title { font-size: 13px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1.5px; padding-top: 5px; }
-        .section-body { line-height: 1.7; font-size: 15px; white-space: pre-line; color: #334155; }
+        /* دیزاینی سی ڤی (بۆ چاپ و PDF) */
+        .cv-container { width: 210mm; min-height: 297mm; background: white; padding: 70px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); box-sizing: border-box; display: flex; flex-direction: column; }
+        .header { border-bottom: 4px solid var(--primary); padding-bottom: 30px; margin-bottom: 40px; }
+        .header h1 { margin: 0; font-size: 45px; font-weight: 900; color: var(--primary); letter-spacing: -2px; }
         
-        .btn-print { background: var(--main); color: white; padding: 16px 45px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 25px; font-size: 16px; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .btn-print:hover { background: var(--accent); transform: scale(1.02); }
+        .contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; font-size: 14px; color: var(--text); }
+        .contact-item { display: flex; align-items: center; gap: 8px; }
+
+        .section { margin-bottom: 40px; display: grid; grid-template-columns: 180px 1fr; gap: 20px; }
+        .section-title { font-size: 14px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
+        .section-content { font-size: 16px; line-height: 1.8; white-space: pre-line; color: var(--text); border-right: 2px solid #f3f4f6; padding-right: 20px; }
+
+        .btn-download { background: var(--primary); color: white; padding: 18px 50px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 30px; font-size: 17px; transition: 0.3s; }
+        .btn-download:hover { background: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); }
 
         @media print {
-            .editor, .btn-print { display: none; }
+            .editor-box, .btn-download { display: none; }
             body { padding: 0; background: white; }
-            .cv-paper { box-shadow: none; width: 100%; padding: 40px; }
+            .cv-container { box-shadow: none; width: 100%; padding: 40px; }
         }
     </style>
 </head>
 <body>
 
-    <button class="btn-print" onclick="window.print()">📄 دابەزاندنی وەک PDF</button>
+    <button class="btn-download" onclick="window.print()">📥 پاشەکەوتکردن وەک PDF</button>
 
-    <div class="editor">
-        <h2>📝 زانیارییەکانت پڕبکەرەوە</h2>
-        <input type="text" id="iName" placeholder="ناوی تەواو" oninput="run()">
-        <input type="text" id="iJob" placeholder="پسپۆڕی/ناونیشانی کار" oninput="run()">
-        <input type="text" id="iBirth" placeholder="بەرواری لەدایکبوون" oninput="run()">
-        <input type="text" id="iAddr" placeholder="ناونیشان" oninput="run()">
-        <input type="text" id="iPhone" placeholder="ژمارەی مۆبایل" oninput="run()">
-        <input type="email" id="iEmail" placeholder="ئیمێڵ" oninput="run()">
+    <div class="editor-box">
+        <h2>✍️ زانیارییەکانت بنووسە</h2>
+        <input type="text" id="inName" placeholder="ناوی تەواو" oninput="update()">
+        <input type="text" id="inBirth" placeholder="بەرواری لەدایکبوون" oninput="update()">
+        <input type="text" id="inAddr" placeholder="ناونیشان" oninput="update()">
+        <input type="text" id="inPhone" placeholder="ژمارەی مۆبایل" oninput="update()">
+        <input type="email" id="inEmail" class="full" placeholder="ئیمێڵ" oninput="update()">
         
-        <textarea id="iAbout" class="full" placeholder="پووختەی ئەزموون (بە کورتە باسی خۆت و کارەکانت بکە)" oninput="run()"></textarea>
-        <textarea id="iEdu" class="full" placeholder="خوێندن (بڕوانامە و ساڵی دەرچوون)" oninput="run()"></textarea>
-        <textarea id="iWork" class="full" placeholder="ئەزموونی کار (لە کوێ و چیت کردووە؟)" oninput="run()"></textarea>
-        <textarea id="iSkills" class="full" placeholder="کارامییەکان" oninput="run()"></textarea>
-        <textarea id="iLang" class="full" placeholder="زمانەکان" oninput="run()"></textarea>
+        <textarea id="inAbout" placeholder="پووختەی ئەزموون (باسی لێهاتووییەکانت بکە)" oninput="update()"></textarea>
+        <textarea id="inEdu" placeholder="خوێندن (بڕوانامە و زانکۆ)" oninput="update()"></textarea>
+        <textarea id="inSkills" placeholder="کارامییەکان" oninput="update()"></textarea>
+        <textarea id="inLang" placeholder="زمانەکان" oninput="update()"></textarea>
     </div>
 
-    <div class="cv-paper">
+    <div class="cv-container">
         <div class="header">
-            <div class="name-area">
-                <h1 id="oName">ناوی تەواو</h1>
-                <p id="oJob">ناونیشانی کار</p>
-            </div>
-            <div class="contact-box">
-                <span id="oBirth">📅 بەرواری لەدایکبوون</span>
-                <span id="oAddr">📍 ناونیشان</span>
-                <span id="oPhone">📞 ژمارەی مۆبایل</span>
-                <span id="oEmail">✉️ ئیمێڵ</span>
+            <h1 id="outName">ناوی تەواو</h1>
+            <div class="contact-grid">
+                <div class="contact-item">📅 <span id="outBirth">بەرواری لەدایکبوون</span></div>
+                <div class="contact-item">📍 <span id="outAddr">ناونیشان</span></div>
+                <div class="contact-item">📞 <span id="outPhone">ژمارەی مۆبایل</span></div>
+                <div class="contact-item">✉️ <span id="outEmail">ئیمێڵ</span></div>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">پووختەی ئەزموون</div>
-            <div class="section-body" id="oAbout">کورتەیەک دەربارەی پرۆفایلی پیشەیی خۆت لێرە بنووسە...</div>
+            <div class="section-content" id="outAbout">کورتەیەک دەربارەی پرۆفایلی خۆت لێرە دەردەکەوێت...</div>
         </div>
 
         <div class="section">
             <div class="section-title">خوێندن</div>
-            <div class="section-body" id="oEdu">بڕوانامەکانت لێرە تۆمار بکە...</div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">ئەزموونی کار</div>
-            <div class="section-body" id="oWork">مێژووی کارەکانت لێرە دیاری بکە...</div>
+            <div class="section-content" id="outEdu">مێژووی خوێندن لێرە بنووسە...</div>
         </div>
 
         <div class="section">
             <div class="section-title">کارامییەکان</div>
-            <div class="section-body" id="oSkills">لێهاتووییەکانت لێرە بنووسە...</div>
+            <div class="section-content" id="outSkills">لێهاتووییەکانت لێرە ڕیز دەکرێن...</div>
         </div>
 
         <div class="section">
             <div class="section-title">زمانەکان</div>
-            <div class="section-body" id="oLang">ئەو زمانانەی پێیان دەدوێیت...</div>
+            <div class="section-content" id="outLang">ئەو زمانانەی پێیان دەدوێیت...</div>
         </div>
     </div>
 
     <script>
-        function run() {
-            document.getElementById('oName').innerText = document.getElementById('iName').value || "ناوی تەواو";
-            document.getElementById('oJob').innerText = document.getElementById('iJob').value || "ناونیشانی کار";
-            document.getElementById('oBirth').innerText = "📅 " + (document.getElementById('iBirth').value || "بەرواری لەدایکبوون");
-            document.getElementById('oAddr').innerText = "📍 " + (document.getElementById('iAddr').value || "ناونیشان");
-            document.getElementById('oPhone').innerText = "📞 " + (document.getElementById('iPhone').value || "ژمارەی مۆبایل");
-            document.getElementById('oEmail').innerText = "✉️ " + (document.getElementById('iEmail').value || "ئیمێڵ");
-            document.getElementById('oAbout').innerText = document.getElementById('iAbout').value || "کورتەیەک دەربارەی پرۆفایلی پیشەیی خۆت لێرە بنووسە...";
-            document.getElementById('oEdu').innerText = document.getElementById('iEdu').value || "بڕوانامەکانت لێرە تۆمار بکە...";
-            document.getElementById('oWork').innerText = document.getElementById('iWork').value || "مێژووی کارەکانت لێرە دیاری بکە...";
-            document.getElementById('oSkills').innerText = document.getElementById('iSkills').value || "لێهاتووییەکانت لێرە بنووسە...";
-            document.getElementById('oLang').innerText = document.getElementById('iLang').value || "ئەو زمانانەی پێیان دەدوێیت...";
+        function update() {
+            document.getElementById('outName').innerText = document.getElementById('inName').value || "ناوی تەواو";
+            document.getElementById('outBirth').innerText = document.getElementById('inBirth').value || "بەرواری لەدایکبوون";
+            document.getElementById('outAddr').innerText = document.getElementById('inAddr').value || "ناونیشان";
+            document.getElementById('outPhone').innerText = document.getElementById('inPhone').value || "ژمارەی مۆبایل";
+            document.getElementById('outEmail').innerText = document.getElementById('inEmail').value || "ئیمێڵ";
+            document.getElementById('outAbout').innerText = document.getElementById('inAbout').value || "پووختەی ئەزموون لێرە دەبێت...";
+            document.getElementById('outEdu').innerText = document.getElementById('inEdu').value || "زانیاری خوێندن...";
+            document.getElementById('outSkills').innerText = document.getElementById('inSkills').value || "کارامییەکان...";
+            document.getElementById('outLang').innerText = document.getElementById('inLang').value || "زمانەکان...";
         }
     </script>
 </body>
