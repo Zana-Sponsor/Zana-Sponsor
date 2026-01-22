@@ -8,101 +8,118 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, 'Arial', sans-serif;
-            background-color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
             padding: 40px 20px;
             margin: 0;
         }
         .profile-container {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            width: 100%;
+            max-width: 340px;
         }
         .profile-img {
-            width: 130px;
-            height: 130px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
-            border: 4px solid white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 5px solid #f8f9fa;
             object-fit: cover;
+            margin-bottom: 15px;
         }
         h1 { 
-            margin: 15px 0 10px; 
-            font-size: 28px; 
-            color: #222; 
+            margin: 0; 
+            font-size: 24px; 
+            color: #2d3436; 
             font-weight: 800;
         }
-        /* ستایلی نوێ بۆ دەقە داواکراوەکە */
         .main-instruction { 
-            color: #222; 
-            font-size: 22px; 
-            font-weight: 900; /* زۆر تۆخ */
-            line-height: 1.5;
-            margin-bottom: 35px;
-            max-width: 350px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 15px;
+            color: #636e72; 
+            font-size: 17px; 
+            font-weight: 600;
+            margin-top: 15px;
+            line-height: 1.4;
         }
         
-        .link-card {
+        .links-wrapper {
             width: 100%;
             max-width: 380px;
             display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .link-card {
+            display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 18px;
-            margin-bottom: 20px;
-            border-radius: 50px;
+            justify-content: space-between;
+            padding: 18px 25px;
+            border-radius: 20px;
             text-decoration: none;
             color: white;
-            font-weight: bold;
-            font-size: 22px;
+            font-weight: 700;
+            font-size: 20px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
 
-        .link-card i {
-            margin-right: 15px; 
-            font-size: 30px;
-        }
-        
-        .whatsapp { background: #42e36d; }
-        .viber { background: #8d7df7; }
-        .phone { background: #4096ff; }
+        /* ڕەنگەکان کراون بە Gradientـی ئارامتر */
+        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); }
+        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
+        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); }
 
         .link-card:hover {
-            transform: scale(1.03);
+            transform: translateY(-3px);
             filter: brightness(1.05);
         }
 
+        .link-card i {
+            font-size: 26px;
+        }
+
         .sponsor-section {
-            margin-top: 50px;
+            margin-top: auto;
+            padding-top: 40px;
             text-align: center;
-            padding-bottom: 20px;
         }
         .sponsor-text {
             font-size: 14px;
-            color: #888;
+            color: #636e72;
             margin-bottom: 12px;
+            font-weight: 600;
         }
+        /* ستایلی نوێی دوگمەی زانا سپۆنسەر بە سەوزێکی شاهانەیی ئارام */
         .footer-tag {
-            padding: 10px 50px;
-            border: 2px solid #42e36d;
-            border-radius: 30px;
-            color: #42e36d;
+            padding: 12px 40px;
+            background-color: #2c3e50; /* ڕەنگێکی تۆخی شیک */
+            background: linear-gradient(45deg, #1e8449, #27ae60); /* سەوزێکی ئارام و قووڵ */
+            border-radius: 50px;
+            color: #ffffff;
             font-size: 18px;
             display: inline-block;
-            font-weight: bold;
+            font-weight: 900;
             text-decoration: none;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2);
+            transition: 0.3s;
         }
+        .footer-tag:hover { 
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+        }
+
         .legal-links {
-            margin-top: 25px;
-            font-size: 12px;
-            color: #ccc;
+            margin-top: 20px;
+            font-size: 11px;
+            color: #95a5a6;
         }
-        .legal-links a { color: #ccc; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -111,31 +128,37 @@
         <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Mamosta Ali" class="profile-img">
         <h1>Mamosta Ali Khoshnaw</h1>
         <div class="main-instruction">
-            بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە :
+            بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە
         </div>
     </div>
 
-    <a href="https://wa.me/+9647511936095?text=سڵاو👋، ئایا دەتوانی زانیاری زیاترم پێبدەی؟" class="link-card whatsapp">
-        واتساپ <i class="fab fa-whatsapp"></i>
-    </a>
-
-    <a href="viber://chat?number=+9647511936095" class="link-card viber">
-        ڤایبەر <i class="fab fa-viber"></i>
-    </a>
-
-    <a href="tel:+9647511936095" class="link-card phone">
-        ژمارەی مۆبایل <i class="fas fa-phone-alt"></i>
-    </a>
-
-    <div class="sponsor-section">
-        <div class="sponsor-text">سپۆنسەرکراوە لەلایەن</div>
-        
-        <a href="https://wa.me/+9647758887488?text=سڵاو بەڕێز، دەمەوێت سپۆنسەر بۆ کاڵاکەم بکەم !" class="footer-tag">
-            Zana Sponsor
+    <div class="links-wrapper">
+        <a href="https://wa.me/+9647511936095?text=سڵاو👋" class="link-card whatsapp">
+            <i class="fab fa-whatsapp"></i>
+            <span>واتساپ</span>
+            <i class="fas fa-chevron-left" style="font-size: 14px; opacity: 0.7;"></i>
         </a>
 
+        <a href="viber://chat?number=+9647511936095" class="link-card viber">
+            <i class="fab fa-viber"></i>
+            <span>ڤایبەر</span>
+            <i class="fas fa-chevron-left" style="font-size: 14px; opacity: 0.7;"></i>
+        </a>
+
+        <a href="tel:+9647511936095" class="link-card phone">
+            <i class="fas fa-phone-alt"></i>
+            <span>ژمارەی مۆبایل</span>
+            <i class="fas fa-chevron-left" style="font-size: 14px; opacity: 0.7;"></i>
+        </a>
+    </div>
+
+    <div class="sponsor-section">
+        <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
+        <a href="https://wa.me/+9647758887488" class="footer-tag">
+            Zana Sponsor
+        </a>
         <div class="legal-links">
-            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+            Privacy Policy | Terms
         </div>
     </div>
 
