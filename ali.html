@@ -14,113 +14,101 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 80px 20px 40px 20px; 
             margin: 0;
         }
         .profile-container {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             background: white;
-            padding: 30px;
-            border-radius: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
             width: 100%;
-            max-width: 340px;
+            max-width: 320px;
         }
         .profile-img {
-            width: 110px;
-            height: 110px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
-            border: 5px solid #f8f9fa;
+            border: 4px solid #f8f9fa;
             object-fit: cover;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         h1 { 
             margin: 0; 
-            font-size: 24px; 
+            font-size: 20px; 
             color: #2d3436; 
             font-weight: 800;
         }
         .main-instruction { 
             color: #636e72; 
-            font-size: 17px; 
+            font-size: 15px; 
             font-weight: 600;
-            margin-top: 15px;
+            margin-top: 10px;
             line-height: 1.4;
         }
         
         .links-wrapper {
             width: 100%;
-            max-width: 380px;
+            max-width: 340px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .link-card {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 18px 25px;
-            border-radius: 20px;
+            padding: 14px 20px;
+            border-radius: 15px;
             text-decoration: none;
             color: white;
             font-weight: 700;
-            font-size: 20px;
+            font-size: 17px;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
         }
 
         .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); }
         .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
         .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); }
 
-        .link-card:hover {
-            transform: translateY(-3px);
-            filter: brightness(1.05);
-        }
+        .link-card:hover { transform: translateY(-2px); }
+        .link-card i { font-size: 22px; }
 
-        .link-card i {
-            font-size: 26px;
-        }
-
-        /* لێرە گۆڕانکاریمان کردووە بۆ ئەوەی بێتە سەرەوە */
+        /* لێرە بەینەکەمان زیاد کردووە */
         .sponsor-section {
-            margin-top: 40px; /* لە جیاتی auto ئێستا بڕێکی دیاریکراوە */
-            padding-top: 20px;
+            margin-top: 60px; /* زیادکرا لە ٢٥ بۆ ٦٠ */
             text-align: center;
         }
         
         .sponsor-text {
-            font-size: 14px;
+            font-size: 13px;
             color: #636e72;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
         .footer-tag {
-            padding: 12px 40px;
+            padding: 10px 30px;
             background: linear-gradient(45deg, #1e8449, #27ae60);
             border-radius: 50px;
             color: #ffffff;
-            font-size: 18px;
+            font-size: 16px;
             display: inline-block;
             font-weight: 900;
             text-decoration: none;
-            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2);
-            transition: 0.3s;
-        }
-        
-        .footer-tag:hover { 
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);
         }
 
         .legal-links {
-            margin-top: 20px;
-            font-size: 11px;
+            margin-top: 15px;
+            font-size: 10px;
             color: #95a5a6;
         }
+        .legal-links a { color: #95a5a6; text-decoration: none; margin: 0 5px; }
     </style>
 </head>
 <body>
@@ -137,19 +125,19 @@
         <a href="https://wa.me/+9647511936095?text=سڵاو👋" class="link-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
-            <i class="fas fa-chevron-left" style="font-size: 14px; opacity: 0.7;"></i>
+            <i class="fas fa-chevron-left" style="font-size: 12px; opacity: 0.6;"></i>
         </a>
 
         <a href="viber://chat?number=+9647511936095" class="link-card viber">
             <i class="fab fa-viber"></i>
             <span>ڤایبەر</span>
-            <i class="fas fa-chevron-left" style="font-size: 14px; opacity: 0.7;"></i>
+            <i class="fas fa-chevron-left" style="font-size: 12px; opacity: 0.6;"></i>
         </a>
 
         <a href="tel:+9647511936095" class="link-card phone">
             <i class="fas fa-phone-alt"></i>
             <span>ژمارەی مۆبایل</span>
-            <i class="fas fa-chevron-left" style="font-size: 14px; opacity: 0.7;"></i>
+            <i class="fas fa-chevron-left" style="font-size: 12px; opacity: 0.6;"></i>
         </a>
     </div>
 
@@ -159,7 +147,8 @@
             Zana Sponsor
         </a>
         <div class="legal-links">
-            Privacy Policy | Terms
+            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
+            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
         </div>
     </div>
 
