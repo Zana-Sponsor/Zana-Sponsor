@@ -15,14 +15,16 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      // فەنکشن بۆ ئەوەی تیکتۆک بزانێت کلیک لە کام دوگمە کراوە
-      function trackClick(label) {
+      // TikTok Event Code (هەنگاوی ٤) - بۆ تۆمارکردنی کلیکەکان
+      function trackContact(platform) {
           ttq.track('Contact', {
-              content_name: label
+              content_name: platform,
+              content_category: 'Sponsor Link'
           });
       }
     }(window, document, 'ttq');
     </script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
@@ -111,11 +113,7 @@
             display: inline-block;
             font-weight: 900;
             text-decoration: none;
-            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);
         }
-
-        .legal-links { margin-top: 20px; font-size: 11px; color: #95a5a6; }
-        .legal-links a { color: #95a5a6; text-decoration: none; margin: 0 6px; }
     </style>
 </head>
 <body>
@@ -127,17 +125,17 @@
     </div>
 
     <div class="links-wrapper">
-        <a href="https://wa.me/+9647758887488?text=سڵاو، دەتوانی زانیاری زیاترم پێبدەی ؟" class="link-card whatsapp" onclick="trackClick('WhatsApp')">
+        <a href="https://wa.me/+9647758887488" class="link-card whatsapp" onclick="trackContact('WhatsApp')">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
 
-        <a href="viber://chat?number=+9647758887488" class="link-card viber" onclick="trackClick('Viber')">
+        <a href="viber://chat?number=+9647758887488" class="link-card viber" onclick="trackContact('Viber')">
             <i class="fab fa-viber"></i>
             <span>ڤایبەر</span>
         </a>
 
-        <a href="tel:+9647758887488" class="link-card phone" onclick="trackClick('Phone')">
+        <a href="tel:+9647758887488" class="link-card phone" onclick="trackContact('Phone')">
             <i class="fas fa-phone-alt"></i>
             <span>ژمارەی مۆبایل</span>
         </a>
@@ -145,11 +143,7 @@
 
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="https://wa.me/+9647758887488" class="footer-tag" onclick="trackClick('Sponsor Footer')">Zana Sponsor</a>
-        <div class="legal-links">
-            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
-            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
-        </div>
+        <a href="#" class="footer-tag">Zana Sponsor</a>
     </div>
 
 </body>
