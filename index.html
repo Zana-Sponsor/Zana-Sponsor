@@ -1,9 +1,9 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku">
 <head>
-    <meta name="robots" content="noindex, nofollow">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Sponsor - Links</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Zana Sponsor</title>
     
     <script>
     !function (w, d, t) {
@@ -14,9 +14,37 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      // فەرمانی ناردنی کلیک بۆ ناو TikTok Ads Manager
-      window.trackTikTokConversion = function() {
-        ttq.track('Contact');
-      };
+      window.trackContact = function(platform, event) {
+          event.preventDefault();
+          var url = event.currentTarget.href;
+          ttq.track('Contact', { content_name: platform });
+          setTimeout(function() { window.location.href = url; }, 200);
+      }
     }(window, document, 'ttq');
     </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
+        .btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin: 10px 0; border-radius: 12px; text-decoration: none; color: white; font-weight: bold; font-size: 18px; }
+        .whatsapp { background: #25D366; }
+        .viber { background: #7360f2; }
+        .btn i { margin-left: 10px; font-size: 24px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>ZANA SPONSOR</h1>
+        <p>کلیک لە یەکێک لەم لینکەکان بکە:</p>
+        
+        <a href="https://wa.me/+9647758887488" class="btn whatsapp" onclick="trackContact('WhatsApp', event)">
+            <i class="fab fa-whatsapp"></i> واتساپ
+        </a>
+
+        <a href="viber://chat?number=+9647510074008" class="btn viber" onclick="trackContact('Viber', event)">
+            <i class="fab fa-viber"></i> ڤایبەر
+        </a>
+    </div>
+</body>
+</html>
