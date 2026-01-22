@@ -7,23 +7,19 @@
     <title>Zana Sponsor - Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MZF24RL8E0"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-MZF24RL8E0');
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndGetCookie=function(t,e){var n=w.TiktokAnalyticsObject;n&&n._i&&n._i[t]&&(n._i[t].getAndSetCookie(e))};ttq.load=function(e,n){var t="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=t,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=d.createElement("script");o.type="text/javascript",o.async=!0,o.src=t;var i=d.getElementsByTagName("script")[0];i.parentNode.insertBefore(o,i)};
 
-      // فەرمانی ژماردنی کلیکەکان وەک Conversion
-      function trackConversion(platform) {
-        gtag('event', 'generate_lead', {
-          'method': platform,
-          'event_category': 'Contact',
-          'event_label': platform
-        });
-      }
+      ttq.load('YOUR_PIXEL_ID'); // <--- لێرە کۆدی پێکسڵەکەت دابنێ
+      ttq.page();
+    }(window, document, 'ttq');
+
+    // فەرمانی ناردنی کلیک بۆ ناو TikTok Ads Manager
+    function trackTikTokConversion() {
+      ttq.track('Contact');
+    }
     </script>
-
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -127,17 +123,17 @@
     </div>
 
     <div class="links-wrapper">
-        <a href="https://wa.me/+9647511936095?text=سڵاو👋" onclick="trackConversion('WhatsApp')" class="link-card whatsapp">
+        <a href="https://wa.me/+9647511936095?text=سڵاو👋" onclick="trackTikTokConversion()" class="link-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
 
-        <a href="viber://chat?number=+9647511936095" onclick="trackConversion('Viber')" class="link-card viber">
+        <a href="viber://chat?number=+9647511936095" onclick="trackTikTokConversion()" class="link-card viber">
             <i class="fab fa-viber"></i>
             <span>ڤایبەر</span>
         </a>
 
-        <a href="tel:+9647511936095" onclick="trackConversion('Phone')" class="link-card phone">
+        <a href="tel:+9647511936095" onclick="trackTikTokConversion()" class="link-card phone">
             <i class="fas fa-phone-alt"></i>
             <span>ژمارەی مۆبایل</span>
         </a>
