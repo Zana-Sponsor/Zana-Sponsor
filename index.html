@@ -14,7 +14,7 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
       
-      // بۆ ئەوەی لیستی Optimization Event یەکسەر کار بکات
+      // ناردنی ڕووداوی Contact بۆ ناسینەوەی ئەوانەی سەردانی لینکەکە دەکەن
       ttq.track('Contact'); 
     }(window, document, 'ttq');
 
@@ -25,7 +25,6 @@
         });
     }
     </script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
@@ -57,43 +56,22 @@
             font-weight: 600; font-size: 18px;
             transition: transform 0.2s;
         }
+        .link-card:hover { transform: scale(1.03); }
         .link-card i { margin-left: 10px; font-size: 22px; }
         .whatsapp { background: #25D366; }
-        .viber { background: #7360f2; }
-        .phone { background: #007bff; }
-        .link-card:hover { transform: scale(1.03); }
-
-        .sponsor-section { margin-top: 50px; text-align: center; }
-        .footer-tag {
-            padding: 6px 30px; border: 1px solid #25D366;
-            border-radius: 20px; color: #25D366; font-size: 14px;
-        }
     </style>
 </head>
 <body>
 
     <div class="profile-container">
-        <img src="https://img.sanishtech.com/u/954dc1945d561b8831c69661863b9856.jpg" alt="Zana Sponsor" class="profile-img">
-        <h1>ZANA SPONSOR</h1>
-        <p>بۆ پەیوەندی کردن، کلیک لە یەکێک لەمانە بکە</p>
+        <img src="https://via.placeholder.com/120" alt="Zana Sponsor" class="profile-img">
+        <h1>Zana Sponsor</h1>
+        <p>بەخێربێن بۆ لێنکە فەرمییەکانمان</p>
     </div>
 
-    <a href="https://wa.me/+9647758887488" onclick="trackClick('WhatsApp')" class="link-card whatsapp">
-        واتساپ <i class="fab fa-whatsapp"></i>
+    <a href="https://wa.me/964xxxxxxx" class="link-card whatsapp" onclick="trackClick('WhatsApp')">
+        <i class="fab fa-whatsapp"></i> واتسئەپ
     </a>
-
-    <a href="viber://chat?number=+9647758887488" onclick="trackClick('Viber')" class="link-card viber">
-        ڤایبەر <i class="fab fa-viber"></i>
-    </a>
-
-    <a href="tel:+9647758887488" onclick="trackClick('Phone')" class="link-card phone">
-        ژمارەی مۆبایل <i class="fas fa-phone-alt"></i>
-    </a>
-
-    <div class="sponsor-section">
-        <div style="font-size: 12px; color: #aaa; margin-bottom: 5px;">دروست کراوە لەلایەن</div>
-        <div class="footer-tag">Zana Sponsor</div>
-    </div>
 
 </body>
 </html>
