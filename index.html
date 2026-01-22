@@ -5,88 +5,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zana Sponsor - Links</title>
-
-    <script>
-    !function (w, d, t) {
-      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
-    var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
-    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-
-      ttq.load('D5N6ETJC77UFLMP0AO10');
-      ttq.page();
-
-      // فەنکشنی چاککراو بۆ ئەوەی دڵنیا بین تیکتۆک داتاکە وەردەگرێت
-      function trackContact(platform, event) {
-          event.preventDefault(); // ڕێگری کاتی لە کردنەوەی لێنکەکە
-          var url = event.currentTarget.href;
-
-          ttq.track('Contact', {
-              content_name: platform,
-              content_category: 'Sponsor Link'
-          });
-
-          // چاوەڕێکردنی ٢٠٠ میلی چرکە پاشان کردنەوەی لێنکەکە
-          setTimeout(function() {
-              window.location.href = url;
-          }, 200);
-      }
-    }(window, document, 'ttq');
-    </script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+<script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+
+  ttq.load('D5N6ETJC77UFLMP0AO10');
+  ttq.page();
+}(window, document, 'ttq');
+</script>
+
+    // فەرمانی ناردنی کلیک بۆ ناو TikTok Ads Manager
+    function trackTikTokConversion() {
+      ttq.track('Contact');
+    }
+    </script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding: 60px 20px 40px 20px; margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 60px 20px 40px 20px; 
+            margin: 0;
         }
         .profile-container {
-            text-align: center; margin-bottom: 25px; background: white;
-            padding: 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-            width: 100%; max-width: 350px;
+            text-align: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            width: 100%;
+            max-width: 350px;
         }
-        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #f8f9fa; object-fit: cover; margin-bottom: 15px; }
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid #f8f9fa;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
         h1 { margin: 0; font-size: 22px; color: #2d3436; font-weight: 800; }
         .main-instruction { color: #636e72; font-size: 16px; font-weight: 600; margin-top: 12px; }
-        .links-wrapper { width: 100%; max-width: 370px; display: flex; flex-direction: column; gap: 15px; }
-        .link-card {
-            display: flex; align-items: center; justify-content: center;
-            padding: 16px 25px; border-radius: 18px; text-decoration: none;
-            color: white; font-weight: 700; font-size: 19px; transition: all 0.2s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.07); animation: fast-pulse 0.8s infinite ease-in-out;
+        
+        .links-wrapper {
+            width: 100%;
+            max-width: 370px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        @keyframes fast-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
-        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
-        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); }
-        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); }
-        .link-card:hover { transform: translateY(-3px) scale(1.06); filter: brightness(1.1); }
-        .link-card i { font-size: 28px; margin-left: 12px; }
+
+        .link-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 25px;
+            border-radius: 18px;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 19px;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+            animation: fast-pulse 0.8s infinite ease-in-out;
+        }
+
+        @keyframes fast-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+            100% { transform: scale(1); }
+        }
+
+        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); animation-delay: 0.1s; }
+        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); animation-delay: 0.2s; }
+        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); animation-delay: 0.3s; }
+
+        .link-card:hover { 
+            transform: translateY(-3px) scale(1.06); 
+            filter: brightness(1.1);
+        }
+
+        .link-card i { 
+            font-size: 28px; 
+            margin-left: 12px; 
+        }
+
         .sponsor-section { margin-top: 60px; text-align: center; }
         .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
-        .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #1e8449, #27ae60); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; }
+
+        .footer-tag {
+            padding: 12px 35px;
+            background: linear-gradient(45deg, #1e8449, #27ae60);
+            border-radius: 50px;
+            color: #ffffff;
+            font-size: 17px;
+            display: inline-block;
+            font-weight: 900;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);
+        }
+
+        .legal-links { margin-top: 20px; font-size: 11px; color: #95a5a6; }
+        .legal-links a { color: #95a5a6; text-decoration: none; margin: 0 6px; }
     </style>
 </head>
 <body>
 
     <div class="profile-container">
-        <img src="https://www.w3schools.com/howto/img_avatar.png" alt="ZANA SPONSOR" class="profile-img">
-        <h1>ZANA SPONSOR</h1>
+        <img src="https://img.sanishtech.com/u/b0963a6eec0608cf5352d116dfced92f.jpg" alt="Serwan Phone" class="profile-img">
+        <h1>Serwan Phone</h1>
         <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە</div>
     </div>
 
     <div class="links-wrapper">
-        <a href="https://wa.me/+9647758887488" class="link-card whatsapp" onclick="trackContact('WhatsApp', event)">
+        <a href="https://wa.me/+9647505343710?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی !" onclick="trackTikTokConversion()" class="link-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
 
-        <a href="viber://chat?number=+9647510074008" class="link-card viber" onclick="trackContact('Viber', event)">
+        <a href="viber://chat?number=+9647505343710" onclick="trackTikTokConversion()" class="link-card viber">
             <i class="fab fa-viber"></i>
             <span>ڤایبەر</span>
         </a>
 
-        <a href="tel:+9647758887488" class="link-card phone" onclick="trackContact('Phone', event)">
+        <a href="tel:+9647505343710" onclick="trackTikTokConversion()" class="link-card phone">
             <i class="fas fa-phone-alt"></i>
             <span>ژمارەی مۆبایل</span>
         </a>
@@ -94,7 +145,11 @@
 
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="#" class="footer-tag">Zana Sponsor</a>
+        <a href="https://wa.me/+9647758887488" class="footer-tag">Serwan Phone</a>
+        <div class="legal-links">
+            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
+            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
+        </div>
     </div>
 
 </body>
