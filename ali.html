@@ -25,7 +25,7 @@
             border-radius: 30px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.03);
             width: 100%;
-            max-width: 350px; /* قەبارەی مامناوەند */
+            max-width: 350px;
         }
         .profile-img {
             width: 100px;
@@ -35,19 +35,8 @@
             object-fit: cover;
             margin-bottom: 15px;
         }
-        h1 { 
-            margin: 0; 
-            font-size: 22px; 
-            color: #2d3436; 
-            font-weight: 800;
-        }
-        .main-instruction { 
-            color: #636e72; 
-            font-size: 16px; 
-            font-weight: 600;
-            margin-top: 12px;
-            line-height: 1.4;
-        }
+        h1 { margin: 0; font-size: 22px; color: #2d3436; font-weight: 800; }
+        .main-instruction { color: #636e72; font-size: 16px; font-weight: 600; margin-top: 12px; }
         
         .links-wrapper {
             width: 100%;
@@ -69,26 +58,31 @@
             font-size: 18px;
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+            /* لێرە ئەنیمەیشنەکە چالاک کراوە */
+            animation: pulse-animation 2s infinite;
         }
 
-        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); }
-        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
-        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); }
+        /* دروستکردنی جوڵەی لەرینەوە */
+        @keyframes pulse-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
 
-        .link-card:hover { transform: translateY(-3px); }
+        /* جیاکردنەوەی کاتی جوڵەی دوگمەکان بۆ ئەوەی پێکەوە نەجوڵێن و جوانتر بن */
+        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); animation-delay: 0.2s; }
+        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); animation-delay: 0.4s; }
+        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); animation-delay: 0.6s; }
+
+        .link-card:hover { 
+            transform: translateY(-3px) scale(1.05) !important; 
+            animation: none; /* کاتێک ماوس دەچێتە سەری جوڵە خۆکارەکە دەوەستێت */
+        }
+
         .link-card i { font-size: 24px; }
 
-        .sponsor-section {
-            margin-top: 50px; /* بەینێکی مامناوەند */
-            text-align: center;
-        }
-        
-        .sponsor-text {
-            font-size: 14px;
-            color: #636e72;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
+        .sponsor-section { margin-top: 50px; text-align: center; }
+        .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
 
         .footer-tag {
             padding: 12px 35px;
@@ -102,11 +96,7 @@
             box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);
         }
 
-        .legal-links {
-            margin-top: 20px;
-            font-size: 11px;
-            color: #95a5a6;
-        }
+        .legal-links { margin-top: 20px; font-size: 11px; color: #95a5a6; }
         .legal-links a { color: #95a5a6; text-decoration: none; margin: 0 6px; }
     </style>
 </head>
@@ -115,9 +105,7 @@
     <div class="profile-container">
         <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Mamosta Ali" class="profile-img">
         <h1>Mamosta Ali Khoshnaw</h1>
-        <div class="main-instruction">
-            بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە
-        </div>
+        <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە</div>
     </div>
 
     <div class="links-wrapper">
@@ -142,9 +130,7 @@
 
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="https://wa.me/+9647758887488" class="footer-tag">
-            Zana Sponsor
-        </a>
+        <a href="https://wa.me/+9647758887488" class="footer-tag">Zana Sponsor</a>
         <div class="legal-links">
             <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
             <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
