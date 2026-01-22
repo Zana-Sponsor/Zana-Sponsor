@@ -2,15 +2,15 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta name="robots" content="noindex, nofollow">
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zana Sponsor - Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* بەکارهێنانی فۆنتی سیستەم بۆ ئەوەی بە کوردی زۆر ڕوون بێت */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fcfcfc;
+            font-family: 'Segoe UI', Tahoma, 'Arial', sans-serif;
+            background-color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -19,7 +19,7 @@
         }
         .profile-container {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         .profile-img {
             width: 130px;
@@ -29,9 +29,24 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             object-fit: cover;
         }
-        h1 { margin: 15px 0 5px; font-size: 24px; color: #333; font-weight: bold; }
-        .intro-text { color: #555; font-size: 16px; margin-bottom: 10px; font-weight: 500; }
-        .sub-text { color: #888; font-size: 14px; margin-bottom: 25px; line-height: 1.6; max-width: 320px; }
+        h1 { 
+            margin: 15px 0 10px; 
+            font-size: 28px; 
+            color: #222; 
+            font-weight: 800;
+        }
+        /* لێرە فۆنت و قەبارەی دەقەکە گەورە و ڕوون کراوە */
+        .main-instruction { 
+            color: #444; 
+            font-size: 19px; 
+            font-weight: bold;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            max-width: 350px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+        }
         
         .link-card {
             width: 100%;
@@ -39,20 +54,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
-            margin-bottom: 18px;
+            padding: 18px;
+            margin-bottom: 20px;
             border-radius: 50px;
             text-decoration: none;
             color: white;
-            font-weight: 600;
-            font-size: 20px;
+            font-weight: bold;
+            font-size: 22px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
         .link-card i {
             margin-right: 15px; 
-            font-size: 28px;
+            font-size: 30px;
         }
         
         .whatsapp { background: #42e36d; }
@@ -60,34 +75,26 @@
         .phone { background: #4096ff; }
 
         .link-card:hover {
-            transform: scale(1.02);
-            filter: brightness(1.1);
-        }
-
-        .trust-badges {
-            margin-top: 10px;
-            font-size: 13px;
-            color: #666;
-            display: flex;
-            gap: 15px;
+            transform: scale(1.03);
+            filter: brightness(1.05);
         }
 
         .sponsor-section {
-            margin-top: 40px;
+            margin-top: 50px;
             text-align: center;
             padding-bottom: 20px;
         }
         .sponsor-text {
-            font-size: 13px;
+            font-size: 14px;
             color: #888;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         .footer-tag {
-            padding: 8px 45px;
+            padding: 10px 50px;
             border: 2px solid #42e36d;
-            border-radius: 25px;
+            border-radius: 30px;
             color: #42e36d;
-            font-size: 16px;
+            font-size: 18px;
             display: inline-block;
             font-weight: bold;
             text-decoration: none;
@@ -98,17 +105,11 @@
             color: white;
         }
         .legal-links {
-            margin-top: 20px;
-            font-size: 11px;
-            color: #bbb;
-        }
-        .legal-links a { color: #bbb; text-decoration: none; margin: 0 5px; }
-        .copyright-text {
-            margin-top: 10px;
-            font-size: 11px;
+            margin-top: 25px;
+            font-size: 12px;
             color: #ccc;
-            direction: ltr;
         }
+        .legal-links a { color: #ccc; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -116,8 +117,9 @@
     <div class="profile-container">
         <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Mamosta Ali" class="profile-img">
         <h1>Mamosta Ali Khoshnaw</h1>
-        <p class="intro-text">باشترین خزمەتگوزاری و ئۆفەر لای ئێمەیە</p>
-        <p class="sub-text">بۆ پەیوەندی کردن و دەستکەوتنی زانیاری زیاتر، کلیک لە یەکێک لە ڕێگاکانی خوارەوە بکە:</p>
+        <div class="main-instruction">
+            بۆ پەیوەندی کردن و دەستکەوتنی زانیاری زیاتر، کلیک لە یەکێک لە ڕێگاکانی خوارەوە بکە:
+        </div>
     </div>
 
     <a href="https://wa.me/+9647511936095?text=سڵاو👋، ئایا دەتوانی زانیاری زیاترم پێبدەی؟" class="link-card whatsapp">
@@ -132,11 +134,6 @@
         ژمارەی مۆبایل <i class="fas fa-phone-alt"></i>
     </a>
 
-    <div class="trust-badges">
-        <span>✅ وەڵامدانەوەی خێرا</span>
-        <span>✅ پشتگیری بەردەوام</span>
-    </div>
-
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەرکراوە لەلایەن</div>
         
@@ -146,10 +143,6 @@
 
         <div class="legal-links">
             <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
-        </div>
-        
-        <div class="copyright-text">
-            Produced By Zana Sponsor © 2026
         </div>
     </div>
 
