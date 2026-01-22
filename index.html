@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ku">
 <head>
+    <meta name="robots" content="noindex, nofollow">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Sponsor</title>
+    <title>Zana Sponsor - Links</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script>
     !function (w, d, t) {
@@ -14,20 +16,33 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      window.trackContact = function(platform, event) {
-          event.preventDefault();
-          var url = event.currentTarget.href;
-          ttq.track('Contact', { content_name: platform });
-          setTimeout(function() { window.location.href = url; }, 200);
-      }
+      // فەرمانی ناردنی کلیک بۆ تیکتۆک
+      window.trackTikTokConversion = function(platform, event) {
+        event.preventDefault(); // ڕێگری لە داخستنی لاپەڕەکە تا داتا دەنێردرێت
+        var url = event.currentTarget.href;
+        ttq.track('Contact', { content_name: platform });
+        setTimeout(function() { window.location.href = url; }, 200);
+      };
     }(window, document, 'ttq');
     </script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 350px; }
-        .btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin: 10px 0; border-radius: 12px; text-decoration: none; color: white; font-weight: bold; font-size: 18px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; padding: 60px 20px; margin: 0;
+        }
+        .card {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center;
+            width: 100%; max-width: 350px;
+        }
+        .btn {
+            display: flex; align-items: center; justify-content: center;
+            padding: 15px; margin: 15px 0; border-radius: 12px;
+            text-decoration: none; color: white; font-weight: bold; font-size: 18px;
+        }
         .whatsapp { background: #25D366; }
         .viber { background: #7360f2; }
         .btn i { margin-left: 10px; font-size: 24px; }
@@ -36,13 +51,13 @@
 <body>
     <div class="card">
         <h1>ZANA SPONSOR</h1>
-        <p>کلیک لە یەکێک لەم لینکەکان بکە:</p>
+        <p>بۆ پەیوەندی کردن، کلیک بکە:</p>
         
-        <a href="https://wa.me/+9647758887488" class="btn whatsapp" onclick="trackContact('WhatsApp', event)">
+        <a href="https://wa.me/+9647758887488" class="btn whatsapp" onclick="trackTikTokConversion('WhatsApp', event)">
             <i class="fab fa-whatsapp"></i> واتساپ
         </a>
 
-        <a href="viber://chat?number=+9647510074008" class="btn viber" onclick="trackContact('Viber', event)">
+        <a href="viber://chat?number=+9647510074008" class="btn viber" onclick="trackTikTokConversion('Viber', event)">
             <i class="fab fa-viber"></i> ڤایبەر
         </a>
     </div>
