@@ -1,14 +1,49 @@
-<script>
-    // فەنکشنێک بۆ دروستکردنی وێنەی لینکدار
-    function createImageLink(url, name, ext) {
-        document.write(`
-            <a href="${url}">
-                <img src="${name}${ext}" width="200" style="margin:10px;">
-            </a>
-        `);
-    }
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <title>ئەپڵۆدی وێنە و دروستکردنی لینک</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        .image-container { margin-top: 20px; }
+        img { max-width: 300px; border: 2px solid #ddd; border-radius: 10px; cursor: pointer; }
+        p { color: #555; }
+    </style>
+</head>
+<body>
 
-    // لێرە تەنها (لینک، ناوی وێنە، پاشگر) بنووسە
-    createImageLink("https://google.com", "pic1", ".jpg");
-    createImageLink("https://facebook.com", "logo", ".png");
-</script>
+    <h2>وێنەیەک ئەپڵۆد بکە بۆ ئەوەی ببێتە لینک</h2>
+    
+    <input type="file" id="fileInput" accept="image/*">
+
+    <div class="image-container" id="result">
+        </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const resultDiv = document.getElementById('result');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0]; // وەرگرتنی فایلەکە
+            
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const imageUrl = event.target.result; // دروستکردنی لینک لە فایلەکە
+                    
+                    // دروستکردنی تاگی <a> و <img> بە شێوەی ئۆتۆماتیکی
+                    resultDiv.innerHTML = `
+                        <p>ئێستا وێنەکە بووە بە لینک! کلیکی لێ بکە:</p>
+                        <a href="${imageUrl}" target="_blank">
+                            <img src="${imageUrl}" alt="Uploaded Image">
+                        </a>
+                    `;
+                };
+
+                reader.readAsDataURL(file); // خوێندنەوەی فایلەکە وەک لینک
+            }
+        });
+    </script>
+
+</body>
+</html>
