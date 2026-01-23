@@ -1,49 +1,103 @@
 <!DOCTYPE html>
 <html lang="ku" dir="rtl">
 <head>
-    <title>ئەپڵۆدی وێنە و دروستکردنی لینک</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموونەی هاوشێوەی SanishTech</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; }
-        .image-container { margin-top: 20px; }
-        img { max-width: 300px; border: 2px solid #ddd; border-radius: 10px; cursor: pointer; }
-        p { color: #555; }
+        :root {
+            --primary-color: #007bff;
+            --bg-color: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* ستایلی بەشی کارتەکان */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            text-decoration: none; /* لابردنی هێڵی ژێر لینک */
+            color: #333;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .post-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover; /* بۆ ئەوەی وێنەکە تێک نەچێت */
+        }
+
+        .post-content {
+            padding: 15px;
+        }
+
+        .post-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #222;
+        }
+
+        .post-content p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <h2>وێنەیەک ئەپڵۆد بکە بۆ ئەوەی ببێتە لینک</h2>
-    
-    <input type="file" id="fileInput" accept="image/*">
+    <div class="container">
+        
+        <a href="https://example.com/news1" class="post-card">
+            <img src="https://via.placeholder.com/400x200" alt="News Image">
+            <div class="post-content">
+                <span class="badge">تەکنەلۆژیا</span>
+                <h3>چۆنێتی دروستکردنی ماڵپەڕێکی مۆدێرن</h3>
+                <p>لێرەدا فێری بنەماکانی دیزاین دەبیت بە شێوازێکی سەردەمیانە...</p>
+            </div>
+        </a>
 
-    <div class="image-container" id="result">
-        </div>
+        <a href="https://example.com/news2" class="post-card">
+            <img src="https://via.placeholder.com/400x200" alt="News Image">
+            <div class="post-content">
+                <span class="badge">مۆبایل</span>
+                <h3>نوێترین مۆبایلی ساڵی 2026 بناسە</h3>
+                <p>تایبەتمەندییە ناوازەکانی ئەم مۆبایلە هەمووان سەرسام دەکات...</p>
+            </div>
+        </a>
 
-    <script>
-        const fileInput = document.getElementById('fileInput');
-        const resultDiv = document.getElementById('result');
-
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0]; // وەرگرتنی فایلەکە
-            
-            if (file) {
-                const reader = new FileReader();
-
-                reader.onload = function(event) {
-                    const imageUrl = event.target.result; // دروستکردنی لینک لە فایلەکە
-                    
-                    // دروستکردنی تاگی <a> و <img> بە شێوەی ئۆتۆماتیکی
-                    resultDiv.innerHTML = `
-                        <p>ئێستا وێنەکە بووە بە لینک! کلیکی لێ بکە:</p>
-                        <a href="${imageUrl}" target="_blank">
-                            <img src="${imageUrl}" alt="Uploaded Image">
-                        </a>
-                    `;
-                };
-
-                reader.readAsDataURL(file); // خوێندنەوەی فایلەکە وەک لینک
-            }
-        });
-    </script>
+    </div>
 
 </body>
 </html>
