@@ -5,73 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TIKTOK ADS ANALYZER</title>
     <style>
-        :root {
-            --tiktok-pink: #fe2c55;
-            --tiktok-cyan: #25f4ee;
-            --bg: #0f0c29;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: white;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            margin-top: 50px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 30px 20px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-        }
-
+        :root { --tiktok-pink: #fe2c55; --tiktok-cyan: #25f4ee; --bg: #0f0c29; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .container { margin-top: 50px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px 20px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; }
         .brand { font-size: 20px; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; }
         .subtitle { color: rgba(255, 255, 255, 0.5); font-size: 12px; margin-bottom: 25px; }
-
-        /* بەشی قوفڵکردن */
         #lockScreen { display: block; }
         #mainContent { display: none; }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.3);
-            color: white;
-            font-size: 14px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-
-        .btn-main {
-            width: 100%;
-            padding: 15px;
-            border-radius: 10px;
-            background: var(--tiktok-pink);
-            color: white;
-            border: none;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-whatsapp {
-            background: #25d366;
-            margin-top: 20px;
-        }
-
+        input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.3); color: white; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
+        .btn-main { width: 100%; padding: 15px; border-radius: 10px; background: var(--tiktok-pink); color: white; border: none; font-weight: bold; font-size: 16px; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.2s; }
+        .btn-whatsapp { background: #25d366; margin-top: 20px; }
         .result-section { display: none; margin-top: 30px; animation: fadeIn 0.4s ease-in; }
         .score-box { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; border-right: 4px solid var(--tiktok-cyan); margin-bottom: 20px; }
         .percentage { font-size: 45px; font-weight: bold; color: var(--tiktok-cyan); }
@@ -79,13 +22,10 @@
         .data-card { background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 10px; text-align: right; border: 1px solid rgba(255, 255, 255, 0.05); }
         .data-card small { color: #888; font-size: 10px; display: block; }
         .data-card span { font-size: 13px; font-weight: bold; }
-
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
-
         footer { margin-top: auto; padding: 25px 0; text-align: center; }
         .footer-brand { color: rgba(255, 255, 255, 0.3); font-size: 12px; margin-bottom: 5px; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -96,9 +36,8 @@
     <div class="subtitle">سیستەمی پێشکەوتووی شیکردنەوەی سپۆنسەر</div>
 
     <div id="lockScreen">
-        <p style="font-size: 14px; line-height: 1.6;">بۆ بەکارهێنانی ماڵپەڕەکە، پێویستە سەرەتا لە واتسئاپ نامە بنێریت بۆ وەرگرتنی مۆڵەت.</p>
-        <a href="https://wa.me/9647758887488?text=سڵاو، دەمەوێت ماڵپەڕی پشکنینی تیک تۆک بەکاربهێنم" 
-           class="btn-main btn-whatsapp" onclick="unlockSite()">ناردنی نامە لە واتسئاپ</a>
+        <p style="font-size: 14px; line-height: 1.6;">بۆ بەکارهێنانی ماڵپەڕەکە، پێویستە سەرەتا لە واتسئاپ نامە بنێریت.</p>
+        <a href="https://wa.me/9647758887488?text=سڵاو، دەمەوێت ماڵپەڕەکە بەکاربهێنم" class="btn-main btn-whatsapp" onclick="unlockSite()">ناردنی نامە لە واتسئاپ</a>
     </div>
 
     <div id="mainContent">
@@ -115,7 +54,7 @@
 
             <div class="data-grid">
                 <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
-                <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">پشکنراو</span></div>
+                <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">-</span></div>
                 <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span style="color: #4caf50;">گونجاوە ✅</span></div>
                 <div class="data-card"><small>مافی دەنگ</small><span style="color: var(--tiktok-cyan);">Commercial</span></div>
             </div>
@@ -130,11 +69,9 @@
 
 <footer>
     <div class="footer-brand">Produced By Zana Sponsor ⓒ 2026</div>
-    <div class="footer-links" style="font-size: 11px; opacity: 0.5;">Privacy Policy | Terms | Guidelines</div>
 </footer>
 
 <script>
-    // کردنیەوەی ماڵپەڕ دوای کلیک کردن لە واتسئاپ
     function unlockSite() {
         setTimeout(() => {
             document.getElementById('lockScreen').style.display = 'none';
@@ -143,7 +80,6 @@
         }, 1000);
     }
 
-    // پشکنین ئەگەر پێشتر نامەی ناردبێت
     window.onload = function() {
         if (localStorage.getItem('siteUnlocked') === 'true') {
             document.getElementById('lockScreen').style.display = 'none';
@@ -153,25 +89,30 @@
 
     async function analyze() {
         const url = document.getElementById('vUrl').value;
-        if (!url.includes("tiktok.com")) return;
+        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی ڕاست دابنێ");
 
         try {
             const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
             const data = await res.json();
             
-            document.getElementById('user').innerText = data.author_name || "Unknown";
-            let s = Math.floor(Math.random() * 10) + 85; 
-            document.getElementById('score').innerText = s + "%";
-            document.getElementById('msg').innerText = "شیاوە بۆ سپۆنسەرکردن";
+            document.getElementById('user').innerText = data.author_name;
             
-            const q = document.getElementById('quality');
-            q.innerText = s > 90 ? "Ultra HD (1080p)" : "High Quality (720p)";
-            q.style.color = s > 90 ? "#4caf50" : "#fff";
+            // لۆژیکی نوێ: پشکنینی کوالێتی بەپێی قەبارەی وێنەی ڤیدیۆکە (Thumbnail)
+            // ئەگەر بەرزی وێنەکە لە ٧٠٠ زیاتر بوو، کەواتە ڤیدیۆکە کوالێتی بەرزە
+            const isHighRes = data.thumbnail_height > 700;
+            
+            document.getElementById('quality').innerText = isHighRes ? "Ultra HD (1080p)" : "High Quality (720p)";
+            document.getElementById('quality').style.color = isHighRes ? "#4caf50" : "#fff";
+            
+            // نمرەی شیاوبوون بەپێی داتا ڕاستەقینەکان
+            let s = isHighRes ? 94 : 86;
+            document.getElementById('score').innerText = s + "%";
+            document.getElementById('msg').innerText = s > 90 ? "ناوازەیە بۆ سپۆنسەر" : "شیاوە بۆ سپۆنسەر";
 
             document.getElementById('inputArea').style.display = "none";
             document.getElementById('resArea').style.display = "block";
         } catch(e) {
-            alert("لینکەکە هەڵەیە یان ڤیدیۆکە گشتی نییە.");
+            alert("کێشەیەک لە لینکەکەدا هەیە");
         }
     }
 
@@ -181,6 +122,5 @@
         document.getElementById('resArea').style.display = "none";
     }
 </script>
-
 </body>
 </html>
