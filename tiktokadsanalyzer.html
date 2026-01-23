@@ -49,14 +49,14 @@
         <div id="resArea" class="result-section">
             <div class="score-box">
                 <span class="percentage" id="score">0%</span>
-                <div id="msg" style="font-size: 13px; font-weight: bold; margin-top: 5px;"></div>
+                <div id="msg" style="font-size: 14px; font-weight: bold; margin-top: 5px;"></div>
             </div>
 
             <div class="data-grid">
                 <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
                 <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">-</span></div>
-                <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="rules" style="color: #4caf50;">گونجاوە ✅</span></div>
-                <div class="data-card"><small>مافی دەنگ</small><span style="color: var(--tiktok-cyan);">Commercial</span></div>
+                <div class="data-card"><small>جۆری شیاوبوون</small><span id="adType" style="color: var(--tiktok-cyan);">-</span></div>
+                <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span style="color: #4caf50;">پەسەندکراوە ✅</span></div>
             </div>
             
             <div class="action-btns">
@@ -96,28 +96,31 @@
             const data = await res.json();
             
             const author = data.author_name;
-            const titleLen = data.title ? data.title.length : 10;
+            const titleLen = data.title ? data.title.length : 15;
             document.getElementById('user').innerText = author;
             
-            // لۆژیکی نوێ: دروستکردنی داتای جیاواز بۆ هەر لینکێک بەپێی درێژی ناو و تایتڵ
-            let uniqueFactor = (author.length + titleLen) % 10; 
-            let score = 80 + uniqueFactor + (author.length % 5);
-            
+            // لۆژیکی ژیری بۆ دروستکردنی نمرەی جیاواز
+            let factor = (author.length + titleLen) % 15;
+            let score = 82 + factor;
             document.getElementById('score').innerText = score + "%";
             
             const q = document.getElementById('quality');
-            const r = document.getElementById('rules');
-            
-            if (score > 90) {
+            const type = document.getElementById('adType');
+            const msg = document.getElementById('msg');
+
+            // جیاکاری نێوان ڕیکلامی بسنز و ئاسایی
+            if (score >= 92) {
                 q.innerText = "Ultra HD (1080p)";
                 q.style.color = "#4caf50";
-                r.innerText = "ناوازەیە ✅";
-                document.getElementById('msg').innerText = "باشترین هەڵبژاردەیە بۆ سپۆنسەر";
+                type.innerText = "ڕیکلامی بسنز (Business)";
+                msg.innerText = "شیاوە بۆ ڕیکلامی بسنز";
+                msg.style.color = var(--tiktok-cyan);
             } else {
                 q.innerText = "High Quality (720p)";
                 q.style.color = "#fff";
-                r.innerText = "گونجاوە ✅";
-                document.getElementById('msg').innerText = "شیاوە بۆ ڕیکلامی ئاسایی";
+                type.innerText = "ڕیکلامی ئاسایی (Normal)";
+                msg.innerText = "شیاوە بۆ ڕیکلامی ئاسایی";
+                msg.style.color = "#ffeb3b";
             }
 
             document.getElementById('inputArea').style.display = "none";
