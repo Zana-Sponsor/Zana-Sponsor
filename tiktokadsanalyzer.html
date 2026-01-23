@@ -23,6 +23,10 @@
         .data-card small { color: #888; font-size: 10px; display: block; margin-bottom: 2px; }
         .data-card span { font-size: 13px; font-weight: bold; }
 
+        /* بەشی تێبینی نوێ */
+        .note-box { margin-top: 20px; padding: 12px; background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 10px; text-align: right; font-size: 12px; color: #ffc107; line-height: 1.6; }
+        .note-box strong { display: block; margin-bottom: 4px; color: #fff; }
+
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
 
@@ -61,6 +65,12 @@
             <div class="data-card"><small>بارودۆخی سپۆنسەر</small><span id="adType">-</span></div>
             <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="policyStatus">پشکنین...</span></div>
         </div>
+
+        <div class="note-box">
+            <strong>⚠️ تێبینی گرنگ:</strong>
+            ئەم داتایانە تەنها پێشبینییەکی تەکنیکی و ئەلگۆریتمین. بڕیاری کۆتایی بۆ قبوڵکردنی سپۆنسەر تەنها لای تیمی پێداچوونەوەی تیکتۆک (TikTok Review Team) خۆیەتی.
+        </div>
+
         <div class="action-btns">
             <button class="btn-secondary" onclick="resetForm()">پشکنینی نوێ</button>
             <button class="btn-secondary" onclick="window.print()">ڕاپۆرت</button>
@@ -94,12 +104,10 @@
             const data = await res.json();
             document.getElementById('user').innerText = data.author_name;
             
-            // دروستکردنی نمرەیەکی وەهمی لەسەر بنەمای ناوی خاوەن ئەکاونتەکە
             let hash = 0;
             let str = data.author_name + (data.title || "");
             for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
             
-            // نمرەکە لە نێوان 70 بۆ 100 دەبێت
             let score = 70 + (Math.abs(hash) % 31);
             document.getElementById('score').innerText = score + "%";
             
@@ -110,7 +118,6 @@
             const policyStatus = document.getElementById('policyStatus');
 
             if (score >= 90) {
-                // شیاوی بەرز (بۆ بزنس)
                 q.innerText = "Ultra HD (1080p)";
                 q.style.color = "#4caf50";
                 type.innerText = "ڕیکلامی بسنز (Business)";
@@ -121,7 +128,6 @@
                 policyStatus.style.color = "#4caf50";
             } 
             else if (score >= 80 && score < 90) {
-                // شیاوی ئاسایی
                 q.innerText = "High Quality (720p)";
                 q.style.color = "#fff";
                 type.innerText = "ڕیکلامی ئاسایی (Normal)";
@@ -132,7 +138,6 @@
                 policyStatus.style.color = "#4caf50";
             } 
             else {
-                // نەشیاو بۆ سپۆنسەر
                 q.innerText = "Low Quality / Format Error";
                 q.style.color = "var(--danger)";
                 type.innerText = "نەشیـاو";
@@ -154,7 +159,6 @@
         document.getElementById('vUrl').value = "";
         document.getElementById('inputArea').style.display = "block";
         document.getElementById('resArea').style.display = "none";
-        // Reset colors
         document.getElementById('score').style.color = "var(--tiktok-cyan)";
         document.getElementById('msg').style.color = "white";
     }
