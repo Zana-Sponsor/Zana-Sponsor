@@ -93,9 +93,22 @@
             const caption = (data.title || "").toLowerCase();
             const author = data.author_name;
             
-            // لۆژیکی ناسینەوەی جۆرەکان
-            const comedyWords = ["کۆمیدی", "پێکەنین", "funny", "comedy", "joke", "پۆستی پێکەنیناوی", "تەپڵ", "حیزبە", "گاڵتە"];
-            const businessWords = ["نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "کاڵا", "پەیوەندی", "کڕین", "داواکردن", "بەرگ", "قوماش", "مۆبایل", "کۆمپانیا"];
+            // --- لیستی وشەکان ---
+
+            // ١. وشە کۆمیدی و نەشیاوەکان (ئەگەر هەبێت دەڵێ شیاو نییە)
+            const comedyWords = [
+                "کۆمیدی", "پێکەنین", "funny", "comedy", "joke", "پۆستی پێکەنیناوی", "تەپڵ", "حیزبە", "گاڵتە", 
+                "Prank", "مەهزەلە", "کیمیایی", "بەزم", "فلمی", "سینەما", "دیمەنێکی", "کۆمێدیا", "بۆ پێکەنین", 
+                "LOL", "خۆشی", "کات بەسەربردن"
+            ];
+
+            // ٢. وشە بازرگانییەکان (ئەگەر هەبێت دەڵێ بۆ بسنز شیاوە)
+            const businessWords = [
+                "نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "کاڵا", "پەیوەندی", "کڕین", 
+                "داواکردن", "بەرگ", "قوماش", "مۆبایل", "کۆمپانیا", "پێشانگا", "دیاری", "داشکاندن", "discount", 
+                "sale", "گەرەنتی", "مارکە", "براند", "بۆ فرۆشتن", "مۆدێل", "نوێترین", "بەردەستە", "order", 
+                "ناونیشان", "تەلەفۆن", "واتسئەپ", "ڤایبەر"
+            ];
 
             const isComedy = comedyWords.some(w => caption.includes(w));
             const isBusiness = businessWords.some(w => caption.includes(w));
@@ -110,14 +123,14 @@
 
             if (isComedy) {
                 // دۆخی نەشیاو
-                score.innerText = "35%";
+                score.innerText = "38%";
                 score.style.color = "#fe2c55";
-                q.innerText = "Medium";
-                type.innerText = "کۆمیدی / گشتی";
+                q.innerText = "Normal";
+                type.innerText = "کۆمیدی / نەشیاو";
                 msg.innerText = "شیاو نییە بۆ سپۆنسەر کردن ❌";
                 msg.style.color = "#fe2c55";
                 scoreBox.style.borderRightColor = "#fe2c55";
-                policy.innerText = "ناوەڕۆک شیاو نییە";
+                policy.innerText = "ناوەڕۆکی نەشیاو";
                 policy.style.color = "#fe2c55";
             } 
             else if (isBusiness) {
@@ -125,16 +138,16 @@
                 score.innerText = "98%";
                 score.style.color = "var(--tiktok-cyan)";
                 q.innerText = "Ultra HD";
-                type.innerText = "بسنز (Business Ads)";
+                type.innerText = "بسنز (Business)";
                 msg.innerText = "شیاوە بۆ سپۆنسەری بسنز ✅";
                 msg.style.color = "var(--tiktok-cyan)";
                 scoreBox.style.borderRightColor = "var(--tiktok-cyan)";
-                policy.innerText = "پەسەندکراوە (بزنس)";
+                policy.innerText = "ناوەڕۆکی بازرگانی";
                 policy.style.color = "#4caf50";
             } 
             else {
-                // دۆخی ئاسایی (ڤیدیۆیەک کە نە کۆمیدییە نە بازرگانی)
-                score.innerText = "75%";
+                // دۆخی ئاسایی
+                score.innerText = "78%";
                 score.style.color = "#fff";
                 q.innerText = "High Quality";
                 type.innerText = "سپۆنسەری ئاسایی";
@@ -148,7 +161,9 @@
             document.getElementById('inputArea').style.display = "none";
             document.getElementById('resArea').style.display = "block";
 
-        } catch(e) { alert("هەڵەیەک ڕوویدا، دووبارە تاقی بکەرەوە."); }
+        } catch(e) { 
+            alert("کێشەیەک لە لینکی ڤیدیۆکەدا هەیە، دڵنیابەرەوە کە پۆستەکە گشتییە (Public)."); 
+        }
     }
 
     function resetForm() {
