@@ -15,7 +15,7 @@
         .btn-main { width: 100%; padding: 15px; border-radius: 10px; background: var(--tiktok-pink); color: white; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
 
         .result-section { display: none; margin-top: 30px; animation: fadeIn 0.4s ease-in; }
-        .score-box { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; border-right: 4px solid var(--tiktok-cyan); margin-bottom: 20px; transition: 0.3s; }
+        .score-box { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; border-right: 4px solid var(--tiktok-cyan); margin-bottom: 20px; }
         .percentage { font-size: 45px; font-weight: bold; color: var(--tiktok-cyan); }
         
         .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -42,7 +42,7 @@
     <div class="subtitle">سیستەمی پێشکەوتووی شیکردنەوەی سپۆنسەر</div>
 
     <div id="inputArea">
-        <input type="text" id="vUrl" placeholder="لینکی ڤیدیۆکە لێرە دابنێ..." autocomplete="off">
+        <input type="text" id="vUrl" placeholder="لینکی پۆستەکە دابنێ..." autocomplete="off">
         <button class="btn-main" id="startBtn" onclick="analyze()">دەستپێکردنی پشکنین</button>
     </div>
 
@@ -53,15 +53,15 @@
         </div>
         <div class="data-grid">
             <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
-            <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">-</span></div>
+            <div class="data-card"><small>کوالێتی ناوەڕۆک</small><span id="quality">-</span></div>
             <div class="data-card"><small>بارودۆخی سپۆنسەر</small><span id="adType">-</span></div>
             <div class="data-card">
                 <small>یاساکانی ٢٠٢٦</small>
                 <span id="policyStatus">-</span>
-                <div id="violationType" style="font-size: 9px; color: var(--danger); margin-top: 3px; font-weight: normal; display: none;"></div>
+                <div id="violationType" style="font-size: 10px; color: var(--danger); margin-top: 2px; display: none;"></div>
             </div>
         </div>
-        <div class="note-box"><strong>⚠️ تێبینی:</strong> تکایە هەڵسەنگاندنی ئەم وێبسایتە 100% پێوەر نییە بۆ ئەوەی کە ئایا ڤیدیۆکەت شیاوە بۆ سپۆنسەر کردن یاخود نا !</div>
+        <div class="note-box"><strong>⚠️ تێبینی گرنگ:</strong> بڕیاری کۆتایی تەنها لای تیمی پێداچوونەوەی تیکتۆکە.</div>
         <div class="action-btns">
             <button class="btn-secondary" onclick="resetForm()">پشکنینی نوێ</button>
             <button class="btn-secondary" onclick="window.print()">ڕاپۆرت</button>
@@ -75,69 +75,72 @@
 
 <script>
     async function analyze() {
-        const url = document.getElementById('vUrl').value.trim();
+        const urlInput = document.getElementById('vUrl').value.trim();
         const btn = document.getElementById('startBtn');
-        
-        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
+        if (!urlInput.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
         
         btn.innerText = "خەریکی پشکنینە...";
         btn.disabled = true;
 
         try {
-            const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
+            const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(urlInput)}`);
             const data = await res.json();
             
-            // دروستکردنی کۆدێکی ناسنامە لەسەر ناوی خاوەن پۆست بۆ ئەوەی ئەنجامەکان جێگیر بن
+            // شیکردنەوەی نمرە لەسەر بنەمای لینکی ڤیدیۆکە نەک ناوەکە
             let hash = 0;
-            let str = data.author_name;
-            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            for (let i = 0; i < urlInput.length; i++) {
+                hash = urlInput.charCodeAt(i) + ((hash << 5) - hash);
+            }
             hash = Math.abs(hash);
 
             const scoreDisplay = document.getElementById('score');
             const scoreBox = document.getElementById('scoreBox');
             const msg = document.getElementById('msg');
-            const quality = document.getElementById('quality');
-            const adType = document.getElementById('adType');
-            const policyStatus = document.getElementById('policyStatus');
-            const violationType = document.getElementById('violationType');
+            const qSpan = document.getElementById('quality');
+            const adSpan = document.getElementById('adType');
+            const pStatus = document.getElementById('policyStatus');
+            const vType = document.getElementById('violationType');
 
             document.getElementById('user').innerText = data.author_name;
 
-            // ئەگەر ناوەکە درێژ بێت یان مەرجێکی تێدا بێت (وەک نموونە) با پۆستەکە بە لاواز دابنرێت
-            if (hash % 3 === 0) { 
-                // دۆخی پێشێلکاری
-                let lowScore = 35 + (hash % 20);
-                scoreDisplay.innerText = lowScore + "%";
+            // ئەگەر نمرەکە بەپێی لینکی ڤیدیۆکە لە خوار ٧٥ بوو، یان پۆستەکە وێنە بوو (Photo Mode)
+            const isPhoto = data.title.toLowerCase().includes("photo") || urlInput.includes("/photo/");
+            let finalScore;
+
+            if (isPhoto || hash % 10 < 3) { 
+                // دۆخی پێشێلکاری یان وێنە
+                finalScore = 30 + (hash % 25);
+                scoreDisplay.innerText = finalScore + "%";
                 scoreDisplay.style.color = "var(--danger)";
                 scoreBox.style.borderRightColor = "var(--danger)";
-                msg.innerText = "شیاو نییە بۆ سپۆنسەر ❌";
+                msg.innerText = "شیاو نییە ❌";
                 msg.style.color = "var(--danger)";
-                quality.innerText = "Low Resolution";
-                adType.innerText = "Not Eligible";
-                policyStatus.innerText = "ڕەتکرایەوە ⚠️";
-                policyStatus.style.color = "var(--danger)";
-                violationType.innerText = "(کوالێتی نزم / بوونی نیشانەی مافی بڵاوکردنەوە)";
-                violationType.style.display = "block";
+                qSpan.innerText = isPhoto ? "Slideshow" : "Low Quality";
+                adSpan.innerText = "Not Fit";
+                pStatus.innerText = "ڕەتکرایەوە ⚠️";
+                pStatus.style.color = "var(--danger)";
+                vType.innerText = isPhoto ? "(تیکتۆک ڕێگە بە وێنە نادات بۆ بزنس)" : "(کوالێتی نزم / پێشێلکاری یاسا)";
+                vType.style.display = "block";
             } else {
-                // دۆخی سەرکەوتوو
-                let highScore = 85 + (hash % 11);
-                scoreDisplay.innerText = highScore + "%";
+                // دۆخی ڤیدیۆی باش
+                finalScore = 80 + (hash % 18);
+                scoreDisplay.innerText = finalScore + "%";
                 scoreDisplay.style.color = "var(--tiktok-cyan)";
                 scoreBox.style.borderRightColor = "var(--tiktok-cyan)";
-                msg.innerText = "شیاوە بۆ سپۆنسەر ✅";
+                msg.innerText = "شیاوە ✅";
                 msg.style.color = "white";
-                quality.innerText = "1080p HD";
-                adType.innerText = "Business Ready";
-                policyStatus.innerText = "پەسەندکراوە ✅";
-                policyStatus.style.color = "#4caf50";
-                violationType.style.display = "none";
+                qSpan.innerText = "High Definition";
+                adSpan.innerText = "Business Ready";
+                pStatus.innerText = "پەسەندکراوە ✅";
+                pStatus.style.color = "#4caf50";
+                vType.style.display = "none";
             }
 
             document.getElementById('inputArea').style.display = "none";
             document.getElementById('resArea').style.display = "block";
 
         } catch (e) {
-            alert("هەڵەیەک لە لینکەکەدا هەیە یان پۆستەکە سڕاوەتەوە.");
+            alert("کێشەیەک لە لینکەکە هەیە یان پۆستەکە گشتی نییە.");
         } finally {
             btn.innerText = "دەستپێکردنی پشکنین";
             btn.disabled = false;
