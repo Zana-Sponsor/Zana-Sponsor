@@ -23,18 +23,16 @@
         .data-card small { color: #888; font-size: 10px; display: block; margin-bottom: 2px; }
         .data-card span { font-size: 13px; font-weight: bold; }
 
-        .disclaimer { margin-top: 15px; padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: #bbb; line-height: 1.5; }
+        .disclaimer { margin-top: 15px; padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: #aaa; line-height: 1.5; }
 
         .policy-section { width: 90%; max-width: 500px; margin-top: 25px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.8; text-align: right; border: 1px solid rgba(255,255,255,0.05); }
         .policy-section h4 { color: var(--tiktok-cyan); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 15px; margin-top: 0; }
         .policy-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-        .policy-item span { color: #4caf50; }
 
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
 
         footer { margin-top: 30px; padding-bottom: 25px; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -57,8 +55,8 @@
         <div class="data-grid">
             <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
             <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">-</span></div>
-            <div class="data-card"><small>جۆری ناوەڕۆک</small><span id="adType">-</span></div>
-            <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="policyStatus">پەسەندکراوە ✅</span></div>
+            <div class="data-card"><small>جۆری شیاوبوون</small><span id="adType">-</span></div>
+            <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="policyStatus">-</span></div>
         </div>
 
         <div class="disclaimer">
@@ -74,11 +72,9 @@
 
 <div class="policy-section">
     <h4>یاساکانی سپۆنسەر (TikTok Ads Policy 2026)</h4>
-    <div class="policy-item"><span>✔</span> بەکارهێنانی مۆسیقای Commercial Library.</div>
-    <div class="policy-item"><span>✔</span> نەبوونی لۆگۆی پلاتفۆرمەکانی تر (وەک Instagram یان YouTube).</div>
-    <div class="policy-item"><span>✔</span> کوالێتی دەنگ و ڕەنگ دەبێت لە 720p کەمتر نەبێت.</div>
-    <div class="policy-item"><span>✔</span> پێویستە کاپشن گوزارشت لە جۆری کاڵا یان خزمەتگوزاری بکات.</div>
-    <div class="policy-item"><span>✔</span> پۆستی کۆمیدی یان کات بەسەربردن زۆرترین ڕەتکردنەوەی هەیە.</div>
+    <div class="policy-item">✓ بەکارهێنانی مۆسیقای Commercial Library.</div>
+    <div class="policy-item">✓ پێویستە کاپشن گوزارشت لە جۆری کاڵا یان خزمەتگوزاری بکات.</div>
+    <div class="policy-item">✓ پۆستی کۆمیدی یان کات بەسەربردن زۆرترین ڕەتکردنەوەی هەیە.</div>
 </div>
 
 <footer>
@@ -97,40 +93,56 @@
             const caption = (data.title || "").toLowerCase();
             const author = data.author_name;
             
-            const funWords = ["کۆمیدی", "پێکەنین", "funny", "comedy", "joke", "پۆستی پێکەنیناوی", "کیمیایی", "تەپڵ"];
-            const bizWords = ["نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "کاڵا", "پەیوەندی", "کڕین", "داواکردن", "بەرگ", "قوماش", "مۆبایل"];
+            // لۆژیکی ناسینەوەی جۆرەکان
+            const comedyWords = ["کۆمیدی", "پێکەنین", "funny", "comedy", "joke", "پۆستی پێکەنیناوی", "تەپڵ", "حیزبە", "گاڵتە"];
+            const businessWords = ["نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "کاڵا", "پەیوەندی", "کڕین", "داواکردن", "بەرگ", "قوماش", "مۆبایل", "کۆمپانیا"];
 
-            const isComedy = funWords.some(w => caption.includes(w));
-            const isBusiness = bizWords.some(w => caption.includes(w));
+            const isComedy = comedyWords.some(w => caption.includes(w));
+            const isBusiness = businessWords.some(w => caption.includes(w));
 
-            document.getElementById('user').innerText = author;
             const q = document.getElementById('quality');
             const type = document.getElementById('adType');
             const msg = document.getElementById('msg');
             const score = document.getElementById('score');
             const scoreBox = document.getElementById('scoreBox');
             const policy = document.getElementById('policyStatus');
+            document.getElementById('user').innerText = author;
 
-            if (isComedy || !isBusiness) {
-                score.innerText = "40%";
+            if (isComedy) {
+                // دۆخی نەشیاو
+                score.innerText = "35%";
                 score.style.color = "#fe2c55";
-                q.innerText = "Normal";
-                type.innerText = "گشتی / کات بەسەربردن";
-                msg.innerText = "شیاو نییە بۆ سپۆنسەر کردن";
+                q.innerText = "Medium";
+                type.innerText = "کۆمیدی / گشتی";
+                msg.innerText = "شیاو نییە بۆ سپۆنسەر کردن ❌";
                 msg.style.color = "#fe2c55";
                 scoreBox.style.borderRightColor = "#fe2c55";
-                policy.innerText = "ناوەڕۆکی بازرگانی نییە ❌";
+                policy.innerText = "ناوەڕۆک شیاو نییە";
                 policy.style.color = "#fe2c55";
-            } else {
-                score.innerText = "97%";
+            } 
+            else if (isBusiness) {
+                // دۆخی بسنز
+                score.innerText = "98%";
                 score.style.color = "var(--tiktok-cyan)";
-                q.innerText = "High Quality";
-                type.innerText = "بزنس / بازرگانی";
-                msg.innerText = "شیاوە بۆ سپۆنسەر کردن ✅";
+                q.innerText = "Ultra HD";
+                type.innerText = "بسنز (Business Ads)";
+                msg.innerText = "شیاوە بۆ سپۆنسەری بسنز ✅";
                 msg.style.color = "var(--tiktok-cyan)";
                 scoreBox.style.borderRightColor = "var(--tiktok-cyan)";
-                policy.innerText = "پەسەندکراوە ✅";
+                policy.innerText = "پەسەندکراوە (بزنس)";
                 policy.style.color = "#4caf50";
+            } 
+            else {
+                // دۆخی ئاسایی (ڤیدیۆیەک کە نە کۆمیدییە نە بازرگانی)
+                score.innerText = "75%";
+                score.style.color = "#fff";
+                q.innerText = "High Quality";
+                type.innerText = "سپۆنسەری ئاسایی";
+                msg.innerText = "شیاوە بۆ ڕیکلامی ئاسایی 👍";
+                msg.style.color = "#fff";
+                scoreBox.style.borderRightColor = "#fff";
+                policy.innerText = "گونجاوە";
+                policy.style.color = "#fff";
             }
 
             document.getElementById('inputArea').style.display = "none";
