@@ -58,7 +58,7 @@
         <div class="data-grid">
             <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
             <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">-</span></div>
-            <div class="data-card"><small>جۆری شیاوبوون</small><span id="adType" style="color: var(--tiktok-cyan);">-</span></div>
+            <div class="data-card"><small>جۆری ناوەڕۆک</small><span id="adType" style="color: var(--tiktok-cyan);">-</span></div>
             <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="policyStatus" style="color: #4caf50;">پەسەندکراوە ✅</span></div>
         </div>
         <div class="action-btns">
@@ -68,16 +68,12 @@
     </div>
 </div>
 
-<a href="https://ads.tiktok.com/help/article/tiktok-advertising-policies-ad-creatives" target="_blank" class="policy-section">
+<a href="#" class="policy-section">
     <h4>
         <svg class="tt-icon" viewBox="0 0 448 512"><path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31V278.2a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.17h0A122.18 122.18 0 0 0 381 102.39a121.43 121.43 0 0 0 67 20.14Z"/></svg>
-        سیاسەتی فەرمی تیک تۆک (Ads Policies)
+        سیاسەتی نوێی شیکردنەوە
     </h4>
-    <div class="policy-item"><span>• پابەندبوون بە مافی بڵاوکردنەوە (Copyright)</span></div>
-    <div class="policy-item"><span>• بەکارهێنانی مۆسیقای بازرگانی فەرمی</span></div>
-    <div class="policy-item"><span>• کوالێتی بەرز و دیمەنی ڕوون</span></div>
-    <div class="policy-item"><span>• گشتی بوونی ڤیدیۆ (Public Video)</span></div>
-    <p style="font-size: 11px; margin-top: 10px; color: var(--tiktok-pink);">بۆ خوێندنەوەی وردەکاری زیاتر لێرە کلیک بکە...</p>
+    <p>ئەم سیستەمە بەپێی کاپشن و جۆری ناوەڕۆک بڕیار دەدات ئایا ڤیدیۆکە بۆ بازرگانی دەبێت یان تەنها کات بەسەربردنە.</p>
 </a>
 
 <footer>
@@ -85,3 +81,76 @@
 </footer>
 
 <script>
+    async function analyze() {
+        const urlInput = document.getElementById('vUrl').value;
+        if (!urlInput.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
+
+        try {
+            const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(urlInput)}`);
+            const data = await res.json();
+            
+            const caption = (data.title || "").toLowerCase();
+            const author = data.author_name;
+            
+            // لیستی ئەو وشانەی کە پۆستەکە دەکەنە "نەشیاو" (کۆمیدی یان کات بەسەربردن)
+            const entertainmentWords = ["کۆمیدی", "پێکەنین", "funny", "comedy", "joke", "کات بەسەربردن", "ئەکتەر", "تەپڵ"];
+            
+            // لیستی ئەو وشانەی کە نیشانەی "شت فرۆشتن" و بزنسن
+            const businessWords = ["نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "store", "کاڵا", "پەیوەندی", "discounts"];
+
+            let isComedy = entertainmentWords.some(word => caption.includes(word));
+            let isBusiness = businessWords.some(word => caption.includes(word));
+
+            const q = document.getElementById('quality');
+            const type = document.getElementById('adType');
+            const msg = document.getElementById('msg');
+            const scoreElement = document.getElementById('score');
+            const scoreBox = document.getElementById('scoreBox');
+            const policyStatus = document.getElementById('policyStatus');
+
+            document.getElementById('user').innerText = author;
+            
+            // ئەگەر کۆمیدی بوو یان هیچ وشەیەکی بازرگانی تێدا نەبوو
+            if (isComedy || !isBusiness) {
+                scoreElement.innerText = "45%";
+                scoreElement.style.color = "#fe2c55";
+                q.innerText = "Standard";
+                type.innerText = "کۆمیدی / گشتی";
+                type.style.color = "#fe2c55";
+                msg.innerText = "شیاو نییە بۆ سپۆنسەر کردن";
+                msg.style.color = "#fe2c55";
+                scoreBox.style.borderRightColor = "#fe2c55";
+                policyStatus.innerText = "بۆ فرۆشتن نییە ❌";
+                policyStatus.style.color = "#fe2c55";
+            } else {
+                // ئەگەر بۆ بزنس بوو
+                scoreElement.innerText = "98%";
+                scoreElement.style.color = "var(--tiktok-cyan)";
+                q.innerText = "Ultra HD";
+                type.innerText = "بازرگانی (Ads)";
+                type.style.color = "var(--tiktok-cyan)";
+                msg.innerText = "شیاوە بۆ سپۆنسەر کردن ✅";
+                msg.style.color = "var(--tiktok-cyan)";
+                scoreBox.style.borderRightColor = "var(--tiktok-cyan)";
+                policyStatus.innerText = "پەسەندکراوە ✅";
+                policyStatus.style.color = "#4caf50";
+            }
+
+            document.getElementById('inputArea').style.display = "none";
+            document.getElementById('resArea').style.display = "block";
+
+        } catch(e) { 
+            alert("کێشەیەک لە لینکەکەدا هەیە یان ڤیدیۆکە تایبەتە (Private)."); 
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('vUrl').value = "";
+        document.getElementById('inputArea').style.display = "block";
+        document.getElementById('resArea').style.display = "none";
+        document.getElementById('msg').style.color = "white";
+        document.getElementById('score').style.color = "var(--tiktok-cyan)";
+    }
+</script>
+</body>
+</html>
