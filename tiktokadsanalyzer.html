@@ -26,14 +26,16 @@
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
 
-        .policy-section { width: 90%; max-width: 500px; margin-top: 40px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 15px; font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.6; text-align: justify; }
-        .policy-section h4 { color: var(--tiktok-cyan); margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        /* بەشی سیاسەتەکان بە لۆگۆی تیک تۆکەوە */
+        .policy-section { width: 90%; max-width: 500px; margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.8; text-align: right; cursor: pointer; transition: 0.3s; text-decoration: none; display: block; border: 1px solid rgba(255,255,255,0.05); }
+        .policy-section:hover { background: rgba(255,255,255,0.07); border-color: var(--tiktok-cyan); }
+        .policy-section h4 { color: var(--tiktok-cyan); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 15px; }
+        .tt-icon { width: 16px; height: 16px; fill: currentColor; }
+        .policy-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 
         footer { margin-top: 30px; padding-bottom: 25px; text-align: center; }
         .wa-link { color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.3s; display: inline-block; margin-bottom: 10px; }
-        .wa-link:hover { color: #25d366; transform: scale(1.05); }
-        .footer-links { font-size: 11px; color: rgba(255,255,255,0.2); }
-        .footer-links a { color: inherit; text-decoration: none; margin: 0 5px; }
+        .wa-link:hover { color: #25d366; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -67,22 +69,20 @@
     </div>
 </div>
 
-<div class="policy-section">
-    <h4>سیاسەتی بەکارهێنانی تیک تۆک (TikTok Ads Policies)</h4>
-    <p>
-        بۆ ئەوەی ڤیدیۆکەت وەک سپۆنسەر پەسەند بکرێت، پێویستە پابەندی ئەم خاڵانە بێت:
-        <br>• ڤیدیۆکە نابێت مافی بڵاوکردنەوەی (Copyright) کەسانی تر پێشێل بکات.
-        <br>• پێویستە دەنگی ڤیدیۆکە لە کتێبخانەی بازرگانی (Commercial Music) بێت.
-        <br>• کوالێتی ڤیدیۆ نابێت لە 720p کەمتر بێت و پێویستە ڕوون بێت.
-        <br>• پێویستە ڤیدیۆکە گشتی (Public) بێت نەک تایبەت (Private).
-    </p>
-</div>
+<a href="https://ads.tiktok.com/help/article/tiktok-advertising-policies-ad-creatives" target="_blank" class="policy-section">
+    <h4>
+        <svg class="tt-icon" viewBox="0 0 448 512"><path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31V278.2a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.17h0A122.18 122.18 0 0 0 381 102.39a121.43 121.43 0 0 0 67 20.14Z"/></svg>
+        سیاسەتی فەرمی تیک تۆک (Ads Policies)
+    </h4>
+    <div class="policy-item"><span>• پابەندبوون بە مافی بڵاوکردنەوە (Copyright)</span></div>
+    <div class="policy-item"><span>• بەکارهێنانی مۆسیقای بازرگانی فەرمی</span></div>
+    <div class="policy-item"><span>• کوالێتی بەرز و دیمەنی ڕوون</span></div>
+    <div class="policy-item"><span>• گشتی بوونی ڤیدیۆ (Public Video)</span></div>
+    <p style="font-size: 11px; margin-top: 10px; color: var(--tiktok-pink);">بۆ خوێندنەوەی وردەکاری زیاتر لێرە کلیک بکە...</p>
+</a>
 
 <footer>
     <a href="https://wa.me/9647758887488" class="wa-link">Produced By Zana Sponsor ⓒ 2026</a>
-    <div class="footer-links">
-        <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">TikTok Guidelines</a>
-    </div>
 </footer>
 
 <script>
