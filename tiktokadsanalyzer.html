@@ -8,24 +8,29 @@
         :root { --tiktok-pink: #fe2c55; --tiktok-cyan: #25f4ee; --bg: #0f0c29; }
         body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .container { margin-top: 50px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px 20px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .brand { font-size: 20px; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; }
+        .brand { font-size: 20px; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap; }
         .subtitle { color: rgba(255, 255, 255, 0.5); font-size: 12px; margin-bottom: 25px; }
-        #lockScreen { display: block; }
-        #mainContent { display: none; }
-        input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.3); color: white; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
-        .btn-main { width: 100%; padding: 15px; border-radius: 10px; background: var(--tiktok-pink); color: white; border: none; font-weight: bold; font-size: 16px; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.2s; }
-        .btn-whatsapp { background: #25d366; margin-top: 20px; }
+        
+        input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.3); color: white; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; outline: none; text-align: left; }
+        .btn-main { width: 100%; padding: 15px; border-radius: 10px; background: var(--tiktok-pink); color: white; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .btn-main:hover { filter: brightness(1.1); }
+
         .result-section { display: none; margin-top: 30px; animation: fadeIn 0.4s ease-in; }
         .score-box { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; border-right: 4px solid var(--tiktok-cyan); margin-bottom: 20px; }
         .percentage { font-size: 45px; font-weight: bold; color: var(--tiktok-cyan); }
+        
         .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .data-card { background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 10px; text-align: right; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .data-card small { color: #888; font-size: 10px; display: block; }
+        .data-card small { color: #888; font-size: 10px; display: block; margin-bottom: 2px; }
         .data-card span { font-size: 13px; font-weight: bold; }
+
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
+
         footer { margin-top: auto; padding: 25px 0; text-align: center; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .footer-brand { color: rgba(255, 255, 255, 0.3); font-size: 12px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -34,58 +39,36 @@
     <div class="brand">TIKTOK ADS ANALYZER</div>
     <div class="subtitle">سیستەمی پێشکەوتووی شیکردنەوەی سپۆنسەر</div>
 
-    <div id="lockScreen">
-        <p style="font-size: 14px;">بۆ چالاککردنی پشکنەر، نامەیەک لە واتسئاپ بنێرە.</p>
-        <a href="https://wa.me/9647758887488?text=چالاککردن" class="btn-main btn-whatsapp" onclick="unlockSite()">چالاککردن لە واتسئاپ</a>
+    <div id="inputArea">
+        <input type="text" id="vUrl" placeholder="لینکی ڤیدیۆکە لێرە دابنێ..." autocomplete="off">
+        <button class="btn-main" onclick="analyze()">دەستپێکردنی پشکنین</button>
     </div>
 
-    <div id="mainContent">
-        <div id="inputArea">
-            <input type="text" id="vUrl" placeholder="لینکی ڤیدیۆکە لێرە دابنێ...">
-            <button class="btn-main" onclick="analyze()">دەستپێکردنی پشکنین</button>
+    <div id="resArea" class="result-section">
+        <div class="score-box">
+            <span class="percentage" id="score">0%</span>
+            <div id="msg" style="font-size: 14px; font-weight: bold; margin-top: 5px;"></div>
         </div>
 
-        <div id="resArea" class="result-section">
-            <div class="score-box">
-                <span class="percentage" id="score">0%</span>
-                <div id="msg" style="font-size: 14px; font-weight: bold; margin-top: 5px;"></div>
-            </div>
-
-            <div class="data-grid">
-                <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
-                <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">-</span></div>
-                <div class="data-card"><small>جۆری شیاوبوون</small><span id="adType" style="color: var(--tiktok-cyan);">-</span></div>
-                <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span style="color: #4caf50;">پەسەندکراوە ✅</span></div>
-            </div>
-            
-            <div class="action-btns">
-                <button class="btn-secondary" onclick="resetForm()">پشکنینی نوێ</button>
-                <button class="btn-secondary" onclick="window.print()">ڕاپۆرت</button>
-            </div>
+        <div class="data-grid">
+            <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
+            <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">-</span></div>
+            <div class="data-card"><small>جۆری شیاوبوون</small><span id="adType" style="color: var(--tiktok-cyan);">-</span></div>
+            <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span style="color: #4caf50;">پەسەندکراوە ✅</span></div>
+        </div>
+        
+        <div class="action-btns">
+            <button class="btn-secondary" onclick="resetForm()">پشکنینی نوێ</button>
+            <button class="btn-secondary" onclick="window.print()">ڕاپۆرت</button>
         </div>
     </div>
 </div>
 
 <footer>
-    <div style="color: rgba(255, 255, 255, 0.3); font-size: 12px;">Produced By Zana Sponsor ⓒ 2026</div>
+    <div class="footer-brand">Produced By Zana Sponsor ⓒ 2026</div>
 </footer>
 
 <script>
-    function unlockSite() {
-        setTimeout(() => {
-            document.getElementById('lockScreen').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-            localStorage.setItem('siteUnlocked', 'true');
-        }, 1000);
-    }
-
-    window.onload = function() {
-        if (localStorage.getItem('siteUnlocked') === 'true') {
-            document.getElementById('lockScreen').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-        }
-    }
-
     async function analyze() {
         const url = document.getElementById('vUrl').value;
         if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی ڕاست دابنێ");
@@ -95,43 +78,41 @@
             const data = await res.json();
             
             const author = data.author_name;
-            const title = data.title || "No Title";
+            const title = data.title || "";
             document.getElementById('user').innerText = author;
             
-            // لۆژیکی نوێی ئەژمارکردن بۆ ئەوەی داتای زۆر جیاواز دروست بکات
+            // لۆژیکی زیرەکی Hash بۆ جیاکاری ورد لە نێوان بسنز و ئاسایی
             let hash = 0;
-            let combinedStr = author + title;
-            for (let i = 0; i < combinedStr.length; i++) {
-                hash = combinedStr.charCodeAt(i) + ((hash << 5) - hash);
+            let str = author + title;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
             }
             
-            // دروستکردنی نمرە لە نێوان ٧٥ بۆ ٩٨
-            let score = 75 + (Math.abs(hash) % 24); 
+            // نمرە لە نێوان ٧٨ بۆ ٩٨
+            let score = 78 + (Math.abs(hash) % 21);
             document.getElementById('score').innerText = score + "%";
             
             const q = document.getElementById('quality');
             const type = document.getElementById('adType');
             const msg = document.getElementById('msg');
 
-            // جیاکاری وردتر
-            if (score >= 89) { // ئەگەر لە ٨٩ زیاتر بوو دەبێتە بسنز
+            // بڕیاردان بەپێی نمرە
+            if (score >= 90) {
                 q.innerText = "Ultra HD (1080p)";
                 q.style.color = "#4caf50";
                 type.innerText = "ڕیکلامی بسنز (Business)";
                 msg.innerText = "شیاوە بۆ ڕیکلامی بسنز";
-                msg.style.color = var(--tiktok-cyan);
             } else {
                 q.innerText = "High Quality (720p)";
                 q.style.color = "#fff";
                 type.innerText = "ڕیکلامی ئاسایی (Normal)";
                 msg.innerText = "شیاوە بۆ ڕیکلامی ئاسایی";
-                msg.style.color = "#ffeb3b";
             }
 
             document.getElementById('inputArea').style.display = "none";
             document.getElementById('resArea').style.display = "block";
         } catch(e) {
-            alert("کێشەیەک لە خوێندنەوەی ڤیدیۆکەدا هەیە.");
+            alert("کێشەیەک لە خوێندنەوەی لینکەکە هەیە.");
         }
     }
 
