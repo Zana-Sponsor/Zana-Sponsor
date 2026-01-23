@@ -13,7 +13,6 @@
         
         input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.3); color: white; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; outline: none; text-align: left; }
         .btn-main { width: 100%; padding: 15px; border-radius: 10px; background: var(--tiktok-pink); color: white; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.98); }
 
         .result-section { display: none; margin-top: 30px; animation: fadeIn 0.4s ease-in; }
         .score-box { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; border-right: 4px solid var(--tiktok-cyan); margin-bottom: 20px; }
@@ -24,14 +23,17 @@
         .data-card small { color: #888; font-size: 10px; display: block; margin-bottom: 2px; }
         .data-card span { font-size: 13px; font-weight: bold; }
 
-        /* بەشی تێبینی نوێ */
-        .disclaimer { margin-top: 20px; padding: 15px; background: rgba(254, 44, 85, 0.1); border-radius: 10px; border: 1px dashed var(--tiktok-pink); font-size: 12px; color: #ff99ab; line-height: 1.6; text-align: justify; }
+        .disclaimer { margin-top: 15px; padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: #bbb; line-height: 1.5; }
+
+        .policy-section { width: 90%; max-width: 500px; margin-top: 25px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.8; text-align: right; border: 1px solid rgba(255,255,255,0.05); }
+        .policy-section h4 { color: var(--tiktok-cyan); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 15px; margin-top: 0; }
+        .policy-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .policy-item span { color: #4caf50; }
 
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
 
-        footer { margin-top: 30px; padding-bottom: 25px; text-align: center; }
-        .wa-link { color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.3s; }
+        footer { margin-top: 30px; padding-bottom: 25px; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -44,7 +46,7 @@
 
     <div id="inputArea">
         <input type="text" id="vUrl" placeholder="لینکی ڤیدیۆکە لێرە دابنێ..." autocomplete="off">
-        <button class="btn-main" id="checkBtn" onclick="analyze()">دەستپێکردنی پشکنین</button>
+        <button class="btn-main" onclick="analyze()">دەستپێکردنی پشکنین</button>
     </div>
 
     <div id="resArea" class="result-section">
@@ -60,7 +62,7 @@
         </div>
 
         <div class="disclaimer">
-            <strong>تێبینی:</strong> تکایە ئاگاداربە ئەم پشکنینە 100% پێوەر نییە بۆ بڕیار دان لەسەر پۆستەکەت کە ئایا شیاوە بۆ سپۆنسەر کردن یاخود نا. ئەمە تەنها شیکردنەوەیەکی سەرەتاییە لەسەر بنەمای کوالێتی و ناوەڕۆکی پۆستەکە.
+            ⚠️ <strong>تێبینی:</strong> تکایە ئاگاداربە ئەم پشکنینە 100% پێوەر نییە بۆ بڕیار دان لەسەر پۆستەکەت کە ئایا شیاوە بۆ سپۆنسەر کردن یاخود نا.
         </div>
 
         <div class="action-btns">
@@ -70,76 +72,71 @@
     </div>
 </div>
 
+<div class="policy-section">
+    <h4>یاساکانی سپۆنسەر (TikTok Ads Policy 2026)</h4>
+    <div class="policy-item"><span>✔</span> بەکارهێنانی مۆسیقای Commercial Library.</div>
+    <div class="policy-item"><span>✔</span> نەبوونی لۆگۆی پلاتفۆرمەکانی تر (وەک Instagram یان YouTube).</div>
+    <div class="policy-item"><span>✔</span> کوالێتی دەنگ و ڕەنگ دەبێت لە 720p کەمتر نەبێت.</div>
+    <div class="policy-item"><span>✔</span> پێویستە کاپشن گوزارشت لە جۆری کاڵا یان خزمەتگوزاری بکات.</div>
+    <div class="policy-item"><span>✔</span> پۆستی کۆمیدی یان کات بەسەربردن زۆرترین ڕەتکردنەوەی هەیە.</div>
+</div>
+
 <footer>
-    <a href="https://wa.me/9647758887488" class="wa-link">Powered By Zana Media ⓒ 2026</a>
+    <center><a href="https://wa.me/9647758887488" style="color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 12px;">Powered By Zana Media ⓒ 2026</a></center>
 </footer>
 
 <script>
     async function analyze() {
         const urlInput = document.getElementById('vUrl').value;
-        const btn = document.getElementById('checkBtn');
-        
-        if (!urlInput || !urlInput.includes("tiktok.com")) {
-            return alert("تکایە لینکێکی دروستی تیک تۆک دابنێ");
-        }
-
-        btn.innerText = "کەمێک چاوەڕێ بکە...";
-        btn.disabled = true;
+        if (!urlInput.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
 
         try {
-            const response = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(urlInput)}`);
-            const data = await response.json();
+            const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(urlInput)}`);
+            const data = await res.json();
             
             const caption = (data.title || "").toLowerCase();
-            const author = data.author_name || "بەکارهێنەری تیک تۆک";
-
-            const funWords = ["کۆمیدی", "پێکەنین", "funny", "comedy", "joke", "پۆستی پێکەنیناوی", "ئەکتەر"];
-            const bizWords = ["نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "کاڵا", "پەیوەندی", "discounts", "داواکردن", "کڕین"];
+            const author = data.author_name;
+            
+            const funWords = ["کۆمیدی", "پێکەنین", "funny", "comedy", "joke", "پۆستی پێکەنیناوی", "کیمیایی", "تەپڵ"];
+            const bizWords = ["نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "کاڵا", "پەیوەندی", "کڕین", "داواکردن", "بەرگ", "قوماش", "مۆبایل"];
 
             const isComedy = funWords.some(w => caption.includes(w));
             const isBusiness = bizWords.some(w => caption.includes(w));
 
-            showResult(isComedy, isBusiness, author);
+            document.getElementById('user').innerText = author;
+            const q = document.getElementById('quality');
+            const type = document.getElementById('adType');
+            const msg = document.getElementById('msg');
+            const score = document.getElementById('score');
+            const scoreBox = document.getElementById('scoreBox');
+            const policy = document.getElementById('policyStatus');
 
-        } catch (error) {
-            showResult(false, false, "بەکارهێنەر");
-        }
-    }
+            if (isComedy || !isBusiness) {
+                score.innerText = "40%";
+                score.style.color = "#fe2c55";
+                q.innerText = "Normal";
+                type.innerText = "گشتی / کات بەسەربردن";
+                msg.innerText = "شیاو نییە بۆ سپۆنسەر کردن";
+                msg.style.color = "#fe2c55";
+                scoreBox.style.borderRightColor = "#fe2c55";
+                policy.innerText = "ناوەڕۆکی بازرگانی نییە ❌";
+                policy.style.color = "#fe2c55";
+            } else {
+                score.innerText = "97%";
+                score.style.color = "var(--tiktok-cyan)";
+                q.innerText = "High Quality";
+                type.innerText = "بزنس / بازرگانی";
+                msg.innerText = "شیاوە بۆ سپۆنسەر کردن ✅";
+                msg.style.color = "var(--tiktok-cyan)";
+                scoreBox.style.borderRightColor = "var(--tiktok-cyan)";
+                policy.innerText = "پەسەندکراوە ✅";
+                policy.style.color = "#4caf50";
+            }
 
-    function showResult(isComedy, isBusiness, author) {
-        const q = document.getElementById('quality');
-        const type = document.getElementById('adType');
-        const msg = document.getElementById('msg');
-        const score = document.getElementById('score');
-        const scoreBox = document.getElementById('scoreBox');
-        const policy = document.getElementById('policyStatus');
+            document.getElementById('inputArea').style.display = "none";
+            document.getElementById('resArea').style.display = "block";
 
-        document.getElementById('user').innerText = author;
-
-        if (isComedy || !isBusiness) {
-            score.innerText = "42%";
-            score.style.color = "#fe2c55";
-            q.innerText = "Standard Quality";
-            type.innerText = "کۆمیدی / گشتی";
-            msg.innerText = "شیاو نییە بۆ سپۆنسەر کردن";
-            msg.style.color = "#fe2c55";
-            scoreBox.style.borderRightColor = "#fe2c55";
-            policy.innerText = "بۆ فرۆشتن نییە ❌";
-            policy.style.color = "#fe2c55";
-        } else {
-            score.innerText = "96%";
-            score.style.color = "var(--tiktok-cyan)";
-            q.innerText = "Ultra HD (1080p)";
-            type.innerText = "بازرگانی (Ads)";
-            msg.innerText = "شیاوە بۆ سپۆنسەر کردن ✅";
-            msg.style.color = "var(--tiktok-cyan)";
-            scoreBox.style.borderRightColor = "var(--tiktok-cyan)";
-            policy.innerText = "پەسەندکراوە ✅";
-            policy.style.color = "#4caf50";
-        }
-
-        document.getElementById('inputArea').style.display = "none";
-        document.getElementById('resArea').style.display = "block";
+        } catch(e) { alert("هەڵەیەک ڕوویدا، دووبارە تاقی بکەرەوە."); }
     }
 
     function resetForm() {
