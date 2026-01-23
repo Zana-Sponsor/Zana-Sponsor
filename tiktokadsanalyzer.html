@@ -13,7 +13,7 @@
         
         input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.3); color: white; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; outline: none; text-align: left; }
         .btn-main { width: 100%; padding: 15px; border-radius: 10px; background: var(--tiktok-pink); color: white; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.98); opacity: 0.8; }
+        .btn-main:active { transform: scale(0.98); }
 
         .result-section { display: none; margin-top: 30px; animation: fadeIn 0.4s ease-in; }
         .score-box { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; border-right: 4px solid var(--tiktok-cyan); margin-bottom: 20px; }
@@ -24,11 +24,14 @@
         .data-card small { color: #888; font-size: 10px; display: block; margin-bottom: 2px; }
         .data-card span { font-size: 13px; font-weight: bold; }
 
+        /* بەشی تێبینی نوێ */
+        .disclaimer { margin-top: 20px; padding: 15px; background: rgba(254, 44, 85, 0.1); border-radius: 10px; border: 1px dashed var(--tiktok-pink); font-size: 12px; color: #ff99ab; line-height: 1.6; text-align: justify; }
+
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
 
         footer { margin-top: 30px; padding-bottom: 25px; text-align: center; }
-        .wa-link { color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.3s; display: inline-block; }
+        .wa-link { color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.3s; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -55,6 +58,11 @@
             <div class="data-card"><small>جۆری ناوەڕۆک</small><span id="adType">-</span></div>
             <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="policyStatus">پەسەندکراوە ✅</span></div>
         </div>
+
+        <div class="disclaimer">
+            <strong>تێبینی:</strong> تکایە ئاگاداربە ئەم پشکنینە 100% پێوەر نییە بۆ بڕیار دان لەسەر پۆستەکەت کە ئایا شیاوە بۆ سپۆنسەر کردن یاخود نا. ئەمە تەنها شیکردنەوەیەکی سەرەتاییە لەسەر بنەمای کوالێتی و ناوەڕۆکی پۆستەکە.
+        </div>
+
         <div class="action-btns">
             <button class="btn-secondary" onclick="resetForm()">پشکنینی نوێ</button>
             <button class="btn-secondary" onclick="window.print()">ڕاپۆرت</button>
@@ -79,26 +87,21 @@
         btn.disabled = true;
 
         try {
-            // هەوڵدان بۆ گرتنی زانیارییەکان
             const response = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(urlInput)}`);
             const data = await response.json();
             
             const caption = (data.title || "").toLowerCase();
             const author = data.author_name || "بەکارهێنەری تیک تۆک";
 
-            // لیستی وشەکان
             const funWords = ["کۆمیدی", "پێکەنین", "funny", "comedy", "joke", "پۆستی پێکەنیناوی", "ئەکتەر"];
-            const bizWords = ["نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "کاڵا", "پەیوەندی", "discounts", "داواکردن"];
+            const bizWords = ["نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "کاڵا", "پەیوەندی", "discounts", "داواکردن", "کڕین"];
 
             const isComedy = funWords.some(w => caption.includes(w));
             const isBusiness = bizWords.some(w => caption.includes(w));
 
-            // نیشاندانی ئەنجام
             showResult(isComedy, isBusiness, author);
 
         } catch (error) {
-            // ئەگەر فێچەکە کاری نەکرد (بۆ ئەوەی بەرنامەکە نەوەستێت)
-            console.log("Error fetching, using fallback logic");
             showResult(false, false, "بەکارهێنەر");
         }
     }
@@ -113,7 +116,6 @@
 
         document.getElementById('user').innerText = author;
 
-        // مەرجی شیاوبوون (ئەگەر کۆمیدی بوو یان وشەی بزنسی تێدا نەبوو)
         if (isComedy || !isBusiness) {
             score.innerText = "42%";
             score.style.color = "#fe2c55";
@@ -141,7 +143,7 @@
     }
 
     function resetForm() {
-        location.reload(); // بۆ ئەوەی هەموو شتێک پاک بێتەوە
+        location.reload();
     }
 </script>
 </body>
