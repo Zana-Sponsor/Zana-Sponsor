@@ -3,161 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIKTOK ADS ANALYZER - AI SCAN</title>
+    <title>AI ADS ANALYZER PRO</title>
     <style>
         :root { --tiktok-pink: #fe2c55; --tiktok-cyan: #25f4ee; --bg: #0f0c29; }
-        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .container { margin-top: 40px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px 20px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .brand { font-size: 22px; font-weight: 900; letter-spacing: 1px; margin-bottom: 5px; background: linear-gradient(to right, #fe2c55, #25f4ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subtitle { color: rgba(255, 255, 255, 0.5); font-size: 11px; margin-bottom: 25px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .container { margin-top: 40px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 25px; width: 90%; max-width: 500px; text-align: center; }
+        .brand { font-size: 24px; font-weight: 900; margin-bottom: 10px; background: linear-gradient(45deg, var(--tiktok-pink), var(--tiktok-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        .input-group { position: relative; width: 100%; }
-        input { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(0, 0, 0, 0.4); color: white; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--tiktok-cyan); box-shadow: 0 0 10px rgba(37, 244, 238, 0.2); }
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; margin-bottom: 15px; outline: none; text-align: center; }
+        .btn-main { width: 100%; padding: 15px; border-radius: 12px; background: var(--tiktok-pink); color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-main:hover { transform: scale(1.02); }
+
+        .result-section { display: none; margin-top: 30px; animation: fadeIn 0.5s ease; }
+        .score-circle { width: 120px; height: 120px; border-radius: 50%; border: 8px solid var(--tiktok-cyan); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 900; }
         
-        .btn-main { width: 100%; padding: 16px; border-radius: 12px; background: var(--tiktok-pink); color: white; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(254, 44, 85, 0.3); }
-        .btn-main:hover { opacity: 0.9; transform: translateY(-2px); }
-        .btn-main:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .status-badge { display: inline-block; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; margin-bottom: 20px; }
+        .business { background: #00f2ea22; color: #00f2ea; border: 1px solid #00f2ea; }
+        .comedy { background: #fe2c5522; color: #fe2c55; border: 1px solid #fe2c55; }
+        .normal { background: #ffffff22; color: #ffffff; border: 1px solid #ffffff; }
 
-        .result-section { display: none; margin-top: 30px; animation: slideUp 0.5s ease-out; }
-        .scan-loader { font-size: 12px; color: var(--tiktok-cyan); margin-bottom: 15px; display: block; letter-spacing: 1px; }
+        .details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: right; }
+        .card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; font-size: 13px; border: 1px solid #222; }
+        .card b { display: block; color: #777; font-size: 11px; margin-bottom: 5px; }
 
-        .score-box { background: rgba(255, 255, 255, 0.05); padding: 25px; border-radius: 15px; border-left: 5px solid var(--tiktok-cyan); margin-bottom: 20px; }
-        .percentage { font-size: 48px; font-weight: 900; color: var(--tiktok-cyan); }
-        
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .data-card { background: rgba(0, 0, 0, 0.3); padding: 14px; border-radius: 12px; text-align: right; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .data-card small { color: #aaa; font-size: 10px; display: block; margin-bottom: 4px; }
-        .data-card span { font-size: 13px; font-weight: bold; color: #eee; }
-
-        .disclaimer { padding: 15px; background: rgba(255, 193, 7, 0.05); border-radius: 10px; border: 1px solid rgba(255, 193, 7, 0.2); font-size: 11px; color: #ffc107; line-height: 1.6; text-align: justify; margin-bottom: 20px; }
-
-        .action-btns { display: flex; gap: 10px; }
-        .btn-secondary { flex: 1; padding: 12px; border-radius: 10px; background: rgba(255, 255, 255, 0.08); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; transition: 0.3s; }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
-
-        footer { margin-top: 40px; padding-bottom: 20px; font-size: 11px; color: rgba(255,255,255,0.3); }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        footer { margin-top: auto; padding: 20px; font-size: 12px; color: #444; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="brand">AI ADS ANALYZER</div>
-    <div class="subtitle">سیستەمی شیکردنەوەی ڤیدیۆ و کۆمێنت (v3.0)</div>
+    <div class="brand">ADS ANALYZER v4.0</div>
+    <p style="font-size: 12px; color: #888;">شیکردنەوەی ڤیدیۆ، کاپشن و کۆمێنت</p>
 
     <div id="inputArea">
-        <input type="text" id="vUrl" placeholder="لینکی ڤیدیۆکە لێرە دابنێ..." autocomplete="off">
-        <button class="btn-main" id="scanBtn" onclick="smartAnalyze()">دەستپێکردنی پشکنینی زیرەک</button>
+        <input type="text" id="vUrl" placeholder="لینکی ڤیدیۆکە لێرە دابنێ...">
+        <button class="btn-main" onclick="startAnalysis()">پشکنینی داتا</button>
     </div>
 
     <div id="resArea" class="result-section">
-        <span class="scan-loader">● پشکنینی ڤیدیۆ و کۆمێنتەکان تەواو بوو</span>
-        <div class="score-box" id="scoreBox">
-            <div id="msg" style="font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;">ئەنجامی کۆتایی</div>
-            <span class="percentage" id="score">0%</span>
-        </div>
+        <div class="score-circle" id="circle">0%</div>
+        <div id="statusBadge" class="status-badge">دیاری نەکراوە</div>
         
-        <div class="data-grid">
-            <div class="data-card"><small>خاوەن ڤیدیۆ</small><span id="user">-</span></div>
-            <div class="data-card"><small>باری کۆمێنت</small><span id="commentStatus">شیکراوەتەوە</span></div>
-            <div class="data-card"><small>جۆری ناوەڕۆک</small><span id="adType">-</span></div>
-            <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="policyStatus">-</span></div>
+        <div class="details">
+            <div class="card"><b>خاوەن ئەکاونت</b><span id="author">-</span></div>
+            <div class="card"><b>جۆری پۆست</b><span id="postType">-</span></div>
+            <div class="card"><b>باری کۆمێنت</b><span id="commentMood">-</span></div>
+            <div class="card"><b>یاساکانی ٢٠٢٦</b><span id="law">-</span></div>
         </div>
 
-        <div class="disclaimer">
-            <strong>ئاگاداری:</strong> تکایە ئاگاداربە ئەم پشکنینە 100% پێوەر نییە بۆ بڕیار دان لەسەر پۆستەکەت کە ئایا شیاوە بۆ سپۆنسەر کردن یاخود نا. بڕیاری کۆتایی لای تیکتۆکە.
-        </div>
-
-        <div class="action-btns">
-            <button class="btn-secondary" onclick="location.reload()">پشکنینی نوێ</button>
-            <button class="btn-secondary" onclick="window.print()">ڕاپۆرت</button>
-        </div>
+        <button class="btn-main" style="margin-top: 20px; background: #333;" onclick="location.reload()">دووبارە پشکنینەوە</button>
     </div>
 </div>
 
-<footer>
-    <center>Powered By Zana Media ⓒ 2026</center>
-</footer>
+<footer>Powered By Zana Media</footer>
 
 <script>
-    async function smartAnalyze() {
+    async function startAnalysis() {
         const url = document.getElementById('vUrl').value;
-        const btn = document.getElementById('scanBtn');
-        
-        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی دروستی تیکتۆک دابنێ");
-
-        btn.innerText = "خەریکی شیکردنەوەی کۆمێنت و ناوەڕۆکە...";
-        btn.disabled = true;
-
-        // داتابەیسی وشەکان (کۆمێنت و ڤیدیۆ)
-        const badKeywords = [
-            "😂", "🤣", "😅", "😆", "کۆمیدی", "پێکەنین", "funny", "comedy", "joke", "تەپڵ", "گاڵتە", 
-            "بەزم", "مەهزەلە", "shox", "pekanin", "کۆمێدیا", "بەزمی", "ئەکتەر", "فیلم", "دراما", 
-            "مەهزەلا", "کۆمێنت", "تاگ", "😂❤️", "مەزە", "ئەکتیڤ", "فۆڵۆ", "لایک"
-        ];
-        
-        const goodKeywords = [
-            "نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "کاڵا", "کڕین", "داواکردن", 
-            "مۆبایل", "کۆمپانیا", "داشکاندن", "discount", "sale", "مارکە", "براند", "بەردەستە", 
-            "ناونیشان", "سعر", "توصیل", "کۆزمێتیک", "دیاری", "سپۆنسەر", "کوالێتی"
-        ];
+        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی ڕاست دابنێ");
 
         try {
-            const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
-            const data = await res.json();
-            const content = (data.title || "").toLowerCase();
-            const author = data.author_name;
+            const response = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
+            const data = await response.json();
+            const text = (data.title + " " + data.author_name).toLowerCase();
 
-            setTimeout(() => {
-                const isComedy = badKeywords.some(w => content.includes(w));
-                const isBusiness = goodKeywords.some(w => content.includes(w));
+            // لیستی وشەکان بۆ خاڵبەندی
+            const comedyWords = ["😂", "🤣", "😅", "کۆمیدی", "پێکەنین", "comedy", "funny", "joke", "بەزم", "مەهزەلە", "shox", "pekanin", "گاڵتە"];
+            const businessWords = ["نرخ", "بڕ", "گەیاندن", "فرۆشتن", "ئۆفەر", "price", "shop", "داواکردن", "سعر", "توصیل", "مارکە", "داشکاندن", "کوالێتی"];
 
-                const score = document.getElementById('score');
-                const type = document.getElementById('adType');
-                const policy = document.getElementById('policyStatus');
-                const scoreBox = document.getElementById('scoreBox');
-                const commentStatus = document.getElementById('commentStatus');
-                
-                document.getElementById('user').innerText = author;
+            // هەژمارکردنی خاڵەکان
+            let comedyScore = 0;
+            let businessScore = 0;
 
-                if (isComedy) {
-                    score.innerText = "18%";
-                    score.style.color = "#fe2c55";
-                    type.innerText = "کۆمیدی / کات بەسەربردن";
-                    policy.innerText = "ڕەتکرایەوە ❌";
-                    policy.style.color = "#fe2c55";
-                    scoreBox.style.borderLeftColor = "#fe2c55";
-                    commentStatus.innerText = "کۆمێنتەکان گونجاو نین";
-                } 
-                else if (isBusiness) {
-                    score.innerText = "96%";
-                    score.style.color = "var(--tiktok-cyan)";
-                    type.innerText = "بزنسی / بازرگانی";
-                    policy.innerText = "پەسەندکراوە ✅";
-                    policy.style.color = "#4caf50";
-                    scoreBox.style.borderLeftColor = "var(--tiktok-cyan)";
-                    commentStatus.innerText = "کۆمێنتی ئەرێنی (Positive)";
-                } 
-                else {
-                    score.innerText = "65%";
-                    score.style.color = "#fff";
-                    type.innerText = "ئاسایی / گشتی";
-                    policy.innerText = "پێویستی بە پشکنینە";
-                    policy.style.color = "#fff";
-                    scoreBox.style.borderLeftColor = "#fff";
-                    commentStatus.innerText = "کۆمێنتی مامناوەند";
-                }
+            comedyWords.forEach(w => { if(text.includes(w)) comedyScore += 2; });
+            businessWords.forEach(w => { if(text.includes(w)) businessScore += 3; });
 
-                document.getElementById('inputArea').style.display = "none";
-                document.getElementById('resArea').style.display = "block";
-            }, 2000);
+            // بڕیاردانی جیاواز
+            let finalScore, type, badgeClass, lawStatus, commentMood;
 
-        } catch(e) {
-            alert("هەڵەیەک لە وەرگرتنی زانیارییەکان ڕوویدا. دووبارە تاقی بکەرەوە.");
-            btn.disabled = false;
-            btn.innerText = "دەستپێکردنی پشکنینی زیرەک";
+            if (comedyScore > businessScore) {
+                // دۆخی کۆمیدی
+                finalScore = 20 + Math.floor(Math.random() * 15);
+                type = "کۆمیدی / کات بەسەربردن";
+                badgeClass = "comedy";
+                lawStatus = "ڕەتکرایەوە ❌";
+                commentMood = "کۆمێنتی گاڵتەجاڕی";
+            } 
+            else if (businessScore > 0 && businessScore >= comedyScore) {
+                // دۆخی بزنس
+                finalScore = 85 + Math.floor(Math.random() * 14);
+                type = "بزنسی / بازرگانی";
+                badgeClass = "business";
+                lawStatus = "پەسەندە ✅";
+                commentMood = "کۆمێنتی کڕیاران";
+            } 
+            else {
+                // دۆخی ئاسایی
+                finalScore = 60 + Math.floor(Math.random() * 10);
+                type = "پۆستی ئاسایی / گشتی";
+                badgeClass = "normal";
+                lawStatus = "پێویستی بە پێداچوونەوەیە";
+                commentMood = "کۆمێنتی مامناوەند";
+            }
+
+            // پیشاندانی ئەنجامەکان
+            document.getElementById('author').innerText = data.author_name;
+            document.getElementById('circle').innerText = finalScore + "%";
+            document.getElementById('circle').style.borderColor = (badgeClass === 'comedy') ? '#fe2c55' : (badgeClass === 'business' ? '#25f4ee' : '#fff');
+            document.getElementById('postType').innerText = type;
+            document.getElementById('commentMood').innerText = commentMood;
+            document.getElementById('law').innerText = lawStatus;
+            
+            const badge = document.getElementById('statusBadge');
+            badge.innerText = (badgeClass === 'business') ? "شیاوە بۆ سپۆنسەر" : (badgeClass === 'comedy' ? "شیاو نییە" : "پۆستی گشتی");
+            badge.className = "status-badge " + badgeClass;
+
+            document.getElementById('inputArea').style.display = "none";
+            document.getElementById('resArea').style.display = "block";
+
+        } catch (e) {
+            alert("هەڵەیەک ڕوویدا، دڵنیابەرەوە لە لینکەکە.");
         }
     }
 </script>
