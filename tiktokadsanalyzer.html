@@ -26,7 +26,6 @@
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
 
-        /* بەشی سیاسەتەکان بە لۆگۆی تیک تۆکەوە */
         .policy-section { width: 90%; max-width: 500px; margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.8; text-align: right; cursor: pointer; transition: 0.3s; text-decoration: none; display: block; border: 1px solid rgba(255,255,255,0.05); }
         .policy-section:hover { background: rgba(255,255,255,0.07); border-color: var(--tiktok-cyan); }
         .policy-section h4 { color: var(--tiktok-cyan); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 15px; }
@@ -52,7 +51,7 @@
     </div>
 
     <div id="resArea" class="result-section">
-        <div class="score-box">
+        <div class="score-box" id="scoreBox">
             <span class="percentage" id="score">0%</span>
             <div id="msg" style="font-size: 14px; font-weight: bold; margin-top: 5px;"></div>
         </div>
@@ -60,7 +59,7 @@
             <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
             <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">-</span></div>
             <div class="data-card"><small>جۆری شیاوبوون</small><span id="adType" style="color: var(--tiktok-cyan);">-</span></div>
-            <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span style="color: #4caf50;">پەسەندکراوە ✅</span></div>
+            <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="policyStatus" style="color: #4caf50;">پەسەندکراوە ✅</span></div>
         </div>
         <div class="action-btns">
             <button class="btn-secondary" onclick="resetForm()">پشکنینی نوێ</button>
@@ -86,48 +85,3 @@
 </footer>
 
 <script>
-    async function analyze() {
-        const url = document.getElementById('vUrl').value;
-        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
-
-        try {
-            const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
-            const data = await res.json();
-            document.getElementById('user').innerText = data.author_name;
-            
-            let hash = 0;
-            let str = data.author_name + (data.title || "");
-            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            
-            let score = 78 + (Math.abs(hash) % 21);
-            document.getElementById('score').innerText = score + "%";
-            
-            const q = document.getElementById('quality');
-            const type = document.getElementById('adType');
-            const msg = document.getElementById('msg');
-
-            if (score >= 90) {
-                q.innerText = "Ultra HD (1080p)";
-                q.style.color = "#4caf50";
-                type.innerText = "ڕیکلامی بسنز (Business)";
-                msg.innerText = "شیاوە بۆ ڕیکلامی بسنز";
-            } else {
-                q.innerText = "High Quality (720p)";
-                q.style.color = "#fff";
-                type.innerText = "ڕیکلامی ئاسایی (Normal)";
-                msg.innerText = "شیاوە بۆ ڕیکلامی ئاسایی";
-            }
-
-            document.getElementById('inputArea').style.display = "none";
-            document.getElementById('resArea').style.display = "block";
-        } catch(e) { alert("کێشەیەک هەیە، دڵنیابەرەوە لینکەکە ڕاستە."); }
-    }
-
-    function resetForm() {
-        document.getElementById('vUrl').value = "";
-        document.getElementById('inputArea').style.display = "block";
-        document.getElementById('resArea').style.display = "none";
-    }
-</script>
-</body>
-</html>
