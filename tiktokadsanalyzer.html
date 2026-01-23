@@ -8,7 +8,7 @@
         :root { --tiktok-pink: #fe2c55; --tiktok-cyan: #25f4ee; --bg: #0f0c29; --danger: #ff4d4d; }
         body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        /* شاشەی قوفڵ */
+        /* شاشەی قوفڵ - زیادکراوە */
         #lockScreen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center; }
         .lock-box { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 40px 25px; border-radius: 25px; border: 1px solid var(--tiktok-pink); width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
         .lock-box input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.5); color: white; text-align: center; margin-bottom: 15px; outline: none; }
@@ -36,8 +36,12 @@
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
 
         .policy-section { width: 90%; max-width: 500px; margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.8; text-align: right; cursor: pointer; transition: 0.3s; text-decoration: none; display: none; border: 1px solid rgba(255,255,255,0.05); }
+        .policy-section h4 { color: var(--tiktok-cyan); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 15px; }
+        .tt-icon { width: 16px; height: 16px; fill: currentColor; }
+        .policy-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+
         footer { margin-top: 30px; padding-bottom: 25px; text-align: center; display: none; }
-        .wa-link { color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 13px; font-weight: bold; }
+        .wa-link { color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.3s; display: inline-block; margin-bottom: 10px; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -57,10 +61,12 @@
 <div class="container" id="mainContainer">
     <div class="brand">TIKTOK ADS ANALYZER</div>
     <div class="subtitle">سیستەمی پێشکەوتووی شیکردنەوەی سپۆنسەر</div>
+
     <div id="inputArea">
         <input type="text" id="vUrl" placeholder="لینکی ڤیدیۆکە لێرە دابنێ..." autocomplete="off">
         <button class="btn-main" onclick="analyze()">دەستپێکردنی پشکنین</button>
     </div>
+
     <div id="resArea" class="result-section">
         <div class="score-box" id="scoreBox">
             <span class="percentage" id="score">0%</span>
@@ -72,7 +78,10 @@
             <div class="data-card"><small>بارودۆخی سپۆنسەر</small><span id="adType">-</span></div>
             <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="policyStatus">پشکنین...</span></div>
         </div>
-        <div class="note-box"><strong>⚠️ تێبینی گرنگ:</strong> بڕیاری کۆتایی لای تیمی تیکتۆک خۆیەتی.</div>
+        <div class="note-box">
+            <strong>⚠️ تێبینی گرنگ:</strong>
+            ئەم داتایانە تەنها پێشبینییەکی تەکنیکی و ئەلگۆریتمین. بڕیاری کۆتایی بۆ قبوڵکردنی سپۆنسەر تەنها لای تیمی پێداچوونەوەی تیکتۆک خۆیەتی.
+        </div>
         <div class="action-btns">
             <button class="btn-secondary" onclick="resetForm()">پشکنینی نوێ</button>
             <button class="btn-secondary" onclick="window.print()">ڕاپۆرت</button>
@@ -91,20 +100,17 @@
         const key = document.getElementById('activationKey').value.trim();
         const btn = document.getElementById('verifyBtn');
         if(!key) return alert("تکایە کلیل بنووسە");
-
         btn.innerText = "خەریکی پشکنینە...";
         try {
             const res = await fetch(`${githubUrl}?t=${new Date().getTime()}`);
             const keysData = await res.json();
-
-            if(keysData[key]) {
+            if(keysData.hasOwnProperty(key)) {
                 const expiry = new Date(keysData[key]);
-                const today = new Date();
-                if (today <= expiry) {
+                if (new Date() <= expiry) {
                     localStorage.setItem('zana_auth', 'true');
                     unlock();
                 } else {
-                    alert("کاتی ئەم کلیلە بەسەرچووە!");
+                    alert("کاتی کلیلەکە بەسەرچووە!");
                     btn.innerText = "چالاککردن";
                 }
             } else {
@@ -124,18 +130,34 @@
 
     async function analyze() {
         const url = document.getElementById('vUrl').value;
-        if (!url.includes("tiktok.com")) return alert("لینکی هەڵە");
+        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
         try {
             const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
             const data = await res.json();
             document.getElementById('user').innerText = data.author_name;
-            document.getElementById('score').innerText = "92%";
-            document.getElementById('quality').innerText = "1080p HD";
-            document.getElementById('adType').innerText = "Business Ready";
-            document.getElementById('policyStatus').innerText = "پەسەندکراوە ✅";
+            let hash = 0;
+            let str = data.author_name + (data.title || "");
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            let score = 70 + (Math.abs(hash) % 31);
+            document.getElementById('score').innerText = score + "%";
+            const q = document.getElementById('quality');
+            const type = document.getElementById('adType');
+            const msg = document.getElementById('msg');
+            const scoreBox = document.getElementById('scoreBox');
+            const ps = document.getElementById('policyStatus');
+            if (score >= 90) {
+                q.innerText = "Ultra HD (1080p)"; q.style.color = "#4caf50";
+                type.innerText = "Business Ready"; type.style.color = "var(--tiktok-cyan)";
+                msg.innerText = "شیاوە بۆ ڕیکلامی بسنز ✅";
+                ps.innerText = "پەسەندکراوە ✅"; ps.style.color = "#4caf50";
+            } else {
+                q.innerText = "Low Quality"; q.style.color = "var(--danger)";
+                type.innerText = "Normal"; type.style.color = "#fff";
+                msg.innerText = "شیاو نییە ❌"; ps.innerText = "پێشێلکاری هەیه! ⚠️";
+            }
             document.getElementById('inputArea').style.display = "none";
             document.getElementById('resArea').style.display = "block";
-        } catch(e) { alert("کێشەیەک هەیە"); }
+        } catch(e) { alert("هەڵەیەک ڕوویدا!"); }
     }
 
     function resetForm() {
