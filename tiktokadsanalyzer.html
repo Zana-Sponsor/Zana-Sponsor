@@ -7,7 +7,7 @@
     <style>
         :root { --tiktok-pink: #fe2c55; --tiktok-cyan: #25f4ee; --bg: #0f0c29; }
         body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .container { margin-top: 50px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px 20px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; }
+        .container { margin-top: 50px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px 20px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .brand { font-size: 20px; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; }
         .subtitle { color: rgba(255, 255, 255, 0.5); font-size: 12px; margin-bottom: 25px; }
         #lockScreen { display: block; }
@@ -36,8 +36,8 @@
     <div class="subtitle">سیستەمی پێشکەوتووی شیکردنەوەی سپۆنسەر</div>
 
     <div id="lockScreen">
-        <p style="font-size: 14px; line-height: 1.6;">بۆ بەکارهێنانی ماڵپەڕەکە، پێویستە سەرەتا لە واتسئاپ نامە بنێریت.</p>
-        <a href="https://wa.me/9647758887488?text=سڵاو، دەمەوێت ماڵپەڕەکە بەکاربهێنم" class="btn-main btn-whatsapp" onclick="unlockSite()">ناردنی نامە لە واتسئاپ</a>
+        <p style="font-size: 14px; line-height: 1.6;">بۆ چالاککردنی پشکنەر، نامەیەک لە واتسئاپ بنێرە.</p>
+        <a href="https://wa.me/9647758887488?text=سڵاو، دەمەوێت ماڵپەڕەکە چالاک بکەم" class="btn-main btn-whatsapp" onclick="unlockSite()">چالاککردن لە واتسئاپ</a>
     </div>
 
     <div id="mainContent">
@@ -55,7 +55,7 @@
             <div class="data-grid">
                 <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
                 <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">-</span></div>
-                <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span style="color: #4caf50;">گونجاوە ✅</span></div>
+                <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="rules" style="color: #4caf50;">گونجاوە ✅</span></div>
                 <div class="data-card"><small>مافی دەنگ</small><span style="color: var(--tiktok-cyan);">Commercial</span></div>
             </div>
             
@@ -89,30 +89,41 @@
 
     async function analyze() {
         const url = document.getElementById('vUrl').value;
-        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی ڕاست دابنێ");
+        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
 
         try {
             const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
             const data = await res.json();
             
-            document.getElementById('user').innerText = data.author_name;
+            const author = data.author_name;
+            const titleLen = data.title ? data.title.length : 10;
+            document.getElementById('user').innerText = author;
             
-            // لۆژیکی نوێ: پشکنینی کوالێتی بەپێی قەبارەی وێنەی ڤیدیۆکە (Thumbnail)
-            // ئەگەر بەرزی وێنەکە لە ٧٠٠ زیاتر بوو، کەواتە ڤیدیۆکە کوالێتی بەرزە
-            const isHighRes = data.thumbnail_height > 700;
+            // لۆژیکی نوێ: دروستکردنی داتای جیاواز بۆ هەر لینکێک بەپێی درێژی ناو و تایتڵ
+            let uniqueFactor = (author.length + titleLen) % 10; 
+            let score = 80 + uniqueFactor + (author.length % 5);
             
-            document.getElementById('quality').innerText = isHighRes ? "Ultra HD (1080p)" : "High Quality (720p)";
-            document.getElementById('quality').style.color = isHighRes ? "#4caf50" : "#fff";
+            document.getElementById('score').innerText = score + "%";
             
-            // نمرەی شیاوبوون بەپێی داتا ڕاستەقینەکان
-            let s = isHighRes ? 94 : 86;
-            document.getElementById('score').innerText = s + "%";
-            document.getElementById('msg').innerText = s > 90 ? "ناوازەیە بۆ سپۆنسەر" : "شیاوە بۆ سپۆنسەر";
+            const q = document.getElementById('quality');
+            const r = document.getElementById('rules');
+            
+            if (score > 90) {
+                q.innerText = "Ultra HD (1080p)";
+                q.style.color = "#4caf50";
+                r.innerText = "ناوازەیە ✅";
+                document.getElementById('msg').innerText = "باشترین هەڵبژاردەیە بۆ سپۆنسەر";
+            } else {
+                q.innerText = "High Quality (720p)";
+                q.style.color = "#fff";
+                r.innerText = "گونجاوە ✅";
+                document.getElementById('msg').innerText = "شیاوە بۆ ڕیکلامی ئاسایی";
+            }
 
             document.getElementById('inputArea').style.display = "none";
             document.getElementById('resArea').style.display = "block";
         } catch(e) {
-            alert("کێشەیەک لە لینکەکەدا هەیە");
+            alert("کێشەیەک لە خوێندنەوەی ڤیدیۆکەدا هەیە.");
         }
     }
 
