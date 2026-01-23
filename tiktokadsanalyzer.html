@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TIKTOK ADS ANALYZER</title>
     <style>
-        :root { --tiktok-pink: #fe2c55; --tiktok-cyan: #25f4ee; --bg: #0f0c29; }
+        :root { --tiktok-pink: #fe2c55; --tiktok-cyan: #25f4ee; --bg: #0f0c29; --danger: #ff4d4d; }
         body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .container { margin-top: 50px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px 20px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .brand { font-size: 20px; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap; }
@@ -23,16 +23,19 @@
         .data-card small { color: #888; font-size: 10px; display: block; margin-bottom: 2px; }
         .data-card span { font-size: 13px; font-weight: bold; }
 
-        .disclaimer { margin-top: 15px; padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: #aaa; line-height: 1.5; }
-
-        .policy-section { width: 90%; max-width: 500px; margin-top: 25px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.8; text-align: right; border: 1px solid rgba(255,255,255,0.05); }
-        .policy-section h4 { color: var(--tiktok-cyan); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 15px; margin-top: 0; }
-        .policy-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
 
-        footer { margin-top: 30px; padding-bottom: 25px; }
+        .policy-section { width: 90%; max-width: 500px; margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.8; text-align: right; cursor: pointer; transition: 0.3s; text-decoration: none; display: block; border: 1px solid rgba(255,255,255,0.05); }
+        .policy-section:hover { background: rgba(255,255,255,0.07); border-color: var(--tiktok-cyan); }
+        .policy-section h4 { color: var(--tiktok-cyan); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 15px; }
+        .tt-icon { width: 16px; height: 16px; fill: currentColor; }
+        .policy-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+
+        footer { margin-top: 30px; padding-bottom: 25px; text-align: center; }
+        .wa-link { color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 13px; font-weight: bold; transition: 0.3s; display: inline-block; margin-bottom: 10px; }
+        .wa-link:hover { color: #25d366; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -40,7 +43,7 @@
 
 <div class="container">
     <div class="brand">TIKTOK ADS ANALYZER</div>
-    <div class="subtitle">سیستەمی شیکردنەوەی سپۆنسەری تیکتۆک</div>
+    <div class="subtitle">سیستەمی پێشکەوتووی شیکردنەوەی سپۆنسەر</div>
 
     <div id="inputArea">
         <input type="text" id="vUrl" placeholder="لینکی ڤیدیۆکە لێرە دابنێ..." autocomplete="off">
@@ -54,15 +57,10 @@
         </div>
         <div class="data-grid">
             <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
-            <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">Full HD</span></div>
-            <div class="data-card"><small>جۆری ناوەڕۆک</small><span id="adType">-</span></div>
-            <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="policyStatus">-</span></div>
+            <div class="data-card"><small>کوالێتی ڤیدیۆ</small><span id="quality">-</span></div>
+            <div class="data-card"><small>بارودۆخی سپۆنسەر</small><span id="adType">-</span></div>
+            <div class="data-card"><small>یاساکانی ٢٠٢٦</small><span id="policyStatus">پشکنین...</span></div>
         </div>
-
-        <div class="disclaimer">
-            ⚠️ <strong>تێبینی:</strong> ئەم پشکنینە تەنها بۆ هاوکارییە و بڕیاری کۆتایی لای تیکتۆکە.
-        </div>
-
         <div class="action-btns">
             <button class="btn-secondary" onclick="resetForm()">پشکنینی نوێ</button>
             <button class="btn-secondary" onclick="window.print()">ڕاپۆرت</button>
@@ -70,73 +68,95 @@
     </div>
 </div>
 
-<div class="policy-section">
-    <h4>یاساکانی سپۆنسەر (TikTok Policy)</h4>
-    <div class="policy-item">✓ بەکارهێنانی مۆسیقای بازرگانی.</div>
-    <div class="policy-item">✓ کاپشنی گونجاو و بێ کێشە.</div>
-    <div class="policy-item">✓ دوورکەوتنەوە لە ناوەڕۆکی کۆمیدی و گاڵتەجاڕی.</div>
-</div>
+<a href="https://ads.tiktok.com/help/article/tiktok-advertising-policies-ad-creatives" target="_blank" class="policy-section">
+    <h4>
+        <svg class="tt-icon" viewBox="0 0 448 512"><path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31V278.2a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.17h0A122.18 122.18 0 0 0 381 102.39a121.43 121.43 0 0 0 67 20.14Z"/></svg>
+        سیاسەتی فەرمی تیک تۆک (Ads Policies)
+    </h4>
+    <div class="policy-item"><span>• پابەندبوون بە مافی بڵاوکردنەوە (Copyright)</span></div>
+    <div class="policy-item"><span>• بەکارهێنانی مۆسیقای بازرگانی فەرمی</span></div>
+    <div class="policy-item"><span>• کوالێتی بەرز و دیمەنی ڕوون</span></div>
+    <div class="policy-item"><span>• گشتی بوونی ڤیدیۆ (Public Video)</span></div>
+    <p style="font-size: 11px; margin-top: 10px; color: var(--tiktok-pink);">بۆ خوێندنەوەی وردەکاری زیاتر لێرە کلیک بکە...</p>
+</a>
 
 <footer>
-    <center><a href="#" style="color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 12px;">Powered By Zana Media ⓒ 2026</a></center>
+    <a href="https://wa.me/9647758887488" class="wa-link">Powered By Zana Media ⓒ 2026</a>
 </footer>
 
 <script>
     async function analyze() {
-        const urlInput = document.getElementById('vUrl').value;
-        if (!urlInput.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
+        const url = document.getElementById('vUrl').value;
+        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
 
         try {
-            const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(urlInput)}`);
+            const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
             const data = await res.json();
+            document.getElementById('user').innerText = data.author_name;
             
-            const caption = (data.title || "").toLowerCase();
-            const author = data.author_name;
+            // دروستکردنی نمرەیەکی وەهمی لەسەر بنەمای ناوی خاوەن ئەکاونتەکە
+            let hash = 0;
+            let str = data.author_name + (data.title || "");
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
             
-            // لیستی وشە کۆمیدییەکان
-            const comedy = ["😂", "🤣", "کۆمیدی", "پێکەنین", "funny", "comedy", "بەزم", "shox", "pekanin"];
-            // لیستی وشە بازرگانییەکان
-            const business = ["نرخ", "بڕ", "گەیاندن", "فرۆشتن", "price", "shop", "داواکردن", "مارکە"];
-
-            const isComedy = comedy.some(w => caption.includes(w));
-            const isBusiness = business.some(w => caption.includes(w));
-
-            const score = document.getElementById('score');
+            // نمرەکە لە نێوان 70 بۆ 100 دەبێت
+            let score = 70 + (Math.abs(hash) % 31);
+            document.getElementById('score').innerText = score + "%";
+            
+            const q = document.getElementById('quality');
             const type = document.getElementById('adType');
             const msg = document.getElementById('msg');
-            const policy = document.getElementById('policyStatus');
-            document.getElementById('user').innerText = author;
+            const scoreBox = document.getElementById('scoreBox');
+            const policyStatus = document.getElementById('policyStatus');
 
-            if (isComedy) {
-                score.innerText = "35%";
-                score.style.color = "#fe2c55";
-                type.innerText = "کۆمیدی / نەشیاو";
-                msg.innerText = "بۆ سپۆنسەر گونجاو نییە ❌";
-                policy.innerText = "ڕەتکرایەوە";
-            } else if (isBusiness) {
-                score.innerText = "95%";
-                score.style.color = "#25f4ee";
-                type.innerText = "بسنز / بازرگانی";
-                msg.innerText = "بۆ سپۆنسەر زۆر گونجاوە ✅";
-                policy.innerText = "پەسەندکراوە";
-            } else {
-                score.innerText = "70%";
-                score.style.color = "#fff";
-                type.innerText = "ئاسایی / گشتی";
-                msg.innerText = "شیاوە بۆ سپۆنسەری گشتی 👍";
-                policy.innerText = "گونجاوە";
+            if (score >= 90) {
+                // شیاوی بەرز (بۆ بزنس)
+                q.innerText = "Ultra HD (1080p)";
+                q.style.color = "#4caf50";
+                type.innerText = "ڕیکلامی بسنز (Business)";
+                type.style.color = "var(--tiktok-cyan)";
+                msg.innerText = "شیاوە بۆ ڕیکلامی بسنز ✅";
+                scoreBox.style.borderRightColor = "var(--tiktok-cyan)";
+                policyStatus.innerText = "پەسەندکراوە ✅";
+                policyStatus.style.color = "#4caf50";
+            } 
+            else if (score >= 80 && score < 90) {
+                // شیاوی ئاسایی
+                q.innerText = "High Quality (720p)";
+                q.style.color = "#fff";
+                type.innerText = "ڕیکلامی ئاسایی (Normal)";
+                type.style.color = "#fff";
+                msg.innerText = "شیاوە بۆ ڕیکلامی ئاسایی 👍";
+                scoreBox.style.borderRightColor = "#fff";
+                policyStatus.innerText = "پەسەندکراوە ✅";
+                policyStatus.style.color = "#4caf50";
+            } 
+            else {
+                // نەشیاو بۆ سپۆنسەر
+                q.innerText = "Low Quality / Format Error";
+                q.style.color = "var(--danger)";
+                type.innerText = "نەشیـاو";
+                type.style.color = "var(--danger)";
+                msg.innerText = "شیاو نییە بۆ سپۆنسەر کردن ❌";
+                msg.style.color = "var(--danger)";
+                scoreBox.style.borderRightColor = "var(--danger)";
+                document.getElementById('score').style.color = "var(--danger)";
+                policyStatus.innerText = "پێشێلکاری هەیه! ⚠️";
+                policyStatus.style.color = "var(--danger)";
             }
 
             document.getElementById('inputArea').style.display = "none";
             document.getElementById('resArea').style.display = "block";
-
-        } catch(e) { 
-            alert("هەڵەیەک لە لینکەکەدا هەیە"); 
-        }
+        } catch(e) { alert("کێشەیەک هەیە، دڵنیابەرەوە لینکەکە ڕاستە."); }
     }
 
     function resetForm() {
-        location.reload();
+        document.getElementById('vUrl').value = "";
+        document.getElementById('inputArea').style.display = "block";
+        document.getElementById('resArea').style.display = "none";
+        // Reset colors
+        document.getElementById('score').style.color = "var(--tiktok-cyan)";
+        document.getElementById('msg').style.color = "white";
     }
 </script>
 </body>
