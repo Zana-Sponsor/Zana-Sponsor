@@ -25,7 +25,6 @@
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
         footer { margin-top: auto; padding: 25px 0; text-align: center; }
-        .footer-brand { color: rgba(255, 255, 255, 0.3); font-size: 12px; margin-bottom: 5px; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -36,13 +35,13 @@
     <div class="subtitle">سیستەمی پێشکەوتووی شیکردنەوەی سپۆنسەر</div>
 
     <div id="lockScreen">
-        <p style="font-size: 14px; line-height: 1.6;">بۆ چالاککردنی پشکنەر، نامەیەک لە واتسئاپ بنێرە.</p>
-        <a href="https://wa.me/9647758887488?text=سڵاو، دەمەوێت ماڵپەڕەکە چالاک بکەم" class="btn-main btn-whatsapp" onclick="unlockSite()">چالاککردن لە واتسئاپ</a>
+        <p style="font-size: 14px;">بۆ چالاککردنی پشکنەر، نامەیەک لە واتسئاپ بنێرە.</p>
+        <a href="https://wa.me/9647758887488?text=چالاککردن" class="btn-main btn-whatsapp" onclick="unlockSite()">چالاککردن لە واتسئاپ</a>
     </div>
 
     <div id="mainContent">
         <div id="inputArea">
-            <input type="text" id="vUrl" placeholder="لینکی ڤیدیۆکە لێرە دابنێ..." autocomplete="off">
+            <input type="text" id="vUrl" placeholder="لینکی ڤیدیۆکە لێرە دابنێ...">
             <button class="btn-main" onclick="analyze()">دەستپێکردنی پشکنین</button>
         </div>
 
@@ -68,7 +67,7 @@
 </div>
 
 <footer>
-    <div class="footer-brand">Produced By Zana Sponsor ⓒ 2026</div>
+    <div style="color: rgba(255, 255, 255, 0.3); font-size: 12px;">Produced By Zana Sponsor ⓒ 2026</div>
 </footer>
 
 <script>
@@ -89,27 +88,33 @@
 
     async function analyze() {
         const url = document.getElementById('vUrl').value;
-        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
+        if (!url.includes("tiktok.com")) return alert("تکایە لینکێکی ڕاست دابنێ");
 
         try {
             const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
             const data = await res.json();
             
             const author = data.author_name;
-            const titleLen = data.title ? data.title.length : 15;
+            const title = data.title || "No Title";
             document.getElementById('user').innerText = author;
             
-            // لۆژیکی ژیری بۆ دروستکردنی نمرەی جیاواز
-            let factor = (author.length + titleLen) % 15;
-            let score = 82 + factor;
+            // لۆژیکی نوێی ئەژمارکردن بۆ ئەوەی داتای زۆر جیاواز دروست بکات
+            let hash = 0;
+            let combinedStr = author + title;
+            for (let i = 0; i < combinedStr.length; i++) {
+                hash = combinedStr.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            
+            // دروستکردنی نمرە لە نێوان ٧٥ بۆ ٩٨
+            let score = 75 + (Math.abs(hash) % 24); 
             document.getElementById('score').innerText = score + "%";
             
             const q = document.getElementById('quality');
             const type = document.getElementById('adType');
             const msg = document.getElementById('msg');
 
-            // جیاکاری نێوان ڕیکلامی بسنز و ئاسایی
-            if (score >= 92) {
+            // جیاکاری وردتر
+            if (score >= 89) { // ئەگەر لە ٨٩ زیاتر بوو دەبێتە بسنز
                 q.innerText = "Ultra HD (1080p)";
                 q.style.color = "#4caf50";
                 type.innerText = "ڕیکلامی بسنز (Business)";
