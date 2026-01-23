@@ -16,16 +16,19 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      // فەنکشنی نوێ بۆ ناردنی ناوەڕۆکی کلیکەکە
-      window.trackTikTokConversion = function(platformName) {
+      // فەنکشنی سەرەکی بۆ ناردنی زانیارییەکان بە دروستی
+      window.trackTikTokConversion = function(platform, event) {
+        event.preventDefault(); // ڕێگری لە داخستنی لاپەڕەکە تا داتا دەنێردرێت
+        var url = event.currentTarget.href;
+        
         ttq.track('Contact', {
-          "contents": [
-            {
-              "content_name": platformName,
-              "content_category": "Button Click"
-            }
-          ]
+          "contents": [{ "content_name": platform }]
         });
+
+        // ٢٠٠ میلی چرکە چاوەڕێ بکە پاشان پەیوەندییەکە ئەنجام بدە
+        setTimeout(function() {
+          window.location.href = url;
+        }, 200);
       };
     }(window, document, 'ttq');
     </script>
@@ -35,7 +38,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
             display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding: 60px 20px 40px 20px; margin: 0;
+            min-height: 100vh; padding: 60px 20px; margin: 0;
         }
         .profile-container {
             text-align: center; margin-bottom: 25px; background: white;
@@ -60,11 +63,7 @@
         .link-card i { font-size: 28px; margin-left: 12px; }
         .sponsor-section { margin-top: 60px; text-align: center; }
         .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
-        .footer-tag {
-            padding: 12px 35px; background: linear-gradient(45deg, #1e8449, #27ae60);
-            border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block;
-            font-weight: 900; text-decoration: none; box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);
-        }
+        .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #1e8449, #27ae60); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; }
         .legal-links { margin-top: 20px; font-size: 11px; color: #95a5a6; }
         .legal-links a { color: #95a5a6; text-decoration: none; margin: 0 6px; }
     </style>
@@ -78,17 +77,17 @@
     </div>
 
     <div class="links-wrapper">
-        <a href="https://wa.me/+9647505343710" onclick="trackTikTokConversion('WhatsApp')" class="link-card whatsapp">
+        <a href="https://wa.me/+9647505343710" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
 
-        <a href="viber://chat?number=+9647505343710" onclick="trackTikTokConversion('Viber')" class="link-card viber">
+        <a href="viber://chat?number=+9647505343710" onclick="trackTikTokConversion('Viber', event)" class="link-card viber">
             <i class="fab fa-viber"></i>
             <span>ڤایبەر</span>
         </a>
 
-        <a href="tel:+9647505343710" onclick="trackTikTokConversion('Phone')" class="link-card phone">
+        <a href="tel:+9647505343710" onclick="trackTikTokConversion('Phone', event)" class="link-card phone">
             <i class="fas fa-phone-alt"></i>
             <span>ژمارەی مۆبایل</span>
         </a>
@@ -97,6 +96,10 @@
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
         <a href="https://wa.me/+9647758887488" class="footer-tag">Serwan Phone</a>
+        <div class="legal-links">
+            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
+            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
+        </div>
     </div>
 
 </body>
