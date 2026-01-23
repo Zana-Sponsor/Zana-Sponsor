@@ -1,3 +1,14 @@
-<a href="https://www.google.com" target="_blank">
-    <img src="photo.jpg" alt="وەسفی وێنەکە" style="width:300px; border-radius: 10px;">
-</a>
+<script>
+    // فەنکشنێک بۆ دروستکردنی وێنەی لینکدار
+    function createImageLink(url, name, ext) {
+        document.write(`
+            <a href="${url}">
+                <img src="${name}${ext}" width="200" style="margin:10px;">
+            </a>
+        `);
+    }
+
+    // لێرە تەنها (لینک، ناوی وێنە، پاشگر) بنووسە
+    createImageLink("https://google.com", "pic1", ".jpg");
+    createImageLink("https://facebook.com", "logo", ".png");
+</script>
