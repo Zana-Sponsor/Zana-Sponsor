@@ -4,6 +4,8 @@
     <meta name="robots" content="noindex, nofollow">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//img.sanishtech.com">
     <title>Zana Sponsor - Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -19,34 +21,29 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      // لێرەدا فەنکشنەکەمان گۆڕیوە بۆ ئەوەی لە تیکتۆک نەچێتە دەرەوە
       window.trackTikTokConversion = function(platform, event) {
         event.preventDefault(); 
         var url = event.currentTarget.href;
         
-        // ناردنی داتا بۆ Vercel Analytics
         if (window.va) window.va('event', { name: 'Contact_Click', data: { platform: platform } });
+        if (typeof ttq !== 'undefined') ttq.track('Contact', { "contents": [{ "content_name": platform }] });
 
-        // ناردنی داتا بۆ TikTok Pixel
-        if (typeof ttq !== 'undefined') {
-          ttq.track('Contact', { "contents": [{ "content_name": platform }] });
-        }
-
-        // بەکارهێنانی Iframe بۆ ئەوەی لەناو تیکتۆک بمێنێتەوە و تەنها ئەپەکە بکاتەوە
+        // ناردنی دەستبەجێ بۆ ئەپەکە بۆ ئەوەی کڕیار هەست بە خێری بکات
         var frame = document.createElement('iframe');
         frame.style.display = 'none';
         frame.src = url;
         document.body.appendChild(frame);
         
-        // دوای کردنەوەی ئەپەکە، Iframeـەکە لادەبەین
         setTimeout(function() {
           document.body.removeChild(frame);
-        }, 300);
+        }, 100); // کاتەکە زۆر کەمکراوەتەوە بۆ خێرایی
       };
     }(window, document, 'ttq');
     </script>
 
     <style>
+        /* خێراکردنی ئەنیمەیشنەکان */
+        * { -webkit-backface-visibility: hidden; } 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
@@ -65,14 +62,14 @@
         .link-card {
             display: flex; align-items: center; justify-content: center;
             padding: 16px 25px; border-radius: 18px; text-decoration: none;
-            color: white; font-weight: 700; font-size: 19px; transition: all 0.2s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.07); animation: fast-pulse 0.8s infinite ease-in-out;
+            color: white; font-weight: 700; font-size: 19px; transition: all 0.15s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.07); animation: fast-pulse 1s infinite ease-in-out;
         }
-        @keyframes fast-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
-        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); animation-delay: 0.1s; }
-        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); animation-delay: 0.2s; }
-        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); animation-delay: 0.3s; }
-        .link-card:hover { transform: translateY(-3px) scale(1.06); filter: brightness(1.1); }
+        @keyframes fast-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
+        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); }
+        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); }
+        .link-card:hover { transform: translateY(-2px) scale(1.03); filter: brightness(1.1); }
         .link-card i { font-size: 28px; margin-left: 12px; }
         .sponsor-section { margin-top: 60px; text-align: center; }
         .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
@@ -84,7 +81,7 @@
 <body>
 
     <div class="profile-container">
-        <img src="https://img.sanishtech.com/u/9497c434abe2cb105776b9413e341d07.png" alt="Talabat Drivers" class="profile-img">
+        <img src="https://img.sanishtech.com/u/9497c434abe2cb105776b9413e341d07.png" alt="Talabat Drivers" class="profile-img" loading="eager">
         <h1>Talabat Drivers</h1>
         <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە</div>
     </div>
