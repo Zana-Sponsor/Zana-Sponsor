@@ -61,7 +61,7 @@
                 <div id="violationType" style="font-size: 10px; color: var(--danger); margin-top: 2px; display: none;"></div>
             </div>
         </div>
-        <div class="note-box"><strong>⚠️ تێبینی گرنگ:</strong> بڕیاری کۆتایی تەنها لای تیمی پێداچوونەوەی تیکتۆکە.</div>
+        <div class="note-box"><strong>⚠️ تێبینی گرنگ:</strong> بڕیاری کۆتایی تەنها لای تیمی پێداچوونەوەی تیکتۆکە، ئەم تێستە 100% ناتوانرێ دیاری بکات کە پۆستەکە شیاوە یاخود نا !</div>
         <div class="action-btns">
             <button class="btn-secondary" onclick="resetForm()">پشکنینی نوێ</button>
             <button class="btn-secondary" onclick="window.print()">ڕاپۆرت</button>
@@ -129,15 +129,15 @@
                 msg.innerText = "مامناوەند ⚠️";
                 msg.style.color = "#ffc107";
                 qSpan.innerText = "Standard Quality";
-                adSpan.innerText = "سپۆنسەری ئاسایی (Promote)";
+                adSpan.innerText = "سپۆنسەری ئاسایی (Video Views)";
                 pStatus.innerText = "پەسەندە (ئاسایی)";
                 pStatus.style.color = "#ffc107";
-                vType.innerText = "(بۆ بزنس و ئەدس مانیجەر پێشنیار ناکرێت)";
+                vType.innerText = "(بۆ بزنس پێشنیار ناکرێت)";
                 vType.style.display = "block";
                 vType.style.color = "#ffc107";
             }
             else {
-                // دۆخی بزنس (Ads Manager)
+                // دۆخی بزنس (Website)
                 finalScore = 85 + (hash % 13);
                 scoreDisplay.innerText = finalScore + "%";
                 scoreDisplay.style.color = "var(--tiktok-cyan)";
@@ -145,7 +145,7 @@
                 msg.innerText = "ناوازە ✅";
                 msg.style.color = "white";
                 qSpan.innerText = "High Definition";
-                adSpan.innerText = "سپۆنسەری بزنس (Ads Manager)";
+                adSpan.innerText = "سپۆنسەری بزنس (Webiste)";
                 pStatus.innerText = "پەسەندکراوە ✅";
                 pStatus.style.color = "#4caf50";
                 vType.style.display = "none";
