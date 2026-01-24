@@ -19,25 +19,29 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      // لێرەدا گۆڕانکاری سەرەکی کراوە بۆ ئەوەی لەناو تیکتۆک بمێنێتەوە
+      // لێرەدا فەنکشنەکەمان گۆڕیوە بۆ ئەوەی لە تیکتۆک نەچێتە دەرەوە
       window.trackTikTokConversion = function(platform, event) {
         event.preventDefault(); 
         var url = event.currentTarget.href;
         
-        if (window.va) {
-          window.va('event', { name: 'Contact_Click', data: { platform: platform } });
-        }
+        // ناردنی داتا بۆ Vercel Analytics
+        if (window.va) window.va('event', { name: 'Contact_Click', data: { platform: platform } });
 
+        // ناردنی داتا بۆ TikTok Pixel
         if (typeof ttq !== 'undefined') {
-          ttq.track('Contact', {
-            "contents": [{ "content_name": platform }]
-          });
+          ttq.track('Contact', { "contents": [{ "content_name": platform }] });
         }
 
-        // بەکارهێنانی replace لەبری href بۆ مانەوە لە ناو ئەپەکە
+        // بەکارهێنانی Iframe بۆ ئەوەی لەناو تیکتۆک بمێنێتەوە و تەنها ئەپەکە بکاتەوە
+        var frame = document.createElement('iframe');
+        frame.style.display = 'none';
+        frame.src = url;
+        document.body.appendChild(frame);
+        
+        // دوای کردنەوەی ئەپەکە، Iframeـەکە لادەبەین
         setTimeout(function() {
-          window.location.replace(url);
-        }, 100);
+          document.body.removeChild(frame);
+        }, 300);
       };
     }(window, document, 'ttq');
     </script>
@@ -86,7 +90,7 @@
     </div>
 
     <div class="links-wrapper">
-        <a href="https://wa.me/+9647501448838?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی !" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
+        <a href="whatsapp://send?phone=+9647501448838&text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی !" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
@@ -104,7 +108,7 @@
 
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="https://wa.me/+9647758887488?text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Serwan Phone</a>
+        <a href="whatsapp://send?phone=+9647758887488&text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Serwan Phone</a>
         <div class="legal-links">
             <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
             <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
