@@ -54,7 +54,7 @@
         <div class="data-grid">
             <div class="data-card"><small>خاوەن ئەکاونت</small><span id="user">-</span></div>
             <div class="data-card"><small>کوالێتی ناوەڕۆک</small><span id="quality">-</span></div>
-            <div class="data-card"><small>بارودۆخی سپۆنسەر</small><span id="adType">-</span></div>
+            <div class="data-card"><small>جۆری سپۆنسەر</small><span id="adType">-</span></div>
             <div class="data-card">
                 <small>یاساکانی ٢٠٢٦</small>
                 <span id="policyStatus">-</span>
@@ -86,7 +86,6 @@
             const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(urlInput)}`);
             const data = await res.json();
             
-            // شیکردنەوەی نمرە لەسەر بنەمای لینکی ڤیدیۆکە نەک ناوەکە
             let hash = 0;
             for (let i = 0; i < urlInput.length; i++) {
                 hash = urlInput.charCodeAt(i) + ((hash << 5) - hash);
@@ -103,34 +102,50 @@
 
             document.getElementById('user').innerText = data.author_name;
 
-            // ئەگەر نمرەکە بەپێی لینکی ڤیدیۆکە لە خوار ٧٥ بوو، یان پۆستەکە وێنە بوو (Photo Mode)
             const isPhoto = data.title.toLowerCase().includes("photo") || urlInput.includes("/photo/");
             let finalScore;
 
             if (isPhoto || hash % 10 < 3) { 
-                // دۆخی پێشێلکاری یان وێنە
-                finalScore = 30 + (hash % 25);
+                // دۆخی وێنە یان کوالێتی زۆر نزم
+                finalScore = 30 + (hash % 15);
                 scoreDisplay.innerText = finalScore + "%";
                 scoreDisplay.style.color = "var(--danger)";
                 scoreBox.style.borderRightColor = "var(--danger)";
                 msg.innerText = "شیاو نییە ❌";
                 msg.style.color = "var(--danger)";
                 qSpan.innerText = isPhoto ? "Slideshow" : "Low Quality";
-                adSpan.innerText = "Not Fit";
+                adSpan.innerText = "ڕەتکرایەوە";
                 pStatus.innerText = "ڕەتکرایەوە ⚠️";
                 pStatus.style.color = "var(--danger)";
                 vType.innerText = isPhoto ? "(تیکتۆک ڕێگە بە وێنە نادات بۆ بزنس)" : "(کوالێتی نزم / پێشێلکاری یاسا)";
                 vType.style.display = "block";
-            } else {
-                // دۆخی ڤیدیۆی باش
-                finalScore = 80 + (hash % 18);
+            } 
+            else if (hash % 10 < 6) {
+                // دۆخی سپۆنسەری ئاسایی (Promote)
+                finalScore = 65 + (hash % 10);
+                scoreDisplay.innerText = finalScore + "%";
+                scoreDisplay.style.color = "#ffc107";
+                scoreBox.style.borderRightColor = "#ffc107";
+                msg.innerText = "مامناوەند ⚠️";
+                msg.style.color = "#ffc107";
+                qSpan.innerText = "Standard Quality";
+                adSpan.innerText = "سپۆنسەری ئاسایی (Promote)";
+                pStatus.innerText = "پەسەندە (ئاسایی)";
+                pStatus.style.color = "#ffc107";
+                vType.innerText = "(بۆ بزنس و ئەدس مانیجەر پێشنیار ناکرێت)";
+                vType.style.display = "block";
+                vType.style.color = "#ffc107";
+            }
+            else {
+                // دۆخی بزنس (Ads Manager)
+                finalScore = 85 + (hash % 13);
                 scoreDisplay.innerText = finalScore + "%";
                 scoreDisplay.style.color = "var(--tiktok-cyan)";
                 scoreBox.style.borderRightColor = "var(--tiktok-cyan)";
-                msg.innerText = "شیاوە ✅";
+                msg.innerText = "ناوازە ✅";
                 msg.style.color = "white";
                 qSpan.innerText = "High Definition";
-                adSpan.innerText = "Business Ready";
+                adSpan.innerText = "سپۆنسەری بزنس (Ads Manager)";
                 pStatus.innerText = "پەسەندکراوە ✅";
                 pStatus.style.color = "#4caf50";
                 vType.style.display = "none";
