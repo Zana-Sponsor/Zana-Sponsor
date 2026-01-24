@@ -10,9 +10,10 @@
     <script defer src="/_vercel/insights/script.js"></script>
 
     <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     !function (w, d, t) {
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
-    var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+    var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
     ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
 
       ttq.load('D5N6ETJC77UFLMP0AO10');
@@ -22,17 +23,14 @@
         event.preventDefault(); 
         var url = event.currentTarget.href;
         
-        // 1. ناردنی داتا بۆ Vercel Analytics وەک Custom Event
-        if (window.va) {
-            window.va('event', { name: 'Contact_Click', data: { platform: platform } });
-        }
+        // ناردنی داتا بۆ Vercel Analytics بە دڵنیایی زیاتر
+        window.va('event', { name: 'Contact_Click', data: { platform: platform } });
 
-        // 2. ناردنی داتا بۆ TikTok Pixel
+        // ناردنی داتا بۆ TikTok
         ttq.track('Contact', {
           "contents": [{ "content_name": platform }]
         });
 
-        // چاوەڕوانییەکی کەم بۆ دڵنیایی لە ناردنی داتاکان پێش گواستنەوە
         setTimeout(function() {
           window.location.href = url;
         }, 300);
@@ -78,18 +76,18 @@
 <body>
 
     <div class="profile-container">
-        <img src="https://img.sanishtech.com/u/7c16372027bbb4e2ae4f2e4952c71f37.jpg" alt="Zana Sponsor - زانا سپۆنسەر" class="profile-img">
-        <h1>Zana Sponsor - زانا سپۆنسەر</h1>
+        <img src="https://img.sanishtech.com/u/01fa7fdee9fc23066b65c7d058eaf13e.jpg" alt="Zana Sponsor" class="profile-img">
+        <h1>Zana Sponsor</h1>
         <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە</div>
     </div>
 
     <div class="links-wrapper">
-        <a href="https://wa.me/9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی !" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
+        <a href="https://wa.me/+9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی !" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
 
-        <a href="viber://chat?number=9647758887488" onclick="trackTikTokConversion('Viber', event)" class="link-card viber">
+        <a href="viber://chat?number=+9647758887488" onclick="trackTikTokConversion('Viber', event)" class="link-card viber">
             <i class="fab fa-viber"></i>
             <span>ڤایبەر</span>
         </a>
@@ -102,7 +100,7 @@
 
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="https://wa.me/9647758887488?text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Zana Sponsor</a>
+        <a href="https://wa.me/+9647758887488?text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Zana Sponsor</a>
         <div class="legal-links">
             <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
             <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
