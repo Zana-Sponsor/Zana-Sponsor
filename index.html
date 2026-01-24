@@ -7,6 +7,8 @@
     <title>Zana Sponsor - Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <script defer src="/_vercel/insights/script.js"></script>
+
     <script>
     !function (w, d, t) {
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
@@ -16,19 +18,24 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      // فەنکشنی سەرەکی بۆ ناردنی زانیارییەکان بە دروستی
       window.trackTikTokConversion = function(platform, event) {
-        event.preventDefault(); // ڕێگری لە داخستنی لاپەڕەکە تا داتا دەنێردرێت
+        event.preventDefault(); 
         var url = event.currentTarget.href;
         
+        // 1. ناردنی داتا بۆ Vercel Analytics وەک Custom Event
+        if (window.va) {
+            window.va('event', { name: 'Contact_Click', data: { platform: platform } });
+        }
+
+        // 2. ناردنی داتا بۆ TikTok Pixel
         ttq.track('Contact', {
           "contents": [{ "content_name": platform }]
         });
 
-        // ٢٠٠ میلی چرکە چاوەڕێ بکە پاشان پەیوەندییەکە ئەنجام بدە
+        // چاوەڕوانییەکی کەم بۆ دڵنیایی لە ناردنی داتاکان پێش گواستنەوە
         setTimeout(function() {
           window.location.href = url;
-        }, 200);
+        }, 300);
       };
     }(window, document, 'ttq');
     </script>
@@ -77,12 +84,12 @@
     </div>
 
     <div class="links-wrapper">
-        <a href="https://wa.me/+9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی !" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
+        <a href="https://wa.me/9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی !" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
 
-        <a href="viber://chat?number=+9647758887488" onclick="trackTikTokConversion('Viber', event)" class="link-card viber">
+        <a href="viber://chat?number=9647758887488" onclick="trackTikTokConversion('Viber', event)" class="link-card viber">
             <i class="fab fa-viber"></i>
             <span>ڤایبەر</span>
         </a>
@@ -95,7 +102,7 @@
 
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="https://wa.me/+9647758887488?text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Zana Sponsor</a>
+        <a href="https://wa.me/9647758887488?text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Zana Sponsor</a>
         <div class="legal-links">
             <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
             <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
