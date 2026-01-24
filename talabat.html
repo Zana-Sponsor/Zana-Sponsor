@@ -19,21 +19,25 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
+      // لێرەدا گۆڕانکاری سەرەکی کراوە بۆ ئەوەی لەناو تیکتۆک بمێنێتەوە
       window.trackTikTokConversion = function(platform, event) {
         event.preventDefault(); 
         var url = event.currentTarget.href;
         
-        // ناردنی داتا بۆ Vercel Analytics بە دڵنیایی زیاتر
-        window.va('event', { name: 'Contact_Click', data: { platform: platform } });
+        if (window.va) {
+          window.va('event', { name: 'Contact_Click', data: { platform: platform } });
+        }
 
-        // ناردنی داتا بۆ TikTok
-        ttq.track('Contact', {
-          "contents": [{ "content_name": platform }]
-        });
+        if (typeof ttq !== 'undefined') {
+          ttq.track('Contact', {
+            "contents": [{ "content_name": platform }]
+          });
+        }
 
+        // بەکارهێنانی replace لەبری href بۆ مانەوە لە ناو ئەپەکە
         setTimeout(function() {
-          window.location.href = url;
-        }, 300);
+          window.location.replace(url);
+        }, 100);
       };
     }(window, document, 'ttq');
     </script>
