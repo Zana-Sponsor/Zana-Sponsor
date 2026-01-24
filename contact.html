@@ -3,92 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Sponsor - Advanced Support</title>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <title>Zana Support - LIVE Warning Fix</title>
     <style>
         :root { --tt-pink: #fe2c55; --tt-cyan: #25f4ee; --bg: #0b0b0b; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: white; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .card { background: #161616; padding: 30px; border-radius: 20px; border: 1px solid #333; width: 100%; max-width: 650px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        h2 { text-align: center; color: var(--tt-cyan); margin-bottom: 25px; font-size: 22px; }
-        .template-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
-        .t-btn { padding: 14px; font-size: 12px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; cursor: pointer; transition: 0.3s; font-weight: bold; }
-        .t-btn:hover { background: var(--tt-pink); transform: translateY(-2px); }
-        input, textarea { width: 100%; padding: 15px; margin: 12px 0; border: 1px solid #333; border-radius: 12px; background: #000; color: white; box-sizing: border-box; text-align: left; font-size: 14px; line-height: 1.6; }
-        .send-btn { width: 100%; padding: 18px; border: none; border-radius: 12px; background: var(--tt-pink); color: white; font-weight: bold; cursor: pointer; font-size: 18px; margin-top: 10px; }
-        .send-btn:disabled { background: #444; cursor: not-allowed; }
-        label { font-size: 13px; color: #888; margin-right: 5px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: white; margin: 0; padding: 20px; }
+        .card { background: #161616; padding: 25px; border-radius: 20px; border: 1px solid #333; max-width: 650px; margin: auto; }
+        h2 { text-align: center; color: var(--tt-cyan); font-size: 22px; }
+        .template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .t-btn { padding: 14px; font-size: 11px; border-radius: 10px; border: 1px solid #444; background: #222; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .t-btn:hover { background: var(--tt-pink); transform: scale(1.02); }
+        .warning-btn { background: #ffcc00; color: #000; border-color: #ffcc00; } /* ڕەنگی زەرد بۆ ئاگادارکردنەوە */
+        input, textarea { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #333; border-radius: 12px; background: #000; color: white; box-sizing: border-box; text-align: left; font-size: 14px; }
+        .send-btn { width: 100%; padding: 18px; border: none; border-radius: 12px; background: var(--tt-pink); color: white; font-weight: bold; cursor: pointer; font-size: 18px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>سەنتەری پشتگیری تیکتۆک (Zana Support)</h2>
+    <h2>TikTok Support (Direct)</h2>
     <div class="template-grid">
-        <button class="t-btn" onclick="setSupport('shadow')">Account not recommended ⚠️</button>
-        <button class="t-btn" onclick="setSupport('live')">کێشەی لایڤ و ستریم 🎥</button>
-        <button class="t-btn" onclick="setSupport('hacked')">گێڕانەوەی ئەکاونت 🔒</button>
-        <button class="t-btn" onclick="setSupport('ads')">کێشەی سپۆنسەر و پارە 💳</button>
+        <button class="t-btn warning-btn" onclick="setSupport('warning')">لابردنی Warning ڵایڤ ⚠️</button>
+        <button class="t-btn" onclick="setSupport('shadow')">Shadowban ⚠️</button>
+        <button class="t-btn" onclick="setSupport('live')">کێشەی لایڤ 🎥</button>
+        <button class="t-btn" onclick="setSupport('ads')">سپۆنسەر و پارە 💳</button>
     </div>
 
-    <form id="contact-form">
-        <label>ناوی بەکارهێنەر یان ناوی تەواو:</label>
-        <input type="text" name="user_name" placeholder="Full Name / Username" required>
-        
-        <label>ئیمێڵی پەیوەندی (Gmail):</label>
-        <input type="email" name="user_email" placeholder="Your Active Email" required>
-        
-        <label>بابەتی نامەکە:</label>
-        <input type="text" name="subject" id="subject" placeholder="Subject Line" required>
-        
-        <label>ناوەڕۆکی نامە (بە ئینگلیزییەکی فەرمی):</label>
-        <textarea name="message" id="message" rows="12" placeholder="نامەکە لێرە بە درێژی ئامادە دەبێت..." required></textarea>
-        
-        <button type="submit" id="submitBtn" class="send-btn">ناردنی ئیمێڵی فەرمی</button>
+    <form id="mailForm">
+        <input type="text" id="subject" placeholder="Subject" required>
+        <textarea id="message" rows="14" placeholder="نامەکە لێرە بە درێژی ئامادە دەبێت..." required></textarea>
+        <button type="submit" class="send-btn">ناردنی ئیمێڵی فەرمی</button>
     </form>
 </div>
 
 <script>
-    (function() {
-        emailjs.init("GU-R3oBqNqfk5Gt98"); 
-    })();
-
     function setSupport(type) {
         const sub = document.getElementById('subject');
         const msg = document.getElementById('message');
         
-        if(type === 'shadow') {
-            sub.value = "Formal Appeal: Investigation into 'Account Not Recommended' Status and Shadowban";
-            msg.value = "Dear TikTok Trust & Safety Team,\n\nI am writing to formally appeal the 'Account not recommended' restriction currently placed on my profile. As a dedicated content creator, I am fully committed to maintaining the integrity of the TikTok community. I have meticulously reviewed all Community Guidelines and can confirm that my content is 100% original and does not violate any policies regarding sensitive or low-quality content.\n\nThis restriction is significantly impacting my account's visibility and growth. I believe this might be a technical error in the automated system. I kindly request a manual review of my recent videos and my overall account standing to restore my recommendation status.\n\nAccount Username: @\nDevice Info: \nRegion: Iraq\n\nThank you for your time and professional evaluation.";
+        if(type === 'warning') {
+            sub.value = "Appeal: Incorrect Community Guidelines Warning During LIVE Stream";
+            msg.value = "Dear TikTok LIVE Safety Team,\n\nI am contacting you to appeal a 'Warning' notification I received during my recent LIVE stream session on my account (@ahm4d_amazon). I take TikTok's Community Guidelines very seriously and I always ensure that my streams are safe, respectful, and follow all established rules.\n\nI believe this warning was triggered by a technical error or a misunderstanding of my content. My stream did not contain any restricted activities, sensitive content, or copyright violations. This warning is negatively affecting my account's health and my ability to interact with my community.\n\nI kindly request a detailed review of my LIVE stream logs. If no actual violation occurred, please remove the warning from my account history and restore my full LIVE privileges.\n\nAccount Username: @ahm4d_amazon\nTime of Event: Recent Stream\nRegion: Iraq\n\nThank you for your professional review.";
+        } else if(type === 'shadow') {
+            sub.value = "Formal Appeal: Account Not Recommended Status";
+            msg.value = "Dear TikTok Support,\n\nI am appealing the 'Account not recommended' status on my profile. My content is original and follows all guidelines. Please review and restore my visibility.\n\nUsername: @ahm4d_amazon\nRegion: Iraq";
         } else if(type === 'live') {
-            sub.value = "Technical Support Request: Permanent Loss of LIVE Streaming Access";
-            msg.value = "To the TikTok Global Support Team,\n\nI am reaching out regarding a persistent technical issue with my LIVE streaming features. Despite meeting all the necessary requirements—including follower count and being over the age of 18—the LIVE option remains unavailable or is showing a restriction error. I have tried clearing the app cache and reinstalling the application, but the issue remains unresolved.\n\nLIVE access is a vital part of my engagement with my audience. I request that you investigate any internal flags or technical glitches associated with my UID. I am prepared to provide identity verification if required.\n\nUsername: @\nApp Version: Latest\n\nLooking forward to a swift resolution.";
-        } else if(type === 'hacked') {
-            sub.value = "Urgent: Compromised Account Recovery and Security Investigation";
-            msg.value = "Emergency Request,\n\nI am reporting that my TikTok account has been compromised (hacked). My login credentials, including the associated email and password, were changed without my authorization. I have lost all access to my personal data and followers.\n\nI can provide the original registration date, the primary device used for the account, and original identification to prove my ownership. This is a matter of privacy and security, and I urge you to freeze any activity on the account until it is safely returned to me.\n\nOriginal Username: @\nLinked Email before breach: \nPrimary Phone Number: \n\nPlease help me recover my digital identity.";
+            sub.value = "Technical Issue: TikTok LIVE Access";
+            msg.value = "Dear Team,\n\nI meet all requirements but cannot go LIVE. Please check my account permissions.\n\nUsername: @";
         } else if(type === 'ads') {
-            sub.value = "Billing and Delivery Dispute: TikTok Ads Manager Campaign Failure";
-            msg.value = "Dear TikTok Business and Ads Support Team,\n\nI am contacting you regarding a serious issue with my recent advertising campaign. My payment was successfully processed and the budget has been deducted from my balance; however, the campaign delivery has stalled completely or is showing a 'Not Delivering' status for an extended period.\n\nThis is causing a direct financial loss to my business marketing efforts. I have checked all creative assets and they comply with TikTok Ad Policies. Please investigate my Ads Manager account immediately to ensure my credits are used correctly or provide a refund for the undelivered services.\n\nBusiness Account ID: \nCampaign Name: \n\nYour immediate attention to this matter is appreciated.";
+            sub.value = "Billing Dispute: Ads Manager Issue";
+            msg.value = "My ads are not delivering despite successful payment.\n\nBusiness ID: ";
         }
     }
 
-    document.getElementById('contact-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.innerText = "خەریکی ناردنە (تکایە چاوەڕێبە)...";
-        btn.disabled = true;
-
-        emailjs.sendForm('service_wq0o3mm', 'template_tod1eq8', this)
-            .then(() => {
-                alert('نامەکە بە سەرکەوتوویی ناردرا! تیمی تیکتۆک لە ڕێگەی ئیمێڵەوە وەڵامت دەدەنەوە.');
-                btn.innerText = "ناردنی ئیمێڵی فەرمی";
-                btn.disabled = false;
-                this.reset();
-            }, (error) => {
-                alert('هەڵەیەک ڕوویدا: ' + JSON.stringify(error));
-                btn.innerText = "دووبارە هەوڵ بدەرەوە";
-                btn.disabled = false;
-            });
-    });
+    document.getElementById('mailForm').onsubmit = function(e) {
+        e.preventDefault();
+        const s = document.getElementById('subject');
+        const b = document.getElementById('message');
+        window.location.href = `mailto:feedback@tiktok.com?subject=${encodeURIComponent(s.value)}&body=${encodeURIComponent(b.value)}`;
+    };
 </script>
 
 </body>
