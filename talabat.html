@@ -7,6 +7,8 @@
     <title>Zana Sponsor - Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <script defer src="/_vercel/insights/script.js"></script>
+
     <script>
     !function (w, d, t) {
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
@@ -16,16 +18,20 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      // فەنکشنی سەرەکی بۆ ناردنی زانیارییەکان بە دروستی
       window.trackTikTokConversion = function(platform, event) {
-        event.preventDefault(); // ڕێگری لە داخستنی لاپەڕەکە تا داتا دەنێردرێت
+        event.preventDefault(); 
         var url = event.currentTarget.href;
         
+        // ناردنی داتا بۆ Vercel Analytics
+        if (window.va) {
+          window.va('event', { name: 'Contact_Click', data: { platform: platform } });
+        }
+
+        // ناردنی داتا بۆ TikTok
         ttq.track('Contact', {
           "contents": [{ "content_name": platform }]
         });
 
-        // ٢٠٠ میلی چرکە چاوەڕێ بکە پاشان پەیوەندییەکە ئەنجام بدە
         setTimeout(function() {
           window.location.href = url;
         }, 200);
@@ -103,4 +109,4 @@
     </div>
 
 </body>
-  </html>
+</html>
