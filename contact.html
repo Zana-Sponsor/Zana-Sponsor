@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Support - TikTok Professional Appeal</title>
+    <title>Zana Support - All-in-One Official Appeal</title>
     <style>
         :root { --tt-pink: #fe2c55; --tt-cyan: #25f4ee; --bg: #0b0b0b; --card-bg: #161616; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: white; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 700px; }
+        .container { width: 100%; max-width: 750px; }
         .header { text-align: center; padding-bottom: 30px; }
-        .header h1 { color: var(--tt-cyan); font-size: 35px; margin: 0; text-shadow: 0 0 10px rgba(37, 244, 238, 0.3); }
+        .header h1 { color: var(--tt-cyan); font-size: 35px; margin: 0; text-shadow: 0 0 10px rgba(37, 244, 238, 0.2); }
         .card { background: var(--card-bg); padding: 35px; border-radius: 25px; border: 1px solid #333; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-        h2 { font-size: 18px; color: #888; text-align: center; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
-        .template-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .t-btn { padding: 16px 10px; font-size: 12px; border-radius: 15px; border: 1px solid #444; background: #1a1a1a; color: white; cursor: pointer; transition: 0.4s; font-weight: bold; }
-        .t-btn:hover { background: var(--tt-pink); border-color: var(--tt-pink); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(254, 44, 85, 0.4); }
+        h2 { font-size: 16px; color: #888; text-align: center; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
+        .template-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .t-btn { padding: 15px 10px; font-size: 12px; border-radius: 12px; border: 1px solid #444; background: #1a1a1a; color: white; cursor: pointer; transition: 0.4s; font-weight: bold; }
+        .t-btn:hover { background: var(--tt-pink); border-color: var(--tt-pink); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(254, 44, 85, 0.3); }
         .btn-warning { border-color: #ffcc00; color: #ffcc00; }
-        input, textarea { width: 100%; padding: 18px; margin-bottom: 20px; border: 1px solid #333; border-radius: 15px; background: #000; color: white; box-sizing: border-box; outline: none; text-align: left; font-size: 14px; line-height: 1.8; transition: 0.3s; }
-        input:focus, textarea:focus { border-color: var(--tt-cyan); box-shadow: 0 0 10px rgba(37, 244, 238, 0.1); }
-        .btn-main { width: 100%; padding: 20px; border-radius: 15px; background: var(--tt-pink); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; box-shadow: 0 10px 20px rgba(254, 44, 85, 0.3); }
-        .btn-main:hover { background: #e0244b; transform: scale(1.01); }
+        .btn-legal { border-color: #25f4ee; color: #25f4ee; }
+        label { font-size: 13px; color: #888; display: block; margin-bottom: 8px; margin-right: 5px; }
+        input, textarea { width: 100%; padding: 18px; margin-bottom: 20px; border: 1px solid #333; border-radius: 15px; background: #000; color: white; box-sizing: border-box; outline: none; text-align: left; font-size: 14px; line-height: 1.8; }
+        .btn-main { width: 100%; padding: 20px; border-radius: 15px; background: var(--tt-pink); color: white; border: none; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; }
         footer { text-align: center; margin-top: 25px; font-size: 12px; color: #555; }
     </style>
 </head>
@@ -31,22 +31,28 @@
     </div>
 
     <div class="card">
-        <h2>کێشەیەک هەڵبژێرە بۆ ئامادەکردنی تێکستی فەرمی</h2>
+        <h2>هەموو جۆرە سکاڵا فەرمییەکان لێرە ئامادەکراون</h2>
         
         <div class="template-grid">
             <button class="t-btn" onclick="setSupport('shadow')">Shadowban Appeal</button>
             <button class="t-btn btn-warning" onclick="setSupport('warning')">LIVE Warning Appeal</button>
             <button class="t-btn" onclick="setSupport('hacked')">Account Recovery</button>
-            <button class="t-btn" onclick="setSupport('ads')">Ads Billing Support</button>
+            <button class="t-btn" onclick="setSupport('ads')">Ads & Billing</button>
+            <button class="t-btn btn-legal" onclick="setSupport('age')">Age Verification</button>
+            <button class="t-btn" onclick="setSupport('verify')">Verification Request</button>
         </div>
 
         <form id="mailForm">
-            <input type="text" id="subject" placeholder="Subject line will appear here..." required>
-            <textarea id="message" rows="18" placeholder="The formal message body will be generated here..." required></textarea>
-            <button type="submit" class="btn-main">ناردنی سکاڵای فەرمی بۆ تیکتۆک</button>
+            <label>بابەتی نامەکە (Subject):</label>
+            <input type="text" id="subject" placeholder="Subject line..." required>
+            
+            <label>ناوەڕۆکی نامەی فەرمی (ئاگاداربە لە شوێنی Your_Username ناوی خۆت بنووسە):</label>
+            <textarea id="message" rows="18" placeholder="Formal message body..." required></textarea>
+            
+            <button type="submit" class="btn-main">ناردنی سکاڵا بۆ تیکتۆک</button>
         </form>
     </div>
-    <footer>© 2026 Zana Sponsor - All Rights Reserved</footer>
+    <footer>© 2026 Zana Sponsor - Comprehensive Support System</footer>
 </div>
 
 <script>
@@ -54,27 +60,44 @@
         const sub = document.getElementById('subject');
         const msg = document.getElementById('message');
         
-        if(type === 'shadow') {
-            sub.value = "Formal Complaint: Manual Review Request for Account Recommendation Eligibility (Shadowban)";
-            msg.value = "To the TikTok Trust and Safety Management Team,\n\nI am formally reaching out to file an appeal regarding the current 'Account not recommended' status on my profile (@your_username). As an established content creator, I maintain a strict policy of adherence to the TikTok Community Guidelines and Intellectual Property rights.\n\nMy analytics indicate a sudden and unjustified drop in organic reach specifically from the 'For You' feed, suggesting an automated flag on my account. I have conducted a thorough internal audit of my recent video content and confirmed that all uploads are original, high-definition, and provide positive engagement for the community. I have not utilized any prohibited third-party growth tools or engaged in coordinated inauthentic behavior.\n\nI believe this restriction is a false positive generated by the automated system. I kindly request an immediate manual re-evaluation of my profile eligibility by a human moderator to rectify this error and restore my recommendation status.\n\nAccount Identity: @your_username\nDevice Region: Iraq\nCategory: Business Content\n\nThank you for your professional cooperation.\n\nRespectfully,\n[Your Name]";
-        } else if(type === 'warning') {
-            sub.value = "Appeal Request: Invalid Community Guidelines Warning Notification during LIVE Stream";
-            msg.value = "Dear TikTok LIVE Safety Operations,\n\nI am writing to formally dispute a 'Warning' notification issued against my account (@your_username) during my recent LIVE broadcast. I am fully committed to providing a safe and constructive environment during my streams, ensuring all content aligns with the safety standards expected on this platform.\n\nDuring the session in question, there were no violations of safety protocols, no restricted activities, and no unauthorized use of copyrighted material. I am concerned that the automated moderation system may have misinterpreted the context of my broadcast. This warning is an unjust mark on my account's record and is causing unnecessary restrictions on my LIVE features.\n\nPlease review the stream logs and metadata associated with this event. I am confident that a detailed inspection will confirm my compliance. I request the immediate removal of this warning from my account history.\n\nUsername: @your_username\nStream Timestamp: Recent Session\n\nBest regards,\n[Your Name]";
-        } else if(type === 'hacked') {
-            sub.value = "Emergency Security Report: Unauthorized Account Access and Credential Breach";
-            msg.value = "Urgent Security Inquiry,\n\nI am reporting a severe security breach regarding my TikTok account. My primary authentication methods, including my registered email address and mobile number, have been modified without my consent, leading to a total loss of account access.\n\nI can verify my ownership through the original device hardware ID (IMEI/UUID) used for account creation, as well as providing documented proof of my original registration date and location. This breach puts my personal data and established audience at risk. I urge your security department to implement an immediate lockdown on the account and initiate the recovery protocol to return the account to its rightful owner.\n\nPrimary Username: @your_username\nLast Authorized Access: [Date]\n\nPlease prioritize this request due to the risk of identity theft.\n\nSincerely,\n[Your Name]";
-        } else if(type === 'ads') {
-            sub.value = "Financial Dispute: TikTok Ads Manager Billing Discrepancy and Delivery Failure";
-            msg.value = "To the TikTok Business and Advertising Support Team,\n\nI am contacting you regarding a technical failure within the TikTok Ads Manager platform that has resulted in a financial discrepancy. My payment for the latest campaign was successfully processed (Transaction ID available upon request), yet the campaign delivery status remains 'Not Delivering' or 'Inactive' without any policy-related rejection.\n\nThis lack of delivery is causing significant disruption to my marketing operations and a loss of potential ROI. I have verified that all creative assets meet the technical and ethical requirements of TikTok Advertising Policies. I request a manual intervention to force-start the delivery or, alternatively, a full credit refund to my ad account balance.\n\nBusiness ID: \nCampaign Reference: \n\nI look forward to your immediate technical feedback.";
-        }
+        const templates = {
+            shadow: {
+                s: "Formal Appeal: Request for Manual Review of Account Recommendation Status",
+                m: "Dear TikTok Trust and Safety Team,\n\nI am formally reaching out to appeal the 'Account not recommended' restriction currently placed on my profile (@Your_Username). I have thoroughly audited my content and confirmed that all my uploads are original and fully comply with TikTok Community Guidelines.\n\nMy organic reach from the 'For You' feed has dropped significantly, which I believe is a false positive flag by the automated system. I kindly request a manual review by a human moderator to restore my recommendation eligibility.\n\nUsername: @Your_Username\nRegion: Iraq\n\nRespectfully."
+            },
+            warning: {
+                s: "Dispute: Invalid Community Guidelines Warning during LIVE Stream",
+                m: "Dear TikTok LIVE Support,\n\nI am writing to dispute a 'Warning' notification issued to my account (@Your_Username) during a recent LIVE session. My broadcast provided a safe and respectful environment and did not violate any safety protocols or copyright laws.\n\nI believe this warning was a technical error. Please review the LIVE logs to verify my compliance and remove this mark from my account history.\n\nUsername: @Your_Username\n\nThank you for your review."
+            },
+            hacked: {
+                s: "Emergency: Report of Compromised Account and Recovery Request",
+                m: "Urgent Security Team,\n\nMy TikTok account (@Your_Username) has been compromised. My primary login credentials (email/phone) were changed without my authorization. I have lost all access to my personal data.\n\nI can provide the original registration device info and date to prove ownership. Please freeze any activity and initiate the recovery process immediately.\n\nUsername: @Your_Username\n\nI await your urgent response."
+            },
+            ads: {
+                s: "Business Dispute: Ad Delivery Failure and Billing Investigation",
+                m: "Dear TikTok Business Support,\n\nI am reporting a delivery failure in the Ads Manager for my account (@Your_Username). My payment was successfully processed, but the campaign remains 'Not Delivering' despite meeting all creative requirements.\n\nPlease investigate my Ads Manager account to ensure my budget is utilized correctly or provide a refund.\n\nUsername: @Your_Username\nBusiness ID: [Insert ID]\n\nRegards."
+            },
+            age: {
+                s: "Legal: Identity Verification and Age Correction Request",
+                m: "To the TikTok Legal Department,\n\nMy account (@Your_Username) features are restricted due to an incorrect age setting in your system. I am over the legal age of 18 and can provide a government-issued ID to verify my identity.\n\nPlease provide a secure link to upload my documents so you can restore my full account access.\n\nUsername: @Your_Username\n\nSincerely."
+            },
+            verify: {
+                s: "Official Request: Verification Badge for Authenticity Protection",
+                m: "Dear Verification Team,\n\nI am reaching out to request a verification badge for my account (@Your_Username) to protect my brand authenticity and prevent impersonation on the platform. I am a professional creator with a growing influence and I am committed to providing high-quality content.\n\nPlease review my account for eligibility.\n\nUsername: @Your_Username\n\nBest regards."
+            }
+        };
+
+        sub.value = templates[type].s;
+        msg.value = templates[type].m;
     }
 
     document.getElementById('mailForm').onsubmit = function(e) {
         e.preventDefault();
         const s = document.getElementById('subject').value;
         const b = document.getElementById('message').value;
-        // پەیوەندی بە ئیمێڵی فەرمی
-        window.location.href = `mailto:feedback@tiktok.com?subject=${encodeURIComponent(s)}&body=${encodeURIComponent(b)}`;
+        // ئیمێڵە فەرمییەکان
+        const supportEmails = "feedback@tiktok.com, legal@tiktok.com, business-servicesupport@tiktok.com"; 
+        window.location.href = `mailto:${supportEmails}?subject=${encodeURIComponent(s)}&body=${encodeURIComponent(b)}`;
     };
 </script>
 
