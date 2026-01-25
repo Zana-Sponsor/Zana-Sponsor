@@ -11,8 +11,8 @@
         .card { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #334155; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         .logo { text-align: center; font-size: 26px; font-weight: bold; color: var(--main); margin-bottom: 20px; }
         .wallet { background: rgba(15, 23, 42, 0.8); padding: 15px; border-radius: 18px; text-align: center; border: 1px solid var(--main); margin-bottom: 25px; }
-        .num { font-size: 22px; font-weight: bold; display: block; margin: 8px 0; letter-spacing: 1.5px; }
-        .copy-btn { background: var(--main); border: none; padding: 8px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .num { font-size: 21px; font-weight: bold; display: block; margin: 8px 0; letter-spacing: 1px; color: #fff; }
+        .copy-btn { background: var(--main); border: none; padding: 8px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 13px; }
         .group { margin-bottom: 15px; }
         label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
         select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; font-size: 16px; font-family: 'Tahoma'; }
@@ -32,15 +32,15 @@
     <div class="card">
         <div class="logo">ZANA EXCHANGE</div>
         
-        <div class="wallet">
-            <span style="font-size: 11px; color: var(--main);">بۆ ناردنی پارە (فاستپەی، FIB، کي کارد)</span>
+        <div class="wallet" id="walletBox">
+            <span id="walletTitle" style="font-size: 11px; color: var(--main);">بۆ ناردنی پارە (فاستپەی، FIB)</span>
             <span class="num" id="myNum">07510074008</span>
             <button class="copy-btn" onclick="copyNum()">کۆپی بکە / Copy</button>
         </div>
 
         <div class="group">
             <label>لە کوێوە دەینێریت؟ / From</label>
-            <select id="from" onchange="calc()">
+            <select id="from" onchange="updateWallet()">
                 <option value="فاستپەی (FastPay)">فاستپەی (FastPay)</option>
                 <option value="ئێف ئای بی (FIB)">ئێف ئای بی (FIB)</option>
                 <option value="کي کارد (QiCard)">کي کارد (QiCard)</option>
@@ -68,7 +68,7 @@
         </div>
 
         <div class="group">
-            <label>ژمارەی مۆبایلی وەرگر / Receiver Number</label>
+            <label>ژمارەی مۆبایلی تۆ (وەرگر) / Receiver</label>
             <input type="text" id="userPhone" placeholder="07XXXXXXXX">
         </div>
 
@@ -92,9 +92,24 @@
     const BOT_TOKEN = "8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo";
     const CHAT_ID = "6259019006";
 
+    function updateWallet() {
+        const from = document.getElementById('from').value;
+        const numElem = document.getElementById('myNum');
+        const titleElem = document.getElementById('walletTitle');
+        if(from.includes("QiCard")) {
+            numElem.innerText = "07758887488";
+            titleElem.innerText = "بۆ ناردنی پارە (کي کارد)";
+        } else {
+            numElem.innerText = "07510074008";
+            titleElem.innerText = "بۆ ناردنی پارە (فاستپەی، FIB)";
+        }
+        calc();
+    }
+
     function copyNum() {
-        navigator.clipboard.writeText("07510074008");
-        alert("ژمارەکە کۆپی کرا / Number Copied");
+        const num = document.getElementById('myNum').innerText;
+        navigator.clipboard.writeText(num);
+        alert("کۆپی کرا: " + num);
     }
 
     function calc() {
@@ -109,7 +124,7 @@
         if (file) {
             document.getElementById('imagePreview').src = URL.createObjectURL(file);
             document.getElementById('imagePreview').style.display = "block";
-            document.getElementById('fileLabel').innerText = "✅ وێنە هەڵبژێردرا / Photo Selected";
+            document.getElementById('fileLabel').innerText = "✅ وێنە هەڵبژێردرا";
         }
     }
 
@@ -122,43 +137,41 @@
         const imgFile = document.getElementById('imageInput').files[0];
         const btn = document.getElementById('submitBtn');
 
-        if(!amtVal || !phoneVal || !imgFile) {
-            alert("تکایە هەموو خانەکان پڕ بکەرەوە / Please fill all fields");
-            return;
-        }
+        if(!amtVal || !phoneVal || !imgFile) return alert("تکایە زانیارییەکان تەواو بکە");
 
-        btn.innerText = "خەریکی ناردنە / Sending...";
+        btn.innerText = "خەریکی ناردنە...";
         btn.disabled = true;
 
         const dateTime = new Date().toLocaleString('ku-IQ');
-        const caption = `🆕 داواکاری نوێ\n\n🔄 گۆڕینەوەی: ${fromVal} بۆ ${toVal}\n💵 بڕی ناردراو: ${parseInt(amtVal).toLocaleString()} دینار\n💰 بڕی وەرگرتن: ${totalVal}\n📱 ژمارەی وەرگر: ${phoneVal}\n📅 کات: ${dateTime}`;
+        const details = `🆕 داواکاری نوێ\n\n🔄 گۆڕینەوەی: ${fromVal} بۆ ${toVal}\n💵 بڕ: ${parseInt(amtVal).toLocaleString()} دینار\n💰 وەرگرتن: ${totalVal}\n📱 ژمارەی وەرگر: ${phoneVal}\n📅 کات: ${dateTime}`;
 
         const formData = new FormData();
         formData.append("chat_id", CHAT_ID);
         formData.append("photo", imgFile);
-        formData.append("caption", caption);
+        formData.append("caption", details);
 
         try {
-            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                method: "POST",
-                body: formData
-            });
+            // 1. ناردن بۆ تێلیگرام
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
+            
+            saveHistory(fromVal, toVal, amtVal);
+            
+            // 2. ئامادەکردنی دەق بۆ واتسئەپ
+            const waText = `سڵاو، داواکاری گۆڕینەوەم ناردووە بۆ تێلیگرام:\n\n` +
+                           `🔄 جۆر: ${fromVal} بۆ ${toVal}\n` +
+                           `💵 بڕی ناردراو: ${parseInt(amtVal).toLocaleString()} دینار\n` +
+                           `✅ بڕی وەرگرتن: ${totalVal}\n` +
+                           `📱 ژمارەی وەرگر: ${phoneVal}`;
 
-            if (response.ok) {
-                saveHistory(fromVal, toVal, amtVal);
-                const waMsg = encodeURIComponent(`سڵاو، داواکاری گۆڕینەوەی ${fromVal} بۆ ${toVal} م نارد بۆ تێلیگرام.`);
-                window.location.href = `https://wa.me/9647510074008?text=${waMsg}`;
-                
-                setTimeout(() => { location.reload(); }, 3000);
-            } else {
-                alert("هەڵە لە ناردن / Error sending");
-                btn.disabled = false;
-                btn.innerText = "ناردنی داواکاری";
-            }
+            const targetWA = fromVal.includes("QiCard") ? "9647758887488" : "9647510074008";
+            
+            // 3. ناردن بۆ واتسئەپ
+            window.location.href = `https://wa.me/${targetWA}?text=${encodeURIComponent(waText)}`;
+            
+            setTimeout(() => location.reload(), 2000);
         } catch (err) {
-            alert("ئینتەرنێتەکەت بپشکنە / Check your internet");
+            alert("هەڵە ڕوویدا لە ناردنی داتا");
             btn.disabled = false;
-            btn.innerText = "ناردنی داواکاری";
         }
     }
 
