@@ -23,7 +23,6 @@
         event.preventDefault(); 
         var url = event.currentTarget.href;
         
-        // ناردنی تەنها نامەکە بەبێ هیچ لینکێک
         if (platform === 'WhatsApp') {
             var message = "سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی!";
             url = "whatsapp://send?phone=+9647758887488&text=" + encodeURIComponent(message);
@@ -79,6 +78,10 @@
         .sponsor-section { margin-top: 60px; text-align: center; }
         .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
         .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #1e8449, #27ae60); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; }
+        /* ستایڵی نوێ بۆ یاساکان */
+        .legal-links { margin-top: 20px; font-size: 12px; color: #95a5a6; }
+        .legal-links a { color: #7f8c8d; text-decoration: none; margin: 0 8px; transition: color 0.2s; }
+        .legal-links a:hover { color: #2d3436; }
     </style>
 </head>
 <body>
@@ -107,6 +110,11 @@
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
         <a href="whatsapp://send?phone=+9647758887488&text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Zana Sponsor</a>
+        
+        <div class="legal-links">
+            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
+            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
+        </div>
     </div>
 
 </body>
