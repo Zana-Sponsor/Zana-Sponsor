@@ -15,13 +15,21 @@
         .copy-btn { background: var(--main); border: none; padding: 8px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .group { margin-bottom: 15px; }
         label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
-        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; font-size: 16px; }
+        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; font-size: 16px; font-family: 'Tahoma'; }
         .res-box { background: rgba(16, 185, 129, 0.15); padding: 15px; border-radius: 15px; margin: 20px 0; border-right: 4px solid var(--success); text-align: center; }
         .total { font-size: 24px; font-weight: bold; color: var(--success); }
         .file-label { display: block; background: #334155; padding: 12px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px dashed var(--main); }
         #imageInput { display: none; }
         #imagePreview { width: 100%; border-radius: 12px; margin-top: 15px; display: none; border: 2px solid var(--main); }
-        .btn { background: linear-gradient(90deg, #facc15, #eab308); color: #000; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .btn { background: linear-gradient(90deg, #facc15, #eab308); color: #000; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; }
+        
+        /* History Styles */
+        .history-section { margin-top: 30px; background: #1e293b; padding: 15px; border-radius: 20px; border: 1px solid #334155; }
+        .history-title { font-size: 16px; color: var(--main); margin-bottom: 10px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
+        .hist-item { background: #0f172a; padding: 10px; border-radius: 10px; margin-bottom: 10px; font-size: 13px; border-right: 3px solid var(--main); }
+        .hist-time { font-size: 10px; color: #94a3b8; display: block; margin-top: 5px; }
+        
+        .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #94a3b8; padding-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -33,11 +41,11 @@
         <div class="wallet" id="walletBox">
             <span id="walletTitle" style="font-size: 11px; color: var(--main);">بۆ ناردنی پارە (فاستپەی، FIB)</span>
             <span class="num" id="myNum">07510074008</span>
-            <button class="copy-btn" onclick="copyNum()">کۆپی بکە / Copy</button>
+            <button class="copy-btn" onclick="copyNum()">کۆپی بکە</button>
         </div>
 
         <div class="group">
-            <label>لە کوێوە دەینێریت؟ / From</label>
+            <label>لە کوێوە دەینێریت؟</label>
             <select id="from" onchange="updateWallet()">
                 <option value="فاستپەی">فاستپەی (FastPay)</option>
                 <option value="FIB">FIB</option>
@@ -46,7 +54,7 @@
         </div>
 
         <div class="group">
-            <label>بۆ کوێ بگۆڕدرێت؟ / To</label>
+            <label>بۆ کوێ بگۆڕدرێت؟</label>
             <select id="to" onchange="calc()">
                 <option value="FIB">FIB</option>
                 <option value="فاستپەی">فاستپەی (FastPay)</option>
@@ -55,7 +63,7 @@
         </div>
 
         <div class="group">
-            <label>بڕی ناردن / Amount</label>
+            <label>بڕی ناردن</label>
             <input type="number" id="amt" placeholder="100,000" oninput="calc()">
         </div>
 
@@ -65,18 +73,27 @@
         </div>
 
         <div class="group">
-            <label>ژمارەی مۆبایلی تۆ (وەرگر)</label>
+            <label>ژمارەی وەرگرتن</label>
             <input type="text" id="userPhone" placeholder="07XXXXXXXX">
         </div>
 
         <div class="group">
-            <label>وێنەی وەسڵ / Receipt</label>
+            <label>وێنەی وەسڵ</label>
             <label for="imageInput" class="file-label" id="fileLabel">📁 وێنەی وەسڵ هەڵبژێرە</label>
             <input type="file" id="imageInput" accept="image/*" onchange="previewImg()">
             <img id="imagePreview">
         </div>
 
         <button class="btn" id="submitBtn" onclick="processOrder()">ناردنی داواکاری</button>
+    </div>
+
+    <div class="history-section" id="historySection" style="display: none;">
+        <div class="history-title">🕒 مێژووی ئاڵوگۆڕەکان</div>
+        <div id="historyList"></div>
+    </div>
+
+    <div class="footer">
+        Powered By Zana Adam ⓒ 2026
     </div>
 </div>
 
@@ -87,20 +104,17 @@
     function updateWallet() {
         const from = document.getElementById('from').value;
         const numElem = document.getElementById('myNum');
-        const titleElem = document.getElementById('walletTitle');
         if(from === "کي کارد") {
             numElem.innerText = "07758887488";
-            titleElem.innerText = "بۆ ناردنی پارە (کي کارد)";
         } else {
             numElem.innerText = "07510074008";
-            titleElem.innerText = "بۆ ناردنی پارە (فاستپەی، FIB)";
         }
         calc();
     }
 
     function copyNum() {
         navigator.clipboard.writeText(document.getElementById('myNum').innerText);
-        alert("کۆپی کرا");
+        alert("ژمارەکە کۆپی کرا");
     }
 
     function calc() {
@@ -133,23 +147,25 @@
         btn.innerText = "خەریکی ناردنە...";
         btn.disabled = true;
 
-        // وەرگرتنی بەروار و کات بە شێوازی کوردی
         const now = new Date();
-        const kurdishDate = now.toLocaleDateString('ku-IQ');
-        const kurdishTime = now.toLocaleTimeString('ku-IQ', { hour: '2-digit', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString('ku-IQ');
+        const timeStr = now.toLocaleTimeString('ku-IQ', { hour: '2-digit', minute: '2-digit' });
 
-        const amtF = parseInt(amt).toLocaleString();
-        const msg = `${amtF} لە ${from} نێردرا، ${total} دەکات لە ${to}`;
+        const msg = `${parseInt(amt).toLocaleString()} لە ${from} نێردرا، ${total} دەکات لە ${to}`;
+        const caption = `🆕 داواکاری نوێ\n\n📝 ${msg}\n📱 وەرگر: ${phone}\n📅 بەروار: ${dateStr}\n⏰ کات: ${timeStr}`;
 
         const formData = new FormData();
         formData.append("chat_id", CHAT_ID);
         formData.append("photo", imgFile);
-        formData.append("caption", `🆕 داواکاری نوێ\n\n📝 ${msg}\n📱 وەرگر: ${phone}\n📅 بەروار: ${kurdishDate}\n⏰ کات: ${kurdishTime}`);
+        formData.append("caption", caption);
 
         try {
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
             
-            const waText = encodeURIComponent(`سڵاو، داواکاری گۆڕینەوەم نارد:\n✅ ${msg}\n📱 وەرگر: ${phone}\n📅 کات: ${kurdishDate} - ${kurdishTime}`);
+            // Save to Local History
+            saveHistory({ msg, phone, date: dateStr, time: timeStr });
+
+            const waText = encodeURIComponent(`سڵاو، داواکاری گۆڕینەوەم نارد:\n✅ ${msg}\n📱 وەرگر: ${phone}\n⏰ کات: ${dateStr} - ${timeStr}`);
             const targetWA = from === "کي کارد" ? "9647758887488" : "9647510074008";
             
             window.location.href = `https://wa.me/${targetWA}?text=${waText}`;
@@ -159,6 +175,27 @@
             btn.disabled = false;
         }
     }
+
+    function saveHistory(item) {
+        let history = JSON.parse(localStorage.getItem('zana_exchange_history') || "[]");
+        history.unshift(item);
+        localStorage.setItem('zana_exchange_history', JSON.stringify(history.slice(0, 10)));
+    }
+
+    function loadHistory() {
+        const history = JSON.parse(localStorage.getItem('zana_exchange_history') || "[]");
+        if(history.length > 0) {
+            document.getElementById('historySection').style.display = "block";
+            document.getElementById('historyList').innerHTML = history.map(h => `
+                <div class="hist-item">
+                    <b>${h.msg}</b>
+                    <span class="hist-time">📱 وەرگر: ${h.phone} | 📅 ${h.date} - ${h.time}</span>
+                </div>
+            `).join('');
+        }
+    }
+
+    window.onload = loadHistory;
 </script>
 
 </body>
