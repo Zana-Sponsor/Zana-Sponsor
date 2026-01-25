@@ -4,51 +4,59 @@
     <meta name="robots" content="noindex, nofollow">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talabat Drivers - Links</title>
+    <title>Zana Sponsor - Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script defer src="/_vercel/insights/script.js"></script>
 
     <script>
-    // تیکتۆک پیکسڵ و ئەنالیتیکس وەک خۆی
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     !function (w, d, t) {
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
     var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
     ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
       window.trackTikTokConversion = function(platform, event) {
         event.preventDefault(); 
         var url = event.currentTarget.href;
+        
         if (window.va) window.va('event', { name: 'Contact_Click', data: { platform: platform } });
-        if (typeof ttq !== 'undefined') ttq.track('Contact', { "contents": [{ "content_name": platform }] });
+        if (typeof ttq !== 'undefined') {
+          ttq.track('Contact', {
+            "contents": [{ "content_name": platform }]
+          });
+        }
 
         var frame = document.createElement('iframe');
         frame.style.display = 'none';
         frame.src = url;
         document.body.appendChild(frame);
-        setTimeout(function() { document.body.removeChild(frame); }, 150);
+        
+        setTimeout(function() {
+          document.body.removeChild(frame);
+        }, 150);
       };
 
-      // فەنکشنی بارکردن (Loading)
+      // بەشی لۆدینگ بۆ ٥ چرکە
       window.addEventListener('load', function() {
           const loader = document.getElementById('loader-wrapper');
           const percentText = document.getElementById('percent');
           let count = 0;
           let interval = setInterval(() => {
-              count += Math.floor(Math.random() * 15) + 1;
+              count += 1;
               if(count >= 100) {
                   count = 100;
                   clearInterval(interval);
                   setTimeout(() => {
                       loader.style.opacity = '0';
                       setTimeout(() => { loader.style.display = 'none'; }, 500);
-                  }, 300);
+                  }, 200);
               }
               percentText.innerText = count + "%";
-          }, 100);
+          }, 45); // خێراییەکە بۆ ئەوەی نزیکەی ٥ چرکە بخایەنێت
       });
     }(window, document, 'ttq');
     </script>
@@ -57,21 +65,24 @@
         /* ستایڵی لۆدینگەکە */
         #loader-wrapper {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 9999;
+            background: #ffffff; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 10000;
             transition: opacity 0.5s ease;
         }
-        .loader-circle {
-            width: 80px; height: 80px; border-radius: 50%;
-            border: 4px solid #f3f3f3; border-top: 4px solid #000;
-            animation: spin 1s linear infinite; margin-bottom: 20px;
+        .loader-container {
+            position: relative; width: 110px; height: 110px;
             display: flex; align-items: center; justify-content: center;
         }
-        .loader-logo { width: 45px; height: 45px; object-fit: contain; }
-        .loading-text { font-family: sans-serif; font-weight: bold; color: #333; }
+        .loader-circle {
+            position: absolute; width: 100%; height: 100%;
+            border: 4px solid #f3f3f3; border-top: 4px solid #000000;
+            border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        .loader-logo { width: 55px; height: 55px; border-radius: 50%; object-fit: contain; z-index: 10; }
+        .loading-status { margin-top: 20px; font-family: sans-serif; font-size: 17px; font-weight: bold; color: #000; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* ستایڵی ئەسڵی لاپەڕەکە */
+        /* ستایڵە ئەسڵییەکەی خۆت بێ دەستکاری */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
@@ -94,21 +105,26 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.07); animation: fast-pulse 0.8s infinite ease-in-out;
         }
         @keyframes fast-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
-        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
-        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); }
-        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); }
+        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); animation-delay: 0.1s; }
+        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); animation-delay: 0.2s; }
+        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); animation-delay: 0.3s; }
+        .link-card:hover { transform: translateY(-3px) scale(1.06); filter: brightness(1.1); }
         .link-card i { font-size: 28px; margin-left: 12px; }
         .sponsor-section { margin-top: 60px; text-align: center; }
+        .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
         .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #1e8449, #27ae60); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; }
+        .legal-links { margin-top: 20px; font-size: 11px; color: #95a5a6; }
+        .legal-links a { color: #95a5a6; text-decoration: none; margin: 0 6px; }
     </style>
 </head>
 <body>
 
     <div id="loader-wrapper">
-        <div class="loader-circle">
-            <img src="https://image2url.com/r2/default/images/1769302020684-b85be098-9826-4e65-9b4f-3e882e28b358.png" class="loader-logo" alt="Logo">
+        <div class="loader-container">
+            <div class="loader-circle"></div>
+            <img src="https://image2url.com/r2/default/images/1769302020684-b85be098-9826-4e65-9b4f-3e882e28b358.png" class="loader-logo">
         </div>
-        <div class="loading-text">Loading... <span id="percent">0%</span></div>
+        <div class="loading-status">Loading... <span id="percent">0%</span></div>
     </div>
 
     <div class="profile-container">
@@ -122,10 +138,12 @@
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
+
         <a href="viber://chat?number=+9647501448838" onclick="trackTikTokConversion('Viber', event)" class="link-card viber">
             <i class="fab fa-viber"></i>
             <span>ڤایبەر</span>
         </a>
+
         <a href="tel:+9647501448838" onclick="trackTikTokConversion('Phone', event)" class="link-card phone">
             <i class="fas fa-phone-alt"></i>
             <span>ژمارەی مۆبایل</span>
@@ -135,6 +153,10 @@
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
         <a href="whatsapp://send?phone=+9647758887488&text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Serwan Phone</a>
+        <div class="legal-links">
+            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
+            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
+        </div>
     </div>
 
 </body>
