@@ -22,23 +22,16 @@
       window.trackTikTokConversion = function(platform, event) {
         event.preventDefault(); 
         var url = event.currentTarget.href;
-
-        // وەرگرتنی لینکی ڤیدیۆ لە URL (Dynamic Link)
-        const urlParams = new URLSearchParams(window.location.search);
-        const videoUrl = urlParams.get('v');
         
-        if (platform === 'WhatsApp') {
-            var message = "سڵاو، دەمەوێت دەربارەی ئەم ڤیدیۆیە بزانم";
-            if (videoUrl) {
-                message += ": " + videoUrl;
-            }
-            url = "whatsapp://send?phone=+9647501448838&text=" + encodeURIComponent(message);
-        }
-        
+        // ناردنی داتا بۆ Vercel و TikTok Pixel بۆ هەژمارکردنی Conversion
         if (window.va) window.va('event', { name: 'Contact_Click', data: { platform: platform } });
-        if (typeof ttq !== 'undefined') ttq.track('Contact', { "contents": [{ "content_name": platform }] });
+        if (typeof ttq !== 'undefined') {
+          ttq.track('Contact', {
+            "contents": [{ "content_name": platform }]
+          });
+        }
 
-        // ناردن بۆ واتساپ/ڤایبەر بێ چوونە دەرەوە بۆ Chrome
+        // بەکارهێنانی iframe بۆ مانەوە لەناو تیکتۆک و کردنەوەی ڕاستەوخۆی ئەپەکان
         var frame = document.createElement('iframe');
         frame.style.display = 'none';
         frame.src = url;
@@ -46,7 +39,7 @@
         
         setTimeout(function() {
           document.body.removeChild(frame);
-        }, 100);
+        }, 150);
       };
     }(window, document, 'ttq');
     </script>
@@ -95,7 +88,7 @@
     </div>
 
     <div class="links-wrapper">
-        <a href="whatsapp://send?phone=+9647501448838" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
+        <a href="whatsapp://send?phone=+9647501448838&text=سڵاو، دەمەوێت زانیاری زیاترم پێبدەی !" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
