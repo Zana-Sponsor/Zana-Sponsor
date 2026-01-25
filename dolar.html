@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zana Media | نرخی دۆلار</title>
+    <style>
+        body {
+            font-family: 'Tahoma', sans-serif;
+            margin: 0;
+            background-color: #0d1117;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: #161b22;
+            width: 350px;
+            padding: 20px;
+            border-radius: 15px;
+            border-top: 4px solid #facc15;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #facc15;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .currency-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #8b949e;
+        }
+
+        .rate-container {
+            display: flex;
+            justify-content: space-between;
+            background: #21262d;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .label { font-size: 14px; color: #8b949e; }
+        .value { font-size: 22px; font-weight: bold; }
+        
+        .buy { color: #3fb950; } /* سەوز بۆ کڕین */
+        .sell { color: #f85149; } /* سوور بۆ فرۆشتن */
+
+        .status {
+            margin-top: 15px;
+            font-size: 11px;
+            color: #484f58;
+        }
+
+        .live-dot {
+            height: 8px;
+            width: 8px;
+            background-color: #3fb950;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 5px;
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes blink { 0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;} }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="logo">ZANA MEDIA</div>
+    <div class="currency-title">🇺🇸 100 دۆلاری ئەمریکی</div>
+
+    <div class="rate-container">
+        <span class="label">کڕین</span>
+        <span id="usd-buy" class="value buy">...</span>
+    </div>
+
+    <div class="rate-container">
+        <span class="label">فرۆشتن</span>
+        <span id="usd-sell" class="value sell">...</span>
+    </div>
+
+    <div class="status">
+        <span class="live-dot"></span>
+        <span id="update-time">لە نوێبوونەوەدایە...</span>
+    </div>
+</div>
+
+<script>
+    async function fetchHatwan() {
+        const proxy = "https://api.allorigins.win/get?url=";
+        const target = encodeURIComponent("https://hatwanexchange.com/");
+        
+        try {
+            const response = await fetch(proxy + target);
+            const data = await response.json();
+            const html = data.contents;
+            
+            // گەڕان بەدوای یەکەم دوو نرخ کە لە سایتەکەدا هەیە (کە هی دۆلارن)
+            const prices = html.match(/\d{3},\d{3}/g);
+            
+            if (prices && prices.length >= 2) {
+                document.getElementById('usd-buy').innerText = prices[0];
+                document.getElementById('usd-sell').innerText = prices[1];
+                document.getElementById('update-time').innerText = "نوێکرایەوە: " + new Date().toLocaleTimeString('ku-IQ');
+            }
+        } catch (err) {
+            document.getElementById('update-time').innerText = "هەڵە لە وەرگرتنی نرخ!";
+        }
+    }
+
+    // هەر ٢٠ چرکەیەک نرخەکە بپشکنە
+    setInterval(fetchHatwan, 20000);
+    fetchHatwan();
+</script>
+
+</body>
+</html>
