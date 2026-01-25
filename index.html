@@ -23,14 +23,11 @@
         event.preventDefault(); 
         var url = event.currentTarget.href;
         
-        // --- تەنها لینکی ڤیدیۆکە دەبڕێت و دەینێرێت ---
+        // ناردنی تەنها نامەکە بەبێ هیچ لینکێک
         if (platform === 'WhatsApp') {
-            var fullUrl = window.location.href;
-            var videoUrl = fullUrl.split('v=')[1] || fullUrl; // ئەگەر v= نەبوو هەمووی دەنێرێت
-            var message = "سڵاو، دەتوانی زانیاری زیاترم پێبدەی !\n" + videoUrl;
+            var message = "سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی!";
             url = "whatsapp://send?phone=+9647758887488&text=" + encodeURIComponent(message);
         }
-        // ---------------------------------------
 
         if (window.va) window.va('event', { name: 'Contact_Click', data: { platform: platform } });
         if (typeof ttq !== 'undefined') {
