@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zana Exchange | سیستەمی ئاڵوگۆڕ</title>
+    <style>
+        :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; }
+        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; }
+        .container { max-width: 400px; margin: auto; }
+        .card { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #334155; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .logo { text-align: center; font-size: 26px; font-weight: bold; color: var(--main); margin-bottom: 20px; }
+        .wallet { background: rgba(15, 23, 42, 0.8); padding: 15px; border-radius: 18px; text-align: center; border: 1px solid var(--main); margin-bottom: 25px; }
+        .num { font-size: 22px; font-weight: bold; display: block; margin: 8px 0; letter-spacing: 1.5px; }
+        .copy-btn { background: var(--main); border: none; padding: 8px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .group { margin-bottom: 15px; text-align: right; }
+        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
+        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; font-size: 16px; }
+        .res-box { background: rgba(16, 185, 129, 0.15); padding: 15px; border-radius: 15px; margin: 20px 0; border-right: 4px solid var(--success); text-align: center; }
+        .total { font-size: 24px; font-weight: bold; color: var(--success); }
+        .file-label { display: block; background: #334155; padding: 12px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px dashed var(--main); margin-top: 5px; }
+        #imageInput { display: none; }
+        #imagePreview { width: 100%; border-radius: 12px; margin-top: 15px; display: none; border: 2px solid var(--main); }
+        .btn { background: linear-gradient(90deg, #facc15, #eab308); color: #000; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="logo">ZANA EXCHANGE</div>
+        
+        <div class="wallet">
+            <span style="font-size: 11px; color: var(--main);">بۆ ناردنی پارە (فەستپەی، FIB، کەی کارت)</span>
+            <span class="num" id="myNum">07510074008</span>
+            <button class="copy-btn" onclick="copyNum()">کۆپی بکە</button>
+        </div>
+
+        <div class="group">
+            <label>لە کوێوە دەینێریت؟</label>
+            <select id="from" onchange="calc()">
+                <option value="فەستپەی">فەستپەی (FastPay)</option>
+                <option value="ئێف ئای بی">ئێف ئای بی (FIB)</option>
+                <option value="کەی کارت">کەی کارت (QiCard)</option>
+            </select>
+        </div>
+
+        <div class="group">
+            <label>بۆ چ جۆرێک بگۆڕدرێت؟</label>
+            <select id="to" onchange="calc()">
+                <option value="ئێف ئای بی">ئێف ئای بی (FIB)</option>
+                <option value="فەستپەی">فەستپەی (FastPay)</option>
+                <option value="کەی کارت">کەی کارت (QiCard)</option>
+            </select>
+        </div>
+
+        <div class="group">
+            <label>بڕی ناردن (دینار)</label>
+            <input type="number" id="amt" placeholder="100,000" oninput="calc()">
+        </div>
+
+        <div class="res-box">
+            <div style="font-size: 12px; color: #94a3b8;">بڕی وەرگرتن (بە لێدەرکردنی عمولە):</div>
+            <span class="total" id="total">0 دینار</span>
+        </div>
+
+        <div class="group">
+            <label>ژمارەی وەرگر</label>
+            <input type="text" id="userPhone" placeholder="07XXXXXXXX">
+        </div>
+
+        <div class="group">
+            <label>وێنەی وەسڵ (Screenshot)</label>
+            <label for="imageInput" class="file-label" id="fileLabel">📁 هەڵبژاردنی وێنە</label>
+            <input type="file" id="imageInput" accept="image/*" onchange="previewImg()">
+            <img id="imagePreview">
+        </div>
+
+        <button class="btn" id="submitBtn" onclick="processOrder()">ناردنی داواکاری</button>
+    </div>
+</div>
+
+<script>
+    const BOT_TOKEN = "8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo";
+    const CHAT_ID = "6259019006";
+
+    function copyNum() {
+        navigator.clipboard.writeText("07510074008");
+        alert("ژمارەکە کۆپی کرا");
+    }
+
+    function calc() {
+        const amt = document.getElementById('amt').value || 0;
+        const fee = Math.floor(amt * 0.01);
+        const result = amt - fee;
+        document.getElementById('total').innerText = (result > 0 ? result.toLocaleString() : 0) + " دینار";
+    }
+
+    function previewImg() {
+        const file = document.getElementById('imageInput').files[0];
+        if (file) {
+            document.getElementById('imagePreview').src = URL.createObjectURL(file);
+            document.getElementById('imagePreview').style.display = "block";
+            document.getElementById('fileLabel').innerText = "✅ وێنە هەڵبژێردرا";
+        }
+    }
+
+    async function processOrder() {
+        const fromVal = document.getElementById('from').value;
+        const toVal = document.getElementById('to').value;
+        const amtVal = document.getElementById('amt').value;
+        const totalVal = document.getElementById('total').innerText;
+        const phoneVal = document.getElementById('userPhone').value;
+        const imgFile = document.getElementById('imageInput').files[0];
+        const btn = document.getElementById('submitBtn');
+
+        if(!amtVal || !phoneVal || !imgFile) return alert("تکایە هەموو خانەکان پڕ بکەرەوە");
+
+        btn.innerText = "خەریکی ناردنە...";
+        btn.disabled = true;
+
+        const dateTime = new Date().toLocaleString('ku-IQ');
+        const captionText = `🆕 داواکاری نوێ\n\n🔄 گۆڕینەوەی: ${fromVal} بۆ ${toVal}\n💵 بڕی ناردراو: ${parseInt(amtVal).toLocaleString()} دینار\n💰 بڕی وەرگرتن: ${totalVal}\n📱 ژمارەی وەرگر: ${phoneVal}\n📅 کات: ${dateTime}`;
+
+        const formData = new FormData();
+        formData.append("chat_id", CHAT_ID);
+        formData.append("photo", imgFile);
+        formData.append("caption", captionText);
+
+        try {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
+            window.location.href = `https://wa.me/9647510074008?text=سڵاو، داواکاری گۆڕینەوەی ${fromVal} بۆ ${toVal} م نارد بۆ تێلیگرام.`;
+        } catch (err) {
+            alert("کێشە لە ناردن هەیە");
+            btn.disabled = false;
+            btn.innerText = "ناردنی داواکاری";
+        }
+    }
+</script>
+
+</body>
+</html>
