@@ -10,8 +10,8 @@
         .container { max-width: 400px; margin: auto; }
         .card { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #334155; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         .logo { text-align: center; font-size: 26px; font-weight: bold; color: var(--main); margin-bottom: 20px; }
-        .wallet { background: rgba(15, 23, 42, 0.8); padding: 15px; border-radius: 18px; text-align: center; border: 1px solid var(--main); margin-bottom: 25px; }
-        .num { font-size: 21px; font-weight: bold; display: block; margin: 8px 0; color: #fff; letter-spacing: 1px; }
+        .wallet { background: rgba(15, 23, 42, 0.8); padding: 15px; border-radius: 18px; text-align: center; border: 1px solid var(--main); margin-bottom: 25px; word-break: break-all; }
+        .num { font-size: 18px; font-weight: bold; display: block; margin: 8px 0; color: #fff; letter-spacing: 1px; }
         .copy-btn { background: var(--main); border: none; padding: 8px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .group { margin-bottom: 15px; }
         label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
@@ -44,7 +44,12 @@
                 <option value="فاستپەی (FastPay)">فاستپەی (FastPay)</option>
                 <option value="ئێف ئای بی (FIB)">ئێف ئای بی (FIB)</option>
                 <option value="کي کارد (QiCard)">کي کارد (QiCard)</option>
+                <option value="USDT (TRC-20)">USDT (TRC-20)</option>
             </select>
+        </div>
+        <div class="group">
+            <label>ناوی نێرەر / Sender Name</label>
+            <input type="text" id="senderName" placeholder="ناوی نێرەر لێرە بنووسە">
         </div>
         <div class="group">
             <label>بۆ کوێ بگۆڕدرێت؟ / To</label>
@@ -60,10 +65,10 @@
         </div>
         <div class="res-box">
             <span class="total" id="total">0 دینار</span>
-            <div style="font-size: 11px; color: #94a3b8; margin-top: 5px;">(عمولە 2,000 بۆ هەر 100 هەزار)</div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 5px;" id="feeText">(عمولە 2,000 بۆ هەر 100 هەزار)</div>
         </div>
         <div class="group">
-            <label>ژمارەی مۆبایلی وەرگر</label>
+            <label>ژمارەی مۆبایل یان هەژماری وەرگر</label>
             <input type="text" id="userPhone" placeholder="07XXXXXXXX">
         </div>
         <div class="group">
@@ -88,8 +93,22 @@
     function updateWallet() {
         const from = document.getElementById('from').value;
         const numElem = document.getElementById('myNum');
-        if(from.includes("QiCard")) numElem.innerText = "07758887488";
-        else numElem.innerText = "07510074008";
+        const titleElem = document.getElementById('walletTitle');
+        const feeText = document.getElementById('feeText');
+
+        if(from.includes("QiCard")) {
+            numElem.innerText = "07758887488";
+            titleElem.innerText = "بۆ ناردنی پارە (کي کارد)";
+            feeText.innerText = "(عمولە 2,000 بۆ هەر 100 هەزار)";
+        } else if(from.includes("USDT")) {
+            numElem.innerText = "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc";
+            titleElem.innerText = "بۆ ناردنی USDT (TRC-20)";
+            feeText.innerText = "(عمولە بۆ USDT بەپێی نرخ کەم دەکرێتەوە)";
+        } else {
+            numElem.innerText = "07510074008";
+            titleElem.innerText = "بۆ ناردنی پارە (فاستپەی، FIB)";
+            feeText.innerText = "(عمولە 2,000 بۆ هەر 100 هەزار)";
+        }
         calc();
     }
 
@@ -99,10 +118,15 @@
     }
 
     function calc() {
+        const from = document.getElementById('from').value;
         const amt = document.getElementById('amt').value || 0;
-        const fee = Math.floor(amt * 0.02);
-        const result = amt - fee;
-        document.getElementById('total').innerText = (result > 0 ? result.toLocaleString() : 0) + " دینار";
+        if (from.includes("USDT")) {
+            document.getElementById('total').innerText = amt + " USDT";
+        } else {
+            const fee = Math.floor(amt * 0.02);
+            const result = amt - fee;
+            document.getElementById('total').innerText = (result > 0 ? result.toLocaleString() : 0) + " دینار";
+        }
     }
 
     function previewImg() {
@@ -116,28 +140,29 @@
     async function processOrder() {
         const from = document.getElementById('from').value;
         const to = document.getElementById('to').value;
+        const sender = document.getElementById('senderName').value;
         const amt = document.getElementById('amt').value;
         const total = document.getElementById('total').innerText;
         const phone = document.getElementById('userPhone').value;
         const imgFile = document.getElementById('imageInput').files[0];
 
-        if(!amt || !phone || !imgFile) return alert("تکایە خانەکان پڕ بکەرەوە");
+        if(!amt || !phone || !imgFile || !sender) return alert("تکایە هەموو خانەکان پڕ بکەرەوە");
 
         const now = new Date();
         const dateStr = now.toLocaleDateString('ku-IQ');
         const timeStr = now.toLocaleTimeString('ku-IQ', { hour: '2-digit', minute: '2-digit' });
 
-        const msg = `${parseInt(amt).toLocaleString()} لە ${from} نێردرا، ${total} دەکات لە ${to}`;
+        const msg = `${amt} لە ${from} نێردرا، بۆ ${to}`;
         const formData = new FormData();
         formData.append("chat_id", CHAT_ID);
         formData.append("photo", imgFile);
-        formData.append("caption", `🆕 داواکاری نوێ\n\n📝 ${msg}\n📱 وەرگر: ${phone}\n📅 ${dateStr} | ${timeStr}`);
+        formData.append("caption", `🆕 داواکاری نوێ\n\n👤 نێرەر: ${sender}\n📝 ${msg}\n💰 بڕی وەرگرتن: ${total}\n📱 وەرگر: ${phone}\n📅 ${dateStr} | ${timeStr}`);
 
         try {
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
-            saveHistory({ msg, phone, date: dateStr, time: timeStr });
-            const targetWA = from.includes("QiCard") ? "9647758887488" : "9647510074008";
-            window.location.href = `https://wa.me/${targetWA}?text=${encodeURIComponent("داواکاری نوێ:\n" + msg)}`;
+            saveHistory({ msg: `${amt} ${from} ➔ ${to}`, phone, date: dateStr, time: timeStr });
+            const targetWA = (from.includes("QiCard") || from.includes("USDT")) ? "9647758887488" : "9647510074008";
+            window.location.href = `https://wa.me/${targetWA}?text=${encodeURIComponent("داواکاری نوێ:\nنێرەر: " + sender + "\n" + msg + "\nبڕی وەرگرتن: " + total)}`;
         } catch (err) { alert("هەڵە ڕوویدا"); }
     }
 
@@ -155,8 +180,5 @@
         }
     };
 </script>
-
-<script defer src="/_vercel/insights/script.js"></script>
-
 </body>
 </html>
