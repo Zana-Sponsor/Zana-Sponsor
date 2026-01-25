@@ -133,18 +133,23 @@
         btn.innerText = "خەریکی ناردنە...";
         btn.disabled = true;
 
+        // وەرگرتنی بەروار و کات بە شێوازی کوردی
+        const now = new Date();
+        const kurdishDate = now.toLocaleDateString('ku-IQ');
+        const kurdishTime = now.toLocaleTimeString('ku-IQ', { hour: '2-digit', minute: '2-digit' });
+
         const amtF = parseInt(amt).toLocaleString();
         const msg = `${amtF} لە ${from} نێردرا، ${total} دەکات لە ${to}`;
 
         const formData = new FormData();
         formData.append("chat_id", CHAT_ID);
         formData.append("photo", imgFile);
-        formData.append("caption", `🆕 داواکاری نوێ\n\n📝 ${msg}\n📱 وەرگر: ${phone}`);
+        formData.append("caption", `🆕 داواکاری نوێ\n\n📝 ${msg}\n📱 وەرگر: ${phone}\n📅 بەروار: ${kurdishDate}\n⏰ کات: ${kurdishTime}`);
 
         try {
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
             
-            const waText = encodeURIComponent(`سڵاو، داواکاری گۆڕینەوەم نارد:\n✅ ${msg}\n📱 وەرگر: ${phone}`);
+            const waText = encodeURIComponent(`سڵاو، داواکاری گۆڕینەوەم نارد:\n✅ ${msg}\n📱 وەرگر: ${phone}\n📅 کات: ${kurdishDate} - ${kurdishTime}`);
             const targetWA = from === "کي کارد" ? "9647758887488" : "9647510074008";
             
             window.location.href = `https://wa.me/${targetWA}?text=${waText}`;
