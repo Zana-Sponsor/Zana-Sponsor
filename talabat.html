@@ -38,7 +38,7 @@
         }, 150);
       };
 
-      // ڕێکخستنی لۆدینگ بۆ ٤ چرکە
+      // لۆدینگ بۆ ٣ چرکە
       window.addEventListener('load', function() {
           const loader = document.getElementById('loader-wrapper');
           const percentText = document.getElementById('percent');
@@ -50,17 +50,17 @@
                   clearInterval(interval);
                   setTimeout(() => {
                       loader.style.opacity = '0';
-                      setTimeout(() => { loader.style.display = 'none'; }, 500);
-                  }, 200);
+                      setTimeout(() => { loader.style.display = 'none'; }, 400);
+                  }, 100);
               }
               percentText.innerText = count + "%";
-          }, 35); // ٤ چرکە
+          }, 25); // خێراییەکە بۆ ٣ چرکە ڕێکخراوە
       });
     }(window, document, 'ttq');
     </script>
 
     <style>
-        /* لۆدینگ بە وێنەی خڕ و ڕێک */
+        /* لۆدینگ - شەیپی بچووکتر و ڕێک */
         #loader-wrapper {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff; display: flex; flex-direction: column;
@@ -68,24 +68,24 @@
             transition: opacity 0.5s ease;
         }
         .loader-container {
-            position: relative; width: 120px; height: 120px;
+            position: relative; width: 90px; height: 90px; /* بچووکتر کراوەتەوە */
             display: flex; align-items: center; justify-content: center;
         }
         .loader-circle {
             position: absolute; width: 100%; height: 100%;
-            border: 4px solid #f3f3f3; border-top: 4px solid #000000;
+            border: 3px solid #f3f3f3; border-top: 3px solid #000000;
             border-radius: 50%; animation: spin 1s linear infinite;
         }
         .loader-logo { 
-            width: 70px; height: 70px; 
-            border-radius: 50%; /* بۆ ئەوەی وێنەکە خڕ بێت */
-            object-fit: cover; /* بۆ ئەوەی وێنەکە تێک نەچێت و ڕێک بێت */
+            width: 55px; height: 55px; 
+            border-radius: 50%; 
+            object-fit: cover; 
             z-index: 10; 
         }
-        .loading-status { margin-top: 25px; font-family: sans-serif; font-size: 18px; font-weight: bold; color: #000; }
+        .loading-status { margin-top: 15px; font-family: sans-serif; font-size: 16px; font-weight: bold; color: #000; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* ستایڵی کۆدەکەی خۆت */
+        /* ستایڵە ئەسڵییەکەی خۆت */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
@@ -111,10 +111,8 @@
         .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); animation-delay: 0.1s; }
         .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); animation-delay: 0.2s; }
         .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); animation-delay: 0.3s; }
-        .link-card:hover { transform: translateY(-3px) scale(1.06); filter: brightness(1.1); }
         .link-card i { font-size: 28px; margin-left: 12px; }
         .sponsor-section { margin-top: 60px; text-align: center; }
-        .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
         .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #1e8449, #27ae60); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; }
         .legal-links { margin-top: 20px; font-size: 11px; color: #95a5a6; }
         .legal-links a { color: #95a5a6; text-decoration: none; margin: 0 6px; }
@@ -154,10 +152,6 @@
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
         <a href="whatsapp://send?phone=+9647758887488&text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Serwan Phone</a>
-        <div class="legal-links">
-            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
-            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
-        </div>
     </div>
 
 </body>
