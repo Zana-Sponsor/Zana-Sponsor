@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | سیستەمی ئاڵوگۆڕ</title>
+    <title>Zana Exchange | ئاڵوگۆڕی باڵانس</title>
     <style>
         :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; }
         body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; text-align: right; }
@@ -22,7 +22,6 @@
         #imageInput { display: none; }
         #imagePreview { width: 100%; border-radius: 12px; margin-top: 15px; display: none; border: 2px solid var(--main); }
         .btn { background: linear-gradient(90deg, #facc15, #eab308); color: #000; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .history { margin-top: 30px; }
         .hist-item { background: #1e293b; padding: 10px; border-radius: 10px; margin-bottom: 8px; font-size: 12px; border-left: 4px solid var(--main); }
     </style>
@@ -34,56 +33,57 @@
         <div class="logo">ZANA EXCHANGE</div>
         
         <div class="wallet">
-            <span style="font-size: 11px; color: var(--main);">بۆ ناردنی پارە (فەستپەی، FIB، کی کارت)</span>
+            <span style="font-size: 11px; color: var(--main);">بۆ ناردنی پارە (فاستپەی، FIB، کي کارد)</span>
             <span class="num" id="myNum">07510074008</span>
-            <button class="copy-btn" onclick="copyNum()">کۆپی بکە</button>
+            <button class="copy-btn" onclick="copyNum()">کۆپی بکە / Copy</button>
         </div>
 
         <div class="group">
-            <label>لە کوێوە دەینێریت؟</label>
+            <label>لە کوێوە دەینێریت؟ / From</label>
             <select id="from" onchange="calc()">
-                <option value="فەستپەی">فەستپەی (FastPay)</option>
-                <option value="FIB">FIB</option>
-                <option value="کی کارت">کی کارت (QiCard)</option>
+                <option value="فاستپەی (FastPay)">فاستپەی (FastPay)</option>
+                <option value="ئێف ئای بی (FIB)">ئێف ئای بی (FIB)</option>
+                <option value="کي کارد (QiCard)">کي کارد (QiCard)</option>
             </select>
         </div>
 
         <div class="group">
-            <label>بۆ کوێ بگۆڕدرێت؟</label>
+            <label>بۆ کوێ بگۆڕدرێت؟ / To</label>
             <select id="to" onchange="calc()">
-                <option value="FIB">FIB</option>
-                <option value="فەستپەی">فەستپەی (FastPay)</option>
-                <option value="کی کارت">کی کارت (QiCard)</option>
+                <option value="ئێف ئای بی (FIB)">ئێف ئای بی (FIB)</option>
+                <option value="فاستپەی (FastPay)">فاستپەی (FastPay)</option>
+                <option value="کي کارد (QiCard)">کي کارد (QiCard)</option>
             </select>
         </div>
 
         <div class="group">
-            <label>بڕی ناردن (دینار)</label>
+            <label>بڕی ناردن / Amount (IQD)</label>
             <input type="number" id="amt" placeholder="100,000" oninput="calc()">
         </div>
 
         <div class="res-box">
-            <div style="font-size: 12px; color: #94a3b8;">بڕی وەرگرتن (دوای عمولە):</div>
+            <div style="font-size: 12px; color: #94a3b8;">بڕی وەرگرتن / Received Amount</div>
             <span class="total" id="total">0 دینار</span>
+            <div style="font-size: 10px; color: #94a3b8; margin-top: 5px;">(عمولە 2,000 بۆ هەر 100 هەزارێک)</div>
         </div>
 
         <div class="group">
-            <label>ژمارەی مۆبایلی وەرگر</label>
+            <label>ژمارەی مۆبایلی وەرگر / Receiver Number</label>
             <input type="text" id="userPhone" placeholder="07XXXXXXXX">
         </div>
 
         <div class="group">
-            <label>وێنەی وەسڵ (Screenshot)</label>
-            <label for="imageInput" class="file-label" id="fileLabel">📁 هەڵبژاردنی وێنە</label>
+            <label>وێنەی وەسڵ / Upload Receipt</label>
+            <label for="imageInput" class="file-label" id="fileLabel">📁 هەڵبژاردنی وێنە / Select Photo</label>
             <input type="file" id="imageInput" accept="image/*" onchange="previewImg()">
             <img id="imagePreview">
         </div>
 
-        <button class="btn" id="submitBtn" onclick="processOrder()">ناردنی داواکاری</button>
+        <button class="btn" id="submitBtn" onclick="processOrder()">ناردنی داواکاری / Send Order</button>
     </div>
 
     <div class="history">
-        <h4 style="color: var(--main); border-bottom: 1px solid #334155; padding-bottom: 5px;">مێژووی ئاڵوگۆڕەکان</h4>
+        <h4 style="color: var(--main); border-bottom: 1px solid #334155; padding-bottom: 5px;">مێژوو / History</h4>
         <div id="histList"></div>
     </div>
 </div>
@@ -94,12 +94,12 @@
 
     function copyNum() {
         navigator.clipboard.writeText("07510074008");
-        alert("ژمارەکە کۆپی کرا");
+        alert("ژمارەکە کۆپی کرا / Number Copied");
     }
 
     function calc() {
         const amt = document.getElementById('amt').value || 0;
-        const fee = Math.floor(amt * 0.01);
+        const fee = Math.floor(amt * 0.02);
         const result = amt - fee;
         document.getElementById('total').innerText = (result > 0 ? result.toLocaleString() : 0) + " دینار";
     }
@@ -109,29 +109,29 @@
         if (file) {
             document.getElementById('imagePreview').src = URL.createObjectURL(file);
             document.getElementById('imagePreview').style.display = "block";
-            document.getElementById('fileLabel').innerText = "✅ وێنە هەڵبژێردرا";
+            document.getElementById('fileLabel').innerText = "✅ وێنە هەڵبژێردرا / Photo Selected";
         }
     }
 
     async function processOrder() {
-        const from = document.getElementById('from').value;
-        const to = document.getElementById('to').value;
-        const amt = document.getElementById('amt').value;
-        const total = document.getElementById('total').innerText;
-        const phone = document.getElementById('userPhone').value;
+        const fromVal = document.getElementById('from').value;
+        const toVal = document.getElementById('to').value;
+        const amtVal = document.getElementById('amt').value;
+        const totalVal = document.getElementById('total').innerText;
+        const phoneVal = document.getElementById('userPhone').value;
         const imgFile = document.getElementById('imageInput').files[0];
         const btn = document.getElementById('submitBtn');
 
-        if(!amt || !phone || !imgFile) {
-            alert("تکایە هەموو خانەکان پڕ بکەرەوە و وێنەکە دابنێ");
+        if(!amtVal || !phoneVal || !imgFile) {
+            alert("تکایە هەموو خانەکان پڕ بکەرەوە / Please fill all fields");
             return;
         }
 
-        btn.innerText = "خەریکی ناردنە...";
+        btn.innerText = "خەریکی ناردنە / Sending...";
         btn.disabled = true;
 
         const dateTime = new Date().toLocaleString('ku-IQ');
-        const caption = `🆕 داواکاری نوێ\n\n🔄 گۆڕینەوەی: ${from} بۆ ${to}\n💵 بڕی ناردراو: ${parseInt(amt).toLocaleString()} دینار\n💰 بڕی وەرگرتن: ${total}\n📱 ژمارەی وەرگر: ${phone}\n📅 کات: ${dateTime}`;
+        const caption = `🆕 داواکاری نوێ\n\n🔄 گۆڕینەوەی: ${fromVal} بۆ ${toVal}\n💵 بڕی ناردراو: ${parseInt(amtVal).toLocaleString()} دینار\n💰 بڕی وەرگرتن: ${totalVal}\n📱 ژمارەی وەرگر: ${phoneVal}\n📅 کات: ${dateTime}`;
 
         const formData = new FormData();
         formData.append("chat_id", CHAT_ID);
@@ -145,22 +145,18 @@
             });
 
             if (response.ok) {
-                // پاشەکەوتکردن لە مێژوو
-                saveHistory(from, to, amt);
-
-                // کردنەوەی واتسئەپ
-                const waMsg = encodeURIComponent(`سڵاو، داواکاری گۆڕینەوەی ${from} بۆ ${to} م نارد بۆ تێلیگرام.`);
+                saveHistory(fromVal, toVal, amtVal);
+                const waMsg = encodeURIComponent(`سڵاو، داواکاری گۆڕینەوەی ${fromVal} بۆ ${toVal} م نارد بۆ تێلیگرام.`);
                 window.location.href = `https://wa.me/9647510074008?text=${waMsg}`;
-
-                // ڕێفرێش دوای ٢ چرکە
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
+                
+                setTimeout(() => { location.reload(); }, 3000);
             } else {
-                throw new Error("تێلیگرام وەڵامی نەدایەوە");
+                alert("هەڵە لە ناردن / Error sending");
+                btn.disabled = false;
+                btn.innerText = "ناردنی داواکاری";
             }
         } catch (err) {
-            alert("کێشەیەک لە ناردن هەیە، تکایە ئینتەرنێتەکەت بپشکنە");
+            alert("ئینتەرنێتەکەت بپشکنە / Check your internet");
             btn.disabled = false;
             btn.innerText = "ناردنی داواکاری";
         }
