@@ -1,133 +1,3 @@
-<!DOCTYPE html>
-<html lang="ku" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | ئاڵوگۆڕی باڵانس</title>
-    <style>
-        :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; }
-        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; text-align: right; }
-        .container { max-width: 400px; margin: auto; }
-        .card { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #334155; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
-        .logo { text-align: center; font-size: 26px; font-weight: bold; color: var(--main); margin-bottom: 20px; }
-        .wallet { background: rgba(15, 23, 42, 0.8); padding: 15px; border-radius: 18px; text-align: center; border: 1px solid var(--main); margin-bottom: 25px; }
-        .num { font-size: 21px; font-weight: bold; display: block; margin: 8px 0; letter-spacing: 1px; color: #fff; }
-        .copy-btn { background: var(--main); border: none; padding: 8px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 13px; }
-        .group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
-        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; font-size: 16px; font-family: 'Tahoma'; }
-        .res-box { background: rgba(16, 185, 129, 0.15); padding: 15px; border-radius: 15px; margin: 20px 0; border-right: 4px solid var(--success); text-align: center; }
-        .total { font-size: 24px; font-weight: bold; color: var(--success); }
-        .file-label { display: block; background: #334155; padding: 12px; border-radius: 12px; text-align: center; cursor: pointer; border: 1px dashed var(--main); margin-top: 5px; }
-        #imageInput { display: none; }
-        #imagePreview { width: 100%; border-radius: 12px; margin-top: 15px; display: none; border: 2px solid var(--main); }
-        .btn { background: linear-gradient(90deg, #facc15, #eab308); color: #000; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .history { margin-top: 30px; }
-        .hist-item { background: #1e293b; padding: 10px; border-radius: 10px; margin-bottom: 8px; font-size: 12px; border-left: 4px solid var(--main); }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div class="card">
-        <div class="logo">ZANA EXCHANGE</div>
-        
-        <div class="wallet" id="walletBox">
-            <span id="walletTitle" style="font-size: 11px; color: var(--main);">بۆ ناردنی پارە (فاستپەی، FIB)</span>
-            <span class="num" id="myNum">07510074008</span>
-            <button class="copy-btn" onclick="copyNum()">کۆپی بکە / Copy</button>
-        </div>
-
-        <div class="group">
-            <label>لە کوێوە دەینێریت؟ / From</label>
-            <select id="from" onchange="updateWallet()">
-                <option value="فاستپەی (FastPay)">فاستپەی (FastPay)</option>
-                <option value="ئێف ئای بی (FIB)">ئێف ئای بی (FIB)</option>
-                <option value="کي کارد (QiCard)">کي کارد (QiCard)</option>
-            </select>
-        </div>
-
-        <div class="group">
-            <label>بۆ کوێ بگۆڕدرێت؟ / To</label>
-            <select id="to" onchange="calc()">
-                <option value="ئێف ئای بی (FIB)">ئێف ئای بی (FIB)</option>
-                <option value="فاستپەی (FastPay)">فاستپەی (FastPay)</option>
-                <option value="کي کارد (QiCard)">کي کارد (QiCard)</option>
-            </select>
-        </div>
-
-        <div class="group">
-            <label>بڕی ناردن / Amount (IQD)</label>
-            <input type="number" id="amt" placeholder="100,000" oninput="calc()">
-        </div>
-
-        <div class="res-box">
-            <div style="font-size: 12px; color: #94a3b8;">بڕی وەرگرتن / Received Amount</div>
-            <span class="total" id="total">0 دینار</span>
-            <div style="font-size: 10px; color: #94a3b8; margin-top: 5px;">(عمولە 2,000 بۆ هەر 100 هەزارێک)</div>
-        </div>
-
-        <div class="group">
-            <label>ژمارەی مۆبایلی تۆ (وەرگر) / Receiver</label>
-            <input type="text" id="userPhone" placeholder="07XXXXXXXX">
-        </div>
-
-        <div class="group">
-            <label>وێنەی وەسڵ / Upload Receipt</label>
-            <label for="imageInput" class="file-label" id="fileLabel">📁 هەڵبژاردنی وێنە / Select Photo</label>
-            <input type="file" id="imageInput" accept="image/*" onchange="previewImg()">
-            <img id="imagePreview">
-        </div>
-
-        <button class="btn" id="submitBtn" onclick="processOrder()">ناردنی داواکاری / Send Order</button>
-    </div>
-
-    <div class="history">
-        <h4 style="color: var(--main); border-bottom: 1px solid #334155; padding-bottom: 5px;">مێژوو / History</h4>
-        <div id="histList"></div>
-    </div>
-</div>
-
-<script>
-    const BOT_TOKEN = "8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo";
-    const CHAT_ID = "6259019006";
-
-    function updateWallet() {
-        const from = document.getElementById('from').value;
-        const numElem = document.getElementById('myNum');
-        const titleElem = document.getElementById('walletTitle');
-        if(from.includes("QiCard")) {
-            numElem.innerText = "07758887488";
-            titleElem.innerText = "بۆ ناردنی پارە (کي کارد)";
-        } else {
-            numElem.innerText = "07510074008";
-            titleElem.innerText = "بۆ ناردنی پارە (فاستپەی، FIB)";
-        }
-        calc();
-    }
-
-    function copyNum() {
-        const num = document.getElementById('myNum').innerText;
-        navigator.clipboard.writeText(num);
-        alert("کۆپی کرا: " + num);
-    }
-
-    function calc() {
-        const amt = document.getElementById('amt').value || 0;
-        const fee = Math.floor(amt * 0.02);
-        const result = amt - fee;
-        document.getElementById('total').innerText = (result > 0 ? result.toLocaleString() : 0) + " دینار";
-    }
-
-    function previewImg() {
-        const file = document.getElementById('imageInput').files[0];
-        if (file) {
-            document.getElementById('imagePreview').src = URL.createObjectURL(file);
-            document.getElementById('imagePreview').style.display = "block";
-            document.getElementById('fileLabel').innerText = "✅ وێنە هەڵبژێردرا";
-        }
-    }
-
     async function processOrder() {
         const fromVal = document.getElementById('from').value;
         const toVal = document.getElementById('to').value;
@@ -143,57 +13,32 @@
         btn.disabled = true;
 
         const dateTime = new Date().toLocaleString('ku-IQ');
-        const details = `🆕 داواکاری نوێ\n\n🔄 گۆڕینەوەی: ${fromVal} بۆ ${toVal}\n💵 بڕ: ${parseInt(amtVal).toLocaleString()} دینار\n💰 وەرگرتن: ${totalVal}\n📱 ژمارەی وەرگر: ${phoneVal}\n📅 کات: ${dateTime}`;
+        
+        // دروستکردنی دەقەکە بەو شێوەیەی داوات کردووە
+        const amountFormatted = parseInt(amtVal).toLocaleString();
+        const mainMessage = `${amountFormatted} لە ${fromVal} نێردرا، ${totalVal} دەکات لە ${toVal}`;
+
+        const caption = `🆕 داواکاری نوێ\n\n📝 ${mainMessage}\n\n📱 ژمارەی وەرگر: ${phoneVal}\n📅 کات: ${dateTime}`;
 
         const formData = new FormData();
         formData.append("chat_id", CHAT_ID);
         formData.append("photo", imgFile);
-        formData.append("caption", details);
+        formData.append("caption", caption);
 
         try {
-            // 1. ناردن بۆ تێلیگرام
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
             
             saveHistory(fromVal, toVal, amtVal);
             
-            // 2. ئامادەکردنی دەق بۆ واتسئەپ
-            const waText = `سڵاو، داواکاری گۆڕینەوەم ناردووە بۆ تێلیگرام:\n\n` +
-                           `🔄 جۆر: ${fromVal} بۆ ${toVal}\n` +
-                           `💵 بڕی ناردراو: ${parseInt(amtVal).toLocaleString()} دینار\n` +
-                           `✅ بڕی وەرگرتن: ${totalVal}\n` +
-                           `📱 ژمارەی وەرگر: ${phoneVal}`;
-
+            // ناردنی هەمان وردەکاری بۆ واتسئەپیش
+            const waText = `سڵاو، داواکاری گۆڕینەوەم ناردووە:\n\n✅ ${mainMessage}\n📱 وەرگر: ${phoneVal}`;
             const targetWA = fromVal.includes("QiCard") ? "9647758887488" : "9647510074008";
             
-            // 3. ناردن بۆ واتسئەپ
             window.location.href = `https://wa.me/${targetWA}?text=${encodeURIComponent(waText)}`;
             
             setTimeout(() => location.reload(), 2000);
         } catch (err) {
-            alert("هەڵە ڕوویدا لە ناردنی داتا");
+            alert("هەڵە ڕوویدا");
             btn.disabled = false;
         }
     }
-
-    function saveHistory(from, to, amt) {
-        const hist = { from, to, amt, date: new Date().toLocaleDateString() };
-        let list = JSON.parse(localStorage.getItem('zana_hist') || "[]");
-        list.unshift(hist);
-        localStorage.setItem('zana_hist', JSON.stringify(list.slice(0, 5)));
-    }
-
-    function showHist() {
-        const list = JSON.parse(localStorage.getItem('zana_hist') || "[]");
-        document.getElementById('histList').innerHTML = list.map(i => `
-            <div class="hist-item">
-                <b>${i.from} ➔ ${i.to}</b><br>
-                بڕ: ${parseInt(i.amt).toLocaleString()} دینار | ${i.date}
-            </div>
-        `).join('');
-    }
-
-    window.onload = showHist;
-</script>
-
-</body>
-</html>
