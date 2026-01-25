@@ -23,17 +23,23 @@
         event.preventDefault(); 
         var url = event.currentTarget.href;
         
-        // ناردنی داتا بۆ Vercel Analytics بە دڵنیایی زیاتر
-        window.va('event', { name: 'Contact_Click', data: { platform: platform } });
+        // ناردنی داتا بۆ Vercel و TikTok Pixel بۆ هەژمارکردنی Conversion
+        if (window.va) window.va('event', { name: 'Contact_Click', data: { platform: platform } });
+        if (typeof ttq !== 'undefined') {
+          ttq.track('Contact', {
+            "contents": [{ "content_name": platform }]
+          });
+        }
 
-        // ناردنی داتا بۆ TikTok
-        ttq.track('Contact', {
-          "contents": [{ "content_name": platform }]
-        });
-
+        // بەکارهێنانی iframe بۆ مانەوە لەناو تیکتۆک و کردنەوەی ڕاستەوخۆی ئەپەکان
+        var frame = document.createElement('iframe');
+        frame.style.display = 'none';
+        frame.src = url;
+        document.body.appendChild(frame);
+        
         setTimeout(function() {
-          window.location.href = url;
-        }, 300);
+          document.body.removeChild(frame);
+        }, 150);
       };
     }(window, document, 'ttq');
     </script>
@@ -77,12 +83,12 @@
 
     <div class="profile-container">
         <img src="https://img.sanishtech.com/u/01fa7fdee9fc23066b65c7d058eaf13e.jpg" alt="Zana Sponsor" class="profile-img">
-        <h1>Zana Sponsor</h1>
+        <h1>Zana Sponsor - زانا سپۆنسەر</h1>
         <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە</div>
     </div>
 
     <div class="links-wrapper">
-        <a href="https://wa.me/+9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی !" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
+        <a href="whatsapp://send?phone=+9647758887488&text=سڵاو، دەمەوێت زانیاری زیاترم پێبدەی !" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
@@ -92,7 +98,7 @@
             <span>ڤایبەر</span>
         </a>
 
-        <a href="tel:+9647758887488" onclick="trackTikTokConversion('Phone', event)" class="link-card phone">
+        <a href="tel:+9647510074008" onclick="trackTikTokConversion('Phone', event)" class="link-card phone">
             <i class="fas fa-phone-alt"></i>
             <span>ژمارەی مۆبایل</span>
         </a>
@@ -100,7 +106,7 @@
 
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="https://wa.me/+9647758887488?text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Zana Sponsor</a>
+        <a href="whatsapp://send?phone=+9647758887488&text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Zana Sponsor</a>
         <div class="legal-links">
             <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
             <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
