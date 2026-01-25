@@ -22,19 +22,37 @@
 
         try {
             // ناردن بۆ تێلیگرام
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
-            
-            // کردنەوەی واتسئەپ لە تابێکی نوێ
-            const waLink = `https://wa.me/9647510074008?text=سڵاو، داواکاری گۆڕینەوەی ${fromVal} بۆ ${toVal} م نارد بۆ تێلیگرام.`;
-            window.open(waLink, '_blank');
+            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { 
+                method: "POST", 
+                body: formData 
+            });
 
-            // ڕێفرێشکردنەوەی لاپەڕەکە دوای ١ چرکە بۆ ئەوەی زانیارییەکان پاک ببنەوە
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
+            if (response.ok) {
+                // پاشەکەوتکردن لە مێژوو پێش پاککردنەوە
+                saveHistory(fromVal, toVal, amtVal);
+
+                // ئامادەکردنی لینکی واتسئەپ
+                const waMsg = `سڵاو، داواکاری گۆڕینەوەی ${fromVal} بۆ ${toVal} م نارد بۆ تێلیگرام.`;
+                const waLink = `https://wa.me/9647510074008?text=${encodeURIComponent(waMsg)}`;
+
+                // گۆڕینی لاپەڕە بۆ واتسئەپ (ئەمە باشترین ڕێگەیە بۆ مۆبایل)
+                window.location.href = waLink;
+
+                // پاککردنەوەی فۆرمەکە بۆ ئەوەی ئەگەر گەڕایەوە پاک بێت
+                setTimeout(() => {
+                    document.getElementById('amt').value = "";
+                    document.getElementById('userPhone').value = "";
+                    document.getElementById('imageInput').value = "";
+                    document.getElementById('imagePreview').style.display = "none";
+                    document.getElementById('total').innerText = "0 دینار";
+                    document.getElementById('fileLabel').innerText = "📁 هەڵبژاردنی وێنە";
+                    btn.disabled = false;
+                    btn.innerText = "ناردنی داواکاری";
+                }, 2000);
+            }
 
         } catch (err) {
-            alert("کێشە لە ناردن هەیە، دووبارە هەوڵ بدەرەوە");
+            alert("کێشەیەک لە ناردن هەیە، تکایە ئینتەرنێتەکەت بپشکنە");
             btn.disabled = false;
             btn.innerText = "ناردنی داواکاری";
         }
