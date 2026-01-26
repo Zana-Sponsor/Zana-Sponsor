@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>ZANA EXCHANGE | Full Details</title>
+    <title>ZANA EXCHANGE | Pro History & Cancel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -17,24 +17,27 @@
         .app-wrapper { width: 100%; max-width: 400px; display: none; }
         .premium-card { background: var(--card-bg); border-radius: 22px; padding: 18px; margin-bottom: 15px; border: 1px solid rgba(255, 255, 255, 0.05); }
         
-        /* 🔥 Order Detail Card Style */
+        /* 🔥 Enhanced Order Card */
         .order-card { 
             background: #1f1f24; border-radius: 18px; padding: 15px; margin-bottom: 15px; 
             border: 1px solid #2d2d35; border-right: 4px solid var(--accent);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #2d2d35; padding-bottom: 8px; }
-        .detail-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 13px; color: #eee; }
-        .detail-row i { color: var(--accent); width: 20px; text-align: center; font-size: 14px; }
-        .status-tag { font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: bold; }
+        .detail-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: #ccc; }
+        .detail-row i { color: var(--accent); width: 18px; text-align: center; }
+        .status-tag { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; }
         .waiting { background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid #ffc107; }
-        .done { background: rgba(40, 167, 69, 0.1); color: #28a745; border: 1px solid #28a745; }
+        
+        .btn-cancel { 
+            background: rgba(255, 77, 77, 0.1); color: #ff4d4d; border: 1px solid #ff4d4d; 
+            width: 100%; padding: 8px; border-radius: 10px; margin-top: 10px; cursor: pointer; font-size: 12px;
+            font-family: 'Vazirmatn'; transition: 0.3s;
+        }
+        .btn-cancel:hover { background: #ff4d4d; color: white; }
 
         input, select { width: 100%; background: #1f1f24; border: 1px solid #2d2d35; border-radius: 10px; padding: 12px; color: white; font-family: 'Vazirmatn'; outline: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; }
         .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .balance-badge { background: rgba(0, 210, 255, 0.08); color: var(--accent); padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 12px; border: 1px solid rgba(0, 210, 255, 0.15); }
-        .file-upload { border: 2px dashed #2d2d35; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; margin-bottom: 15px; display: block; }
-        #previewImg { width: 100%; border-radius: 10px; margin-top: 10px; display: none; }
         #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
     </style>
 </head>
@@ -56,7 +59,7 @@
     </div>
 
     <div class="premium-card">
-        <div style="background:#1f1f24; padding:10px; border-radius:12px; display:flex; justify-content:space-between; margin-bottom:15px; border-right: 4px solid var(--accent);">
+        <div style="background:#1f1f24; padding:10px; border-radius:12px; display:flex; justify-content:space-between; margin-bottom:15px;">
             <span style="font-size:13px;">ناردن بۆ: <b id="myNum" style="color:var(--accent)">---</b></span>
             <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer; color:var(--accent)"></i>
         </div>
@@ -68,32 +71,23 @@
             <option value="Korek">📱 Korek Transfer</option>
             <option value="USDT">🪙 USDT ($)</option>
         </select>
-
         <input type="number" id="amt" placeholder="بڕی ناردن" oninput="calc()">
-
         <select id="receiveVia" onchange="calc()">
             <option value="FastPay">FastPay</option>
             <option value="FIB">FIB</option>
             <option value="QiCard">Qi Card</option>
         </select>
-
         <div class="balance-badge">
-            <small>بڕی وەرگیراو:</small>
+            <small>بڕی وەرگیراوی تۆ:</small>
             <div id="totalDisplay" style="font-size:22px; font-weight:800;">0 IQD</div>
         </div>
-
-        <input type="tel" id="userPhone" placeholder="ژمارەی مۆبایلەکەت">
-
-        <label class="file-upload" for="fileInput">
-            <i class="fas fa-receipt"></i> وێنەی وەسڵ
-            <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="previewFile()">
-            <img id="previewImg" src="">
-        </label>
+        <input type="tel" id="userPhone" placeholder="ژمارەی مۆبایلی وەرگر">
+        <input type="file" id="fileInput" accept="image/*" style="margin-bottom:10px;">
         
         <button class="btn-global" id="submitBtn" onclick="processOrder()"><i class="fas fa-paper-plane"></i> ناردنی داواکاری</button>
     </div>
 
-    <h3 style="font-size:16px; margin: 20px 5px;"><i class="fas fa-history"></i> مێژووی داواکارییەکانت</h3>
+    <h3 style="font-size:16px; margin: 20px 5px;"><i class="fas fa-history"></i> وردەکاری داواکارییەکان</h3>
     <div id="historyList"></div>
 </div>
 
@@ -116,36 +110,35 @@
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const from = document.getElementById('from').value;
         const to = document.getElementById('receiveVia').value;
-        let final = 0;
-        if (from === "Asiacell") final = (amt/100000)*83000;
-        else if (from === "Korek") final = (amt/100000)*81000;
-        else if (from === "USDT") final = (amt/100)*145000;
-        else final = amt * 0.99;
+        let final = (from === "USDT") ? amt * 1450 : (from === "Asiacell" || from === "Korek" ? amt * 0.82 : amt * 0.99);
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " IQD";
-    }
-
-    function previewFile() {
-        const file = document.getElementById('fileInput').files[0];
-        if (file) { document.getElementById('previewImg').src = URL.createObjectURL(file); document.getElementById('previewImg').style.display = 'block'; }
     }
 
     async function processOrder() {
         const phone = document.getElementById('userPhone').value;
         const file = document.getElementById('fileInput').files[0];
-        if(phone.length < 10 || !file) return alert("⚠️ تکایە هەموو خانەکان پڕ بکەرەوە!");
+        if(!phone || !file) return alert("تکایە هەموو خانەکان پڕ بکەرەوە!");
 
         const orderId = Math.floor(1000 + Math.random() * 8999);
-        const date = new Date().toLocaleString('ku-IQ');
-        const caption = `🚀 داواکاری نوێ: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📱 ژمارە: ${phone}\n📥 ناردن: ${document.getElementById('from').value}\n📤 وەرگرتن: ${document.getElementById('receiveVia').value}\n💵 بڕ: ${document.getElementById('amt').value}\n💰 پوختە: ${document.getElementById('totalDisplay').innerText}`;
+        const caption = `🆕 ئۆردەری نوێ: #${orderId}\n👤 ناو: ${auth.currentUser.displayName}\n📱 ژمارە: ${phone}\n📥 ناردن: ${document.getElementById('from').value}\n📤 وەرگرتن: ${document.getElementById('receiveVia').value}\n💵 بڕ: ${document.getElementById('amt').value}\n💰 پوختە: ${document.getElementById('totalDisplay').innerText}`;
 
         const formData = new FormData();
         formData.append("chat_id", TG_CHAT_ID); formData.append("photo", file); formData.append("caption", caption);
 
         try {
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, { method: "POST", body: formData });
-            await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, from: document.getElementById('from').value, to: document.getElementById('receiveVia').value, amount: document.getElementById('amt').value, total: document.getElementById('totalDisplay').innerText, status: 'چاوەڕوانە', time: date, phone: phone });
-            alert("نێردرا ✅"); location.reload();
-        } catch(e) { alert("هەڵە ڕوویدا"); }
+            await db.ref('orders/' + orderId).set({
+                uEmail: auth.currentUser.email,
+                from: document.getElementById('from').value,
+                to: document.getElementById('receiveVia').value,
+                amount: document.getElementById('amt').value,
+                total: document.getElementById('totalDisplay').innerText,
+                status: 'چاوەڕوانە',
+                phone: phone,
+                time: new Date().toLocaleString('ku-IQ')
+            });
+            alert("نێردرا ✅");
+        } catch(e) { alert("هەڵە"); }
     }
 
     function loadHistory(email) {
@@ -153,26 +146,33 @@
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                const stClass = o.status === 'چاوەڕوانە' ? 'waiting' : 'done';
                 html = `
                 <div class="order-card">
                     <div class="order-header">
-                        <span style="font-weight:800; color:var(--accent);">🆔 #${c.key}</span>
-                        <span class="status-tag ${stClass}"><i class="fas fa-circle-notch fa-spin"></i> ${o.status}</span>
+                        <span style="color:var(--accent); font-weight:800;">ID: #${c.key}</span>
+                        <span class="status-tag waiting">${o.status}</span>
                     </div>
-                    <div class="detail-row"><i class="fas fa-arrow-circle-up"></i> ڕێگەی ناردن: <b>${o.from}</b></div>
-                    <div class="detail-row"><i class="fas fa-arrow-circle-down"></i> وەرگرتن لەسەر: <b>${o.to}</b></div>
-                    <div class="detail-row"><i class="fas fa-money-bill-wave"></i> بڕی نێردراو: <b>${o.amount}</b></div>
-                    <div class="detail-row"><i class="fas fa-check-double"></i> بڕی وەرگیراو: <b style="color:#28a745">${o.total}</b></div>
-                    <div class="detail-row"><i class="fas fa-user-tag"></i> بۆ ژمارەی: <b>${o.phone}</b></div>
-                    <div class="detail-row"><i class="far fa-clock"></i> کاتی داواکاری: <span style="font-size:11px">${o.time}</span></div>
+                    <div class="detail-row"><i class="fas fa-arrow-up"></i> ناردن لەرێگەی: <b>${o.from}</b></div>
+                    <div class="detail-row"><i class="fas fa-arrow-down"></i> وەرگرتن لەسەر: <b>${o.to}</b></div>
+                    <div class="detail-row"><i class="fas fa-coins"></i> بڕی نێردراو: <b>${o.amount}</b></div>
+                    <div class="detail-row"><i class="fas fa-check-circle"></i> بڕی وەرگیراو: <b style="color:#28a745">${o.total}</b></div>
+                    <div class="detail-row"><i class="fas fa-phone"></i> ژمارەی مۆبایل: <b>${o.phone}</b></div>
+                    <div class="detail-row"><i class="far fa-clock"></i> کات: <b>${o.time}</b></div>
+                    <button class="btn-cancel" onclick="cancelOrder('${c.key}')">هەڵوەشاندنەوەی داواکاری</button>
                 </div>` + html;
             });
-            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; color:#444;'>هیچ ئۆردەرێک نییە</p>";
+            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center;'>هیچ ئۆردەرێک نییە</p>";
         });
     }
 
-    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا ✅"); }
+    async function cancelOrder(id) {
+        if(confirm("دڵنیای لە هەڵوەشاندنەوە؟")) {
+            await db.ref('orders/' + id).remove();
+            alert("ئۆردەرەکە ڕەشکرایەوە");
+        }
+    }
+
+    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا"); }
     updateWallet();
 </script>
 </body>
