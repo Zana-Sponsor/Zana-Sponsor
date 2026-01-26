@@ -3,63 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Admin | بەڕێوەبردنی واڵێتەکان</title>
+    <title>Zana Pro Admin | Control Center</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; --border: #334155; }
         body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
-        .container { max-width: 1000px; margin: auto; }
+        .container { max-width: 900px; margin: auto; display: none; }
         
-        /* تابی بەشەکان */
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid var(--border); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-weight: bold; }
-        .tab-btn.active { background: var(--main); color: #000; border-color: var(--main); }
+        #login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+        .login-box { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid var(--border); width: 320px; text-align: center; }
+
+        .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-item { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); text-align: center; }
+        .stat-item b { font-size: 22px; color: var(--main); display: block; margin-top: 5px; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid var(--border); padding: 12px 25px; border-radius: 15px; cursor: pointer; white-space: nowrap; font-weight: bold; }
+        .tab-btn.active { background: var(--main); color: #000; }
 
         .admin-box { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid var(--border); display: none; }
-        .admin-box.active { display: block; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .admin-box.active { display: block; }
 
-        /* ستایلی فۆڕمەکان */
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 6px; font-weight: bold; }
-        input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: #0f172a; color: white; box-sizing: border-box; font-size: 14px; }
+        .order-card { background: #161e2d; border-radius: 20px; padding: 20px; margin-bottom: 15px; border-right: 6px solid var(--main); }
+        .order-status-accepted { border-right-color: var(--success) !important; }
+        .order-status-rejected { border-right-color: var(--danger) !important; }
         
-        .btn { background: var(--main); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); }
+        .exchange-display { background: #0f172a; padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin: 15px 0; text-align: center; }
+        .btn-act { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; }
 
-        /* خشتەی واڵێتەکان */
-        .wallet-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #161e2d; border-radius: 15px; overflow: hidden; }
-        .wallet-table th { background: #0f172a; padding: 15px; text-align: center; color: var(--main); font-size: 13px; }
-        .wallet-table td { padding: 15px; text-align: center; border-bottom: 1px solid var(--border); font-size: 14px; }
-        .delete-btn { color: var(--danger); background: none; border: none; cursor: pointer; font-size: 18px; }
-
-        /* ستایلی ئۆردەرەکان */
-        .order-card { background: #161e2d; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px; }
-        .receipt-link { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; border: 2px solid var(--main); cursor: pointer; }
-        .order-info { flex: 1; }
-        .order-status { font-size: 12px; padding: 4px 10px; border-radius: 6px; font-weight: bold; }
-
-        #login-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        input, textarea, select { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #0f172a; color: white; margin-bottom: 15px; box-sizing: border-box; font-family: inherit; }
+        .btn-main { background: var(--main); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
+        
+        .list-row { background: #0f172a; padding: 15px; margin-bottom: 10px; border-radius: 15px; border: 1px solid var(--border); }
+        .tag { font-size: 10px; padding: 2px 8px; border-radius: 5px; background: var(--main); color: #00; margin-left: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="login-overlay">
-    <div class="admin-box active" style="width:320px; text-align:center;">
-        <h2 style="margin-bottom:20px; color:var(--main)">چوونەژوورەوەی ئەدمین</h2>
-        <input type="password" id="passInput" placeholder="وشەی نهێنی..." style="text-align:center; margin-bottom:15px;">
-        <button class="btn" onclick="checkPass()">چوونەژوورەوە <i class="fas fa-sign-in-alt"></i></button>
+<div id="login-screen">
+    <div class="login-box">
+        <i class="fas fa-lock" style="font-size: 40px; color: var(--main); margin-bottom: 20px;"></i>
+        <h2>چوونەژوورەوە</h2>
+        <input type="password" id="adminPass" placeholder="وشەی نهێنی...">
+        <button class="btn-main" onclick="checkAuth()">Login</button>
     </div>
 </div>
 
-<div class="container">
+<div class="container" id="mainUI">
+    <div class="stats-bar">
+        <div class="stat-item"><span>کۆی فرۆشی ئەمڕۆ</span><b id="todaySales">0</b></div>
+        <div class="stat-item"><span>ئۆردەرەکان</span><b id="orderCount">0</b></div>
+    </div>
+
     <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('orders-tab', this)"><i class="fas fa-list"></i> ئۆردەرەکان</button>
-        <button class="tab-btn" onclick="openTab('wallets-tab', this)"><i class="fas fa-wallet"></i> واڵێتەکان (Methods)</button>
-        <button class="tab-btn" onclick="openTab('settings-tab', this)"><i class="fas fa-cog"></i> ڕێکخستنی سیستم</button>
+        <button class="tab-btn active" onclick="openTab('orders-tab', this)">ئۆردەرەکان</button>
+        <button class="tab-btn" onclick="openTab('wallets-tab', this)">واڵێت و حمولە</button>
+        <button class="tab-btn" onclick="openTab('notify-tab', this)">ئاگاداری</button>
+        <button class="tab-btn" onclick="location.reload()" style="background: #334155; color: white;">Logout</button>
     </div>
 
     <div id="orders-tab" class="admin-box active">
@@ -67,55 +69,23 @@
     </div>
 
     <div id="wallets-tab" class="admin-box">
-        <h2>زیادکردنی واڵێت (Wallet Method)</h2>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>ناوی واڵێت (Method Name)</label>
-                <input type="text" id="wName" placeholder="نموونە: FastPay">
-            </div>
-            <div class="form-group">
-                <label>ژمارە یان ناونیشان (Wallet Number)</label>
-                <input type="text" id="wNum" placeholder="07XXXXXXXX">
-            </div>
-            <div class="form-group">
-                <label>حمولە (Fee) - 0.98 واتە 2% بڕین</label>
-                <input type="number" id="wFee" step="0.01" value="0.99">
-            </div>
-            <div class="form-group">
-                <label>بۆ چ بەشێک بێت؟</label>
-                <select id="wType">
-                    <option value="both">ناردن و وەرگرتن</option>
-                    <option value="from">تەنها ناردن (From)</option>
-                    <option value="to">تەنها وەرگرتن (To)</option>
-                </select>
-            </div>
-        </div>
-        <button class="btn" onclick="addWallet()"><i class="fas fa-plus-circle"></i> زیادکردنی واڵێت</button>
-
-        <table class="wallet-table">
-            <thead>
-                <tr>
-                    <th>ناو</th>
-                    <th>ژمارە</th>
-                    <th>حمولە</th>
-                    <th>سڕینەوە</th>
-                </tr>
-            </thead>
-            <tbody id="walletsContainer"></tbody>
-        </table>
+        <h3>ڕێکخستنی واڵێت و نرخەکان</h3>
+        <input type="text" id="wName" placeholder="ناوی واڵێت (وەک: ZainCash)">
+        <input type="text" id="wNum" placeholder="ژمارەی وەرگرتن (بۆ To تەنها پێویستە)">
+        <input type="number" id="wFee" step="0.01" value="0.95" placeholder="ڕێژەی بڕین (0.95 = 5% قازانج)">
+        <select id="wType">
+            <option value="both">بۆ هەردوو بەش (From & To)</option>
+            <option value="from">تەنها بۆ ناردن (From)</option>
+            <option value="to">تەنها بۆ وەرگرتن (To)</option>
+        </select>
+        <button class="btn-main" onclick="addMethod()">زیادکردنی دراو</button>
+        <div id="methodsList" style="margin-top:20px;"></div>
     </div>
 
-    <div id="settings-tab" class="admin-box">
-        <h2>ڕێکخستنی گشتی</h2>
-        <div class="form-group">
-            <label>ئاگاداری ناو سایت (Alert Message)</label>
-            <textarea id="sAlert" rows="3"></textarea>
-        </div>
-        <div class="form-grid">
-            <div class="form-group"><label>ڤێرژنی سیستم</label><input type="text" id="sVer"></div>
-            <div class="form-group"><label>لینکی تێلێگرام</label><input type="text" id="sTele"></div>
-        </div>
-        <button class="btn" onclick="saveSettings()"><i class="fas fa-save"></i> پاشەکەوتکردن</button>
+    <div id="notify-tab" class="admin-box">
+        <h3>ئاگاداری گشتی</h3>
+        <textarea id="notifMsg" rows="4" placeholder="نامەکەت..."></textarea>
+        <button class="btn-main" onclick="sendAlert()">ناردن</button>
     </div>
 </div>
 
@@ -124,15 +94,14 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ئاگادارکەرەوەی دەنگی و لەرزین
-    const notifySound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-    let firstLoad = true;
+    const SECRET_KEY = "zana2024";
 
-    function checkPass() {
-        if(document.getElementById('passInput').value === "zana123") {
-            document.getElementById('login-overlay').style.display = 'none';
-            initApp();
-        } else { alert("وشەی نهێنی هەڵەیە!"); }
+    function checkAuth() {
+        if(document.getElementById('adminPass').value === SECRET_KEY) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('mainUI').style.display = 'block';
+            startApp();
+        } else { alert("هەڵەیە!"); }
     }
 
     function openTab(id, btn) {
@@ -142,90 +111,70 @@
         btn.classList.add('active');
     }
 
-    function initApp() {
-        // گوێگرتن لە ئۆردەرە نوێیەکان
-        db.ref('orders').on('child_added', snap => {
-            if(!firstLoad) {
-                notifySound.play().catch(()=>{});
-                if(navigator.vibrate) navigator.vibrate([300, 100, 300]);
-            }
-        });
-        db.ref('orders').once('value', () => { firstLoad = false; });
-
-        // نیشاندانی ئۆردەرەکان
+    function startApp() {
+        // ئۆردەرەکان
         db.ref('orders').on('value', snap => {
             const data = snap.val();
-            let html = "";
+            let html = ""; let totalSales = 0; let count = 0;
             if(data) {
                 Object.values(data).reverse().forEach(o => {
-                    html += `
-                    <div class="order-card">
-                        <img src="${o.image}" class="receipt-link" onclick="window.open(this.src)">
-                        <div class="order-info">
-                            <b>#${o.orderID}</b> - <small>${o.time}</small><br>
-                            نێرەر: ${o.senderPh} (${o.from}) ➔ وەرگر: ${o.userPh}<br>
-                            بڕ: ${o.amt} ➔ <span style="color:var(--success)">${o.total}</span>
-                        </div>
-                        <div style="text-align:left">
-                            <button class="delete-btn" onclick="delOrder('${o.orderID}')"><i class="fas fa-trash-alt"></i></button>
+                    count++;
+                    if(o.status === 'accepted') totalSales += parseInt(o.amt) || 0;
+                    let statusCls = o.status === 'accepted' ? 'order-status-accepted' : (o.status === 'rejected' ? 'order-status-rejected' : '');
+                    html += `<div class="order-card ${statusCls}">
+                        <div style="display:flex; justify-content:space-between;"><b>#${o.orderID}</b> <small>${o.time}</small></div>
+                        <div class="exchange-display">کڕیار <b>${o.amt} ${o.from}</b> ➔ <b>${o.total} ${o.to}</b></div>
+                        <div style="font-size:13px; margin-bottom:10px;">نێرەر: ${o.senderPh} | بۆ واڵێتی: ${o.userPh}</div>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <img src="${o.image}" style="width:60px; height:60px; border-radius:10px; cursor:pointer;" onclick="window.open(this.src)">
+                            <div style="display:flex; gap:5px; flex:1">
+                                <button class="btn-act" style="background:var(--success)" onclick="db.ref('orders/${o.orderID}').update({status:'accepted'})">قبوڵ</button>
+                                <button class="btn-act" style="background:var(--danger)" onclick="db.ref('orders/${o.orderID}').update({status:'rejected'})">ڕەت</button>
+                                <button class="btn-act" style="background:#334155; flex:0.3" onclick="if(confirm('بسڕێتەوە؟')) db.ref('orders/${o.orderID}').remove()"><i class="fas fa-trash"></i></button>
+                            </div>
                         </div>
                     </div>`;
                 });
             }
-            document.getElementById('ordersList').innerHTML = html || "<center>هیچ ئۆردەرێک نییە</center>";
+            document.getElementById('ordersList').innerHTML = html;
+            document.getElementById('todaySales').innerText = totalSales.toLocaleString() + " IQD";
+            document.getElementById('orderCount').innerText = count;
         });
 
-        // نیشاندانی لیستی واڵێتەکان
-        db.ref('methods').on('value', snap => {
-            const data = snap.val();
-            let html = "";
-            if(data) {
-                Object.keys(data).forEach(key => {
-                    const w = data[key];
-                    html += `<tr>
-                        <td>${w.name}</td>
-                        <td>${w.value}</td>
-                        <td>${w.fee}</td>
-                        <td><button class="delete-btn" onclick="delWallet('${key}')"><i class="fas fa-times"></i></button></td>
-                    </tr>`;
-                });
-            }
-            document.getElementById('walletsContainer').innerHTML = html;
-        });
-
-        // بارکردنی ڕێکخستنەکان
-        db.ref('settings').on('value', s => {
-            const d = s.val();
-            if(d) {
-                document.getElementById('sAlert').value = d.alertMsg;
-                document.getElementById('sVer').value = d.version;
-                document.getElementById('sTele').value = d.teleLink;
-            }
+        // واڵێت و نرخەکان (ئەمە ئەو بەشە نوێیەیە کە داوات کردبوو)
+        db.ref('methods').on('value', s => {
+            let h = ""; const d = s.val();
+            if(d) Object.keys(d).forEach(k => {
+                h += `<div class="list-row">
+                    <div style="display:flex; justify-content:space-between;">
+                        <b>${d[k].name} <span class="tag">${d[k].type}</span></b>
+                        <button onclick="db.ref('methods/${k}').remove()" style="color:var(--danger); border:none; background:none; cursor:pointer;">×</button>
+                    </div>
+                    <div style="font-size:12px; color:#94a3b8; margin-top:5px;">
+                        ژمارە: ${d[k].value || '---'} | حمولە: ${Math.round((1-d[k].fee)*100)}%
+                    </div>
+                </div>`;
+            });
+            document.getElementById('methodsList').innerHTML = h;
         });
     }
 
-    function addWallet() {
+    function addMethod() {
         const name = document.getElementById('wName').value;
-        const num = document.getElementById('wNum').value;
+        const val = document.getElementById('wNum').value;
         const fee = document.getElementById('wFee').value;
         const type = document.getElementById('wType').value;
-        if(name && num && fee) {
-            db.ref('methods').push({ name, value: num, fee: parseFloat(fee), type });
-            alert("واڵێت زیاد کرا!");
+        if(name && fee) {
+            db.ref('methods').push({ name, value: val, fee: parseFloat(fee), type });
+            alert("زیاد کرا!");
         }
     }
 
-    async function saveSettings() {
-        await db.ref('settings').update({
-            alertMsg: document.getElementById('sAlert').value,
-            version: document.getElementById('sVer').value,
-            teleLink: document.getElementById('sTele').value
-        });
-        alert("سیستم نوێکرایەوە!");
+    async function sendAlert() {
+        const msg = document.getElementById('notifMsg').value;
+        await db.ref('settings').update({ alertMsg: msg });
+        alert("ئۆکەی!");
     }
-
-    function delOrder(id) { if(confirm("ئەم ئۆردەرە بسڕێتەوە؟")) db.ref('orders/' + id).remove(); }
-    function delWallet(key) { if(confirm("ئەم واڵێتە لایببەم؟")) db.ref('methods/' + key).remove(); }
 </script>
 </body>
 </html>
