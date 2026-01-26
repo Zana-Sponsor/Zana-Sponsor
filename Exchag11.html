@@ -36,7 +36,6 @@
             color: var(--text-main); 
             margin: 0; padding: 15px; 
             min-height: 100vh;
-            line-height: 1.6;
         }
 
         .container { max-width: 460px; margin: auto; display: none; }
@@ -51,14 +50,12 @@
         .social-btn.tg { background: rgba(0, 136, 204, 0.2); border-color: var(--telegram); }
         .social-btn.wa { background: rgba(37, 211, 102, 0.2); border-color: var(--whatsapp); }
 
-        .logo-section { text-align: center; padding: 15px 0 25px; }
         .exchange-logo {
             width: 85px; height: 85px; background: var(--accent); border-radius: 24px;
-            display: flex; align-items: center; justify-content: center; margin: 0 auto;
-            box-shadow: 0 0 40px rgba(250, 204, 21, 0.3); animation: float 4s ease-in-out infinite;
+            display: flex; align-items: center; justify-content: center; margin: 20px auto;
+            box-shadow: 0 0 40px rgba(250, 204, 21, 0.3);
         }
         .exchange-logo i { font-size: 42px; color: #000; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         .glass-card {
             background: var(--card-bg); border: 1px solid var(--glass-border);
@@ -78,8 +75,9 @@
         
         select, input {
             width: 100%; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border);
-            border-radius: 18px; padding: 16px; color: #fff; font-family: 'Afarin'; box-sizing: border-box;
+            border-radius: 18px; padding: 16px; color: #fff; font-family: 'Afarin'; box-sizing: border-box; outline: none;
         }
+        select option { background: #111827; }
 
         .result-pill {
             background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), transparent);
@@ -110,20 +108,20 @@
             background: transparent; color: var(--text-dim); border: 1px solid var(--glass-border);
             width: 100%; padding: 15px; border-radius: 20px; margin-top: 15px; cursor: pointer; font-family: 'Afarin';
         }
+
+        .version-tag { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 30px; opacity: 0.5; }
     </style>
 </head>
 <body>
 
 <div id="loginOverlay">
     <div class="glass-card" style="text-align:center; width:85%;">
-        <div class="exchange-logo" style="margin-bottom: 25px;"><i class="fas fa-right-left"></i></div>
+        <div class="exchange-logo"><i class="fas fa-right-left"></i></div>
         <h2 style="color:var(--accent); margin:0;">زانا ئێکسچەینج</h2>
         <p style="color:var(--text-dim); margin:15px 0 30px;">بۆ وەرگرتنی خزمەتگوزارییەکانمان بچۆ ژوورەوە</p>
-        
         <button onclick="signIn()" style="width:100%; padding:18px; border-radius:20px; border:none; background:#fff; font-weight:bold; display:flex; align-items:center; justify-content:center; gap:12px; cursor:pointer; font-family: 'Afarin';">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"> چوونەژوورەوە بە گووگڵ
         </button>
-
         <button onclick="enterAsGuest()" class="btn-guest">بڕۆ ژوورەوە وەک میوان</button>
     </div>
 </div>
@@ -139,12 +137,7 @@
             <img id="userImg" src="" class="avatar">
             <span id="userName" style="font-size:15px; font-weight:bold;">...</span>
         </div>
-        <i class="fas fa-power-off" style="color:var(--danger); cursor:pointer; font-size: 20px;" onclick="logout()"></i>
-    </div>
-
-    <div class="logo-section">
-        <div class="exchange-logo"><i class="fas fa-repeat"></i></div>
-        <h1 style="font-size: 26px; color: #fff; margin-top: 20px; font-weight: bold;">ZANA <span style="color:var(--accent)">EXCHANGE</span></h1>
+        <i class="fas fa-power-off" style="color:var(--danger); cursor:pointer;" onclick="logout()"></i>
     </div>
 
     <div class="glass-card">
@@ -178,6 +171,16 @@
         </div>
 
         <div class="field-group">
+            <label>وەرگرتن لەڕێگەی</label>
+            <select id="receiveVia" onchange="updateReceiverLabel()">
+                <option value="FastPay">FastPay</option>
+                <option value="FIB">FIB</option>
+                <option value="QiCard">QiCard</option>
+                <option value="ZainCash">ZainCash</option>
+            </select>
+        </div>
+
+        <div class="field-group">
             <label id="receiverLabel">ژمارەی وەرگرتنی FastPay</label>
             <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11">
         </div>
@@ -193,6 +196,7 @@
 
     <h3 style="margin: 30px 10px 15px;"><i class="fas fa-history" style="color:var(--accent)"></i> دوایین چالاکییەکان</h3>
     <div id="historyList"></div>
+    <div class="version-tag">Version 2.1.0 (Stable)</div>
 </div>
 
 <script>
@@ -208,27 +212,15 @@
 
     let isGuest = false;
 
-    function signIn() { 
-        isGuest = false;
-        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); 
-    }
-
+    function signIn() { isGuest = false; auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
     function enterAsGuest() {
         isGuest = true;
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('userName').innerText = "بەکارھێنەری میوان";
+        document.getElementById('userName').innerText = "میوان";
         document.getElementById('userImg').src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-        document.getElementById('historyList').innerHTML = "<p style='text-align:center; color:var(--text-dim); padding:20px;'>بۆ بینینی مێژووی داواکارییەکان دەبێت بە گووگڵ بچیتە ژوورەوە</p>";
     }
-
-    function logout() {
-        if(isGuest) {
-            location.reload();
-        } else {
-            auth.signOut();
-        }
-    }
+    function logout() { location.reload(); }
 
     auth.onAuthStateChanged(user => {
         if (user && !isGuest) {
@@ -237,9 +229,6 @@
             document.getElementById('userName').innerText = user.displayName;
             document.getElementById('userImg').src = user.photoURL;
             loadHistory(user.email);
-        } else if (!isGuest) {
-            document.getElementById('loginOverlay').style.display = 'flex';
-            document.getElementById('mainApp').style.display = 'none';
         }
     });
 
@@ -252,6 +241,11 @@
         calc();
     }
 
+    function updateReceiverLabel() {
+        const sel = document.getElementById('receiveVia').value;
+        document.getElementById('receiverLabel').innerText = `ژمارەی وەرگرتنی ${sel}`;
+    }
+
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const fromVal = document.getElementById('from').value;
@@ -261,44 +255,30 @@
 
     function copyNum() {
         navigator.clipboard.writeText(document.getElementById('myNum').innerText);
-        alert("ناونیشانەکە کۆپی کرا!");
+        alert("کۆپی کرا!");
     }
 
     function previewImg() {
         const file = document.getElementById('imageInput').files[0];
-        if (file) { 
-            document.getElementById('imagePreview').src = URL.createObjectURL(file); 
-            document.getElementById('imagePreview').style.display = "block"; 
-        }
+        if (file) { document.getElementById('imagePreview').src = URL.createObjectURL(file); document.getElementById('imagePreview').style.display = "block"; }
     }
 
     async function processOrder() {
-        if(isGuest) {
-            alert("ببورە! میوان ناتوانێت ئۆردەر بکات. تکایە سەرەتا بە گووگڵ بچۆ ژوورەوە.");
-            location.reload();
-            return;
-        }
-
+        if(isGuest) { alert("میوان ناتوانێت ئۆردەر بکات، تکایە بە گووگڵ بچۆ ژوورەوە"); return; }
         const user = auth.currentUser;
         const amt = document.getElementById('amt').value;
         const ph = document.getElementById('userPhone').value;
-        const imgFile = document.getElementById('imageInput').files[0];
+        const receiveMethod = document.getElementById('receiveVia').value;
+        const fromMethod = document.getElementById('from').value;
+        const total = document.getElementById('totalDisplay').innerText;
 
-        if(!amt || !imgFile || ph.length < 10) return alert("تکایە زانیارییەکان تەواو بکە");
+        if(!amt || ph.length < 10) return alert("زانیارییەکان تەواو بکە");
 
-        const btn = document.getElementById('submitBtn');
-        btn.innerText = "چاوەڕوانبە..."; btn.disabled = true;
+        const orderId = Math.floor(10000 + Math.random() * 90000);
+        await db.ref('orders/' + orderId).set({ uEmail: user.email, orderID: orderId, amt, total, from: fromMethod, to: receiveMethod, userPh: ph, status: 'pending', time: new Date().toLocaleString('ku-IQ') });
 
-        const id = Math.floor(10000 + Math.random() * 90000);
-        
-        await db.ref('orders/' + id).set({
-            uEmail: user.email, orderID: id,
-            amt: amt, total: document.getElementById('totalDisplay').innerText, 
-            from: document.getElementById('from').value, 
-            to: "ھەمان جۆر", userPh: ph, status: 'pending', time: new Date().toLocaleTimeString('ku-IQ')
-        });
-
-        alert("داواکاری نێردرا! #" + id);
+        const waMsg = `💎 داواکاری نوێ: #${orderId}%0A📥 ناردن لە: ${fromMethod} (${amt})%0A📤 وەرگرتن بە: ${receiveMethod} (${total})%0A📞 ژمارەی وەرگر: ${ph}`;
+        window.open(`https://wa.me/9647758887488?text=${waMsg}`, '_blank');
         location.reload();
     }
 
@@ -307,10 +287,7 @@
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                html = `<div class="order-ticket">
-                    <div><b>#${o.orderID}</b><br><small>${o.from}</small></div>
-                    <div style="color:var(--accent)">${o.total}</div>
-                </div>` + html;
+                html = `<div class="order-ticket"><div><b>#${o.orderID}</b><br><small>${o.from} ➔ ${o.to}</small></div><div style="color:var(--accent)">${o.total}</div></div>` + html;
             });
             document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.3;'>هیچ چالاکییەک نییە</p>";
         });
