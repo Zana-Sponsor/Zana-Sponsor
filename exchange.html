@@ -118,7 +118,7 @@
         
         <div class="group">
             <label for="imageInput" class="file-label"><i class="fas fa-camera"></i> وێنەی وەسڵ</label>
-            <input type="file" id="imageInput" accept="image/*" onchange="previewImg()">
+            <input type="file" id="imageInput" accept="image/*" onchange="previewImg()" style="display: none;">
             <img id="imagePreview">
         </div>
 
@@ -179,7 +179,7 @@
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
             
             alert("داواکارییەکەت نێردرا! #" + orderID);
-            location.reload(); // ڕێفرێش دوای کلیک کردن لەسەر OK لە ئاڵێرتەکە
+            location.reload(); 
 
         } catch(e) { 
             alert("هەڵە ڕوویدا!"); 
