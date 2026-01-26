@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | Gmail Login</title>
+    <title>Zana Exchange | Auth Fix</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -11,79 +11,37 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; --gold: linear-gradient(135deg, #facc15 0%, #eab308 100%); --google: #ffffff; }
-        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
-        .container { max-width: 400px; margin: auto; display: none; } /* شاراوەیە تاوەکو داخل دەبێت */
-        
-        /* 🚪 شاشەی چوونەژوورەوە */
-        #loginScreen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .google-btn { background: var(--google); color: #000; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
-        .google-btn:hover { transform: scale(1.05); }
-
-        /* 🕒 Header & Profile */
-        .header-info { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 12px 15px; border-radius: 20px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        .user-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .user-img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--main); }
-        .clock-box { text-align: left; }
-        #liveTime { font-size: 14px; font-weight: bold; color: var(--main); font-family: monospace; display: block; }
-        #liveDate { font-size: 9px; color: #94a3b8; }
-
-        /* General Styles */
-        .card { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #334155; margin-bottom: 20px; }
-        .group { margin-bottom: 15px; }
-        label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 6px; }
-        input, select { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; text-align: inherit; }
-        .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 18px; border-radius: 18px; font-size: 15px; font-weight: 900; cursor: pointer; }
-        .res-box { background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 15px; margin: 15px 0; border: 1px solid var(--success); text-align: center; }
-        .total { font-size: 20px; font-weight: bold; color: var(--success); }
-        .logout-btn { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; border-radius: 8px; font-size: 10px; cursor: pointer; margin-top: 5px; }
+        :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --gold: linear-gradient(135deg, #facc15 0%, #eab308 100%); }
+        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .login-box { background: var(--card); padding: 40px; border-radius: 30px; text-align: center; border: 1px solid #334155; width: 85%; max-width: 350px; }
+        .google-btn { background: white; color: #000; border: none; padding: 15px; width: 100%; border-radius: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
+        #app { display: none; width: 100%; height: 100vh; padding: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<div id="loginScreen">
-    <i class="fas fa-exchange-alt" style="font-size: 50px; color: var(--main); margin-bottom: 20px;"></i>
-    <h2 style="margin-bottom: 10px;">ZANA EXCHANGE</h2>
-    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 30px;">تکایە بە Gmail بچۆ ژوورەوە بۆ بەردەوامبوون</p>
+<div id="loginScreen" class="login-box">
+    <h2 style="color:var(--main)">ZANA EXCHANGE</h2>
+    <p style="font-size: 13px; color: #94a3b8;">تکایە بە Gmail بچۆ ژوورەوە</p>
     <button class="google-btn" onclick="signIn()">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20">
-        بەردەوامبە لەگەڵ Google
+        <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" width="20">
+        بەردەوامبە بە Google
     </button>
 </div>
 
-<div class="container" id="mainApp">
-    <div class="header-info">
-        <div class="user-profile">
-            <img id="uImg" src="" class="user-img">
-            <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                <span id="uName" style="font-size: 12px; font-weight: bold;">...</span>
-                <button class="logout-btn" onclick="signOut()">چوونەدەرەوە</button>
-            </div>
+<div id="app">
+    <div style="background:var(--card); padding:15px; border-radius:15px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img id="uImg" src="" style="width:40px; border-radius:50%; border:2px solid var(--main)">
+            <span id="uName">...</span>
         </div>
-        <div class="clock-box">
-            <span id="liveTime">00:00:00</span>
-            <span id="liveDate">...</span>
-        </div>
+        <button onclick="signOut()" style="background:none; border:1px solid red; color:red; padding:5px 10px; border-radius:8px; cursor:pointer;">Logout</button>
     </div>
-
-    <div class="card">
-        <div class="group">
-            <label>بڕی پارە</label>
-            <input type="number" id="amt" placeholder="100,000" oninput="calc()">
-        </div>
-        <div class="res-box"><span class="total" id="total">0 IQD</span></div>
-        
-        <div class="group">
-            <label>ژمارەی وەرگر</label>
-            <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11">
-        </div>
-        
-        <button class="btn" onclick="processOrder()">ناردنی داواکاری</button>
-    </div>
+    <center><h3 style="margin-top:50px;">بەخێربێیت بۆ ئەپەکەت!</h3></center>
 </div>
 
 <script>
-    // ⚙️ Firebase Config
+    // ⚠️ دڵنیابەرەوە ئەم زانیاریانە هی پڕۆژەکەی خۆت بن
     const firebaseConfig = {
         apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU",
         authDomain: "zana-exchange.firebaseapp.com",
@@ -93,63 +51,37 @@
     firebase.initializeApp(firebaseConfig);
 
     const auth = firebase.auth();
-    const db = firebase.database();
 
-    // 🔑 Google Login & Logout
     function signIn() {
         const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider).catch(error => alert("هەڵە: " + error.message));
+        // بەکارهێنانی Popup بۆ مۆبایل و کۆمپیوتەر
+        auth.signInWithPopup(provider)
+        .then((result) => {
+            console.log("Logged in:", result.user);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("کێشەیەک هەیە: " + error.message);
+        });
     }
 
     function signOut() {
-        if(confirm("دەتەوێت بچیتە دەرەوە؟")) auth.signOut();
+        auth.signOut();
     }
 
-    // 🕵️ چاودێریکردنی باری بەکارهێنەر
     auth.onAuthStateChanged(user => {
         if (user) {
             document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('app').style.display = 'block';
             document.getElementById('uName').innerText = user.displayName;
-            document.getElementById('uImg').src = user.photoURL || 'https://via.placeholder.com/40';
+            document.getElementById('uImg').src = user.photoURL;
+            document.body.style.display = 'block';
         } else {
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('app').style.display = 'none';
+            document.body.style.display = 'flex';
         }
     });
-
-    // 🕒 کاتی عێراق
-    function updateClock() {
-        const now = new Date();
-        const options = { timeZone: 'Asia/Baghdad', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-        document.getElementById('liveTime').innerText = now.toLocaleTimeString('en-GB', options);
-        document.getElementById('liveDate').innerText = now.toLocaleDateString('ku-IQ', { day: 'numeric', month: 'long', year: 'numeric' });
-    }
-    setInterval(updateClock, 1000);
-
-    function calc() {
-        let a = document.getElementById('amt').value || 0;
-        document.getElementById('total').innerText = (a * 0.99).toLocaleString() + " IQD";
-    }
-
-    function processOrder() {
-        const user = auth.currentUser;
-        if(!user) return;
-        
-        const orderData = {
-            uid: user.uid,
-            email: user.email,
-            name: user.displayName,
-            amount: document.getElementById('amt').value,
-            phone: document.getElementById('userPhone').value,
-            time: new Date().toISOString()
-        };
-
-        db.ref('orders').push(orderData).then(() => {
-            alert("داواکارییەکەت بەسەرکەوتوویی نێردرا!");
-        });
-    }
 </script>
-
 </body>
 </html>
