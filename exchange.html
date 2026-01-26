@@ -11,10 +11,35 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; --gold: linear-gradient(135deg, #facc15 0%, #eab308 100%); --telegram: #0088cc; --whatsapp: #25d366; }
-        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
+        /* پێناسەکردنی فۆنتە نوێیەکە */
+        @font-face {
+            font-family: 'KurdishFont';
+            src: url('UniQAIDAR_Afarin_002.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root { 
+            --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; 
+            --danger: #ef4444; --gold: linear-gradient(135deg, #facc15 0%, #eab308 100%); 
+            --telegram: #0088cc; --whatsapp: #25d366; 
+        }
+
+        body { 
+            font-family: 'KurdishFont', 'Tahoma', sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            margin: 0; 
+            padding: 10px; 
+            text-align: right; 
+        }
+
+        /* جێبەجێکردنی فۆنتەکە لەسەر هەموو توخمەکان */
+        input, select, button, textarea, .brand-name, .btn, .notice-content {
+            font-family: 'KurdishFont', 'Tahoma', sans-serif !important;
+        }
+
         .container { max-width: 400px; margin: auto; display: none; }
-        
         #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
         .google-card { background: var(--card); padding: 40px 20px; border-radius: 30px; text-align: center; width: 85%; border: 1px solid var(--main); }
         .google-btn { background: white; color: black; border: none; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 20px; }
@@ -22,7 +47,7 @@
         #teleAlert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(5px); }
         .alert-box { background: var(--card); padding: 30px; border-radius: 30px; width: 80%; max-width: 300px; text-align: center; border: 1px solid var(--telegram); }
         .alert-btns { display: flex; gap: 10px; margin-top: 20px; }
-        .alert-btns a, .alert-btns button { flex: 1; padding: 12px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; font-family: 'Tahoma'; text-decoration: none; font-size: 14px; }
+        .alert-btns a, .alert-btns button { flex: 1; padding: 12px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; text-decoration: none; font-size: 14px; }
         .btn-join { background: var(--telegram); color: white; }
         .btn-ok { background: #334155; color: white; }
 
@@ -34,7 +59,7 @@
         .brand-name { font-size: 26px; font-weight: 900; color: var(--main); display: block; margin-top: 5px; }
 
         .top-notice { background: rgba(250, 204, 21, 0.1); border: 1px solid var(--main); border-radius: 12px; padding: 8px; margin-bottom: 15px; overflow: hidden; }
-        .notice-content { font-size: 12px; color: var(--main); white-space: nowrap; display: inline-block; animation: scrollText 20s linear infinite; }
+        .notice-content { font-size: 13px; color: var(--main); white-space: nowrap; display: inline-block; animation: scrollText 20s linear infinite; }
         @keyframes scrollText { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
         .user-bar { display: flex; align-items: center; justify-content: space-between; background: var(--card); padding: 10px 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
@@ -42,28 +67,19 @@
 
         .card { background: var(--card); padding: 25px; border-radius: 30px; border: 1px solid #334155; margin-bottom: 20px; }
         .wallet { background: rgba(15, 23, 42, 0.8); padding: 15px; border-radius: 20px; text-align: center; border: 1px solid var(--main); margin-bottom: 25px; }
-        .num { font-size: 11px; font-weight: bold; color: #f8fafc; word-break: break-all; }
+        .num { font-size: 12px; font-weight: bold; color: #f8fafc; word-break: break-all; font-family: sans-serif !important; }
         
         .res-box { background: rgba(16, 185, 129, 0.1); border: 1px dashed var(--success); padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 15px; }
         .res-box span { font-size: 24px; font-weight: 800; color: var(--main); text-shadow: 0 0 10px rgba(250, 204, 21, 0.3); }
 
-        select, input { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; text-align: right; margin-bottom: 15px; }
-        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
-        .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn:active { transform: scale(0.95); }
+        select, input { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; text-align: right; margin-bottom: 15px; font-size: 15px; }
+        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 8px; }
+        .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 17px; }
         
-        /* ⬇️ ستایلی نوێی بەشی مێژووی ئۆردەرەکان ⬇️ */
         #historyList { margin-top: 30px; }
         .history-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: var(--main); }
-        .hist-item { background: linear-gradient(145deg, #1e293b, #0f172a); padding: 20px; border-radius: 25px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: 0.3s; position: relative; overflow: hidden; }
+        .hist-item { background: linear-gradient(145deg, #1e293b, #0f172a); padding: 20px; border-radius: 25px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
         .hist-item::after { content: ''; position: absolute; left: 0; top: 0; width: 6px; height: 100%; background: var(--main); }
-        .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .order-id { font-family: monospace; background: rgba(250, 204, 21, 0.1); padding: 4px 10px; border-radius: 10px; font-size: 14px; color: var(--main); }
-        .status-badge { font-size: 12px; padding: 6px 12px; border-radius: 12px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
-        .hist-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .detail-box { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 15px; }
-        .detail-label { font-size: 10px; color: #94a3b8; display: block; margin-bottom: 2px; }
-        .detail-value { font-size: 12px; font-weight: bold; color: white; }
     </style>
 </head>
 <body>
@@ -83,7 +99,7 @@
 <div id="loginOverlay">
     <div class="google-card">
         <i class="fas fa-exchange-alt logo-icon"></i>
-        <h2 class="brand-name">ZANA EXCHANGE - زانا ئێکسچەینج</h2>
+        <h2 class="brand-name">ZANA EXCHANGE</h2>
         <button class="google-btn" onclick="signIn()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"> چوونەژوورەوە بە Google
         </button>
@@ -106,23 +122,20 @@
     </div>
 
     <div class="top-notice">
-        <div class="notice-content" id="noticeText">بەخێربێن بۆ زانا ئێکسچەینج - ئێمە جێگای متمانەی ئێوەین بۆ هەر کێشەیەک پەیوەندی بکەن لەڕێگەی واتسئاپەوە </div>
-    </div>
-    <div class="top-notice">
-        <div class="notice-content" id="noticeText">تکایە ئەگەر ئۆردەرەکانتان تاخیر بوو دەتوانن لەڕێگەی واتسئاپەوە ئاگادارمان بکەنەوە</div>
+        <div class="notice-content">بەخێربێن بۆ زانا ئێکسچەینج - جێگای متمانەی ئێوەین بۆ هەر کێشەیەک پەیوەندی بکەن</div>
     </div>
     
     <div class="user-bar">
         <div style="display:flex; align-items:center; gap:10px;">
             <img id="userImg" src="" class="profile-img">
-            <span id="userName" style="font-size: 13px; font-weight: bold;">...</span>
+            <span id="userName" style="font-size: 14px; font-weight: bold;">...</span>
         </div>
         <i class="fas fa-sign-out-alt" style="color:var(--danger); cursor:pointer;" onclick="auth.signOut()"></i>
     </div>
 
     <div class="card">
         <div class="wallet">
-            <span style="font-size: 10px; color: var(--main); display: block; margin-bottom: 5px;">ناونیشانی واڵێت:</span>
+            <span style="font-size: 11px; color: var(--main); display: block; margin-bottom: 5px;">ناونیشانی واڵێت:</span>
             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; direction: ltr;">
                 <i class="far fa-copy" style="color:var(--main); cursor:pointer;" onclick="copyNum()"></i>
                 <span class="num" id="myNum">هەڵبژێرە...</span>
@@ -159,7 +172,8 @@
         <label id="receiverLabel">ژمارەی وەرگر (FastPay)</label>
         <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11">
         
-        <label style="background: #334155; padding: 12px; border-radius: 15px; text-align: center; cursor: pointer; display: block; border: 1px dashed var(--main); font-size: 12px;"><i class="fas fa-image"></i> وێنەی وەسڵ
+        <label style="background: #334155; padding: 12px; border-radius: 15px; text-align: center; cursor: pointer; display: block; border: 1px dashed var(--main); font-size: 14px;">
+            <i class="fas fa-image"></i> وێنەی وەسڵ
             <input type="file" id="imageInput" accept="image/*" onchange="previewImg()" style="display: none;">
         </label>
         <img id="imagePreview" style="width: 100%; border-radius: 12px; margin: 10px 0; display: none; border: 2px solid var(--main);">
@@ -172,6 +186,7 @@
 </div>
 
 <script>
+    /* هەمان کۆدە جاڤاسکریپتەکەت لێرە دابنێوە */
     const firebaseConfig = { 
         apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", 
         authDomain: "zana-exchange.firebaseapp.com", 
@@ -258,23 +273,14 @@
             status: 'pending', time: new Date().toLocaleString('ku-IQ')
         });
 
-        const caption = `🆕 ئۆردەری نوێ: #${id}\n👤 نێرەر: ${sender}\n📥 لە: ${from} (${amt})\n📤 بۆ: ${to} (${total})\n📞 وەرگر: ${ph}\n📧 ئیمەیڵ: ${user.email}`;
-        
         const formData = new FormData();
         formData.append('chat_id', TELE_CHAT_ID);
         formData.append('photo', imgFile);
-        formData.append('caption', caption);
+        formData.append('caption', `🆕 ئۆردەر: #${id}\n👤 نێرەر: ${sender}\n📥 لە: ${from} (${amt})\n📤 بۆ: ${to}\n📞 وەرگر: ${ph}`);
 
-        fetch(`https://api.telegram.org/bot${TELE_TOKEN}/sendPhoto`, {
-            method: 'POST',
-            body: formData
-        }).then(() => {
-            alert("داواکاری نێردرا #" + id);
-            location.reload();
-        }).catch(() => {
-            alert("هەڵە ڕوویدا لە ناردنی وێنە بۆ تێلیگرام");
-            document.getElementById('submitBtn').disabled = false;
-        });
+        fetch(`https://api.telegram.org/bot${TELE_TOKEN}/sendPhoto`, { method: 'POST', body: formData })
+        .then(() => { alert("داواکاری نێردرا #" + id); location.reload(); })
+        .catch(() => { alert("هەڵە ڕوویدا"); document.getElementById('submitBtn').disabled = false; });
     }
 
     function loadHistory(email) {
@@ -283,35 +289,14 @@
             snap.forEach(c => {
                 const o = c.val();
                 if(o.uEmail === email) {
-                    let badge = { text: 'چاوەڕوانبە', icon: 'fa-clock', bg: 'rgba(250, 204, 21, 0.1)', color: 'var(--main)' };
-                    if(o.status === 'completed') badge = { text: 'تەواوبوو', icon: 'fa-check-circle', bg: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)' };
-                    if(o.status === 'rejected') badge = { text: 'ڕەتکرایەوە', icon: 'fa-times-circle', bg: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)' };
-
-                    html += `<div class="hist-item" style="border-right: 5px solid ${badge.color}">
-                        <div class="hist-header">
-                            <span class="order-id">#${o.orderID}</span>
-                            <span class="status-badge" style="background:${badge.bg}; color:${badge.color}">
-                                <i class="fas ${badge.icon}"></i> ${badge.text}
-                            </span>
-                        </div>
-                        <div class="hist-details">
-                            <div class="detail-box">
-                                <span class="detail-label">بڕی نێردراو</span>
-                                <span class="detail-value">${o.amt} (${o.from})</span>
-                            </div>
-                            <div class="detail-box">
-                                <span class="detail-label">بڕی وەرگیراو</span>
-                                <span class="detail-value" style="color:var(--main)">${o.total} (${o.to})</span>
-                            </div>
-                        </div>
-                        <div style="font-size:10px; color:#64748b; margin-top:10px; text-align:left;">${o.time}</div>
-                    </div>`;
+                    html += `<div class="hist-item">#${o.orderID} - ${o.total} - ${o.status}</div>`;
                 }
             });
-            document.getElementById('historyList').innerHTML = html || "<center style='padding:40px; opacity:0.3;'><i class='fas fa-folder-open' style='font-size:40px;'></i><p>هیچ ئۆردەرێک نییە</p></center>";
+            document.getElementById('historyList').innerHTML = html || "<p>هیچ ئۆردەرێک نییە</p>";
         });
     }
     updateWallet();
 </script>
+
 </body>
 </html>
