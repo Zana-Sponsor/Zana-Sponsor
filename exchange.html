@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>ZANA EXCHANGE | Global Premium</title>
+    <title>ZANA EXCHANGE | Pro System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -13,74 +13,54 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap');
         :root { --accent: #00d2ff; --bg: #0a0a0c; --card-bg: #16161a; --text: #ffffff; }
-        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; justify-content: center; }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         
-        .app-wrapper { width: 100%; max-width: 390px; display: none; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .app-wrapper { width: 100%; max-width: 400px; display: none; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .premium-card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
-
-        /* Login Screen Design */
-        #loginSection { width: 100%; max-width: 350px; text-align: center; z-index: 1000; }
-        .logo-area { font-size: 50px; color: var(--accent); margin-bottom: 15px; text-shadow: 0 0 20px rgba(0, 210, 255, 0.4); }
-        .login-title { font-size: 24px; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px; }
-        .login-subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
-
-        /* Google Button Style */
-        .btn-google { 
-            background: white; color: #000; width: 100%; padding: 14px; border: none; 
-            border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-            transition: 0.3s; box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+        .premium-card { background: var(--card-bg); border-radius: 22px; padding: 20px; margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        /* Order History Items */
+        .order-item { 
+            background: #1f1f24; border-radius: 15px; padding: 12px; margin-bottom: 10px; 
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid #2d2d35;
         }
-        .btn-google:hover { background: #f1f1f1; transform: translateY(-2px); }
-        .btn-google img { width: 20px; }
+        .status-badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; }
+        .pending { background: rgba(255, 193, 7, 0.1); color: #ffc107; }
+        .completed { background: rgba(40, 167, 69, 0.1); color: #28a745; }
 
-        .btn-guest { margin-top: 15px; color: #555; font-size: 13px; cursor: pointer; text-decoration: underline; }
-
-        /* App Elements */
-        .wallet-compact { background: #1f1f24; border-radius: 12px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-right: 3px solid var(--accent); }
         .input-label { font-size: 12px; color: #888; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        select, input { width: 100%; background: #1f1f24; border: 1px solid #2d2d35; border-radius: 10px; padding: 12px; color: white; font-family: 'Vazirmatn'; text-align: center; outline: none; font-size: 14px; margin-bottom: 12px; box-sizing: border-box; }
+        select, input { width: 100%; background: #1f1f24; border: 1px solid #2d2d35; border-radius: 10px; padding: 12px; color: white; font-family: 'Vazirmatn'; text-align: center; outline: none; margin-bottom: 12px; box-sizing: border-box; }
         
-        .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
-        .btn-global:active { transform: scale(0.96); }
+        .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .balance-badge { background: rgba(0, 210, 255, 0.08); color: var(--accent); padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 12px; border: 1px solid rgba(0, 210, 255, 0.15); }
         
-        .balance-badge { background: rgba(0, 210, 255, 0.08); color: var(--accent); padding: 12px; border-radius: 12px; text-align: center; margin: 8px 0; border: 1px solid rgba(0, 210, 255, 0.15); }
-        #totalDisplay { font-size: 24px; font-weight: 800; }
+        #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
     </style>
 </head>
 <body>
 
 <div id="loginSection">
-    <div class="logo-area"><i class="fas fa-bolt-lightning"></i></div>
-    <div class="login-title">ZANA EXCHANGE</div>
-    <div class="login-subtitle">خێراترین پلاتفۆرمی گۆڕینەوەی دراو</div>
-    
-    <button class="btn-google" onclick="signIn()">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_激ogo_2015.png" alt="Google">
-        بەردەوامبە لەگەڵ Google
-    </button>
-    
-    <div class="btn-guest" onclick="enterAsGuest()">وەک میوان سەیری نرخەکان بکە</div>
+    <i class="fas fa-right-left" style="font-size: 50px; color: var(--accent); margin-bottom: 20px;"></i>
+    <h2 style="margin:0;">ZANA EXCHANGE</h2>
+    <p style="color:#666; margin-bottom:30px;">پلاتفۆرمی فەرمی گۆڕینەوەی باڵانس</p>
+    <button class="btn-global" style="width: 280px;" onclick="signIn()"><i class="fab fa-google"></i> چوونەژوورەوە بە Google</button>
+    <div onclick="enterAsGuest()" style="margin-top:20px; color:#444; cursor:pointer;">سەیرکردن وەک میوان</div>
 </div>
 
 <div class="app-wrapper" id="mainApp">
-    <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 5px; margin-bottom: 10px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 5px;">
         <div style="display:flex; align-items:center; gap:8px;">
-            <img id="userImg" src="" style="width:35px; height:35px; border-radius:50%; border: 1.5px solid var(--accent);">
-            <b id="userName" style="font-size: 14px;">...</b>
+            <img id="userImg" src="" style="width:35px; border-radius:50%; border: 1px solid var(--accent);">
+            <b id="userName" style="font-size: 13px;">...</b>
         </div>
-        <i class="fas fa-sign-out-alt" onclick="logout()" style="color: #444; font-size: 20px; cursor:pointer;"></i>
+        <i class="fas fa-sign-out-alt" onclick="logout()" style="color:#444; cursor:pointer;"></i>
     </div>
 
     <div class="premium-card">
-        <div class="wallet-compact">
-            <div class="wallet-info">
-                <small style="font-size: 10px; color: #666;">ژمارەی ئێمە بۆ ناردن:</small>
-                <b id="myNum" style="font-size: 15px; color: var(--accent);">---</b>
-            </div>
-            <i class="far fa-copy" onclick="copyNum()" style="color: var(--accent); cursor:pointer;"></i>
+        <div style="background:#1f1f24; padding:10px; border-radius:12px; display:flex; justify-content:space-between; margin-bottom:15px;">
+            <span style="font-size:13px; color:var(--accent);">ناردن بۆ: <b id="myNum">---</b></span>
+            <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer;"></i>
         </div>
 
         <span class="input-label"><i class="fas fa-arrow-up"></i> ناردن لەڕێگەی:</span>
@@ -89,73 +69,55 @@
             <option value="FIB">🏦 FIB Bank</option>
             <option value="Asiacell">📱 Asiacell Transfer</option>
             <option value="Korek">📱 Korek Transfer</option>
-            <option value="USDT">🪙 USDT (Network Address)</option>
+            <option value="USDT">🪙 USDT ($)</option>
         </select>
 
-        <span class="input-label"><i class="fas fa-coins"></i> بڕی ناردن:</span>
+        <span class="input-label"><i class="fas fa-coins"></i> بڕی پارە:</span>
         <input type="number" id="amt" placeholder="0" oninput="calc()">
 
         <span class="input-label"><i class="fas fa-wallet"></i> وەرگرتن لەسەر:</span>
         <select id="receiveVia" onchange="calc()">
             <option value="FastPay">FastPay</option>
-            <option value="FIB">FIB Bank</option>
+            <option value="FIB">FIB</option>
             <option value="QiCard">Qi Card</option>
         </select>
 
         <div class="balance-badge">
-            <small style="font-size: 11px; display: block; margin-bottom: 2px; opacity: 0.6;">بڕی پوختەی وەرگیراو:</small>
-            <div id="totalDisplay">0 IQD</div>
+            <span style="font-size:11px; opacity:0.6;">بڕی وەرگیراو:</span>
+            <div id="totalDisplay" style="font-size:22px; font-weight:800;">0 IQD</div>
         </div>
 
-        <span class="input-label"><i class="fas fa-phone"></i> ژمارەی مۆبایلی تۆ:</span>
+        <span class="input-label"><i class="fas fa-phone"></i> ژمارەی مۆبایلی وەرگر (پێویستە):</span>
         <input type="tel" id="userPhone" placeholder="07XXXXXXXXX">
         
-        <button class="btn-global" id="submitBtn" onclick="processOrder()">
-            <i class="fab fa-whatsapp"></i> ناردنی داواکاری
-        </button>
+        <button class="btn-global" id="submitBtn" onclick="processOrder()"><i class="fab fa-whatsapp"></i> ناردنی داواکاری</button>
     </div>
+
+    <h3 style="font-size:16px; margin: 10px 5px;"><i class="fas fa-history"></i> داواکارییەکانی من</h3>
+    <div id="historyList"></div>
 </div>
 
 <script>
     const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+    const auth = firebase.auth(); const db = firebase.database();
     let isGuest = false;
 
-    function signIn() { 
-        isGuest = false; 
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider).catch(err => alert("هەڵەیەک ڕوویدا لە چوونەژوورەوە"));
-    }
-
-    function enterAsGuest() { 
-        isGuest = true; 
-        document.getElementById('loginSection').style.display = 'none'; 
-        document.getElementById('mainApp').style.display = 'block'; 
-        document.getElementById('userName').innerText = "میوان (تەنها بینین)";
-        document.getElementById('userImg').src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-        // گۆڕینی ستایلی دوگمەکە بۆ ئەوەی دیار بێت ناچالاکە
-        document.getElementById('submitBtn').style.opacity = "0.5";
-        document.getElementById('submitBtn').innerHTML = "بۆ ناردن پێویستە داخڵ بیت";
-    }
-
+    function signIn() { isGuest = false; auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+    function enterAsGuest() { isGuest = true; document.getElementById('loginSection').style.display='none'; document.getElementById('mainApp').style.display='block'; document.getElementById('userName').innerText="Guest"; document.getElementById('submitBtn').style.opacity="0.5"; }
     function logout() { auth.signOut().then(() => location.reload()); }
 
     auth.onAuthStateChanged(user => { 
         if (user && !isGuest) { 
-            document.getElementById('loginSection').style.display = 'none'; 
-            document.getElementById('mainApp').style.display = 'block'; 
+            document.getElementById('loginSection').style.display='none'; 
+            document.getElementById('mainApp').style.display='block'; 
             document.getElementById('userName').innerText = user.displayName; 
-            document.getElementById('userImg').src = user.photoURL; 
+            document.getElementById('userImg').src = user.photoURL;
+            loadHistory(user.email);
         } 
     });
 
-    const wallets = { 
-        "FastPay": "07510074008", "FIB": "07510074008", 
-        "Asiacell": "07758887488", "Korek": "07510074008", 
-        "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" 
-    };
-
+    const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
     function updateWallet() { document.getElementById('myNum').innerText = wallets[document.getElementById('from').value]; calc(); }
 
     function calc() {
@@ -163,40 +125,56 @@
         const from = document.getElementById('from').value;
         const to = document.getElementById('receiveVia').value;
         let final = 0;
-
-        if (from === "Asiacell") {
-            if (to === "FastPay") final = (amt / 100000) * 84000;
-            else if (to === "FIB") final = (amt / 100000) * 83000;
-            else if (to === "QiCard") final = (amt / 100000) * 83500;
-        } 
-        else if (from === "Korek") {
-            if (to === "FastPay") final = (amt / 100000) * 82000;
-            else if (to === "FIB") final = (amt / 100000) * 81000;
-            else if (to === "QiCard") final = (amt / 100000) * 81500;
-        }
-        else if (from === "USDT") {
-            if (to === "FastPay") final = (amt / 100) * 145000;
-            else if (to === "FIB") final = (amt / 100) * 144000;
-            else if (to === "QiCard") final = (amt / 100) * 144500;
-        }
-        else { final = amt * 0.99; }
+        if (from === "Asiacell") final = (to==="FastPay") ? (amt/100000)*84000 : (to==="FIB" ? (amt/100000)*83000 : (amt/100000)*83500);
+        else if (from === "Korek") final = (to==="FastPay") ? (amt/100000)*82000 : (to==="FIB" ? (amt/100000)*81000 : (amt/100000)*81500);
+        else if (from === "USDT") final = (to==="FastPay") ? (amt/100)*145000 : (to==="FIB" ? (amt/100)*144000 : (amt/100)*144500);
+        else final = amt * 0.99;
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " IQD";
     }
 
-    function processOrder() {
-        if(isGuest) {
-            alert("⚠️ ببورە! وەک میوان ناتوانیت داواکاری بنێریت. تکایە بە هەژماری Google داخڵ ببە.");
-            return;
-        }
+    async function processOrder() {
+        const phone = document.getElementById('userPhone').value;
+        if(isGuest) return alert("بچۆ ژوورەوە!");
+        if(phone.length < 10) return alert("⚠️ تکایە ژمارەی مۆبایلەکەت بە دروستی بنووسە!");
+
         const orderId = Math.floor(1000 + Math.random() * 8999);
-        const text = `🔹 داواکاری نوێ: %23${orderId}%0A---%0A📥 ناردن: ${document.getElementById('from').value}%0A📤 وەرگرتن: ${document.getElementById('receiveVia').value}%0A💰 بڕ: ${document.getElementById('amt').value}%0A💵 پوختە: ${document.getElementById('totalDisplay').innerText}%0A📱 ژمارە: ${document.getElementById('userPhone').value}`;
+        const orderData = {
+            uEmail: auth.currentUser.email,
+            from: document.getElementById('from').value,
+            to: document.getElementById('receiveVia').value,
+            amount: document.getElementById('amt').value,
+            total: document.getElementById('totalDisplay').innerText,
+            status: 'چاوەڕوانە',
+            time: new Date().toLocaleTimeString()
+        };
+
+        await db.ref('orders/' + orderId).set(orderData);
+        const text = `🔹 داواکاری نوێ: %23${orderId}%0A📥 ناردن: ${orderData.from}%0A📤 وەرگرتن: ${orderData.to}%0A💰 بڕ: ${orderData.amount}%0A💵 پوختە: ${orderData.total}%0A📱 ژمارە: ${phone}`;
         window.open(`https://wa.me/9647510074008?text=${text}`, '_blank');
     }
 
-    function copyNum() { 
-        navigator.clipboard.writeText(document.getElementById('myNum').innerText); 
-        alert("کۆپی کرا ✅"); 
+    function loadHistory(email) {
+        db.ref('orders').orderByChild('uEmail').equalTo(email).on('value', snap => {
+            let html = "";
+            snap.forEach(c => {
+                const o = c.val();
+                html = `<div class="order-item">
+                    <div>
+                        <i class="fas fa-exchange-alt" style="color:var(--accent); margin-left:10px;"></i>
+                        <b>${o.total}</b><br>
+                        <small style="color:#666; font-size:10px;">${o.from} ➔ ${o.to}</small>
+                    </div>
+                    <div style="text-align:left">
+                        <span class="status-badge ${o.status==='جێبەجێکرا'?'completed':'pending'}">${o.status}</span><br>
+                        <small style="color:#444; font-size:9px;">${o.time}</small>
+                    </div>
+                </div>` + html;
+            });
+            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; color:#444;'>هیچ داواکارییەک نییە</p>";
+        });
     }
+
+    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا ✅"); }
     updateWallet();
 </script>
 </body>
