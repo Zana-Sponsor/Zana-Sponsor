@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Order Manager</title>
+    <title>Zana Admin | Control Center</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -20,20 +20,23 @@
         .sales-box { border: 1px solid var(--main); grid-column: span 3; padding: 20px; }
         .sales-box b { font-size: 28px; color: var(--main); }
 
+        /* Notification Box */
+        .notif-section { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
+        textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #0f172a; color: white; margin-bottom: 10px; resize: none; font-family: inherit; box-sizing: border-box; }
+        .btn-send { background: var(--main); color: black; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
+        .btn-send:hover { background: #eab308; }
+
         /* Order Card */
         .order-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
         .order-card.accepted { border-right: 8px solid var(--success); }
         .order-card.rejected { border-right: 8px solid var(--danger); opacity: 0.8; }
         
         .exchange-row { background: rgba(15, 23, 42, 0.5); padding: 12px; border-radius: 12px; margin: 12px 0; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); }
-        .exchange-row i { color: var(--main); }
-
         .btn-group { display: flex; gap: 8px; margin-top: 15px; }
-        .btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
+        .btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; }
         .btn-acc { background: var(--success); }
         .btn-rej { background: var(--danger); }
         .btn-del { background: #475569; flex: 0.3; }
-        
         .img-thumb { width: 55px; height: 55px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; }
     </style>
 </head>
@@ -46,17 +49,20 @@
             <b id="totalSales">0</b>
         </div>
         <div class="stat-card" style="border-bottom: 3px solid var(--success);">
-            <span>وەرگیراو</span>
-            <b id="accCount">0</b>
+            <span>وەرگیراو</span><b id="accCount">0</b>
         </div>
         <div class="stat-card" style="border-bottom: 3px solid var(--danger);">
-            <span>ڕەتکراوە</span>
-            <b id="rejCount">0</b>
+            <span>ڕەتکراوە</span><b id="rejCount">0</b>
         </div>
         <div class="stat-card">
-            <span>کۆی گشتی</span>
-            <b id="totalCount">0</b>
+            <span>کۆی گشتی</span><b id="totalCount">0</b>
         </div>
+    </div>
+
+    <div class="notif-section">
+        <h3 style="margin-top:0; font-size:16px;"><i class="fas fa-bullhorn" style="color:var(--main)"></i> ناردنی ئاگاداری بۆ هەمووان</h3>
+        <textarea id="notifMsg" rows="3" placeholder="نامەکەت لێرە بنووسە (بۆ نموونە: ئۆردەر کردن کراوەیە...)"></textarea>
+        <button class="btn-send" onclick="sendAlert()">ناردنی ئاگاداری</button>
     </div>
 
     <div id="ordersList"></div>
@@ -75,13 +81,24 @@
     let firstLoad = true;
     let lastOrderCount = 0;
 
-    // فەنکشنی دەنگ
     function playNewOrderSound() {
         const msg = new SpeechSynthesisUtterance("New Order");
         msg.lang = 'en-US';
         window.speechSynthesis.speak(msg);
     }
 
+    // --- ناردنی ئاگاداری بۆ فایەربەیس ---
+    async function sendAlert() {
+        const msg = document.getElementById('notifMsg').value;
+        if(msg) {
+            await db.ref('settings').update({ alertMsg: msg });
+            alert("ئاگادارییەکە نێردرا و گەیشتە دەستی کڕیاران!");
+        } else {
+            alert("تکایە نامەیەک بنووسە!");
+        }
+    }
+
+    // --- خوێندنەوەی ئۆردەرەکان ---
     db.ref('orders').on('value', snap => {
         const data = snap.val();
         let html = ""; 
@@ -91,7 +108,6 @@
             const ordersArray = Object.values(data);
             total = ordersArray.length;
 
-            // پشکنین بۆ ئۆردەری نوێ و لێدانی دەنگ
             if (!firstLoad && total > lastOrderCount) {
                 playNewOrderSound();
             }
@@ -110,7 +126,6 @@
                         <span>#${o.orderID}</span>
                         <span><i class="far fa-clock"></i> ${o.time}</span>
                     </div>
-
                     <div class="exchange-row">
                         <div style="text-align:center;">
                             <small style="color:#94a3b8; display:block;">ناردوویەتی</small>
@@ -122,15 +137,10 @@
                             <b style="color:var(--success)">${o.total} ${o.to}</b>
                         </div>
                     </div>
-
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div style="font-size:13px; color:#cbd5e1;">
-                            نێرەر: <b>${o.senderPh}</b><br>
-                            بۆ: <b>${o.userPh}</b>
-                        </div>
+                        <div style="font-size:13px; color:#cbd5e1;">نێرەر: ${o.senderPh}<br>بۆ: ${o.userPh}</div>
                         <img src="${o.image}" class="img-thumb" onclick="window.open(this.src)">
                     </div>
-
                     <div class="btn-group">
                         <button class="btn btn-acc" onclick="updateStatus('${o.orderID}', 'accepted')">قبوڵ</button>
                         <button class="btn btn-rej" onclick="updateStatus('${o.orderID}', 'rejected')">ڕەت</button>
@@ -140,7 +150,7 @@
             });
         }
         
-        document.getElementById('ordersList').innerHTML = html || "<center style='margin-top:50px; color:#475569;'>لیستەکە بەتاڵە</center>";
+        document.getElementById('ordersList').innerHTML = html || "<center style='margin:30px; color:#475569;'>لیستەکە بەتاڵە</center>";
         document.getElementById('totalSales').innerText = sales.toLocaleString();
         document.getElementById('accCount').innerText = acc;
         document.getElementById('rejCount').innerText = rej;
