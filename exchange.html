@@ -15,19 +15,15 @@
         body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
         .container { max-width: 400px; margin: auto; display: none; }
         
-        /* شاشەی لۆگین */
         #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
         .google-card { background: var(--card); padding: 40px 20px; border-radius: 30px; text-align: center; width: 85%; border: 1px solid var(--main); }
         .google-btn { background: white; color: black; border: none; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 20px; }
 
-        /* پڕۆفایل بار */
         .user-bar { display: flex; align-items: center; justify-content: space-between; background: var(--card); padding: 10px 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
         .profile-img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--main); }
 
         .card { background: var(--card); padding: 25px; border-radius: 30px; border: 1px solid #334155; margin-bottom: 20px; }
         .wallet { background: rgba(15, 23, 42, 0.8); padding: 15px; border-radius: 20px; text-align: center; border: 1px solid var(--main); margin-bottom: 25px; }
-        
-        /* کەمکردنەوەی قەبارەی فۆنتی ژمارەکان و ناونیشانی USDT */
         .num-wrapper { display: flex; align-items: center; justify-content: center; gap: 8px; direction: ltr; }
         .num { font-size: 11px; font-weight: bold; letter-spacing: 0.5px; word-break: break-all; color: #f8fafc; }
         
@@ -36,8 +32,12 @@
         select, input { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; text-align: right; }
         .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: bold; cursor: pointer; }
         .res-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; margin-bottom: 20px; text-align: center; }
-        .total { font-size: 20px; font-weight: bold; color: var(--main); }
-        .hist-item { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 15px; border-right: 5px solid var(--main); }
+        .total-display { font-size: 20px; font-weight: bold; color: var(--main); }
+
+        /* ستایلی ئۆردەرەکان وەک فایلە ڕەسەنەکە */
+        .hist-item { background: var(--card); padding: 18px; border-radius: 22px; margin-bottom: 15px; border-right: 5px solid var(--main); }
+        .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+        .hist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; }
         #imagePreview { width: 100%; border-radius: 12px; margin-top: 10px; display: none; border: 2px solid var(--main); }
     </style>
 </head>
@@ -91,7 +91,7 @@
         <div class="group"><label id="amtLabel">بڕی پارە</label>
         <input type="number" id="amt" placeholder="بڕەکە لێرە بنووسە" oninput="calc()"></div>
         
-        <div class="res-box"><span class="total" id="total">0 دینار</span></div>
+        <div class="res-box"><span class="total-display" id="totalDisplay">0 دینار</span></div>
         
         <div class="group"><label>ژمارەی نێرەر</label><input type="text" id="senderPhone" placeholder="07XXXXXXXX"></div>
         <div class="group"><label>ژمارەی وەرگر</label><input type="text" id="userPhone" placeholder="07XXXXXXXX"></div>
@@ -104,6 +104,8 @@
 
         <button class="btn" onclick="processOrder()">ناردنی داواکاری</button>
     </div>
+    
+    <div style="font-size: 16px; font-weight: bold; color: var(--main); margin-bottom: 15px; padding-right: 5px;">مێژووی داواکارییەکان</div>
     <div id="historyList"></div>
 </div>
 
@@ -148,15 +150,8 @@
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const fromVal = document.getElementById('from').value;
-        let final = 0;
-        if(fromVal === 'usdt') {
-            final = amt * 1450; // 100 دۆلار بە 145 هەزار
-        } else if(fromVal === 'korek') {
-            final = amt * 0.82;
-        } else {
-            final = amt * 0.99;
-        }
-        document.getElementById('total').innerText = Math.floor(final).toLocaleString() + " دینار";
+        let final = (fromVal === 'usdt') ? amt * 1450 : (fromVal === 'korek' ? amt * 0.82 : amt * 0.99);
+        document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " دینار";
     }
 
     function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا!"); }
@@ -168,22 +163,46 @@
 
     async function processOrder() {
         const user = auth.currentUser;
-        const amt = document.getElementById('amt').value;
-        if(!amt) return alert("بڕی پارە بنووسە");
+        const amtValue = document.getElementById('amt').value;
+        if(!amtValue) return alert("بڕی پارە بنووسە");
         const orderID = Math.floor(10000 + Math.random() * 90000);
         await db.ref('orders/' + orderID).set({
             uEmail: user.email, orderID: orderID, 
-            amt: amt, total: document.getElementById('total').innerText,
-            from: document.getElementById('from').value, status: 'pending'
+            amt: (document.getElementById('from').value === 'usdt') ? amtValue + "$" : amtValue + " IQD",
+            total: document.getElementById('totalDisplay').innerText,
+            from: document.getElementById('from').value, 
+            to: document.getElementById('to').value,
+            userPh: document.getElementById('userPhone').value,
+            status: 'pending',
+            time: new Date().toLocaleString('ku-IQ')
         });
         alert("داواکاری نێردرا #" + orderID);
     }
 
     function loadHistory(email) {
         db.ref('orders').on('value', snap => {
-            let h = "";
-            snap.forEach(c => { if(c.val().uEmail === email) h += `<div class="hist-item">#${c.val().orderID} - ${c.val().status}</div>`; });
-            document.getElementById('historyList').innerHTML = h;
+            let html = "";
+            snap.forEach(child => {
+                const o = child.val();
+                if(o.uEmail === email) {
+                    let color = "var(--main)";
+                    let statusText = "بچاوەڕوانی <i class='fas fa-clock'></i>";
+                    
+                    if(o.status === 'completed') { color = "var(--success)"; statusText = "تەواوبوو <i class='fas fa-check-circle'></i>"; }
+                    else if(o.status === 'rejected') { color = "var(--danger)"; statusText = "ڕەتکرایەوە <i class='fas fa-times-circle'></i>"; }
+
+                    html += `<div class="hist-item" style="border-right-color: ${color}">
+                        <div class="hist-header">
+                            <b style="color:var(--main)">#${o.orderID}</b>
+                            <span style="color:${color}; font-weight:bold; font-size: 12px;">${statusText}</span>
+                        </div>
+                        <div class="hist-row"><i class="fas fa-paper-plane" style="color:#60a5fa; width:15px;"></i><span>نێردرا: <b>${o.amt}</b> <small style="color:var(--main)">(${o.from})</small></span></div>
+                        <div class="hist-row"><i class="fas fa-money-bill-wave" style="color:var(--success); width:15px;"></i><span>وەرگیرا: <b>${o.total}</b> <small style="color:var(--main)">(${o.to})</small></span></div>
+                        <div class="hist-row"><i class="fas fa-user" style="color:#f87171; width:15px;"></i><span>وەرگر: <b>${o.userPh}</b></span></div>
+                    </div>`;
+                }
+            });
+            document.getElementById('historyList').innerHTML = html || "<center style='opacity:0.5'>مێژوو نییە</center>";
         });
     }
 </script>
