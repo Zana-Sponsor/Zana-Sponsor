@@ -38,6 +38,7 @@
         .total { font-size: 18px; font-weight: bold; color: var(--success); }
         .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: bold; cursor: pointer; }
         
+        .hist-title { font-size: 14px; font-weight: bold; color: var(--main); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .hist-item { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 15px; border-right: 5px solid var(--main); }
         .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
         .hist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; }
@@ -116,6 +117,7 @@
         <button class="btn" id="submitBtn" onclick="processOrder()">ناردنی داواکاری</button>
     </div>
 
+    <div class="hist-title"><i class="fas fa-history"></i> دوایین داواکارییەکانت</div>
     <div id="historyList"></div>
 </div>
 
@@ -145,15 +147,6 @@
     function updateWallet() {
         const selected = document.getElementById('from').value;
         document.getElementById('myNum').innerText = staticWallets[selected];
-        const label = document.getElementById('amtLabel');
-        const input = document.getElementById('amt');
-        if(selected === 'usdt') {
-            label.innerText = "بڕی دۆلار ($) - کەمترین 10$";
-            input.placeholder = "نموونە: 100";
-        } else {
-            label.innerText = "بڕی پارە (IQD)";
-            input.placeholder = "نموونە: 100000";
-        }
         calc();
     }
 
@@ -176,7 +169,6 @@
 
     async function processOrder() {
         const btn = document.getElementById('submitBtn');
-        const fromVal = document.getElementById('from').value;
         const fromText = document.getElementById('from').options[document.getElementById('from').selectedIndex].text;
         const toText = document.getElementById('to').options[document.getElementById('to').selectedIndex].text;
         const amt = parseFloat(document.getElementById('amt').value);
@@ -185,39 +177,40 @@
         const total = document.getElementById('total').innerText;
         const imgFile = document.getElementById('imageInput').files[0];
 
-        if(fromVal === 'usdt' && amt < 10) return alert("بڕی دۆلار نابێت لە 10$ کەمتر بێت");
         if(!amt || !senderPh || !userPh || !imgFile) return alert("خانەکان پڕ بکەرەوە");
         
         btn.disabled = true; btn.innerText = "چاوەڕێبە...";
         const orderID = Math.floor(10000 + Math.random() * 90000);
-        const amtDisplay = (fromVal === 'usdt') ? amt + "$" : amt.toLocaleString() + " IQD";
+        const amtDisplay = (document.getElementById('from').value === 'usdt') ? amt + "$" : amt.toLocaleString() + " IQD";
 
         try {
             await db.ref('orders/' + orderID).set({ orderID, from: fromText, to: toText, senderPh, userPh, amt: amtDisplay, total, status: 'pending', time: new Date().toLocaleString('ku-IQ') });
             
-            // ئەم بەشە ئایدی ئۆردەرەکە لەناو مۆبایلەکەت پاشکەوت دەکات
-            let localOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
-            localOrders.push(orderID);
-            localStorage.setItem('myOrders', JSON.stringify(localOrders));
+            // پاشکەوتکردن لە ناو مۆبایلەکە بۆ ئەوەی تەنها لای خۆت پیشان بدرێت
+            let myOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
+            myOrders.push(orderID);
+            localStorage.setItem('myOrders', JSON.stringify(myOrders));
 
             const formData = new FormData();
             formData.append("chat_id", "6259019006");
             formData.append("photo", imgFile);
             formData.append("caption", `🆔 #${orderID}\nنێرەر: ${senderPh}\nبڕی نێردراو: ${amtDisplay}\nبۆ: ${total} (${toText})\nوەرگر: ${userPh}`);
             await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: formData });
-            alert("نێردرا #" + orderID); location.reload();
+            
+            alert("نێردرا #" + orderID); 
+            location.reload();
         } catch(e) { alert("هەڵە ڕوویدا!"); btn.disabled = false; }
     }
 
     db.ref('orders').on('value', (snap) => {
         const data = snap.val();
         let html = "";
-        let localOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
+        let myOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
 
         if (data) {
             Object.values(data).reverse().forEach(o => {
-                // تەنها ئەگەر ئایدی ئۆردەرەکە لەم مۆبایلەدا هەبێت پیشانی دەدات
-                if (localOrders.includes(o.orderID)) {
+                // فلتەرکردن: تەنها ئەوانەی ئایدییەکەیان لەم مۆبایلەدا هەیە
+                if (myOrders.includes(o.orderID)) {
                     let color = "var(--main)"; let statusText = "چاوەڕوان بە <i class='fas fa-clock'></i>";
                     if(o.status === 'accepted') { color = "var(--success)"; statusText = "وەرگیرا <i class='fas fa-check-circle'></i>"; }
                     else if(o.status === 'rejected') { color = "var(--danger)"; statusText = "ڕەتکرایەوە <i class='fas fa-times-circle'></i>"; }
@@ -231,6 +224,10 @@
                     </div>`;
                 }
             });
+        }
+        
+        if (html === "") {
+            html = "<p style='text-align:center; font-size:12px; color:#94a3b8;'>هیچ داواکارییەک نییە</p>";
         }
         document.getElementById('historyList').innerHTML = html;
     });
