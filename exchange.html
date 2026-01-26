@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | Pro v5.2</title>
+    <title>ZANA EXCHANGE | Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -15,45 +15,62 @@
         body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
         .container { max-width: 400px; margin: auto; display: none; }
         
+        /* شاشەی لۆگین */
         #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .google-card { background: var(--card); padding: 40px 20px; border-radius: 30px; text-align: center; width: 85%; border: 1px solid var(--main); }
+        .google-card { background: var(--card); padding: 40px 20px; border-radius: 30px; text-align: center; width: 85%; border: 1px solid var(--main); box-shadow: 0 0 20px rgba(250, 204, 21, 0.2); }
         .google-btn { background: white; color: black; border: none; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 20px; }
 
-        /* لۆگۆ و سەردێڕ */
-        .header-brand { text-align: center; margin-bottom: 15px; }
-        .logo-icon { font-size: 45px; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 5px rgba(250,204,21,0.5)); }
-        .brand-name { font-size: 24px; font-weight: 900; color: var(--main); display: block; letter-spacing: 1px; }
+        /* پۆپ ئەپی تێلیگرام */
+        #teleAlert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(5px); }
+        .alert-box { background: var(--card); padding: 30px; border-radius: 30px; width: 85%; max-width: 320px; text-align: center; border: 1px solid var(--telegram); }
 
-        /* بەشی ئاگاداری */
-        .top-notice { background: rgba(250, 204, 21, 0.1); border: 1px solid var(--main); border-radius: 12px; padding: 8px; margin-bottom: 15px; overflow: hidden; display: none; }
-        .notice-content { font-size: 12px; color: var(--main); white-space: nowrap; animation: scrollText 15s linear infinite; }
+        /* لۆگۆ و سەردێڕ */
+        .header-brand { text-align: center; margin-bottom: 20px; padding-top: 10px; }
+        .logo-wrapper { position: relative; display: inline-block; }
+        .logo-icon { font-size: 50px; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .brand-name { font-size: 26px; font-weight: 900; color: var(--main); display: block; margin-top: 5px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
+        .top-notice { background: rgba(250, 204, 21, 0.1); border: 1px solid var(--main); border-radius: 12px; padding: 8px; margin-bottom: 15px; overflow: hidden; }
+        .notice-content { font-size: 12px; color: var(--main); white-space: nowrap; display: inline-block; animation: scrollText 20s linear infinite; }
         @keyframes scrollText { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
         .user-bar { display: flex; align-items: center; justify-content: space-between; background: var(--card); padding: 10px 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .profile-img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--main); }
+        .profile-img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--main); }
 
         .card { background: var(--card); padding: 25px; border-radius: 30px; border: 1px solid #334155; margin-bottom: 20px; }
         .wallet { background: rgba(15, 23, 42, 0.8); padding: 15px; border-radius: 20px; text-align: center; border: 1px solid var(--main); margin-bottom: 25px; }
-        .num { font-size: 10px; font-weight: bold; letter-spacing: 0.5px; color: #f8fafc; word-break: break-all; }
+        .num { font-size: 11px; font-weight: bold; color: #f8fafc; word-break: break-all; }
         
-        .group { margin-bottom: 20px; }
+        select, input { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; text-align: right; margin-bottom: 15px; }
         label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
-        select, input { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; text-align: right; }
-        .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: bold; cursor: pointer; }
+        .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .res-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 20px; margin-bottom: 20px; text-align: center; }
-        .total-display { font-size: 20px; font-weight: bold; color: var(--main); }
-
+        
+        /* ستایلی ئۆردەرەکان */
         .hist-item { background: var(--card); padding: 18px; border-radius: 22px; margin-bottom: 15px; border-right: 5px solid var(--main); }
-        .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
-        #imagePreview { width: 100%; border-radius: 12px; margin-top: 10px; display: none; border: 2px solid var(--main); }
+        .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+        .status-badge { font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
     </style>
 </head>
 <body>
 
+<div id="teleAlert">
+    <div class="alert-box">
+        <i class="fab fa-telegram" style="font-size: 50px; color: var(--telegram); margin-bottom: 15px; display: block;"></i>
+        <h3 style="margin: 0 0 10px 0;">جۆینی تێلیگرام بە</h3>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">بۆ بینینی نوێترین گۆڕانکاریی نرخەکان و پشتیوانی خێرا.</p>
+        <a href="https://t.me/zana_exchange" target="_blank" class="btn" style="background: var(--telegram); color: white; text-decoration: none; display: block; margin-bottom: 10px;">جۆین بە</a>
+        <button onclick="closeTeleAlert()" style="background:none; border:none; color: #94a3b8; cursor:pointer;">پاشان (باشە)</button>
+    </div>
+</div>
+
 <div id="loginOverlay">
     <div class="google-card">
-        <i class="fas fa-coins logo-icon"></i>
-        <h2 style="color: var(--main); margin-top: 10px;">ZANA EXCHANGE</h2>
+        <div class="logo-wrapper">
+            <i class="fas fa-sync-alt logo-icon"></i>
+            <i class="fas fa-crown" style="position: absolute; top: -15px; right: -15px; color: var(--main); font-size: 20px;"></i>
+        </div>
+        <h2 class="brand-name">ZANA EXCHANGE</h2>
         <button class="google-btn" onclick="signIn()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"> چوونەژوورەوە بە Google
         </button>
@@ -62,12 +79,15 @@
 
 <div class="container" id="mainApp">
     <div class="header-brand">
-        <i class="fas fa-crown logo-icon"></i>
+        <div class="logo-wrapper">
+            <i class="fas fa-exchange-alt logo-icon"></i>
+            <i class="fas fa-crown" style="position: absolute; top: -10px; right: -10px; color: var(--main); font-size: 18px;"></i>
+        </div>
         <span class="brand-name">ZANA EXCHANGE</span>
     </div>
 
-    <div class="top-notice" id="noticeBar">
-        <div class="notice-content" id="noticeText">بەخێربێن بۆ زانا ئێکسچەینج - باشترین نرخ لای ئێمەیە</div>
+    <div class="top-notice">
+        <div class="notice-content" id="noticeText">بەخێربێن بۆ زانا ئێکسچەینج - جێگەی متمانەی ئێوەیە</div>
     </div>
 
     <div class="user-bar">
@@ -80,46 +100,44 @@
 
     <div class="card">
         <div class="wallet">
-            <span style="font-size: 10px; color: var(--main); display: block; margin-bottom: 5px;">بۆ ئەم ناونیشانە بنێرە:</span>
+            <span style="font-size: 10px; color: var(--main); display: block; margin-bottom: 5px;">ناونیشانی واڵێت:</span>
             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; direction: ltr;">
                 <i class="far fa-copy" style="color:var(--main); cursor:pointer;" onclick="copyNum()"></i>
                 <span class="num" id="myNum">هەڵبژێرە...</span>
             </div>
         </div>
 
-        <div class="group">
-            <label>لە کوێوە دەینێریت؟ (From)</label>
-            <select id="from" onchange="updateWallet()">
-                <option value="FastPay">FastPay (فاستپەی)</option>
-                <option value="FIB">FIB (ئیف ئای بی)</option>
-                <option value="QiCard">QiCard (کی کارت)</option>
-                <option value="USDT">USDT ($ 100 = 145,000)</option>
-                <option value="Korek">Korek (کۆڕەک)</option>
-            </select>
-        </div>
+        <label>ناردن لە (From)</label>
+        <select id="from" onchange="updateWallet()">
+            <option value="FastPay">FastPay</option>
+            <option value="FIB">FIB</option>
+            <option value="QiCard">QiCard</option>
+            <option value="USDT">USDT ($ 100 = 145,000)</option>
+            <option value="Korek">Korek</option>
+        </select>
 
-        <div class="group"><label>بۆ چی دەگۆڕدرێت؟ (To)</label>
-            <select id="to" onchange="updateReceiverLabel()">
-                <option value="FastPay">FastPay</option>
-                <option value="FIB">FIB</option>
-                <option value="QiCard">QiCard</option>
-            </select>
-        </div>
+        <label>وەرگرتن بە (To)</label>
+        <select id="to" onchange="updateReceiverLabel()">
+            <option value="FastPay">FastPay</option>
+            <option value="FIB">FIB</option>
+            <option value="QiCard">QiCard</option>
+        </select>
 
-        <div class="group"><label id="amtLabel">بڕی پارە (IQD)</label>
-        <input type="number" id="amt" placeholder="بڕەکە بنووسە" oninput="calc()"></div>
+        <label id="amtLabel">بڕی پارە (IQD)</label>
+        <input type="number" id="amt" placeholder="0" oninput="calc()">
         
-        <div class="res-box"><span class="total-display" id="totalDisplay">0 دینار</span></div>
+        <div class="res-box"><span style="font-size:20px; font-weight:bold; color:var(--main);" id="totalDisplay">0 دینار</span></div>
         
-        <div class="group"><label>ناوی ئەکاونتی نێرەر</label><input type="text" id="senderPhone" placeholder="ناوی خاوەن ئەکاونت"></div>
-        <div class="group"><label id="receiverLabel">ژمارەی وەرگر (FastPay)</label>
-        <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11" oninput="validatePhone(this)"></div>
+        <label>ناوی ئەکاونتی نێرەر</label>
+        <input type="text" id="senderPhone" placeholder="ناوی تەواوی خۆت">
         
-        <div class="group">
-            <label for="imageInput" style="background: #334155; padding: 10px; border-radius: 12px; text-align: center; cursor: pointer; display: block; border: 1px dashed var(--main); font-size: 12px;"><i class="fas fa-camera"></i> وێنەی وەسڵ</label>
+        <label id="receiverLabel">ژمارەی وەرگر (FastPay)</label>
+        <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11">
+        
+        <label style="background: #334155; padding: 12px; border-radius: 15px; text-align: center; cursor: pointer; display: block; border: 1px dashed var(--main);"><i class="fas fa-image"></i> وێنەی وەسڵ
             <input type="file" id="imageInput" accept="image/*" onchange="previewImg()" style="display: none;">
-            <img id="imagePreview">
-        </div>
+        </label>
+        <img id="imagePreview" style="width: 100%; border-radius: 12px; margin: 10px 0; display: none; border: 2px solid var(--main);">
 
         <button class="btn" onclick="processOrder()">ناردنی داواکاری</button>
     </div>
@@ -138,12 +156,8 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
-    const staticWallets = {
-        "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "07758887488",
-        "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc", "Korek": "07510074008"
-    };
-
     function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+    function closeTeleAlert() { document.getElementById('teleAlert').style.display = 'none'; }
 
     auth.onAuthStateChanged(user => {
         if (user) {
@@ -152,21 +166,14 @@
             document.getElementById('userName').innerText = user.displayName;
             document.getElementById('userImg').src = user.photoURL;
             loadHistory(user.email);
-            fetchNotice();
+            setTimeout(() => { document.getElementById('teleAlert').style.display = 'flex'; }, 1500);
         } else {
             document.getElementById('loginOverlay').style.display = 'flex';
             document.getElementById('mainApp').style.display = 'none';
         }
     });
 
-    function validatePhone(input) {
-        input.value = input.value.replace(/[^0-9]/g, '');
-        if (input.value.length > 0 && !input.value.startsWith('07')) {
-            input.style.borderColor = 'var(--danger)';
-        } else {
-            input.style.borderColor = '#334155';
-        }
-    }
+    const staticWallets = { "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "07758887488", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc", "Korek": "07510074008" };
 
     function updateWallet() {
         const selected = document.getElementById('from').value;
@@ -176,8 +183,7 @@
     }
 
     function updateReceiverLabel() {
-        const to = document.getElementById('to').value;
-        document.getElementById('receiverLabel').innerText = `ژمارەی ${to} (دەبێت بە 07 دەستپێبکات)`;
+        document.getElementById('receiverLabel').innerText = `ژمارەی ${document.getElementById('to').value} (دەبێت بە 07 دەستپێبکات)`;
     }
 
     function calc() {
@@ -187,60 +193,55 @@
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " دینار";
     }
 
-    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا!"); }
+    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("ناونیشانەکە کۆپی کرا!"); }
 
     function previewImg() {
         const file = document.getElementById('imageInput').files[0];
-        if (file) { document.getElementById('imagePreview').src = URL.createObjectURL(file); document.getElementById('imagePreview').style.display = "block"; }
-    }
-
-    function fetchNotice() {
-        db.ref('settings/alertMsg').on('value', s => {
-            if(s.val()) {
-                document.getElementById('noticeText').innerText = s.val();
-                document.getElementById('noticeBar').style.display = 'block';
-            }
-        });
+        if (file) { 
+            document.getElementById('imagePreview').src = URL.createObjectURL(file); 
+            document.getElementById('imagePreview').style.display = "block"; 
+        }
     }
 
     async function processOrder() {
         const user = auth.currentUser;
-        const amtValue = document.getElementById('amt').value;
-        const userPh = document.getElementById('userPhone').value;
+        const amt = document.getElementById('amt').value;
+        const ph = document.getElementById('userPhone').value;
+        if(!amt || !ph.startsWith('07') || ph.length !== 11) return alert("تکایە داتا دروست بنووسە");
         
-        if(!amtValue || !userPh.startsWith('07') || userPh.length !== 11) {
-            return alert("تکایە ژمارەی مۆبایلی عێراقی دروست (07xxxxxxxx) بنووسە");
-        }
-
-        const orderID = Math.floor(10000 + Math.random() * 90000);
-        await db.ref('orders/' + orderID).set({
-            uEmail: user.email, orderID: orderID, 
-            amt: (document.getElementById('from').value === 'USDT') ? amtValue + "$" : amtValue + " IQD",
+        const id = Math.floor(10000 + Math.random() * 90000);
+        await db.ref('orders/' + id).set({
+            uEmail: user.email, orderID: id,
+            amt: (document.getElementById('from').value === 'USDT') ? amt + "$" : amt + " IQD",
             total: document.getElementById('totalDisplay').innerText,
             from: document.getElementById('from').value, to: document.getElementById('to').value,
-            userPh: userPh, senderName: document.getElementById('senderPhone').value,
+            userPh: ph, sender: document.getElementById('senderPhone').value,
             status: 'pending', time: new Date().toLocaleString('ku-IQ')
         });
-        alert("داواکاری نێردرا #" + orderID);
+        alert("داواکاری نێردرا #" + id);
     }
 
     function loadHistory(email) {
         db.ref('orders').on('value', snap => {
             let html = "";
-            snap.forEach(child => {
-                const o = child.val();
+            snap.forEach(c => {
+                const o = c.val();
                 if(o.uEmail === email) {
-                    let color = "var(--main)";
-                    if(o.status === 'completed') color = "var(--success)";
-                    else if(o.status === 'rejected') color = "var(--danger)";
+                    let badge = { text: 'چاوەڕوانبە', icon: 'fa-clock', color: 'var(--main)' };
+                    if(o.status === 'completed') badge = { text: 'وەرگیرا', icon: 'fa-check-circle', color: 'var(--success)' };
+                    if(o.status === 'rejected') badge = { text: 'ڕەتکرایەوە', icon: 'fa-times-circle', color: 'var(--danger)' };
 
-                    html += `<div class="hist-item" style="border-right-color: ${color}">
-                        <div class="hist-header"><b style="color:var(--main)">#${o.orderID}</b><span style="color:${color};font-size:11px;">${o.status}</span></div>
-                        <div style="font-size:12px; opacity:0.9;">بۆ: ${o.userPh} | بڕ: ${o.total}</div>
+                    html += `<div class="hist-item" style="border-right-color: ${badge.color}">
+                        <div class="hist-header">
+                            <b style="color:var(--main)">#${o.orderID}</b>
+                            <span class="status-badge" style="color:${badge.color}">${badge.text} <i class="fas ${badge.icon}"></i></span>
+                        </div>
+                        <div style="font-size:12px; opacity:0.8;">بڕی نێردراو: ${o.amt} (${o.from})</div>
+                        <div style="font-size:12px; font-weight:bold; color:var(--success); margin-top:5px;">بڕی وەرگیراو: ${o.total} (${o.to})</div>
                     </div>`;
                 }
             });
-            document.getElementById('historyList').innerHTML = html || "<center style='opacity:0.5'>مێژوو نییە</center>";
+            document.getElementById('historyList').innerHTML = html || "<center style='padding:20px; opacity:0.5;'>هیچ ئۆردەرێک نییە</center>";
         });
     }
     updateWallet();
