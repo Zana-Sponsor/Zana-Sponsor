@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | Pro v5.5</title>
+    <title>Zana Exchange | Pro v5.6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -12,56 +12,55 @@
         body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; transition: 0.3s; }
         .container { max-width: 400px; margin: auto; }
         
-        /* Language Selector */
-        .lang-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
-        .lang-btn { background: var(--card); border: 1px solid #334155; color: white; padding: 5px 12px; border-radius: 10px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .lang-btn.active { border-color: var(--main); color: var(--main); }
+        /* Lang Bar */
+        .lang-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .lang-btn { background: var(--card); border: 1px solid #334155; color: white; padding: 6px 14px; border-radius: 12px; cursor: pointer; font-size: 11px; }
+        .lang-btn.active { border-color: var(--main); color: var(--main); background: rgba(250, 204, 21, 0.1); }
+
+        /* 🔥 Live Notification Section */
+        .notif-box { background: rgba(250, 204, 21, 0.1); border: 1px dashed var(--main); border-radius: 15px; padding: 12px; margin-bottom: 15px; display: none; align-items: center; gap: 12px; animation: slideIn 0.5s ease; }
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .notif-icon { width: 35px; height: 35px; background: var(--main); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .notif-content { flex-grow: 1; font-size: 12px; font-weight: bold; line-height: 1.4; }
 
         #teleAlert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 2000; }
         .alert-box { background: var(--card); width: 85%; max-width: 320px; padding: 25px; border-radius: 25px; border: 2px solid var(--telegram); text-align: center; }
-        .alert-btn { background: var(--telegram); color: white; border: none; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin: 5px; font-size: 12px; }
-        .alert-btn.secondary { background: #334155; }
-
-        .support-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .support-box { padding: 10px; border-radius: 15px; text-align: center; text-decoration: none; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid; }
-        .whatsapp { background: rgba(37, 211, 102, 0.1); border-color: #25d366; color: #25d366; }
-        .telegram { background: rgba(0, 136, 204, 0.1); border-color: var(--telegram); color: var(--telegram); }
-
-        .inline-alert { background: rgba(250, 204, 21, 0.1); border: 1px dashed var(--main); border-radius: 15px; padding: 12px; margin-bottom: 20px; display: none; align-items: center; gap: 10px; }
-        .card { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #334155; margin-bottom: 20px; }
         
-        .wallet { background: rgba(15, 23, 42, 0.8); padding: 12px; border-radius: 18px; text-align: center; border: 1px solid var(--main); margin-bottom: 20px; }
-        .num-wrapper { display: flex; align-items: center; justify-content: center; gap: 8px; direction: ltr; }
-        .num { font-size: 10px; font-weight: bold; font-family: monospace; color: #cbd5e1; word-break: break-all; }
-        .copy-btn { color: var(--main); cursor: pointer; font-size: 14px; }
+        .support-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .support-box { padding: 12px; border-radius: 15px; text-align: center; text-decoration: none; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid; }
+        .whatsapp { border-color: #25d366; color: #25d366; background: rgba(37, 211, 102, 0.05); }
+        .telegram { border-color: var(--telegram); color: var(--telegram); background: rgba(0, 136, 204, 0.05); }
+
+        .card { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .wallet { background: #0f172a; padding: 15px; border-radius: 20px; text-align: center; border: 1px solid var(--main); margin-bottom: 20px; }
+        .num-wrapper { display: flex; align-items: center; justify-content: center; gap: 10px; direction: ltr; margin-top: 5px; }
+        .num { font-size: 11px; font-weight: bold; font-family: monospace; color: #fff; }
         
         .group { margin-bottom: 15px; }
-        label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 6px; }
-        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; font-size: 13px; text-align: inherit; }
+        label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 6px; padding-right: 5px; }
+        select, input { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; font-size: 13px; text-align: inherit; }
         
-        .res-box { background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 15px; margin: 15px 0; border: 1px solid var(--success); text-align: center; }
-        .total { font-size: 18px; font-weight: bold; color: var(--success); }
-        .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: bold; cursor: pointer; }
+        .res-box { background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 15px; margin: 15px 0; border: 1px solid var(--success); text-align: center; }
+        .total { font-size: 20px; font-weight: bold; color: var(--success); }
+        .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 18px; border-radius: 18px; font-size: 15px; font-weight: 900; cursor: pointer; box-shadow: 0 5px 15px rgba(234, 179, 8, 0.3); }
         
         .hist-title { font-size: 14px; font-weight: bold; color: var(--main); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .hist-item { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 15px; border-right: 5px solid var(--main); }
-        /* Style for English LTR orders */
+        .hist-item { background: var(--card); padding: 18px; border-radius: 22px; margin-bottom: 12px; border-right: 5px solid var(--main); }
         body.en .hist-item { border-right: none; border-left: 5px solid var(--main); }
-        
-        .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+        .hist-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; font-size: 12px; }
         .hist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; }
-        #imagePreview { width: 100%; border-radius: 12px; margin-top: 10px; display: none; border: 2px solid var(--main); }
+        #imagePreview { width: 100%; border-radius: 15px; margin-top: 10px; display: none; border: 2px solid var(--main); }
     </style>
 </head>
 <body>
 
 <div id="teleAlert">
     <div class="alert-box">
-        <i class="fab fa-telegram" style="font-size: 40px; color: var(--telegram); margin-bottom: 15px; display: block;"></i>
-        <h3 id="modalTitle">بەخێربێیت</h3>
-        <p id="modalDesc" style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">بۆ بینینی نرخەکان جۆینی تێلێگرام بە.</p>
-        <a href="https://t.me/zana_exchange" target="_blank" class="alert-btn" id="modalJoin">جۆینی تێلێگرام</a>
-        <button class="alert-btn secondary" onclick="closeAlert()" id="modalClose">باشە</button>
+        <i class="fab fa-telegram" style="font-size: 45px; color: var(--telegram); margin-bottom: 15px; display: block;"></i>
+        <h3 id="modalTitle">...</h3>
+        <p id="modalDesc" style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">...</p>
+        <a href="https://t.me/zana_exchange" target="_blank" class="alert-btn" id="modalJoin" style="background:var(--telegram); color:white; padding:10px 20px; border-radius:12px; text-decoration:none;">Join</a>
+        <button class="alert-btn" onclick="closeAlert()" id="modalClose" style="background:#334155; color:white; border:none; padding:10px 20px; border-radius:12px; margin-top:10px;">OK</button>
     </div>
 </div>
 
@@ -69,7 +68,12 @@
     <div class="lang-bar">
         <button class="lang-btn" onclick="setLang('en')">English</button>
         <button class="lang-btn" onclick="setLang('ar')">العربية</button>
-        <button class="lang-btn active" onclick="setLang('ku')">کوردی</button>
+        <button class="lang-btn" onclick="setLang('ku')">کوردی</button>
+    </div>
+
+    <div class="notif-box" id="liveAlert">
+        <div class="notif-icon"><i class="fas fa-bell"></i></div>
+        <div class="notif-content" id="liveAlertText"></div>
     </div>
 
     <div class="support-wrapper">
@@ -77,28 +81,23 @@
         <a href="https://t.me/zana_exchange" target="_blank" class="support-box telegram"><i class="fab fa-telegram-plane"></i> Telegram</a>
     </div>
 
-    <div class="inline-alert" id="liveAlert">
-        <i class="fas fa-bullhorn" style="color:var(--main)"></i>
-        <p id="liveAlertText" style="margin:0; font-size:11px; font-weight:bold;"></p>
-    </div>
-
     <div class="card">
         <center>
-            <span style="font-size: 20px; font-weight: 900; color: var(--main);">ZANA EXCHANGE</span><br>
-            <small id="subTitle" style="color:#94a3b8; font-size:11px;">بۆ خزمەتگوزاری ئاڵوگۆڕکردن</small>
+            <span style="font-size: 22px; font-weight: 900; color: var(--main); letter-spacing: 1px;">ZANA EXCHANGE</span><br>
+            <small id="subTitle" style="color:#94a3b8; font-size: 11px;"></small>
         </center>
         <br>
         
         <div class="wallet">
-            <span id="sendTo" style="font-size: 9px; color: var(--main); margin-bottom: 5px; display: block;">بۆ ئەم ناونیشانە بنێرە:</span>
+            <span id="sendTo" style="font-size: 10px; color: var(--main); margin-bottom: 8px; display: block; font-weight: bold;"></span>
             <div class="num-wrapper">
-                <i class="far fa-copy copy-btn" onclick="copyNum()"></i>
+                <i class="far fa-copy" style="color:var(--main); cursor:pointer;" onclick="copyNum()"></i>
                 <span class="num" id="myNum">---</span>
             </div>
         </div>
 
         <div class="group">
-            <label id="lblFrom">لە کوێوە دەینێریت؟ (From)</label>
+            <label id="lblFrom"></label>
             <select id="from" onchange="updateWallet()">
                 <option value="fastpay">FastPay</option>
                 <option value="fib">FIB</option>
@@ -108,8 +107,7 @@
             </select>
         </div>
 
-        <div class="group">
-            <label id="lblTo">بۆ چی دەگۆڕدرێت؟ (To)</label>
+        <div class="group"><label id="lblTo"></label>
             <select id="to">
                 <option value="FastPay">FastPay</option>
                 <option value="FIB">FIB</option>
@@ -119,80 +117,63 @@
         </div>
 
         <div class="group">
-            <label id="lblSender">ژمارەی نێرەر</label>
+            <label id="lblSender"></label>
             <input type="tel" id="senderPhone" placeholder="07XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
-
-        <div class="group">
-            <label id="lblAmt">بڕی پارە</label>
-            <input type="number" id="amt" placeholder="100000" oninput="calc()">
-        </div>
-
+        <div class="group"><label id="lblAmt"></label><input type="number" id="amt" placeholder="100000" oninput="calc()"></div>
         <div class="res-box"><span class="total" id="total">0</span></div>
-
         <div class="group">
-            <label id="lblReceiver">ژمارەی وەرگر</label>
+            <label id="lblReceiver"></label>
             <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
         
         <div class="group">
-            <label for="imageInput" id="lblImage" style="background: #334155; padding: 10px; border-radius: 12px; text-align: center; cursor: pointer; display: block; border: 1px dashed var(--main); font-size: 12px;"><i class="fas fa-camera"></i> وێنەی وەسڵ</label>
+            <label for="imageInput" id="lblImage" style="background: #334155; padding: 12px; border-radius: 15px; text-align: center; cursor: pointer; display: block; border: 1px dashed var(--main); font-size: 12px;"></label>
             <input type="file" id="imageInput" accept="image/*" onchange="previewImg()" style="display: none;">
             <img id="imagePreview">
         </div>
 
-        <button class="btn" id="submitBtn" onclick="processOrder()">ناردنی داواکاری</button>
+        <button class="btn" id="submitBtn" onclick="processOrder()"></button>
     </div>
 
-    <div class="hist-title" id="lblHistory"><i class="fas fa-history"></i> دوایین داواکارییەکانت</div>
+    <div class="hist-title" id="lblHistory"></div>
     <div id="historyList"></div>
 </div>
 
 <script>
-    const staticWallets = {
-        "fastpay": "07510074008", "fib": "07510074008", "qicard": "07758887488",
-        "usdt": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc", "korek": "07510074008"
-    };
-
     const languages = {
         ku: {
             dir: 'rtl', modalT: 'بەخێربێیت', modalD: 'بۆ بینینی نرخەکان جۆینی تێلێگرام بە.', modalJ: 'جۆینی تێلێگرام', modalC: 'باشە',
-            sub: 'بۆ خزمەتگوزاری ئاڵوگۆڕکردن', sendTo: 'بۆ ئەم ناونیشانە بنێرە:', from: 'لە کوێوە دەینێریت؟ (From)', to: 'بۆ چی دەگۆڕدرێت؟ (To)',
-            sender: 'ژمارەی نێرەر', amt: 'بڕی پارە', receiver: 'ژمارەی وەرگر', img: 'وێنەی وەسڵ', btn: 'ناردنی داواکاری', 
-            hist: 'دوایین داواکارییەکانت', unit: 'دینار', wait: 'چاوەڕێبە...', success: 'نێردرا #', error: 'هەڵە ڕوویدا!', 
-            noOrder: 'هیچ ئۆردەرێکت نییە', phoneErr: 'ژمارەی هەڵەیە! دەبێت ١١ ژمارە بێت و بە 07 دەستپێبکات', fieldsErr: 'خانەکان پڕ بکەرەوە',
-            statusP: 'چاوەڕوان بە', statusA: 'وەرگیرا', statusR: 'ڕەتکرایەوە'
+            sub: 'بۆ خزمەتگوزاری ئاڵوگۆڕکردن', sendTo: 'بۆ ئەم ناونیشانە بنێرە:', from: 'لە کوێوە دەینێریت؟', to: 'بۆ چی دەگۆڕدرێت؟',
+            sender: 'ژمارەی نێرەر', amt: 'بڕی پارە', receiver: 'ژمارەی وەرگر', img: 'وێنەی وەسڵ باربکە', btn: 'ناردنی داواکاری', 
+            hist: 'داواکارییەکانی تۆ', unit: 'دینار', wait: 'کەمێک چاوەڕێبە...', success: 'نێردرا #', error: 'هەڵەیەک ڕوویدا!', 
+            noOrder: 'هیچ ئۆردەرێک لێرە نییە', phoneErr: 'ژمارەی هەڵەیە (دەبێت ١١ ژمارە بێت)', fieldsErr: 'تکایە هەموو خانەکان پڕبکەرەوە',
+            statusP: 'چاوەڕوانە', statusA: 'وەرگیرا', statusR: 'ڕەتکرایەوە'
         },
         ar: {
-            dir: 'rtl', modalT: 'أهلاً بك', modalD: 'انضم إلى التليجرام لمتابعة الأسعار.', modalJ: 'انضمام للتليجرام', modalC: 'حسناً',
-            sub: 'لخدمات التحويل المالي', sendTo: 'أرسل إلى هذا العنوان:', from: 'من أين سترسل؟ (From)', to: 'إلى ماذا ستحول؟ (To)',
-            sender: 'رقم المرسل', amt: 'المبلغ', receiver: 'رقم المستلم', img: 'صورة الوصل', btn: 'إرسال الطلب', 
-            hist: 'آخر طلباتك', unit: 'دينار', wait: 'انتظر...', success: 'تم الإرسال #', error: 'حدث خطأ!', 
-            noOrder: 'ليس لديك طلبات', phoneErr: 'الرقم خطأ! يجب أن يكون ١١ رقماً ويبدأ بـ 07', fieldsErr: 'يرجى ملء جميع الحقول',
-            statusP: 'قيد الانتظار', statusA: 'تم القبول', statusR: 'تم الرفض'
+            dir: 'rtl', modalT: 'أهلاً بك', modalD: 'انضم للتليجرام لمتابعة الأسعار.', modalJ: 'انضمام', modalC: 'حسناً',
+            sub: 'للتحويل المالي السريع', sendTo: 'أرسل إلى هذا الحساب:', from: 'من أين سترسل؟', to: 'إلى ماذا ستحول؟',
+            sender: 'رقم المرسل', amt: 'المبلغ', receiver: 'رقم المستلم', img: 'ارفع صورة الوصل', btn: 'إرسال الطلب', 
+            hist: 'طلباتك الأخيرة', unit: 'دينار', wait: 'يرجى الانتظار...', success: 'تم الإرسال #', error: 'حدث خطأ!', 
+            noOrder: 'لا توجد طلبات', phoneErr: 'الرقم غير صحيح (يجب ١١ رقم)', fieldsErr: 'يرجى ملء كافة الحقول',
+            statusP: 'قيد الانتظار', statusA: 'مقبول', statusR: 'مرفوض'
         },
         en: {
-            dir: 'ltr', modalT: 'Welcome', modalD: 'Join Telegram to see live rates.', modalJ: 'Join Telegram', modalC: 'OK',
-            sub: 'For Exchange Services', sendTo: 'Send to this address:', from: 'From (Sending)', to: 'To (Receiving)',
-            sender: 'Sender Number', amt: 'Amount', receiver: 'Receiver Number', img: 'Upload Receipt', btn: 'Submit Order', 
-            hist: 'Recent Orders', unit: 'IQD', wait: 'Please wait...', success: 'Sent #', error: 'Error occurred!', 
-            noOrder: 'No orders yet', phoneErr: 'Invalid number! Must be 11 digits starting with 07', fieldsErr: 'Please fill all fields',
-            statusP: 'Pending', statusA: 'Accepted', statusR: 'Rejected'
+            dir: 'ltr', modalT: 'Welcome', modalD: 'Join Telegram for daily rates.', modalJ: 'Join Now', modalC: 'Got it',
+            sub: 'Quick Exchange Service', sendTo: 'Send to this address:', from: 'From (Sending)', to: 'To (Receiving)',
+            sender: 'Sender Number', amt: 'Amount', receiver: 'Receiver Number', img: 'Upload Receipt Image', btn: 'Submit Order', 
+            hist: 'Your History', unit: 'IQD', wait: 'Processing...', success: 'Order Sent #', error: 'Something went wrong!', 
+            noOrder: 'No history found', phoneErr: 'Invalid Phone (11 digits required)', fieldsErr: 'Please fill all fields',
+            statusP: 'Pending', statusA: 'Completed', statusR: 'Rejected'
         }
     };
 
     let currentLang = localStorage.getItem('lang') || 'ku';
 
     function setLang(lang) {
-        currentLang = lang;
-        localStorage.setItem('lang', lang);
+        currentLang = lang; localStorage.setItem('lang', lang);
         const l = languages[lang];
-        document.documentElement.lang = lang;
-        document.documentElement.dir = l.dir;
-        document.body.dir = l.dir;
-        document.body.className = lang;
-
-        // Update Text
+        document.body.dir = l.dir; document.body.className = lang;
         document.getElementById('modalTitle').innerText = l.modalT;
         document.getElementById('modalDesc').innerText = l.modalD;
         document.getElementById('modalJoin').innerText = l.modalJ;
@@ -204,18 +185,15 @@
         document.getElementById('lblSender').innerText = l.sender;
         document.getElementById('lblAmt').innerText = l.amt;
         document.getElementById('lblReceiver').innerText = l.receiver;
-        document.getElementById('lblImage').innerHTML = `<i class="fas fa-camera"></i> ${l.img}`;
+        document.getElementById('lblImage').innerHTML = `<i class="fas fa-camera" style="margin:0 5px"></i> ${l.img}`;
         document.getElementById('submitBtn').innerText = l.btn;
         document.getElementById('lblHistory').innerHTML = `<i class="fas fa-history"></i> ${l.hist}`;
         
-        // Active Button
         document.querySelectorAll('.lang-btn').forEach(b => {
             b.classList.remove('active');
-            if(b.innerText.toLowerCase().includes(lang === 'ku' ? 'کوردی' : lang === 'ar' ? 'العربية' : 'english')) b.classList.add('active');
+            if(b.onclick.toString().includes(lang)) b.classList.add('active');
         });
-        
-        calc();
-        renderHistory();
+        calc(); renderHistory();
     }
 
     const firebaseConfig = { 
@@ -227,96 +205,78 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function closeAlert() { document.getElementById('teleAlert').style.display = 'none'; }
+    // 🔥 Live Notifications from Firebase
+    db.ref('settings/alertMsg').on('value', (s) => {
+        const msg = s.val();
+        if(msg) {
+            document.getElementById('liveAlertText').innerText = msg;
+            document.getElementById('liveAlert').style.display = 'flex';
+        } else {
+            document.getElementById('liveAlert').style.display = 'none';
+        }
+    });
 
-    function updateWallet() {
-        const selected = document.getElementById('from').value;
-        document.getElementById('myNum').innerText = staticWallets[selected];
-        calc();
-    }
+    const staticWallets = { "fastpay": "07510074008", "fib": "07510074008", "qicard": "07758887488", "usdt": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc", "korek": "07510074008" };
+    function closeAlert() { document.getElementById('teleAlert').style.display = 'none'; }
+    function updateWallet() { document.getElementById('myNum').innerText = staticWallets[document.getElementById('from').value]; calc(); }
+    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("Copied!"); }
+    function previewImg() { const f = document.getElementById('imageInput').files[0]; if(f) { document.getElementById('imagePreview').src = URL.createObjectURL(f); document.getElementById('imagePreview').style.display="block"; } }
 
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
-        const fromVal = document.getElementById('from').value;
-        const l = languages[currentLang];
-        let final = 0;
-        if(fromVal === 'usdt') final = amt * 1450;
-        else if(fromVal === 'korek') final = amt * 0.82;
-        else final = amt * 0.99;
-        document.getElementById('total').innerText = Math.floor(final).toLocaleString() + " " + l.unit;
-    }
-
-    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert(currentLang === 'ku' ? "کۆپی کرا!" : currentLang === 'ar' ? "تم النسخ!" : "Copied!"); }
-
-    function previewImg() {
-        const file = document.getElementById('imageInput').files[0];
-        if (file) { document.getElementById('imagePreview').src = URL.createObjectURL(file); document.getElementById('imagePreview').style.display = "block"; }
+        const from = document.getElementById('from').value;
+        let final = (from==='usdt') ? amt*1450 : (from==='korek') ? amt*0.82 : amt*0.99;
+        document.getElementById('total').innerText = Math.floor(final).toLocaleString() + " " + languages[currentLang].unit;
     }
 
     async function processOrder() {
         const l = languages[currentLang];
         const btn = document.getElementById('submitBtn');
-        const fromText = document.getElementById('from').options[document.getElementById('from').selectedIndex].text;
-        const toText = document.getElementById('to').options[document.getElementById('to').selectedIndex].text;
-        const amt = parseFloat(document.getElementById('amt').value);
-        const senderPh = document.getElementById('senderPhone').value;
-        const userPh = document.getElementById('userPhone').value;
-        const total = document.getElementById('total').innerText;
-        const imgFile = document.getElementById('imageInput').files[0];
+        const amt = document.getElementById('amt').value;
+        const sender = document.getElementById('senderPhone').value;
+        const user = document.getElementById('userPhone').value;
+        const img = document.getElementById('imageInput').files[0];
 
-        const phoneRegex = /^07[0-9]{9}$/;
-        if(!amt || !senderPh || !userPh || !imgFile) return alert(l.fieldsErr);
-        if(!phoneRegex.test(senderPh) || !phoneRegex.test(userPh)) return alert(l.phoneErr);
-        
+        if(!amt || !sender || !user || !img) return alert(l.fieldsErr);
+        if(!/^07[0-9]{9}$/.test(sender) || !/^07[0-9]{9}$/.test(user)) return alert(l.phoneErr);
+
         btn.disabled = true; btn.innerText = l.wait;
-        const orderID = Math.floor(10000 + Math.random() * 90000);
-        const amtDisplay = (document.getElementById('from').value === 'usdt') ? amt + "$" : amt.toLocaleString() + " IQD";
-
+        const id = Math.floor(10000 + Math.random() * 90000);
+        
         try {
-            await db.ref('orders/' + orderID).set({ orderID, from: fromText, to: toText, senderPh, userPh, amt: amtDisplay, total, status: 'pending', time: new Date().toLocaleString() });
-            let myOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
-            myOrders.push(orderID);
-            localStorage.setItem('myOrders', JSON.stringify(myOrders));
-
-            const formData = new FormData();
-            formData.append("chat_id", "6259019006");
-            formData.append("photo", imgFile);
-            formData.append("caption", `🆔 #${orderID}\nنێرەر: ${senderPh}\nبڕی: ${amtDisplay}\nبۆ: ${total}\nوەرگر: ${userPh}`);
-            await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: formData });
-            alert(l.success + orderID); location.reload();
+            await db.ref('orders/' + id).set({ orderID: id, from: document.getElementById('from').value, to: document.getElementById('to').value, senderPh: sender, userPh: user, amt, total: document.getElementById('total').innerText, status: 'pending', time: new Date().toLocaleString() });
+            let my = JSON.parse(localStorage.getItem('myOrders') || "[]"); my.push(id); localStorage.setItem('myOrders', JSON.stringify(my));
+            
+            const fd = new FormData(); fd.append("chat_id", "6259019006"); fd.append("photo", img);
+            fd.append("caption", `🆔 #${id}\nSender: ${sender}\nAmount: ${amt}\nReceiver: ${user}\nTotal: ${document.getElementById('total').innerText}`);
+            await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: fd });
+            
+            alert(l.success + id); location.reload();
         } catch(e) { alert(l.error); btn.disabled = false; btn.innerText = l.btn; }
     }
 
     function renderHistory() {
         db.ref('orders').once('value', (snap) => {
-            const data = snap.val();
-            let html = "";
-            let myOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
-            const l = languages[currentLang];
-
-            if (data) {
+            const data = snap.val(); let html = ""; const my = JSON.parse(localStorage.getItem('myOrders') || "[]");
+            if(data) {
                 Object.values(data).reverse().forEach(o => {
-                    if (myOrders.includes(o.orderID)) {
-                        let color = "var(--main)"; 
-                        let sTxt = l.statusP;
-                        if(o.status === 'accepted') { color = "var(--success)"; sTxt = l.statusA; }
-                        else if(o.status === 'rejected') { color = "var(--danger)"; sTxt = l.statusR; }
-
-                        html += `<div class="hist-item" style="border-${currentLang==='en'?'left':'right'}-color: ${color}">
-                            <div class="hist-header"><b>#${o.orderID}</b><span style="color:${color};font-weight:bold;">${sTxt}</span></div>
-                            <div class="hist-row"><i class="fas fa-paper-plane"></i><span>${o.amt} (${o.from})</span></div>
-                            <div class="hist-row"><i class="fas fa-money-bill-wave"></i><span>${o.total} (${o.to})</span></div>
-                            <div class="hist-row"><i class="fas fa-user"></i><span>${o.userPh}</span></div>
+                    if(my.includes(o.orderID)) {
+                        let c = (o.status==='accepted')?'var(--success)':(o.status==='rejected')?'var(--danger)':'var(--main)';
+                        let s = (o.status==='accepted')?languages[currentLang].statusA:(o.status==='rejected')?languages[currentLang].statusR:languages[currentLang].statusP;
+                        html += `<div class="hist-item" style="border-${currentLang==='en'?'left':'right'}-color:${c}">
+                            <div class="hist-header"><b>#${o.orderID}</b><span style="color:${c}">${s}</span></div>
+                            <div class="hist-row"><i class="fas fa-paper-plane"></i> ${o.amt} (${o.from})</div>
+                            <div class="hist-row"><i class="fas fa-money-bill-wave"></i> ${o.total} (${o.to})</div>
+                            <div class="hist-row"><i class="fas fa-user"></i> ${o.userPh}</div>
                         </div>`;
                     }
                 });
             }
-            document.getElementById('historyList').innerHTML = html || `<center style='font-size:12px;color:#94a3b8'>${l.noOrder}</center>`;
+            document.getElementById('historyList').innerHTML = html || `<center style='font-size:12px;color:#94a3b8'>${languages[currentLang].noOrder}</center>`;
         });
     }
 
-    setLang(currentLang);
-    updateWallet();
+    setLang(currentLang); updateWallet();
     db.ref('orders').on('value', renderHistory);
 </script>
 </body>
