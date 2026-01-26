@@ -12,24 +12,19 @@
         body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
         .container { max-width: 400px; margin: auto; }
         
-        /* پۆپ ئەپی تێلێگرام */
         #teleAlert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 2000; }
         .alert-box { background: var(--card); width: 85%; max-width: 320px; padding: 25px; border-radius: 25px; border: 2px solid var(--telegram); text-align: center; }
         .alert-btn { background: var(--telegram); color: white; border: none; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin: 5px; font-size: 12px; }
         .alert-btn.secondary { background: #334155; }
 
-        /* بەشی پشتگیری */
         .support-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .support-box { padding: 10px; border-radius: 15px; text-align: center; text-decoration: none; font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid; }
         .whatsapp { background: rgba(37, 211, 102, 0.1); border-color: #25d366; color: #25d366; }
         .telegram { background: rgba(0, 136, 204, 0.1); border-color: var(--telegram); color: var(--telegram); }
 
-        /* ئاگاداری ناو سایت */
         .inline-alert { background: rgba(250, 204, 21, 0.1); border: 1px dashed var(--main); border-radius: 15px; padding: 12px; margin-bottom: 20px; display: none; align-items: center; gap: 10px; }
-
         .card { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #334155; margin-bottom: 20px; }
         
-        /* واڵێت */
         .wallet { background: rgba(15, 23, 42, 0.8); padding: 12px; border-radius: 18px; text-align: center; border: 1px solid var(--main); margin-bottom: 20px; }
         .num-wrapper { display: flex; align-items: center; justify-content: center; gap: 8px; direction: ltr; }
         .num { font-size: 10px; font-weight: bold; font-family: monospace; color: #cbd5e1; word-break: break-all; }
@@ -43,7 +38,6 @@
         .total { font-size: 18px; font-weight: bold; color: var(--success); }
         .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: bold; cursor: pointer; }
         
-        /* مێژووی داواکارییەکان */
         .hist-item { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 15px; border-right: 5px solid var(--main); }
         .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
         .hist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; }
@@ -167,14 +161,9 @@
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const fromVal = document.getElementById('from').value;
         let final = 0;
-
-        if(fromVal === 'usdt') {
-            final = amt * 1450;
-        } else if(fromVal === 'korek') {
-            final = amt * 0.82;
-        } else {
-            final = amt * 0.99;
-        }
+        if(fromVal === 'usdt') final = amt * 1450;
+        else if(fromVal === 'korek') final = amt * 0.82;
+        else final = amt * 0.99;
         document.getElementById('total').innerText = Math.floor(final).toLocaleString() + " دینار";
     }
 
@@ -205,6 +194,12 @@
 
         try {
             await db.ref('orders/' + orderID).set({ orderID, from: fromText, to: toText, senderPh, userPh, amt: amtDisplay, total, status: 'pending', time: new Date().toLocaleString('ku-IQ') });
+            
+            // ئەم بەشە ئایدی ئۆردەرەکە لەناو مۆبایلەکەت پاشکەوت دەکات
+            let localOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
+            localOrders.push(orderID);
+            localStorage.setItem('myOrders', JSON.stringify(localOrders));
+
             const formData = new FormData();
             formData.append("chat_id", "6259019006");
             formData.append("photo", imgFile);
@@ -217,19 +212,24 @@
     db.ref('orders').on('value', (snap) => {
         const data = snap.val();
         let html = "";
-        if (data) {
-            Object.values(data).reverse().slice(0, 5).forEach(o => {
-                let color = "var(--main)"; let statusText = "چاوەڕوان بە <i class='fas fa-clock'></i>";
-                if(o.status === 'accepted') { color = "var(--success)"; statusText = "وەرگیرا <i class='fas fa-check-circle'></i>"; }
-                else if(o.status === 'rejected') { color = "var(--danger)"; statusText = "ڕەتکرایەوە <i class='fas fa-times-circle'></i>"; }
+        let localOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
 
-                html += `<div class="hist-item" style="border-right-color: ${color}">
-                    <div class="hist-header"><b style="color:var(--main)">#${o.orderID}</b><span style="color:${color};font-weight:bold; font-size: 12px;">${statusText}</span></div>
-                    <div class="hist-row"><i class="fas fa-paper-plane" style="color:#60a5fa; width:15px;"></i><span>نێردرا: <b>${o.amt}</b> <small style="color:var(--main)">(${o.from})</small></span></div>
-                    <div class="hist-row"><i class="fas fa-money-bill-wave" style="color:var(--success); width:15px;"></i><span>وەرگیرا: <b>${o.total}</b> <small style="color:var(--main)">(${o.to || 'دیاری نەکراوە'})</small></span></div>
-                    <div class="hist-row"><i class="fas fa-user" style="color:#f87171; width:15px;"></i><span>وەرگر: <b>${o.userPh}</b></span></div>
-                    <div class="hist-row"><i class="fas fa-calendar-alt" style="color:var(--main); width:15px;"></i><span style="font-size:11px; opacity:0.8;">${o.time}</span></div>
-                </div>`;
+        if (data) {
+            Object.values(data).reverse().forEach(o => {
+                // تەنها ئەگەر ئایدی ئۆردەرەکە لەم مۆبایلەدا هەبێت پیشانی دەدات
+                if (localOrders.includes(o.orderID)) {
+                    let color = "var(--main)"; let statusText = "چاوەڕوان بە <i class='fas fa-clock'></i>";
+                    if(o.status === 'accepted') { color = "var(--success)"; statusText = "وەرگیرا <i class='fas fa-check-circle'></i>"; }
+                    else if(o.status === 'rejected') { color = "var(--danger)"; statusText = "ڕەتکرایەوە <i class='fas fa-times-circle'></i>"; }
+
+                    html += `<div class="hist-item" style="border-right-color: ${color}">
+                        <div class="hist-header"><b style="color:var(--main)">#${o.orderID}</b><span style="color:${color};font-weight:bold; font-size: 12px;">${statusText}</span></div>
+                        <div class="hist-row"><i class="fas fa-paper-plane" style="color:#60a5fa; width:15px;"></i><span>نێردرا: <b>${o.amt}</b> <small style="color:var(--main)">(${o.from})</small></span></div>
+                        <div class="hist-row"><i class="fas fa-money-bill-wave" style="color:var(--success); width:15px;"></i><span>وەرگیرا: <b>${o.total}</b> <small style="color:var(--main)">(${o.to || 'دیاری نەکراوە'})</small></span></div>
+                        <div class="hist-row"><i class="fas fa-user" style="color:#f87171; width:15px;"></i><span>وەرگر: <b>${o.userPh}</b></span></div>
+                        <div class="hist-row"><i class="fas fa-calendar-alt" style="color:var(--main); width:15px;"></i><span style="font-size:11px; opacity:0.8;">${o.time}</span></div>
+                    </div>`;
+                }
             });
         }
         document.getElementById('historyList').innerHTML = html;
