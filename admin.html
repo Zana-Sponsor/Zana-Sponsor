@@ -1,36 +1,175 @@
-<div class="card" style="margin-bottom: 30px; border: 1px solid var(--main);">
-    <h3 style="color: var(--main); margin-top: 0;"><i class="fas fa-coins"></i> ڕێکخستنی دراو و حمولە</h3>
-    
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <div class="group">
-            <label>ناوی دراو (وەک: فاستپەی)</label>
-            <input type="text" id="methodName" placeholder="بنووسە...">
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zana Exchange | Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #10b981; --danger: #ef4444; }
+        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; text-align: right; }
+        .container { max-width: 900px; margin: auto; }
+        .card { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #334155; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
+        .btn { background: var(--main); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; }
+        .btn-danger { background: var(--danger); color: white; }
+        
+        /* شێوازی ئۆردەرەکان */
+        .order-item { background: #0f172a; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-right: 5px solid var(--main); }
+        .order-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .status-badge { padding: 4px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; }
+        
+        /* بەشی واڵێتەکان */
+        .method-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* ئامارەکان */
+        .stat-box { background: var(--main); color: #000; padding: 15px; border-radius: 12px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2><i class="fas fa-user-shield"></i> پانێڵی بەڕێوەبردن</h2>
+
+    <div class="grid">
+        <div class="stat-box">
+            <small>فرۆشی ڕۆژانە (ئەمڕۆ)</small>
+            <h2 id="todaySales">0 IQD</h2>
+        </div>
+        <div class="stat-box" style="background: #334155; color: white;">
+            <small>کۆی داواکارییەکان</small>
+            <h2 id="totalOrdersCount">0</h2>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="card">
+        <h3><i class="fas fa-coins"></i> بەڕێوەبردنی دراوەکان (دانە دانە)</h3>
+        <div class="grid">
+            <div class="group">
+                <label>ناوی دراو (وەک: فاستپەی)</label>
+                <input type="text" id="mName" placeholder="بنووسە...">
+            </div>
+            <div class="group">
+                <label>حمولە (نموونە: 0.99)</label>
+                <input type="number" id="mFee" step="0.01" value="0.99">
+            </div>
         </div>
         <div class="group">
-            <label>حمولە (نموونە: 0.99)</label>
-            <input type="number" id="methodFee" step="0.01" value="0.99">
+            <label>ژمارەی وەرگرتن / واڵێت</label>
+            <input type="text" id="mValue" placeholder="ژمارەکە لێرە بنووسە...">
         </div>
+        <button class="btn" onclick="saveMethod()">پاشەکەوتکردن</button>
+        <div id="methodsList" style="margin-top: 15px;"></div>
     </div>
 
-    <div class="group">
-        <label>ژمارەی وەرگرتن (Wallet/Number)</label>
-        <input type="text" id="methodValue" placeholder="ژمارەکە لێرە بنووسە...">
+    <div class="card">
+        <h3><i class="fas fa-bell"></i> ناردنی ئاگاداری بۆ کڕیارەکان</h3>
+        <input type="text" id="alertInput" placeholder="دەقی ئاگادارییەکە لێرە بنووسە...">
+        <button class="btn" onclick="updateAlert()" style="margin-top: 10px; background: #60a5fa;">بڵاوکردنەوە</button>
     </div>
 
-    <div class="group">
-        <label>جۆری بەکارهێنان</label>
-        <select id="methodType">
-            <option value="both">بۆ هەردووکی (ناردن و وەرگرتن)</option>
-            <option value="from">تەنها بۆ ناردن (From)</option>
-            <option value="to">تەنها بۆ وەرگرتن (To)</option>
-        </select>
-    </div>
-
-    <button class="btn" onclick="saveMethod()" style="margin-top: 10px;">پاشەکەوتکردن / نوێکردنەوە</button>
-
-    <hr style="border: 0.5px solid #334155; margin: 20px 0;">
-    
-    <div id="methodsList">
-        <p style="font-size: 12px; color: #94a3b8; text-align: center;">چاوەڕێی بارکردنی دراوەکان بە...</p>
-    </div>
+    <h3><i class="fas fa-list"></i> داواکارییە نوێیەکان</h3>
+    <div id="ordersList"></div>
 </div>
+
+<script>
+    // --- ڕێکخستنی فایەربەیس ---
+    const firebaseConfig = { 
+        apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", 
+        authDomain: "zana-exchange.firebaseapp.com", 
+        databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", 
+        projectId: "zana-exchange" 
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // ١. کردارەکانی واڵێت و حمولە
+    function saveMethod() {
+        const name = document.getElementById('mName').value;
+        const fee = document.getElementById('mFee').value;
+        const val = document.getElementById('mValue').value;
+        if(!name || !val) return alert("خانەکان پڕ بکەرەوە");
+        
+        const id = name.replace(/\s+/g, '_').toLowerCase();
+        db.ref('methods/' + id).set({ name, fee: parseFloat(fee), value: val, type: 'both' });
+        alert("پاشەکەوت کرا");
+        document.getElementById('mName').value = "";
+        document.getElementById('mValue').value = "";
+    }
+
+    db.ref('methods').on('value', (snap) => {
+        let html = "";
+        snap.forEach(child => {
+            const m = child.val();
+            html += `<div class="method-item">
+                <span><b>${m.name}</b> (${m.fee})</span>
+                <button onclick="deleteMethod('${child.key}')" style="color:red; background:none; border:none; cursor:pointer;">سڕینەوە</button>
+            </div>`;
+        });
+        document.getElementById('methodsList').innerHTML = html;
+    });
+
+    function deleteMethod(id) { if(confirm("بسرێتەوە؟")) db.ref('methods/' + id).remove(); }
+
+    // ٢. نوێکردنەوەی ئاگاداری
+    function updateAlert() {
+        const msg = document.getElementById('alertInput').value;
+        db.ref('settings/alertMsg').set(msg);
+        alert("ئاگاداری نوێکراوەوە");
+    }
+
+    // ٣. ئۆردەرەکان و ئاماری فرۆش
+    db.ref('orders').on('value', (snap) => {
+        let ordersHtml = "";
+        let totalSales = 0;
+        let count = 0;
+        const today = new Date().toLocaleDateString('ku-IQ');
+
+        snap.forEach(child => {
+            const o = child.val();
+            count++;
+            
+            // حیسابکردنی فرۆشی ئەمڕۆ
+            if(o.time && o.time.includes(today) && o.status === 'accepted') {
+                totalSales += (parseFloat(o.amt) || 0);
+            }
+
+            let statusCol = o.status === 'accepted' ? 'var(--success)' : (o.status === 'rejected' ? 'var(--danger)' : 'var(--main)');
+            
+            ordersHtml += `
+            <div class="order-item" style="border-right-color: ${statusCol}">
+                <div class="order-header">
+                    <b>#${o.orderID}</b>
+                    <span class="status-badge" style="background:${statusCol}">${o.status}</span>
+                </div>
+                <div style="font-size:13px;">
+                    لە: ${o.from} | بۆ: ${o.to}<br>
+                    بڕ: ${o.amt} | وەرگر: ${o.userPh}<br>
+                    <small>${o.time}</small>
+                </div>
+                <div style="margin-top:10px;">
+                    <button class="btn" style="width:auto; padding:5px 15px; background:var(--success)" onclick="updateStatus('${o.orderID}', 'accepted')">قبوڵکردن</button>
+                    <button class="btn btn-danger" style="width:auto; padding:5px 15px;" onclick="updateStatus('${o.orderID}', 'rejected')">ڕەتکردنەوە</button>
+                </div>
+            </div>`;
+        });
+        
+        document.getElementById('ordersList').innerHTML = ordersHtml;
+        document.getElementById('todaySales').innerText = totalSales.toLocaleString() + " IQD";
+        document.getElementById('totalOrdersCount').innerText = count;
+    });
+
+    function updateStatus(id, status) {
+        db.ref('orders/' + id).update({ status: status });
+    }
+</script>
+
+</body>
+</html>
