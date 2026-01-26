@@ -3,81 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Zana Exchange</title>
+    <title>Zana Admin | پانێڵی بەڕێوەبردن</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; }
-        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px; text-align: right; }
-        .admin-container { max-width: 500px; margin: auto; background: var(--card); padding: 30px; border-radius: 30px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { color: var(--main); text-align: center; margin-bottom: 25px; border-bottom: 2px solid #334155; padding-bottom: 10px; }
-        .input-group { margin-bottom: 20px; }
-        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 8px; }
-        input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; }
-        .save-btn { background: var(--main); color: #000; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        .save-btn:hover { background: #eab308; }
-        .status { text-align: center; margin-top: 15px; font-size: 13px; color: var(--success); display: none; }
+        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; text-align: right; }
+        .admin-box { max-width: 450px; margin: 20px auto; background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #334155; }
+        h2 { color: var(--main); text-align: center; font-size: 20px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
+        input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; font-family: 'Tahoma'; }
+        .btn-update { background: var(--main); color: #000; border: none; width: 100%; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .btn-update:active { transform: scale(0.98); }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 100; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-<div class="admin-container">
-    <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+<div id="login-overlay">
+    <div class="admin-box" style="width: 300px;">
+        <h2>داخڵبوون</h2>
+        <input type="password" id="passInput" placeholder="وشەی نهێنی بنووسە...">
+        <button class="btn-update" onclick="checkPass()">چوونە ژوورەوە</button>
+    </div>
+</div>
+
+<div class="admin-box">
+    <h2><i class="fas fa-tools"></i> دەستکاری سیستم</h2>
     
-    <div class="input-group">
-        <label>دەقی ئاگاداری (Alert Message)</label>
-        <textarea id="alertMsg" rows="3">گۆڕانکاری لەبەشی دراو کرا، بۆ هەر 100 هەزارێک 1% حمولەیە، جگە لەکۆڕەک !</textarea>
+    <div class="form-group">
+        <label>دەقی ئاگاداری (ئەوەی لە ژێر ئایکۆنەکانە)</label>
+        <textarea id="admAlert" rows="3"></textarea>
     </div>
 
-    <div class="input-group">
-        <label>حمولەی گشتی (بۆ نموونە 0.99 واتە 1%)</label>
-        <input type="number" id="generalFee" step="0.01" value="0.99">
+    <div class="form-group">
+        <label>حمولەی گشتی (بۆ نموونە 0.99 بۆ 1%)</label>
+        <input type="number" id="admFee" step="0.01">
     </div>
 
-    <div class="input-group">
-        <label>ژمارەی فاستپەی/وەرگرتن</label>
-        <input type="text" id="walletNum" value="07510074008">
+    <div class="form-group">
+        <label>ژمارەی فاستپەی / وەرگرتن</label>
+        <input type="text" id="admWallet">
     </div>
 
-    <button class="save-btn" onclick="updateSystem()">نوێکردنەوە و بڵاوکردنەوە</button>
-    <p class="status" id="statusMsg">بە سەرکەوتوویی نوێکرایەوە!</p>
+    <button class="btn-update" onclick="saveSettings()">نوێکردنەوە و بڵاوکردنەوە لە تێلێگرام</button>
+    <p id="status" style="text-align: center; color: var(--success); display: none; margin-top: 10px;">بە سەرکەوتوویی نوێکرایەوە!</p>
 </div>
 
 <script>
-    const firebaseConfig = { 
-        apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", 
-        authDomain: "zana-exchange.firebaseapp.com", 
-        databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", 
-        projectId: "zana-exchange" 
-    };
+    const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    async function updateSystem() {
-        const msg = document.getElementById('alertMsg').value;
-        const fee = document.getElementById('generalFee').value;
-        const wallet = document.getElementById('walletNum').value;
+    function checkPass() {
+        if(document.getElementById('passInput').value === "zana123") { // لێرە پاسوۆردەکە بگۆڕە
+            document.getElementById('login-overlay').style.display = 'none';
+            loadCurrent();
+        } else { alert("وشەی نهێنی هەڵەیە!"); }
+    }
 
-        // 1. پاشەکەوتکردن لە فایەربەیس
-        await db.ref('settings').set({
-            alertMsg: msg,
-            fee: fee,
-            wallet: wallet
+    function loadCurrent() {
+        db.ref('settings').once('value', (s) => {
+            const d = s.val();
+            if(d) {
+                document.getElementById('admAlert').value = d.alertMsg;
+                document.getElementById('admFee').value = d.fee;
+                document.getElementById('admWallet').value = d.wallet;
+            }
         });
+    }
 
-        // 2. ناردنی ئاگاداری بۆ تێلێگرام
-        const BOT_TOKEN = "8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo";
-        const CHAT_ID = "6259019006"; // ئایدی چەناڵەکەت
-        const telegramText = `🔔 <b>ئاگاداری نوێ لە Zana Exchange</b>\n\n${msg}\n\n💳 ژمارەی نوێ: ${wallet}`;
+    async function saveSettings() {
+        const data = {
+            alertMsg: document.getElementById('admAlert').value,
+            fee: document.getElementById('admFee').value,
+            wallet: document.getElementById('admWallet').value
+        };
 
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        await db.ref('settings').set(data);
+
+        // بڵاوکردنەوە لە چەناڵی تێلێگرام
+        const msg = `🔔 <b>ئاگاداری نوێ لە ZANA EXCHANGE</b>\n\n${data.alertMsg}\n\n💳 ژمارەی نوێ: <code>${data.wallet}</code>`;
+        await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendMessage`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chat_id: CHAT_ID, text: telegramText, parse_mode: "HTML" })
+            body: JSON.stringify({ chat_id: "6259019006", text: msg, parse_mode: "HTML" })
         });
 
-        document.getElementById('statusMsg').style.display = 'block';
+        document.getElementById('status').style.display = 'block';
+        setTimeout(() => { document.getElementById('status').style.display = 'none'; }, 3000);
     }
 </script>
 </body>
