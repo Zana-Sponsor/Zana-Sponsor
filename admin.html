@@ -11,33 +11,23 @@
         :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; --border: #334155; }
         body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
         .container { max-width: 900px; margin: auto; display: none; }
-        
         #login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 10000; }
         .login-box { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid var(--border); width: 320px; text-align: center; }
-
         .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .stat-item { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); text-align: center; }
         .stat-item b { font-size: 22px; color: var(--main); display: block; margin-top: 5px; }
-
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
         .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid var(--border); padding: 12px 25px; border-radius: 15px; cursor: pointer; white-space: nowrap; font-weight: bold; }
         .tab-btn.active { background: var(--main); color: #000; }
-
         .admin-box { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid var(--border); display: none; }
         .admin-box.active { display: block; }
-
         .order-card { background: #161e2d; border-radius: 20px; padding: 20px; margin-bottom: 15px; border-right: 6px solid var(--main); }
-        .order-status-accepted { border-right-color: var(--success) !important; }
-        .order-status-rejected { border-right-color: var(--danger) !important; }
-        
-        .exchange-display { background: #0f172a; padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin: 15px 0; text-align: center; }
+        .exchange-display { background: #0f172a; padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin: 15px 0; text-align: center; line-height: 1.8; }
         .btn-act { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; }
-
         input, textarea, select { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: #0f172a; color: white; margin-bottom: 15px; box-sizing: border-box; font-family: inherit; }
         .btn-main { background: var(--main); color: #000; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
-        
         .list-row { background: #0f172a; padding: 15px; margin-bottom: 10px; border-radius: 15px; border: 1px solid var(--border); }
-        .tag { font-size: 10px; padding: 2px 8px; border-radius: 5px; background: var(--main); color: #00; margin-left: 5px; font-weight: bold; }
+        .tag { font-size: 10px; padding: 2px 8px; border-radius: 5px; background: var(--main); color: #000; margin-left: 5px; font-weight: bold; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -53,8 +43,8 @@
 
 <div class="container" id="mainUI">
     <div class="stats-bar">
-        <div class="stat-item"><span>کۆی فرۆشی ئەمڕۆ</span><b id="todaySales">0</b></div>
-        <div class="stat-item"><span>ئۆردەرەکان</span><b id="orderCount">0</b></div>
+        <div class="stat-item"><span>فرۆشی ئەمڕۆ</span><b id="todaySales">0</b></div>
+        <div class="stat-item"><span>کۆی ئۆردەر</span><b id="orderCount">0</b></div>
     </div>
 
     <div class="tabs">
@@ -69,23 +59,23 @@
     </div>
 
     <div id="wallets-tab" class="admin-box">
-        <h3>ڕێکخستنی واڵێت و نرخەکان</h3>
-        <input type="text" id="wName" placeholder="ناوی واڵێت (وەک: ZainCash)">
-        <input type="text" id="wNum" placeholder="ژمارەی وەرگرتن (بۆ To تەنها پێویستە)">
-        <input type="number" id="wFee" step="0.01" value="0.95" placeholder="ڕێژەی بڕین (0.95 = 5% قازانج)">
+        <h3>ڕێکخستنی دراو و نرخەکان</h3>
+        <input type="text" id="wName" placeholder="ناوی واڵێت (وەک: FastPay)">
+        <input type="text" id="wNum" placeholder="ژمارەی وەرگرتنی پارە">
+        <input type="number" id="wFee" step="0.01" value="0.95" placeholder="حمولە (0.95 = 5% بڕین)">
         <select id="wType">
-            <option value="both">بۆ هەردوو بەش (From & To)</option>
-            <option value="from">تەنها بۆ ناردن (From)</option>
-            <option value="to">تەنها بۆ وەرگرتن (To)</option>
+            <option value="both">هەردوو بەش (From & To)</option>
+            <option value="from">تەنها ناردن (From)</option>
+            <option value="to">تەنها وەرگرتن (To)</option>
         </select>
-        <button class="btn-main" onclick="addMethod()">زیادکردنی دراو</button>
+        <button class="btn-main" onclick="addMethod()">پاشەکەوتکردنی دراو</button>
         <div id="methodsList" style="margin-top:20px;"></div>
     </div>
 
     <div id="notify-tab" class="admin-box">
-        <h3>ئاگاداری گشتی</h3>
-        <textarea id="notifMsg" rows="4" placeholder="نامەکەت..."></textarea>
-        <button class="btn-main" onclick="sendAlert()">ناردن</button>
+        <h3>نامەی ئاگاداری بۆ کڕیاران</h3>
+        <textarea id="notifMsg" rows="4" placeholder="نامەکە لێرە بنووسە..."></textarea>
+        <button class="btn-main" onclick="sendAlert()">ناردنی پەیام</button>
     </div>
 </div>
 
@@ -101,7 +91,7 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('mainUI').style.display = 'block';
             startApp();
-        } else { alert("هەڵەیە!"); }
+        } else { alert("وشەی نهێنی هەڵەیە!"); }
     }
 
     function openTab(id, btn) {
@@ -123,11 +113,14 @@
                     let statusCls = o.status === 'accepted' ? 'order-status-accepted' : (o.status === 'rejected' ? 'order-status-rejected' : '');
                     html += `<div class="order-card ${statusCls}">
                         <div style="display:flex; justify-content:space-between;"><b>#${o.orderID}</b> <small>${o.time}</small></div>
-                        <div class="exchange-display">کڕیار <b>${o.amt} ${o.from}</b> ➔ <b>${o.total} ${o.to}</b></div>
-                        <div style="font-size:13px; margin-bottom:10px;">نێرەر: ${o.senderPh} | بۆ واڵێتی: ${o.userPh}</div>
+                        <div class="exchange-display">
+                            کڕیار <b style="color:var(--main)">${o.amt} ${o.from}</b> ی ناردووە <br>
+                            بۆمان بکە بە <b style="color:var(--success)">${o.total} ${o.to}</b>
+                        </div>
+                        <div style="font-size:13px; margin-bottom:10px; color:#cbd5e1;">نێرەر: ${o.senderPh} | وەرگر: <b>${o.userPh}</b></div>
                         <div style="display:flex; gap:10px; align-items:center;">
-                            <img src="${o.image}" style="width:60px; height:60px; border-radius:10px; cursor:pointer;" onclick="window.open(this.src)">
-                            <div style="display:flex; gap:5px; flex:1">
+                            <img src="${o.image}" style="width:65px; height:65px; border-radius:12px; cursor:pointer; border:1px solid var(--border);" onclick="window.open(this.src)">
+                            <div style="display:flex; gap:8px; flex:1">
                                 <button class="btn-act" style="background:var(--success)" onclick="db.ref('orders/${o.orderID}').update({status:'accepted'})">قبوڵ</button>
                                 <button class="btn-act" style="background:var(--danger)" onclick="db.ref('orders/${o.orderID}').update({status:'rejected'})">ڕەت</button>
                                 <button class="btn-act" style="background:#334155; flex:0.3" onclick="if(confirm('بسڕێتەوە؟')) db.ref('orders/${o.orderID}').remove()"><i class="fas fa-trash"></i></button>
@@ -136,22 +129,22 @@
                     </div>`;
                 });
             }
-            document.getElementById('ordersList').innerHTML = html;
+            document.getElementById('ordersList').innerHTML = html || "<center>هیچ ئۆردەرێک نییە</center>";
             document.getElementById('todaySales').innerText = totalSales.toLocaleString() + " IQD";
             document.getElementById('orderCount').innerText = count;
         });
 
-        // واڵێت و نرخەکان (ئەمە ئەو بەشە نوێیەیە کە داوات کردبوو)
+        // واڵێتەکان
         db.ref('methods').on('value', s => {
             let h = ""; const d = s.val();
             if(d) Object.keys(d).forEach(k => {
                 h += `<div class="list-row">
-                    <div style="display:flex; justify-content:space-between;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
                         <b>${d[k].name} <span class="tag">${d[k].type}</span></b>
-                        <button onclick="db.ref('methods/${k}').remove()" style="color:var(--danger); border:none; background:none; cursor:pointer;">×</button>
+                        <button onclick="db.ref('methods/${k}').remove()" style="color:var(--danger); border:none; background:none; cursor:pointer; font-size:18px;">&times;</button>
                     </div>
-                    <div style="font-size:12px; color:#94a3b8; margin-top:5px;">
-                        ژمارە: ${d[k].value || '---'} | حمولە: ${Math.round((1-d[k].fee)*100)}%
+                    <div style="font-size:12px; color:#94a3b8; margin-top:8px;">
+                        ژمارە: ${d[k].value || 'دیاری نەکراوە'} | حمولە: ${Math.round((1 - d[k].fee) * 100)}%
                     </div>
                 </div>`;
             });
@@ -164,16 +157,27 @@
         const val = document.getElementById('wNum').value;
         const fee = document.getElementById('wFee').value;
         const type = document.getElementById('wType').value;
+
         if(name && fee) {
-            db.ref('methods').push({ name, value: val, fee: parseFloat(fee), type });
-            alert("زیاد کرا!");
+            db.ref('methods').push({
+                name: name,
+                value: val || "---",
+                fee: parseFloat(fee),
+                type: type
+            }).then(() => {
+                alert("سەرکەوتووانە زیاد کرا!");
+                document.getElementById('wName').value = "";
+                document.getElementById('wNum').value = "";
+            });
+        } else {
+            alert("تکایە ناو و حمولە بنووسە!");
         }
     }
 
     async function sendAlert() {
         const msg = document.getElementById('notifMsg').value;
         await db.ref('settings').update({ alertMsg: msg });
-        alert("ئۆکەی!");
+        alert("ئاگادارییەکە نێردرا!");
     }
 </script>
 </body>
