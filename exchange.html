@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | Pro v5.0</title>
+    <title>Zana Exchange | Pro v5.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -12,7 +12,6 @@
         body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
         .container { max-width: 400px; margin: auto; }
         
-        /* Telegram Alert Popup */
         #teleAlert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
         .alert-box { background: var(--card); width: 85%; max-width: 320px; padding: 25px; border-radius: 25px; border: 2px solid var(--telegram); text-align: center; position: relative; box-shadow: 0 0 20px rgba(0, 136, 204, 0.3); }
         .alert-box i.fa-telegram { font-size: 50px; color: var(--telegram); margin-bottom: 15px; }
@@ -21,7 +20,6 @@
         .alert-btn { background: var(--telegram); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 15px; }
         .close-alert { position: absolute; top: 10px; right: 15px; color: #94a3b8; cursor: pointer; font-size: 20px; }
 
-        /* Support Buttons */
         .support-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .support-box { padding: 12px; border-radius: 15px; text-align: center; text-decoration: none; font-weight: bold; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid; }
         .whatsapp { background: rgba(37, 211, 102, 0.1); border-color: #25d366; color: #25d366; }
@@ -82,7 +80,7 @@
         <div class="logo-section">
             <div class="logo-circle"><i class="fas fa-exchange-alt"></i></div>
             <span class="logo-title">ZANA EXCHANGE</span>
-            <center><span class="version-tag">Version 5.0 Pro</span></center>
+            <center><span class="version-tag">Version 5.1 Pro</span></center>
         </div>
         
         <div class="wallet">
@@ -131,7 +129,6 @@
 </div>
 
 <script>
-    // Firebase and Config
     const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -139,10 +136,7 @@
     const CHAT_ID = "6259019006";
     const USDT_ADDR = "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc";
 
-    // Close Popup Logic
-    function closeAlert() {
-        document.getElementById('teleAlert').style.display = 'none';
-    }
+    function closeAlert() { document.getElementById('teleAlert').style.display = 'none'; }
 
     function updateWallet() {
         const from = document.getElementById('from').value;
@@ -183,8 +177,16 @@
             const formData = new FormData(); formData.append("chat_id", CHAT_ID); formData.append("photo", imgFile);
             formData.append("caption", `🆔 #${orderID}\nنێردرا: ${from}\nوەرگیرا: ${to}\nنێرەر: ${senderPh}\nبڕ: ${amt}\nگۆڕین: ${total}\nوەرگر: ${userPh}`);
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
-            alert("نێردرا! #" + orderID);
-        } catch(e) { alert("هەڵە!"); } finally { btn.disabled = false; btn.innerText = "ناردنی داواکاری"; }
+            
+            // ئەم بەشە ڕێفرێش دەکاتەوە دوای ناردن
+            alert("داواکارییەکەت نێردرا! #" + orderID);
+            location.reload(); 
+
+        } catch(e) { 
+            alert("هەڵە ڕوویدا، دووبارە هەوڵ بدەرەوە"); 
+        } finally { 
+            btn.disabled = false; btn.innerText = "ناردنی داواکاری"; 
+        }
     }
 
     db.ref('orders').on('value', (snap) => {
@@ -206,7 +208,3 @@
             });
         }
         document.getElementById('historyList').innerHTML = html;
-    });
-</script>
-</body>
-</html>
