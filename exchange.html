@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | Customer</title>
+    <title>Zana Exchange | Pro</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
@@ -11,42 +11,53 @@
         body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; text-align: right; padding: 15px; margin: 0; }
         .container { max-width: 450px; margin: auto; }
         .card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .logo { text-align: center; font-size: 24px; font-weight: 900; color: var(--main); margin-bottom: 20px; }
-        label { font-size: 13px; color: #94a3b8; display: block; margin-top: 10px; }
-        input { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; font-size: 16px; outline: none; }
-        input:focus { border-color: var(--main); }
-        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--main); color: #000; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 15px; }
-        .order-item { background: #0f172a; padding: 15px; border-radius: 15px; margin-top: 15px; border-right: 6px solid var(--main); position: relative; }
-        .status-tag { font-size: 11px; padding: 3px 10px; border-radius: 5px; font-weight: bold; float: left; color: white; }
+        .logo { text-align: center; font-size: 24px; font-weight: 900; color: var(--main); margin-bottom: 20px; cursor: pointer; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; font-size: 16px; outline: none; }
+        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--main); color: #000; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .admin-section { display: none; margin-top: 25px; border-top: 2px dashed #444; padding-top: 20px; }
+        .order-item { background: #0f172a; padding: 15px; border-radius: 15px; margin-top: 15px; border-right: 6px solid var(--main); }
+        .status-tag { font-size: 11px; padding: 3px 10px; border-radius: 5px; font-weight: bold; float: left; }
+        .adm-controls { display: flex; gap: 10px; margin-top: 10px; }
+        .adm-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="card">
-        <div class="logo">ZANA EXCHANGE</div>
+        <div class="logo" onclick="openAdmin()">ZANA EXCHANGE</div>
         
-        <label>بڕی پارە (IQD)</label>
-        <input type="number" id="amt" placeholder="نموونە: 250,000">
-        
-        <label>ژمارەی مۆبایل</label>
-        <input type="text" id="phone" placeholder="07XXXXXXXXX">
-        
-        <button class="btn" onclick="sendOrder()">ناردنی داواکاری</button>
+        <div id="userSide">
+            <label style="font-size: 13px; color: #94a3b8;">بڕی پارە (IQD)</label>
+            <input type="number" id="amt" placeholder="نموونە: 150,000">
+            <label style="font-size: 13px; color: #94a3b8;">ژمارەی مۆبایل</label>
+            <input type="text" id="phone" placeholder="07XXXXXXXXX">
+            <button class="btn" onclick="sendOrder()">ناردنی داواکاری</button>
+        </div>
+
+        <div id="adminSide" class="admin-section">
+            <h3 style="color:var(--main); text-align: center;">🛠 پانێڵی بەڕێوەبردن</h3>
+            <div id="adminList">باردەکرێت...</div>
+            <button class="btn" style="background:#475569; color:white;" onclick="location.reload()">داخستنی ئەدمین</button>
+        </div>
     </div>
 
-    <div style="margin-top: 30px;">
-        <h4 style="color:var(--main); margin-bottom:10px;">🕒 دۆخی دوایین ئۆردەرەکان</h4>
+    <div style="margin-top: 25px;">
+        <h4 style="color:var(--main); margin-bottom:10px;">🕒 مێژووی ئۆردەرەکان</h4>
         <div id="publicList">باردەکرێت...</div>
     </div>
 </div>
 
 <script>
-    // ⚠️ لێرە تەنها apiKey دابنێ
+    // لێرە هەموو زانیارییەکانی تۆم داناوە
     const firebaseConfig = {
-      apiKey: "کۆدی_apiKey_لێرە_دابنێ", 
-      databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", 
-      projectId: "zana-exchange"
+      apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU",
+      authDomain: "zana-exchange.firebaseapp.com",
+      databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com",
+      projectId: "zana-exchange",
+      storageBucket: "zana-exchange.firebasestorage.app",
+      messagingSenderId: "107338028455",
+      appId: "1:107338028455:web:af6f4fb82ed3d7bdd85282"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -61,30 +72,49 @@
         db.ref('orders/' + id).set({
             id: id, amt: amt, phone: phone, status: 'pending', time: new Date().toLocaleTimeString('ku-IQ')
         });
-        alert("داواکارییەکەت نێردرا! کۆدی بەدواداچوون: " + id);
+        alert("ئۆردەر نێردرا! کۆد: " + id);
         document.getElementById('amt').value = "";
         document.getElementById('phone').value = "";
     }
 
-    db.ref('orders').limitToLast(10).on('value', (snap) => {
+    db.ref('orders').on('value', (snap) => {
         const data = snap.val();
-        let html = "";
-        let items = [];
+        let pubHtml = "";
+        let admHtml = "";
 
-        for (let id in data) items.push(data[id]);
-        items.reverse().forEach(o => {
+        for (let id in data) {
+            let o = data[id];
             let color = o.status === 'accepted' ? 'var(--success)' : o.status === 'rejected' ? 'var(--danger)' : 'var(--main)';
             let text = o.status === 'pending' ? 'چاوەڕوان' : o.status === 'accepted' ? 'تەواو بوو' : 'ڕەتکراوە';
 
-            html += `
+            pubHtml += `
                 <div class="order-item" style="border-right-color: ${color}">
                     <span class="status-tag" style="background:${color}">${text}</span>
                     <b>#${o.id}</b> | ${o.amt} IQD <br>
                     <small style="opacity:0.6">${o.time}</small>
                 </div>`;
-        });
-        document.getElementById('publicList').innerHTML = html || "هیچ ئۆردەرێک نییە";
+
+            admHtml += `
+                <div class="order-item">
+                    <b>#${o.id}</b> | ${o.phone} | ${o.amt} IQD
+                    <div class="adm-controls">
+                        <button class="adm-btn" style="background:var(--success)" onclick="updateStatus(${o.id}, 'accepted')">قبوڵ</button>
+                        <button class="adm-btn" style="background:var(--danger)" onclick="updateStatus(${o.id}, 'rejected')">ڕەت</button>
+                    </div>
+                </div>`;
+        }
+        document.getElementById('publicList').innerHTML = pubHtml || "هیچ ئۆردەرێک نییە";
+        document.getElementById('adminList').innerHTML = admHtml || "هیچ ئۆردەرێک نییە";
     });
+
+    function updateStatus(id, s) { db.ref('orders/' + id).update({ status: s }); }
+
+    function openAdmin() {
+        if(prompt("پاسوۆرد بنووسە:") === "1234") {
+            document.getElementById('userSide').style.display = 'none';
+            document.getElementById('adminSide').style.display = 'block';
+        }
+    }
 </script>
 </body>
 </html>
