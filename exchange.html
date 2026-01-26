@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>ZANA EXCHANGE | نرخە نوێیەکان</title>
+    <title>ZANA EXCHANGE | ئۆردەرەکانم</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -23,9 +23,8 @@
             --card-bg: rgba(17, 24, 39, 0.85);
             --text-main: #f3f4f6;
             --text-dim: #9ca3af;
-            --success: #10b981;
-            --danger: #ef4444;
             --glass-border: rgba(255, 255, 255, 0.08);
+            --success: #10b981;
         }
 
         body { 
@@ -34,7 +33,6 @@
             color: var(--text-main); 
             margin: 0; padding: 15px; 
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         /* --- Sidebar Style --- */
@@ -49,45 +47,49 @@
             color: var(--text-main); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05);
             cursor: pointer; font-weight: bold;
         }
-        .menu-item i { color: var(--accent); width: 20px; }
+        .menu-item i { color: var(--accent); }
 
         .container { max-width: 460px; margin: auto; display: none; }
         .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 
         .glass-card {
             background: var(--card-bg); border: 1px solid var(--glass-border);
-            border-radius: 35px; padding: 28px; backdrop-filter: blur(25px);
+            border-radius: 35px; padding: 25px; backdrop-filter: blur(25px);
             box-shadow: 0 25px 60px rgba(0,0,0,0.5); margin-bottom: 25px;
         }
 
-        .wallet-display {
-            background: rgba(0,0,0,0.4); border-radius: 22px; padding: 18px;
-            margin-bottom: 25px; border: 1px solid rgba(250, 204, 21, 0.25); text-align: center;
+        /* --- New Order History Card Design --- */
+        .order-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
         }
-        .wallet-label { font-size: 12px; color: var(--accent); margin-bottom: 10px; display: block; font-weight: bold; }
-        .wallet-address { font-family: monospace; font-size: 15px; color: #fff; word-break: break-all; }
-
-        .field-group { margin-bottom: 20px; }
-        .field-group label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-dim); margin-bottom: 10px; }
-        .field-group label i { color: var(--accent); }
+        .order-card::before {
+            content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 5px; background: var(--accent);
+        }
+        .order-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+        .order-id { font-weight: bold; color: var(--accent); font-size: 14px; }
+        .order-time { font-size: 11px; color: var(--text-dim); }
         
-        select, input {
-            width: 100%; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border);
-            border-radius: 18px; padding: 16px; color: #fff; font-family: 'Afarin'; box-sizing: border-box; 
-            outline: none; font-size: 16px !important;
-        }
+        .order-details { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .detail-item { flex: 1; text-align: center; }
+        .detail-item i { font-size: 18px; color: var(--accent); margin-bottom: 5px; display: block; }
+        .detail-label { font-size: 11px; color: var(--text-dim); display: block; }
+        .detail-val { font-size: 13px; font-weight: bold; }
+        
+        .arrow-icon { color: var(--text-dim); opacity: 0.3; }
 
-        .result-pill {
-            background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), transparent);
-            border-right: 4px solid var(--success); padding: 18px; border-radius: 20px; margin: 25px 0; text-align: center;
-        }
+        /* --- Existing UI Elements --- */
+        .wallet-display { background: rgba(0,0,0,0.4); border-radius: 22px; padding: 18px; margin-bottom: 25px; border: 1px solid rgba(250, 204, 21, 0.25); text-align: center; }
+        .field-group { margin-bottom: 20px; }
+        select, input { width: 100%; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); border-radius: 18px; padding: 16px; color: #fff; font-family: 'Afarin'; outline: none; font-size: 16px !important; }
+        .result-pill { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), transparent); border-right: 4px solid var(--success); padding: 18px; border-radius: 20px; margin: 25px 0; text-align: center; }
         #totalDisplay { font-size: 28px; font-weight: bold; color: var(--accent); }
-
-        .btn-premium {
-            background: var(--accent); color: #000; width: 100%; padding: 20px;
-            border: none; border-radius: 22px; font-weight: bold; font-size: 18px; cursor: pointer;
-            font-family: 'Afarin'; box-shadow: 0 12px 30px rgba(250, 204, 21, 0.25);
-        }
+        .btn-premium { background: var(--accent); color: #000; width: 100%; padding: 20px; border: none; border-radius: 22px; font-weight: bold; font-size: 18px; cursor: pointer; font-family: 'Afarin'; }
 
         #loginOverlay { position: fixed; inset: 0; background: var(--bg-deep); display: flex; align-items: center; justify-content: center; z-index: 2000; }
         .avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--accent); cursor: pointer; }
@@ -97,20 +99,19 @@
 
 <div class="sidebar" id="sidebar">
     <div style="text-align: left; margin-bottom: 30px;"><i class="fas fa-times" onclick="toggleMenu()" style="font-size: 24px; cursor: pointer;"></i></div>
-    <div class="menu-item" onclick="scrollToHistory()"><i class="fas fa-list-ul"></i> ئۆردەرەکانم</div>
+    <div class="menu-item" onclick="scrollToHistory()"><i class="fas fa-history"></i> ئۆردەرەکانم</div>
     <a href="https://wa.me/9647758887488" class="menu-item"><i class="fas fa-headset"></i> سەپۆرت (واتسئاپ)</a>
-    <div class="menu-item" style="margin-top: 50px; opacity: 0.5;"><i class="fas fa-info-circle"></i> ڤێرژنی ئەپ: 2.3.0</div>
+    <div class="menu-item" style="margin-top: 50px; opacity: 0.5;"><i class="fas fa-info-circle"></i> ڤێرژنی ئەپ: 2.4.0</div>
     <div class="menu-item" onclick="location.reload()" style="color:var(--danger); border:none;"><i class="fas fa-sign-out-alt"></i> چوونەدەرەوە</div>
 </div>
 
 <div id="loginOverlay">
     <div class="glass-card" style="text-align:center; width:85%; max-width: 380px;">
-        <i class="fas fa-bars" onclick="toggleMenu()" style="position: absolute; right: 25px; top: 25px; color: var(--accent); cursor: pointer;"></i>
         <div style="width: 80px; height: 80px; background: var(--accent); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
             <i class="fas fa-right-left" style="font-size: 35px; color: #000;"></i>
         </div>
         <h2 style="color:var(--accent); margin:0;">زانا ئێکسچەینج</h2>
-        <p style="color:var(--text-dim); margin:15px 0 30px;">ئاڵوگۆڕی دراو بە نرخێکی گونجاو</p>
+        <p style="color:var(--text-dim); margin:15px 0 30px;">ئاڵوگۆڕی باڵانس بە ئاسانی</p>
         <button onclick="signIn()" style="width:100%; padding:18px; border-radius:20px; border:none; background:#fff; font-weight:bold; display:flex; align-items:center; justify-content:center; gap:12px; cursor:pointer; font-family: 'Afarin';">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"> چوونەژوورەوە بە Google
         </button>
@@ -161,7 +162,6 @@
         </div>
 
         <div class="result-pill">
-            <span style="font-size:13px; color:var(--text-dim); display:block;">بڕی وەرگیراو</span>
             <div id="totalDisplay">0 دینار</div>
         </div>
 
@@ -170,7 +170,7 @@
             <input type="tel" id="userPhone" placeholder="07XXXXXXXXX">
         </div>
 
-        <button class="btn-premium" onclick="processOrder()">دووپاتکردنەوەی گۆڕینەوە</button>
+        <button class="btn-premium" onclick="processOrder()">ناردنی داواکاری</button>
     </div>
 
     <h3 id="historyTitle" style="margin: 30px 10px 15px;"><i class="fas fa-history" style="color:var(--accent)"></i> دوایین چالاکییەکان</h3>
@@ -178,12 +178,8 @@
 </div>
 
 <script>
-    const firebaseConfig = { 
-        apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", 
-        authDomain: "zana-exchange.firebaseapp.com", 
-        databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", 
-        projectId: "zana-exchange" 
-    };
+    // Firebase Config (هەمان هی خۆت)
+    const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
@@ -210,14 +206,7 @@
         }
     });
 
-    const staticWallets = { 
-        "FastPay": "07510074008", 
-        "FIB": "07510074008", 
-        "QiCard": "07758887488", 
-        "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc", 
-        "Asiacell": "0770XXXXXXX",
-        "Korek": "0750XXXXXXX" 
-    };
+    const staticWallets = { "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "07758887488", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc", "Asiacell": "0770XXXXXXX", "Korek": "0750XXXXXXX" };
 
     function updateWallet() {
         document.getElementById('myNum').innerText = staticWallets[document.getElementById('from').value];
@@ -232,7 +221,6 @@
         const toVal = document.getElementById('receiveVia').value;
         let final = 0;
 
-        // سیستەمی نوێی نرخەکان بەپێی وەرگرتن
         if (fromVal === 'Asiacell') {
             if (toVal === 'FastPay') final = amt * 0.84;
             else if (toVal === 'FIB') final = amt * 0.83;
@@ -248,29 +236,29 @@
             else if (toVal === 'FIB') final = amt * 1440;
             else if (toVal === 'QiCard') final = amt * 1445;
         } 
-        else {
-            final = amt * 0.99; // بۆ گۆڕینەوەی ئاسایی
-        }
+        else { final = amt * 0.99; }
 
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " دینار";
     }
 
     async function processOrder() {
-        if(isGuest) return alert("⚠️ تکایە بە گووگڵ بچۆ ژوورەوە");
+        if(isGuest) return alert("⚠️ تکایە بچۆ ژوورەوە");
         const amt = document.getElementById('amt').value;
         const ph = document.getElementById('userPhone').value;
         if(!amt || ph.length < 10) return alert("زانیارییەکان تەواو بکە");
 
         const orderId = Math.floor(10000 + Math.random() * 90000);
-        await db.ref('orders/' + orderId).set({
+        const orderData = {
             uEmail: auth.currentUser.email,
             orderID: orderId,
+            amt: amt,
             total: document.getElementById('totalDisplay').innerText,
             from: document.getElementById('from').value,
             to: document.getElementById('receiveVia').value,
             userPh: ph,
-            time: new Date().toLocaleString()
-        });
+            time: new Date().toLocaleString('ku-IQ')
+        };
+        await db.ref('orders/' + orderId).set(orderData);
         window.open(`https://wa.me/9647758887488?text=ئۆردەری نوێ #${orderId}`, '_blank');
         location.reload();
     }
@@ -280,10 +268,28 @@
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                html = `<div style="background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:10px; display:flex; justify-content:space-between; border:1px solid var(--glass-border);">
-                        <div><b>#${o.orderID}</b><br><small>${o.from} ➔ ${o.to}</small></div>
-                        <div style="color:var(--accent)">${o.total}</div>
-                      </div>` + html;
+                html = `
+                <div class="order-card">
+                    <div class="order-header">
+                        <span class="order-id">#${o.orderID}</span>
+                        <span class="order-time">${o.time}</span>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <i class="fas fa-arrow-up"></i>
+                            <span class="detail-label">ناردن</span>
+                            <span class="detail-val">${o.from}</span>
+                            <small style="font-size:10px">${o.amt}</small>
+                        </div>
+                        <i class="fas fa-chevron-left arrow-icon"></i>
+                        <div class="detail-item">
+                            <i class="fas fa-arrow-down" style="color:var(--success)"></i>
+                            <span class="detail-label">وەرگرتن</span>
+                            <span class="detail-val">${o.to}</span>
+                            <small style="font-size:10px; color:var(--success)">${o.total}</small>
+                        </div>
+                    </div>
+                </div>` + html;
             });
             document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.3;'>هیچ چالاکییەک نییە</p>";
         });
