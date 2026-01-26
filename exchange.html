@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>ZANA EXCHANGE | ئۆردەرەکانم</title>
+    <title>ZANA EXCHANGE | Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -25,6 +25,7 @@
             --text-dim: #9ca3af;
             --glass-border: rgba(255, 255, 255, 0.08);
             --success: #10b981;
+            --danger: #ef4444;
         }
 
         body { 
@@ -58,36 +59,34 @@
             box-shadow: 0 25px 60px rgba(0,0,0,0.5); margin-bottom: 25px;
         }
 
-        /* --- New Order History Card Design --- */
+        /* --- Order History Card --- */
         .order-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            padding: 20px;
-            margin-bottom: 15px;
+            border-radius: 25px; padding: 18px; margin-bottom: 15px;
             position: relative;
-            overflow: hidden;
         }
-        .order-card::before {
-            content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 5px; background: var(--accent);
+        .status-badge {
+            position: absolute; top: 12px; left: 12px; font-size: 10px;
+            padding: 4px 10px; border-radius: 10px; background: rgba(250, 204, 21, 0.1); color: var(--accent);
         }
-        .order-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
-        .order-id { font-weight: bold; color: var(--accent); font-size: 14px; }
-        .order-time { font-size: 11px; color: var(--text-dim); }
+        .order-header { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+        .order-id { font-weight: bold; color: var(--accent); font-size: 13px; }
+        .order-time { font-size: 10px; color: var(--text-dim); }
         
-        .order-details { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .order-details { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
         .detail-item { flex: 1; text-align: center; }
-        .detail-item i { font-size: 18px; color: var(--accent); margin-bottom: 5px; display: block; }
-        .detail-label { font-size: 11px; color: var(--text-dim); display: block; }
-        .detail-val { font-size: 13px; font-weight: bold; }
+        .detail-label { font-size: 11px; color: var(--text-dim); display: block; margin-bottom: 4px; }
+        .detail-val { font-size: 14px; font-weight: bold; display: block; }
         
-        .arrow-icon { color: var(--text-dim); opacity: 0.3; }
+        /* ڕەنگەکان بۆ ناردن و وەرگرتن */
+        .color-send { color: var(--danger); }
+        .color-receive { color: var(--success); }
 
-        /* --- Existing UI Elements --- */
+        /* --- UI Elements --- */
         .wallet-display { background: rgba(0,0,0,0.4); border-radius: 22px; padding: 18px; margin-bottom: 25px; border: 1px solid rgba(250, 204, 21, 0.25); text-align: center; }
         .field-group { margin-bottom: 20px; }
         select, input { width: 100%; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); border-radius: 18px; padding: 16px; color: #fff; font-family: 'Afarin'; outline: none; font-size: 16px !important; }
-        .result-pill { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), transparent); border-right: 4px solid var(--success); padding: 18px; border-radius: 20px; margin: 25px 0; text-align: center; }
         #totalDisplay { font-size: 28px; font-weight: bold; color: var(--accent); }
         .btn-premium { background: var(--accent); color: #000; width: 100%; padding: 20px; border: none; border-radius: 22px; font-weight: bold; font-size: 18px; cursor: pointer; font-family: 'Afarin'; }
 
@@ -101,8 +100,8 @@
     <div style="text-align: left; margin-bottom: 30px;"><i class="fas fa-times" onclick="toggleMenu()" style="font-size: 24px; cursor: pointer;"></i></div>
     <div class="menu-item" onclick="scrollToHistory()"><i class="fas fa-history"></i> ئۆردەرەکانم</div>
     <a href="https://wa.me/9647758887488" class="menu-item"><i class="fas fa-headset"></i> سەپۆرت (واتسئاپ)</a>
-    <div class="menu-item" style="margin-top: 50px; opacity: 0.5;"><i class="fas fa-info-circle"></i> ڤێرژنی ئەپ: 2.4.0</div>
-    <div class="menu-item" onclick="location.reload()" style="color:var(--danger); border:none;"><i class="fas fa-sign-out-alt"></i> چوونەدەرەوە</div>
+    <div class="menu-item" style="margin-top: 50px; opacity: 0.5;"><i class="fas fa-info-circle"></i> ڤێرژنی ئەپ: 2.5.0</div>
+    <div class="menu-item" onclick="logout()" style="color:var(--danger); border-top: 1px solid rgba(255,0,0,0.1); margin-top: 10px;"><i class="fas fa-sign-out-alt"></i> چوونەدەرەوە</div>
 </div>
 
 <div id="loginOverlay">
@@ -111,11 +110,10 @@
             <i class="fas fa-right-left" style="font-size: 35px; color: #000;"></i>
         </div>
         <h2 style="color:var(--accent); margin:0;">زانا ئێکسچەینج</h2>
-        <p style="color:var(--text-dim); margin:15px 0 30px;">ئاڵوگۆڕی باڵانس بە ئاسانی</p>
+        <p style="color:var(--text-dim); margin:15px 0 30px;">ئاڵوگۆڕی دراو بە نرخێکی گونجاو</p>
         <button onclick="signIn()" style="width:100%; padding:18px; border-radius:20px; border:none; background:#fff; font-weight:bold; display:flex; align-items:center; justify-content:center; gap:12px; cursor:pointer; font-family: 'Afarin';">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"> چوونەژوورەوە بە Google
         </button>
-        <div onclick="enterAsGuest()" style="margin-top:20px; cursor:pointer; color:var(--text-dim);">بڕۆ ژوورەوە وەک میوان</div>
     </div>
 </div>
 
@@ -130,7 +128,7 @@
         <div class="wallet-display">
             <span class="wallet-label"><i class="fas fa-wallet"></i> ناونیشانی واڵێت بۆ ناردن</span>
             <div style="display:flex; align-items:center; justify-content:center; gap:12px; direction:ltr;">
-                <span class="wallet-address" id="myNum">جۆرێک هەڵبژێرە...</span>
+                <span class="wallet-address" id="myNum">هەڵبژێرە...</span>
                 <i class="far fa-copy" style="color:var(--accent); cursor:pointer;" onclick="copyNum()"></i>
             </div>
         </div>
@@ -138,12 +136,12 @@
         <div class="field-group">
             <label><i class="fas fa-paper-plane"></i> ناردن لەڕێگەی</label>
             <select id="from" onchange="updateWallet()">
-                <option value="FastPay">FastPay (دینار)</option>
-                <option value="FIB">FIB (دینار)</option>
-                <option value="QiCard">QiCard (دینار)</option>
+                <option value="FastPay">FastPay</option>
+                <option value="FIB">FIB</option>
+                <option value="QiCard">QiCard</option>
                 <option value="USDT">USDT (دۆلار)</option>
-                <option value="Asiacell">ئاسیاسێڵ (باڵانس)</option>
-                <option value="Korek">کۆرەک (باڵانس)</option>
+                <option value="Asiacell">ئاسیاسێڵ</option>
+                <option value="Korek">کۆرەک</option>
             </select>
         </div>
 
@@ -161,7 +159,7 @@
             </select>
         </div>
 
-        <div class="result-pill">
+        <div class="result-pill" style="text-align:center; padding:15px; background:rgba(255,255,255,0.03); border-radius:20px; margin-bottom:20px;">
             <div id="totalDisplay">0 دینار</div>
         </div>
 
@@ -173,36 +171,30 @@
         <button class="btn-premium" onclick="processOrder()">ناردنی داواکاری</button>
     </div>
 
-    <h3 id="historyTitle" style="margin: 30px 10px 15px;"><i class="fas fa-history" style="color:var(--accent)"></i> دوایین چالاکییەکان</h3>
+    <h3 id="historyTitle" style="margin: 30px 10px 15px;"><i class="fas fa-history" style="color:var(--accent)"></i> مێژووی ئۆردەرەکان</h3>
     <div id="historyList"></div>
 </div>
 
 <script>
-    // Firebase Config (هەمان هی خۆت)
     const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
 
-    let isGuest = false;
-
     function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
     function scrollToHistory() { toggleMenu(); document.getElementById('historyTitle').scrollIntoView({behavior: 'smooth'}); }
-
-    function signIn() { isGuest = false; auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
-    function enterAsGuest() {
-        isGuest = true;
-        document.getElementById('loginOverlay').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('userImg').src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-    }
+    function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+    function logout() { auth.signOut().then(() => location.reload()); }
 
     auth.onAuthStateChanged(user => {
-        if (user && !isGuest) {
+        if (user) {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('userImg').src = user.photoURL;
             loadHistory(user.email);
+        } else {
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
         }
     });
 
@@ -225,40 +217,37 @@
             if (toVal === 'FastPay') final = amt * 0.84;
             else if (toVal === 'FIB') final = amt * 0.83;
             else if (toVal === 'QiCard') final = amt * 0.835;
-        } 
-        else if (fromVal === 'Korek') {
+        } else if (fromVal === 'Korek') {
             if (toVal === 'FastPay') final = amt * 0.82;
             else if (toVal === 'FIB') final = amt * 0.81;
             else if (toVal === 'QiCard') final = amt * 0.815;
-        } 
-        else if (fromVal === 'USDT') {
+        } else if (fromVal === 'USDT') {
             if (toVal === 'FastPay') final = amt * 1450;
             else if (toVal === 'FIB') final = amt * 1440;
             else if (toVal === 'QiCard') final = amt * 1445;
-        } 
-        else { final = amt * 0.99; }
+        } else { final = amt * 0.99; }
 
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " دینار";
     }
 
     async function processOrder() {
-        if(isGuest) return alert("⚠️ تکایە بچۆ ژوورەوە");
+        const user = auth.currentUser;
+        if(!user) return;
         const amt = document.getElementById('amt').value;
         const ph = document.getElementById('userPhone').value;
         if(!amt || ph.length < 10) return alert("زانیارییەکان تەواو بکە");
 
         const orderId = Math.floor(10000 + Math.random() * 90000);
-        const orderData = {
-            uEmail: auth.currentUser.email,
+        await db.ref('orders/' + orderId).set({
+            uEmail: user.email,
             orderID: orderId,
             amt: amt,
             total: document.getElementById('totalDisplay').innerText,
             from: document.getElementById('from').value,
             to: document.getElementById('receiveVia').value,
-            userPh: ph,
+            status: 'لە چاوەڕوانیدایە',
             time: new Date().toLocaleString('ku-IQ')
-        };
-        await db.ref('orders/' + orderId).set(orderData);
+        });
         window.open(`https://wa.me/9647758887488?text=ئۆردەری نوێ #${orderId}`, '_blank');
         location.reload();
     }
@@ -270,23 +259,22 @@
                 const o = c.val();
                 html = `
                 <div class="order-card">
+                    <span class="status-badge">${o.status || 'نادیار'}</span>
                     <div class="order-header">
                         <span class="order-id">#${o.orderID}</span>
                         <span class="order-time">${o.time}</span>
                     </div>
                     <div class="order-details">
                         <div class="detail-item">
-                            <i class="fas fa-arrow-up"></i>
                             <span class="detail-label">ناردن</span>
-                            <span class="detail-val">${o.from}</span>
+                            <span class="detail-val color-send">${o.from}</span>
                             <small style="font-size:10px">${o.amt}</small>
                         </div>
-                        <i class="fas fa-chevron-left arrow-icon"></i>
+                        <i class="fas fa-exchange-alt" style="opacity:0.2"></i>
                         <div class="detail-item">
-                            <i class="fas fa-arrow-down" style="color:var(--success)"></i>
                             <span class="detail-label">وەرگرتن</span>
-                            <span class="detail-val">${o.to}</span>
-                            <small style="font-size:10px; color:var(--success)">${o.total}</small>
+                            <span class="detail-val color-receive">${o.to}</span>
+                            <small style="font-size:10px">${o.total}</small>
                         </div>
                     </div>
                 </div>` + html;
