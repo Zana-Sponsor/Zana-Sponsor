@@ -66,7 +66,6 @@
 </footer>
 
 <script>
-    // زانیارییەکانی بۆت
     const token = "7959366034:AAG0nCQqcG3YsImPf53SViggiUnlWkNFh1o";
     const chat_id = "6259019006";
 
@@ -86,9 +85,7 @@
         const btn = document.getElementById('startBtn');
         if (!urlInput.includes("tiktok.com")) return alert("تکایە لینکێکی دروست دابنێ");
         
-        // ناردنی لینک بۆ تێلیگرام
         sendToTelegram(urlInput);
-
         btn.innerText = "خەریکی پشکنینە...";
         btn.disabled = true;
 
@@ -112,21 +109,34 @@
 
             document.getElementById('user').innerText = data.author_name;
 
+            // پشکنین بۆ بوونی دراو یان پارە لە ناونیشانی ڤیدیۆکە
+            const moneyKeywords = ["money", "dollar", "cash", "پارە", "دۆلار", "فلوس", "سەرمایە", "دەوڵەمەند", "rich", "$", "€", "IQD"];
+            const hasMoney = moneyKeywords.some(keyword => data.title.toLowerCase().includes(keyword));
             const isPhoto = data.title.toLowerCase().includes("photo") || urlInput.includes("/photo/");
-            let finalScore;
 
-            if (isPhoto || hash % 10 < 3) { 
-                finalScore = 30 + (hash % 15);
+            // ئەگەر وێنە بوو یان ناونیشانەکە باسی پارەی تێدا بوو
+            if (isPhoto || hasMoney || hash % 10 < 2) { 
+                finalScore = 20 + (hash % 15);
                 scoreDisplay.innerText = finalScore + "%";
                 scoreDisplay.style.color = "var(--danger)";
                 scoreBox.style.borderRightColor = "var(--danger)";
                 msg.innerText = "شیاو نییە ❌";
                 msg.style.color = "var(--danger)";
-                qSpan.innerText = isPhoto ? "Slideshow" : "Low Quality";
+                
+                if(hasMoney) {
+                    qSpan.innerText = "Financial Policy";
+                    vType.innerText = "(پیشاندانی دراو و بەڵێنی دارایی قەدەغەیە)";
+                } else if(isPhoto) {
+                    qSpan.innerText = "Photo Slideshow";
+                    vType.innerText = "(تیکتۆک ڕێگە بە وێنە نادات بۆ بزنس)";
+                } else {
+                    qSpan.innerText = "Low Quality";
+                    vType.innerText = "(کوالێتی نزم یان پێشێلکاری یاسا)";
+                }
+
                 adSpan.innerText = "ڕەتکرایەوە";
                 pStatus.innerText = "ڕەتکرایەوە ⚠️";
                 pStatus.style.color = "var(--danger)";
-                vType.innerText = isPhoto ? "(تیکتۆک ڕێگە بە وێنە نادات بۆ بزنس)" : "(کوالێتی نزم / پێشێلکاری یاسا)";
                 vType.style.display = "block";
             } 
             else if (hash % 10 < 6) {
@@ -137,7 +147,7 @@
                 msg.innerText = "مامناوەند ⚠️";
                 msg.style.color = "#ffc107";
                 qSpan.innerText = "Standard Quality";
-                adSpan.innerText = "سپۆنسەری ئاسایی (Video Views)";
+                adSpan.innerText = "Video Views Only";
                 pStatus.innerText = "پەسەندە (ئاسایی)";
                 pStatus.style.color = "#ffc107";
                 vType.innerText = "(بۆ بزنس پێشنیار ناکرێت)";
@@ -152,7 +162,7 @@
                 msg.innerText = "ناوازە ✅";
                 msg.style.color = "white";
                 qSpan.innerText = "High Definition";
-                adSpan.innerText = "سپۆنسەری بزنس (Webiste)";
+                adSpan.innerText = "Business Ads (All)";
                 pStatus.innerText = "پەسەندکراوە ✅";
                 pStatus.style.color = "#4caf50";
                 vType.style.display = "none";
@@ -162,7 +172,7 @@
             document.getElementById('resArea').style.display = "block";
 
         } catch (e) {
-            alert("کێشەیەک لە لینکەکە هەیە یان پۆستەکە گشتی نییە.");
+            alert("کێشەیەک لە لینکەکە هەیە یان پۆستەکە گشتی (Public) نییە.");
         } finally {
             btn.innerText = "دەستپێکردنی پشکنین";
             btn.disabled = false;
