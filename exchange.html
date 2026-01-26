@@ -44,7 +44,6 @@
         .wallet { background: rgba(15, 23, 42, 0.8); padding: 15px; border-radius: 20px; text-align: center; border: 1px solid var(--main); margin-bottom: 25px; }
         .num { font-size: 11px; font-weight: bold; color: #f8fafc; word-break: break-all; }
         
-        /* ستایلی نوێی بڕی پارەکە */
         .res-box { background: rgba(16, 185, 129, 0.1); border: 1px dashed var(--success); padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 15px; }
         .res-box span { font-size: 24px; font-weight: 800; color: var(--main); text-shadow: 0 0 10px rgba(250, 204, 21, 0.3); }
 
@@ -53,9 +52,18 @@
         .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 18px; border-radius: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn:active { transform: scale(0.95); }
         
-        .hist-item { background: var(--card); padding: 18px; border-radius: 22px; margin-bottom: 15px; border-right: 5px solid var(--main); }
-        .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .status-badge { font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        /* ⬇️ ستایلی نوێی بەشی مێژووی ئۆردەرەکان ⬇️ */
+        #historyList { margin-top: 30px; }
+        .history-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: var(--main); }
+        .hist-item { background: linear-gradient(145deg, #1e293b, #0f172a); padding: 20px; border-radius: 25px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: 0.3s; position: relative; overflow: hidden; }
+        .hist-item::after { content: ''; position: absolute; left: 0; top: 0; width: 6px; height: 100%; background: var(--main); }
+        .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .order-id { font-family: monospace; background: rgba(250, 204, 21, 0.1); padding: 4px 10px; border-radius: 10px; font-size: 14px; color: var(--main); }
+        .status-badge { font-size: 12px; padding: 6px 12px; border-radius: 12px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
+        .hist-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .detail-box { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 15px; }
+        .detail-label { font-size: 10px; color: #94a3b8; display: block; margin-bottom: 2px; }
+        .detail-value { font-size: 12px; font-weight: bold; color: white; }
     </style>
 </head>
 <body>
@@ -156,6 +164,7 @@
         <button class="btn" id="submitBtn" onclick="processOrder()">ناردنی داواکاری</button>
     </div>
     
+    <div class="history-title"><i class="fas fa-history"></i> دوایین داواکارییەکان</div>
     <div id="historyList"></div>
 </div>
 
@@ -238,7 +247,6 @@
 
         const id = Math.floor(10000 + Math.random() * 90000);
         
-        // ١. سەیڤ کردن لە Firebase
         await db.ref('orders/' + id).set({
             uEmail: user.email, orderID: id,
             amt: (from === 'USDT') ? amt + "$" : amt + " IQD",
@@ -247,7 +255,6 @@
             status: 'pending', time: new Date().toLocaleString('ku-IQ')
         });
 
-        // ٢. ناردنی وێنە و زانیارییەکان بۆ تێلیگرام
         const caption = `🆕 ئۆردەری نوێ: #${id}\n👤 نێرەر: ${sender}\n📥 لە: ${from} (${amt})\n📤 بۆ: ${to} (${total})\n📞 وەرگر: ${ph}\n📧 ئیمەیڵ: ${user.email}`;
         
         const formData = new FormData();
@@ -273,21 +280,32 @@
             snap.forEach(c => {
                 const o = c.val();
                 if(o.uEmail === email) {
-                    let badge = { text: 'چاوەڕوانبە', icon: 'fa-clock', color: 'var(--main)' };
-                    if(o.status === 'completed') badge = { text: 'وەرگیرا', icon: 'fa-check-circle', color: 'var(--success)' };
-                    if(o.status === 'rejected') badge = { text: 'ڕەتکرایەوە', icon: 'fa-times-circle', color: 'var(--danger)' };
+                    let badge = { text: 'چاوەڕوانبە', icon: 'fa-clock', bg: 'rgba(250, 204, 21, 0.1)', color: 'var(--main)' };
+                    if(o.status === 'completed') badge = { text: 'تەواوبوو', icon: 'fa-check-circle', bg: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)' };
+                    if(o.status === 'rejected') badge = { text: 'ڕەتکرایەوە', icon: 'fa-times-circle', bg: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)' };
 
-                    html += `<div class="hist-item" style="border-right-color: ${badge.color}">
+                    html += `<div class="hist-item" style="border-right: 5px solid ${badge.color}">
                         <div class="hist-header">
-                            <b style="color:var(--main)">#${o.orderID}</b>
-                            <span class="status-badge" style="color:${badge.color}">${badge.text} <i class="fas ${badge.icon}"></i></span>
+                            <span class="order-id">#${o.orderID}</span>
+                            <span class="status-badge" style="background:${badge.bg}; color:${badge.color}">
+                                <i class="fas ${badge.icon}"></i> ${badge.text}
+                            </span>
                         </div>
-                        <div style="font-size:12px; opacity:0.8;">بڕی نێردراو: ${o.amt} (${o.from})</div>
-                        <div style="font-size:12px; font-weight:bold; color:var(--success); margin-top:5px;">بڕی وەرگیراو: ${o.total} (${o.to})</div>
+                        <div class="hist-details">
+                            <div class="detail-box">
+                                <span class="detail-label">بڕی نێردراو</span>
+                                <span class="detail-value">${o.amt} (${o.from})</span>
+                            </div>
+                            <div class="detail-box">
+                                <span class="detail-label">بڕی وەرگیراو</span>
+                                <span class="detail-value" style="color:var(--main)">${o.total} (${o.to})</span>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; color:#64748b; margin-top:10px; text-align:left;">${o.time}</div>
                     </div>`;
                 }
             });
-            document.getElementById('historyList').innerHTML = html || "<center style='padding:20px; opacity:0.5;'>هیچ ئۆردەرێک نییە</center>";
+            document.getElementById('historyList').innerHTML = html || "<center style='padding:40px; opacity:0.3;'><i class='fas fa-folder-open' style='font-size:40px;'></i><p>هیچ ئۆردەرێک نییە</p></center>";
         });
     }
     updateWallet();
