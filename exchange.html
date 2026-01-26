@@ -178,14 +178,12 @@
             formData.append("caption", `🆔 #${orderID}\nنێردرا: ${from}\nوەرگیرا: ${to}\nنێرەر: ${senderPh}\nبڕ: ${amt}\nگۆڕین: ${total}\nوەرگر: ${userPh}`);
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
             
-            // ئەم بەشە ڕێفرێش دەکاتەوە دوای ناردن
             alert("داواکارییەکەت نێردرا! #" + orderID);
-            location.reload(); 
+            location.reload(); // ڕێفرێش دوای کلیک کردن لەسەر OK لە ئاڵێرتەکە
 
         } catch(e) { 
-            alert("هەڵە ڕوویدا، دووبارە هەوڵ بدەرەوە"); 
-        } finally { 
-            btn.disabled = false; btn.innerText = "ناردنی داواکاری"; 
+            alert("هەڵە ڕوویدا!"); 
+            btn.disabled = false; btn.innerText = "ناردنی داواکاری";
         }
     }
 
@@ -208,3 +206,7 @@
             });
         }
         document.getElementById('historyList').innerHTML = html;
+    });
+</script>
+</body>
+</html>
