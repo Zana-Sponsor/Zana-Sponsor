@@ -94,10 +94,10 @@
         <div class="group">
             <label>لە کوێوە دەینێریت؟ (From)</label>
             <select id="from" onchange="updateWallet()">
+                <option value="USDT">USDT (TRC20 ترۆن)</option>
                 <option value="فاستپەی">FastPay (فاستپەی)</option>
                 <option value="ئیف ئای بی">FIB (ئیف ئای بی)</option>
                 <option value="کێ کارت">QiCard (کێ کارت)</option>
-                <option value="USDT">USDT (TRC20 ترۆن)</option>
                 <option value="کۆڕەک">Korek (کۆڕەک)</option>
             </select>
         </div>
@@ -112,7 +112,7 @@
         </div>
 
         <div class="group"><label>ژمارەی نێرەر</label><input type="text" id="senderPhone" placeholder="07XXXXXXXX"></div>
-        <div class="group"><label>بڕی پارە</label><input type="number" id="amt" placeholder="100000" oninput="calc()"></div>
+        <div class="group"><label id="amtLabel">بڕی USDT</label><input type="number" id="amt" placeholder="100" oninput="calc()"></div>
         <div class="res-box"><span class="total" id="total">0 دینار</span></div>
         <div class="group"><label>ژمارەی وەرگر</label><input type="text" id="userPhone" placeholder="07XXXXXXXX"></div>
         
@@ -141,9 +141,18 @@
     function updateWallet() {
         const from = document.getElementById('from').value;
         const numElem = document.getElementById('myNum');
+        const amtLabel = document.getElementById('amtLabel');
+        
         if(from === "کێ کارت") numElem.innerText = "07758887488";
         else if(from === "USDT") numElem.innerText = USDT_ADDR;
         else numElem.innerText = "07510074008";
+        
+        if(from === "USDT") {
+            amtLabel.innerText = "بڕی USDT";
+        } else {
+            amtLabel.innerText = "بڕی دینار";
+        }
+        
         calc();
     }
 
@@ -152,8 +161,20 @@
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const from = document.getElementById('from').value;
-        let fee = 0.98; if(from === "کۆڕەک") fee = 0.82;
-        document.getElementById('total').innerText = Math.floor(amt * fee).toLocaleString() + " دینار";
+        let totalVal = 0;
+
+        if(from === "USDT") {
+            // نرخی 100 دۆلار = 148,000 دینار
+            // یەک دۆلار دەبێتە 1480 دینار
+            // حمولەی 2% کەم دەکرێتەوە (لێکدانی 0.98)
+            totalVal = (amt * 1480) * 0.98;
+        } else if(from === "کۆڕەک") {
+            totalVal = amt * 0.82;
+        } else {
+            totalVal = amt * 0.98;
+        }
+
+        document.getElementById('total').innerText = Math.floor(totalVal).toLocaleString() + " دینار";
     }
 
     function previewImg() {
@@ -207,6 +228,9 @@
         }
         document.getElementById('historyList').innerHTML = html;
     });
+    
+    // بانگکردنی ئەپدەیت بۆ یەکەمجار
+    updateWallet();
 </script>
 </body>
 </html>
