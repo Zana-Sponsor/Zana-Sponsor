@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | Pro v5.2</title>
+    <title>Zana Exchange | Pro v5.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; --gold: linear-gradient(135deg, #facc15 0%, #eab308 100%); --telegram: #0088cc; }
-        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
+        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; transition: 0.3s; }
         .container { max-width: 400px; margin: auto; }
         
+        /* Language Selector */
+        .lang-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .lang-btn { background: var(--card); border: 1px solid #334155; color: white; padding: 5px 12px; border-radius: 10px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .lang-btn.active { border-color: var(--main); color: var(--main); }
+
         #teleAlert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 2000; }
         .alert-box { background: var(--card); width: 85%; max-width: 320px; padding: 25px; border-radius: 25px; border: 2px solid var(--telegram); text-align: center; }
         .alert-btn { background: var(--telegram); color: white; border: none; padding: 10px 15px; border-radius: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin: 5px; font-size: 12px; }
@@ -32,7 +37,7 @@
         
         .group { margin-bottom: 15px; }
         label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 6px; }
-        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; text-align: right; font-size: 13px; }
+        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; box-sizing: border-box; font-size: 13px; text-align: inherit; }
         
         .res-box { background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 15px; margin: 15px 0; border: 1px solid var(--success); text-align: center; }
         .total { font-size: 18px; font-weight: bold; color: var(--success); }
@@ -40,6 +45,9 @@
         
         .hist-title { font-size: 14px; font-weight: bold; color: var(--main); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .hist-item { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 15px; border-right: 5px solid var(--main); }
+        /* Style for English LTR orders */
+        body.en .hist-item { border-right: none; border-left: 5px solid var(--main); }
+        
         .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
         .hist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; }
         #imagePreview { width: 100%; border-radius: 12px; margin-top: 10px; display: none; border: 2px solid var(--main); }
@@ -50,14 +58,20 @@
 <div id="teleAlert">
     <div class="alert-box">
         <i class="fab fa-telegram" style="font-size: 40px; color: var(--telegram); margin-bottom: 15px; display: block;"></i>
-        <h3 style="margin: 0 0 10px 0; font-size: 18px;">بەخێربێیت</h3>
-        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">بۆ بینینی نرخەکان جۆینی تێلێگرام بە.</p>
-        <a href="https://t.me/zana_exchange" target="_blank" class="alert-btn">جۆینی تێلێگرام</a>
-        <button class="alert-btn secondary" onclick="closeAlert()">باشە</button>
+        <h3 id="modalTitle">بەخێربێیت</h3>
+        <p id="modalDesc" style="font-size: 12px; color: #94a3b8; margin-bottom: 20px;">بۆ بینینی نرخەکان جۆینی تێلێگرام بە.</p>
+        <a href="https://t.me/zana_exchange" target="_blank" class="alert-btn" id="modalJoin">جۆینی تێلێگرام</a>
+        <button class="alert-btn secondary" onclick="closeAlert()" id="modalClose">باشە</button>
     </div>
 </div>
 
 <div class="container">
+    <div class="lang-bar">
+        <button class="lang-btn" onclick="setLang('en')">English</button>
+        <button class="lang-btn" onclick="setLang('ar')">العربية</button>
+        <button class="lang-btn active" onclick="setLang('ku')">کوردی</button>
+    </div>
+
     <div class="support-wrapper">
         <a href="https://wa.me/9647758887488" target="_blank" class="support-box whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a>
         <a href="https://t.me/zana_exchange" target="_blank" class="support-box telegram"><i class="fab fa-telegram-plane"></i> Telegram</a>
@@ -71,30 +85,31 @@
     <div class="card">
         <center>
             <span style="font-size: 20px; font-weight: 900; color: var(--main);">ZANA EXCHANGE</span><br>
-            <small style="color:#94a3b8; font-size:11px;">بۆ خزمەتگوزاری ئاڵوگۆڕکردن</small>
+            <small id="subTitle" style="color:#94a3b8; font-size:11px;">بۆ خزمەتگوزاری ئاڵوگۆڕکردن</small>
         </center>
         <br>
         
         <div class="wallet">
-            <span style="font-size: 9px; color: var(--main); margin-bottom: 5px; display: block;">بۆ ئەم ناونیشانە بنێرە:</span>
+            <span id="sendTo" style="font-size: 9px; color: var(--main); margin-bottom: 5px; display: block;">بۆ ئەم ناونیشانە بنێرە:</span>
             <div class="num-wrapper">
                 <i class="far fa-copy copy-btn" onclick="copyNum()"></i>
-                <span class="num" id="myNum">هەڵبژێرە...</span>
+                <span class="num" id="myNum">---</span>
             </div>
         </div>
 
         <div class="group">
-            <label>لە کوێوە دەینێریت؟ (From)</label>
+            <label id="lblFrom">لە کوێوە دەینێریت؟ (From)</label>
             <select id="from" onchange="updateWallet()">
-                <option value="fastpay">FastPay (فاستپەی)</option>
-                <option value="fib">FIB (ئیف ئای بی)</option>
-                <option value="qicard">QiCard (کی کارت)</option>
-                <option value="usdt">USDT (TRC20 دۆلار)</option>
-                <option value="korek">Korek (کۆڕەک)</option>
+                <option value="fastpay">FastPay</option>
+                <option value="fib">FIB</option>
+                <option value="qicard">QiCard</option>
+                <option value="usdt">USDT (TRC20)</option>
+                <option value="korek">Korek</option>
             </select>
         </div>
 
-        <div class="group"><label>بۆ چی دەگۆڕدرێت؟ (To)</label>
+        <div class="group">
+            <label id="lblTo">بۆ چی دەگۆڕدرێت؟ (To)</label>
             <select id="to">
                 <option value="FastPay">FastPay</option>
                 <option value="FIB">FIB</option>
@@ -104,18 +119,24 @@
         </div>
 
         <div class="group">
-            <label>ژمارەی نێرەر</label>
+            <label id="lblSender">ژمارەی نێرەر</label>
             <input type="tel" id="senderPhone" placeholder="07XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
-        <div class="group"><label id="amtLabel">بڕی پارە (IQD)</label><input type="number" id="amt" placeholder="100000" oninput="calc()"></div>
-        <div class="res-box"><span class="total" id="total">0 دینار</span></div>
+
         <div class="group">
-            <label>ژمارەی وەرگر</label>
+            <label id="lblAmt">بڕی پارە</label>
+            <input type="number" id="amt" placeholder="100000" oninput="calc()">
+        </div>
+
+        <div class="res-box"><span class="total" id="total">0</span></div>
+
+        <div class="group">
+            <label id="lblReceiver">ژمارەی وەرگر</label>
             <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
         
         <div class="group">
-            <label for="imageInput" style="background: #334155; padding: 10px; border-radius: 12px; text-align: center; cursor: pointer; display: block; border: 1px dashed var(--main); font-size: 12px;"><i class="fas fa-camera"></i> وێنەی وەسڵ</label>
+            <label for="imageInput" id="lblImage" style="background: #334155; padding: 10px; border-radius: 12px; text-align: center; cursor: pointer; display: block; border: 1px dashed var(--main); font-size: 12px;"><i class="fas fa-camera"></i> وێنەی وەسڵ</label>
             <input type="file" id="imageInput" accept="image/*" onchange="previewImg()" style="display: none;">
             <img id="imagePreview">
         </div>
@@ -123,7 +144,7 @@
         <button class="btn" id="submitBtn" onclick="processOrder()">ناردنی داواکاری</button>
     </div>
 
-    <div class="hist-title"><i class="fas fa-history"></i> دوایین داواکارییەکانت</div>
+    <div class="hist-title" id="lblHistory"><i class="fas fa-history"></i> دوایین داواکارییەکانت</div>
     <div id="historyList"></div>
 </div>
 
@@ -132,6 +153,70 @@
         "fastpay": "07510074008", "fib": "07510074008", "qicard": "07758887488",
         "usdt": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc", "korek": "07510074008"
     };
+
+    const languages = {
+        ku: {
+            dir: 'rtl', modalT: 'بەخێربێیت', modalD: 'بۆ بینینی نرخەکان جۆینی تێلێگرام بە.', modalJ: 'جۆینی تێلێگرام', modalC: 'باشە',
+            sub: 'بۆ خزمەتگوزاری ئاڵوگۆڕکردن', sendTo: 'بۆ ئەم ناونیشانە بنێرە:', from: 'لە کوێوە دەینێریت؟ (From)', to: 'بۆ چی دەگۆڕدرێت؟ (To)',
+            sender: 'ژمارەی نێرەر', amt: 'بڕی پارە', receiver: 'ژمارەی وەرگر', img: 'وێنەی وەسڵ', btn: 'ناردنی داواکاری', 
+            hist: 'دوایین داواکارییەکانت', unit: 'دینار', wait: 'چاوەڕێبە...', success: 'نێردرا #', error: 'هەڵە ڕوویدا!', 
+            noOrder: 'هیچ ئۆردەرێکت نییە', phoneErr: 'ژمارەی هەڵەیە! دەبێت ١١ ژمارە بێت و بە 07 دەستپێبکات', fieldsErr: 'خانەکان پڕ بکەرەوە',
+            statusP: 'چاوەڕوان بە', statusA: 'وەرگیرا', statusR: 'ڕەتکرایەوە'
+        },
+        ar: {
+            dir: 'rtl', modalT: 'أهلاً بك', modalD: 'انضم إلى التليجرام لمتابعة الأسعار.', modalJ: 'انضمام للتليجرام', modalC: 'حسناً',
+            sub: 'لخدمات التحويل المالي', sendTo: 'أرسل إلى هذا العنوان:', from: 'من أين سترسل؟ (From)', to: 'إلى ماذا ستحول؟ (To)',
+            sender: 'رقم المرسل', amt: 'المبلغ', receiver: 'رقم المستلم', img: 'صورة الوصل', btn: 'إرسال الطلب', 
+            hist: 'آخر طلباتك', unit: 'دينار', wait: 'انتظر...', success: 'تم الإرسال #', error: 'حدث خطأ!', 
+            noOrder: 'ليس لديك طلبات', phoneErr: 'الرقم خطأ! يجب أن يكون ١١ رقماً ويبدأ بـ 07', fieldsErr: 'يرجى ملء جميع الحقول',
+            statusP: 'قيد الانتظار', statusA: 'تم القبول', statusR: 'تم الرفض'
+        },
+        en: {
+            dir: 'ltr', modalT: 'Welcome', modalD: 'Join Telegram to see live rates.', modalJ: 'Join Telegram', modalC: 'OK',
+            sub: 'For Exchange Services', sendTo: 'Send to this address:', from: 'From (Sending)', to: 'To (Receiving)',
+            sender: 'Sender Number', amt: 'Amount', receiver: 'Receiver Number', img: 'Upload Receipt', btn: 'Submit Order', 
+            hist: 'Recent Orders', unit: 'IQD', wait: 'Please wait...', success: 'Sent #', error: 'Error occurred!', 
+            noOrder: 'No orders yet', phoneErr: 'Invalid number! Must be 11 digits starting with 07', fieldsErr: 'Please fill all fields',
+            statusP: 'Pending', statusA: 'Accepted', statusR: 'Rejected'
+        }
+    };
+
+    let currentLang = localStorage.getItem('lang') || 'ku';
+
+    function setLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('lang', lang);
+        const l = languages[lang];
+        document.documentElement.lang = lang;
+        document.documentElement.dir = l.dir;
+        document.body.dir = l.dir;
+        document.body.className = lang;
+
+        // Update Text
+        document.getElementById('modalTitle').innerText = l.modalT;
+        document.getElementById('modalDesc').innerText = l.modalD;
+        document.getElementById('modalJoin').innerText = l.modalJ;
+        document.getElementById('modalClose').innerText = l.modalC;
+        document.getElementById('subTitle').innerText = l.sub;
+        document.getElementById('sendTo').innerText = l.sendTo;
+        document.getElementById('lblFrom').innerText = l.from;
+        document.getElementById('lblTo').innerText = l.to;
+        document.getElementById('lblSender').innerText = l.sender;
+        document.getElementById('lblAmt').innerText = l.amt;
+        document.getElementById('lblReceiver').innerText = l.receiver;
+        document.getElementById('lblImage').innerHTML = `<i class="fas fa-camera"></i> ${l.img}`;
+        document.getElementById('submitBtn').innerText = l.btn;
+        document.getElementById('lblHistory').innerHTML = `<i class="fas fa-history"></i> ${l.hist}`;
+        
+        // Active Button
+        document.querySelectorAll('.lang-btn').forEach(b => {
+            b.classList.remove('active');
+            if(b.innerText.toLowerCase().includes(lang === 'ku' ? 'کوردی' : lang === 'ar' ? 'العربية' : 'english')) b.classList.add('active');
+        });
+        
+        calc();
+        renderHistory();
+    }
 
     const firebaseConfig = { 
         apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", 
@@ -144,12 +229,6 @@
 
     function closeAlert() { document.getElementById('teleAlert').style.display = 'none'; }
 
-    db.ref('settings/alertMsg').on('value', (s) => {
-        const msg = s.val();
-        if(msg) { document.getElementById('liveAlertText').innerText = msg; document.getElementById('liveAlert').style.display = 'flex'; }
-        else { document.getElementById('liveAlert').style.display = 'none'; }
-    });
-
     function updateWallet() {
         const selected = document.getElementById('from').value;
         document.getElementById('myNum').innerText = staticWallets[selected];
@@ -159,14 +238,15 @@
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const fromVal = document.getElementById('from').value;
+        const l = languages[currentLang];
         let final = 0;
         if(fromVal === 'usdt') final = amt * 1450;
         else if(fromVal === 'korek') final = amt * 0.82;
         else final = amt * 0.99;
-        document.getElementById('total').innerText = Math.floor(final).toLocaleString() + " دینار";
+        document.getElementById('total').innerText = Math.floor(final).toLocaleString() + " " + l.unit;
     }
 
-    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا!"); }
+    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert(currentLang === 'ku' ? "کۆپی کرا!" : currentLang === 'ar' ? "تم النسخ!" : "Copied!"); }
 
     function previewImg() {
         const file = document.getElementById('imageInput').files[0];
@@ -174,6 +254,7 @@
     }
 
     async function processOrder() {
+        const l = languages[currentLang];
         const btn = document.getElementById('submitBtn');
         const fromText = document.getElementById('from').options[document.getElementById('from').selectedIndex].text;
         const toText = document.getElementById('to').options[document.getElementById('to').selectedIndex].text;
@@ -184,17 +265,15 @@
         const imgFile = document.getElementById('imageInput').files[0];
 
         const phoneRegex = /^07[0-9]{9}$/;
-        if(!amt || !senderPh || !userPh || !imgFile) return alert("خانەکان پڕ بکەرەوە");
-        if(!phoneRegex.test(senderPh) || !phoneRegex.test(userPh)) return alert("ژمارەی هەڵەیە! دەبێت ١١ ژمارە بێت و بە 07 دەستپێبکات");
+        if(!amt || !senderPh || !userPh || !imgFile) return alert(l.fieldsErr);
+        if(!phoneRegex.test(senderPh) || !phoneRegex.test(userPh)) return alert(l.phoneErr);
         
-        btn.disabled = true; btn.innerText = "چاوەڕێبە...";
+        btn.disabled = true; btn.innerText = l.wait;
         const orderID = Math.floor(10000 + Math.random() * 90000);
         const amtDisplay = (document.getElementById('from').value === 'usdt') ? amt + "$" : amt.toLocaleString() + " IQD";
 
         try {
-            await db.ref('orders/' + orderID).set({ orderID, from: fromText, to: toText, senderPh, userPh, amt: amtDisplay, total, status: 'pending', time: new Date().toLocaleString('ku-IQ') });
-            
-            // ئەمە ئایدی ئۆردەرەکە لەم مۆبایلەدا پاشکەوت دەکات
+            await db.ref('orders/' + orderID).set({ orderID, from: fromText, to: toText, senderPh, userPh, amt: amtDisplay, total, status: 'pending', time: new Date().toLocaleString() });
             let myOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
             myOrders.push(orderID);
             localStorage.setItem('myOrders', JSON.stringify(myOrders));
@@ -202,39 +281,43 @@
             const formData = new FormData();
             formData.append("chat_id", "6259019006");
             formData.append("photo", imgFile);
-            formData.append("caption", `🆔 #${orderID}\nنێرەر: ${senderPh}\nبڕی نێردراو: ${amtDisplay}\nبۆ: ${total} (${toText})\nوەرگر: ${userPh}`);
+            formData.append("caption", `🆔 #${orderID}\nنێرەر: ${senderPh}\nبڕی: ${amtDisplay}\nبۆ: ${total}\nوەرگر: ${userPh}`);
             await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: formData });
-            alert("نێردرا #" + orderID); location.reload();
-        } catch(e) { alert("هەڵە ڕوویدا!"); btn.disabled = false; }
+            alert(l.success + orderID); location.reload();
+        } catch(e) { alert(l.error); btn.disabled = false; btn.innerText = l.btn; }
     }
 
-    // پیشاندانی ئۆردەرەکان بەبێ ئەوەی تێکبچێت
-    db.ref('orders').on('value', (snap) => {
-        const data = snap.val();
-        let html = "";
-        let myOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
+    function renderHistory() {
+        db.ref('orders').once('value', (snap) => {
+            const data = snap.val();
+            let html = "";
+            let myOrders = JSON.parse(localStorage.getItem('myOrders') || "[]");
+            const l = languages[currentLang];
 
-        if (data) {
-            Object.values(data).reverse().forEach(o => {
-                // تەنها ئەو ئۆردەرانە نیشان دەدات کە هی ئەم مۆبایلەن
-                if (myOrders.includes(o.orderID)) {
-                    let color = "var(--main)"; let statusText = "چاوەڕوان بە <i class='fas fa-clock'></i>";
-                    if(o.status === 'accepted') { color = "var(--success)"; statusText = "وەرگیرا <i class='fas fa-check-circle'></i>"; }
-                    else if(o.status === 'rejected') { color = "var(--danger)"; statusText = "ڕەتکرایەوە <i class='fas fa-times-circle'></i>"; }
+            if (data) {
+                Object.values(data).reverse().forEach(o => {
+                    if (myOrders.includes(o.orderID)) {
+                        let color = "var(--main)"; 
+                        let sTxt = l.statusP;
+                        if(o.status === 'accepted') { color = "var(--success)"; sTxt = l.statusA; }
+                        else if(o.status === 'rejected') { color = "var(--danger)"; sTxt = l.statusR; }
 
-                    html += `<div class="hist-item" style="border-right-color: ${color}">
-                        <div class="hist-header"><b style="color:var(--main)">#${o.orderID}</b><span style="color:${color};font-weight:bold; font-size: 12px;">${statusText}</span></div>
-                        <div class="hist-row"><i class="fas fa-paper-plane" style="color:#60a5fa; width:15px;"></i><span>نێردرا: <b>${o.amt}</b> <small style="color:var(--main)">(${o.from})</small></span></div>
-                        <div class="hist-row"><i class="fas fa-money-bill-wave" style="color:var(--success); width:15px;"></i><span>وەرگیرا: <b>${o.total}</b> <small style="color:var(--main)">(${o.to || 'دیاری نەکراوە'})</small></span></div>
-                        <div class="hist-row"><i class="fas fa-user" style="color:#f87171; width:15px;"></i><span>وەرگر: <b>${o.userPh}</b></span></div>
-                        <div class="hist-row"><i class="fas fa-calendar-alt" style="color:var(--main); width:15px;"></i><span style="font-size:11px; opacity:0.8;">${o.time}</span></div>
-                    </div>`;
-                }
-            });
-        }
-        document.getElementById('historyList').innerHTML = html || "<center style='font-size:12px;color:#94a3b8'>هیچ ئۆردەرێکت نییە</center>";
-    });
+                        html += `<div class="hist-item" style="border-${currentLang==='en'?'left':'right'}-color: ${color}">
+                            <div class="hist-header"><b>#${o.orderID}</b><span style="color:${color};font-weight:bold;">${sTxt}</span></div>
+                            <div class="hist-row"><i class="fas fa-paper-plane"></i><span>${o.amt} (${o.from})</span></div>
+                            <div class="hist-row"><i class="fas fa-money-bill-wave"></i><span>${o.total} (${o.to})</span></div>
+                            <div class="hist-row"><i class="fas fa-user"></i><span>${o.userPh}</span></div>
+                        </div>`;
+                    }
+                });
+            }
+            document.getElementById('historyList').innerHTML = html || `<center style='font-size:12px;color:#94a3b8'>${l.noOrder}</center>`;
+        });
+    }
+
+    setLang(currentLang);
     updateWallet();
+    db.ref('orders').on('value', renderHistory);
 </script>
 </body>
 </html>
