@@ -19,8 +19,8 @@
         .alert-btn { background: var(--telegram); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin: 5px; font-size: 13px; }
         .alert-btn.secondary { background: #334155; }
 
-        /* --- ئاگاداری ناو لاپەڕە --- */
-        .inline-alert { background: rgba(250, 204, 21, 0.1); border: 1px dashed var(--main); border-radius: 15px; padding: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        /* --- ئاگاداری ناو لاپەڕە (بەستراوەتەوە بە پانێڵ) --- */
+        .inline-alert { background: rgba(250, 204, 21, 0.1); border: 1px dashed var(--main); border-radius: 15px; padding: 12px; margin-bottom: 20px; display: none; align-items: center; gap: 10px; }
         .inline-alert i { color: var(--main); font-size: 20px; animation: ring 2s infinite ease-in-out; }
         .inline-alert p { margin: 0; font-size: 12px; font-weight: bold; line-height: 1.5; }
 
@@ -77,9 +77,9 @@
         <a href="https://t.me/zana_exchange" target="_blank" class="support-box telegram"><i class="fab fa-telegram-plane"></i> Telegram</a>
     </div>
 
-    <div class="inline-alert">
+    <div class="inline-alert" id="liveAlertBox">
         <i class="fas fa-bell"></i>
-        <p>گۆڕانکاری لەبەشی دراو کرا، بۆ هەر 100 هەزارێک 1% حمولەیە، جگە لەکۆڕەک !</p>
+        <p id="liveAlertText"></p>
     </div>
 
     <div class="card">
@@ -140,6 +140,19 @@
     const db = firebase.database();
     const BOT_TOKEN = "8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo";
     const CHAT_ID = "6259019006";
+
+    // --- بەشی وەرگرتنی ئاگاداری زیندوو لە پانێڵەوە ---
+    db.ref('settings/alertMsg').on('value', (snap) => {
+        const msg = snap.val();
+        const box = document.getElementById('liveAlertBox');
+        const txt = document.getElementById('liveAlertText');
+        if(msg && msg.trim() !== "") {
+            txt.innerText = msg;
+            box.style.display = 'flex';
+        } else {
+            box.style.display = 'none';
+        }
+    });
 
     function closeAlert() { document.getElementById('teleAlert').style.display = 'none'; }
 
