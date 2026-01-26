@@ -3,54 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Sales Manager</title>
+    <title>Zana Order Manager</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; --border: #334155; }
-        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; text-align: right; }
+        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
         .container { max-width: 700px; margin: auto; }
         
-        /* Stats Card */
-        .sales-header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 25px; border-radius: 25px; border: 1px solid var(--main); text-align: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .sales-header span { font-size: 14px; color: #94a3b8; display: block; margin-bottom: 5px; }
-        .sales-header b { font-size: 32px; color: var(--main); text-shadow: 0 0 10px rgba(250, 204, 21, 0.3); }
+        /* Stats Section */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
+        .stat-card span { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 5px; }
+        .stat-card b { font-size: 18px; display: block; }
+        .sales-box { border: 1px solid var(--main); grid-column: span 3; padding: 20px; }
+        .sales-box b { font-size: 28px; color: var(--main); }
 
         /* Order Card */
-        .order-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); transition: 0.3s; position: relative; overflow: hidden; }
+        .order-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
         .order-card.accepted { border-right: 8px solid var(--success); }
-        .order-card.rejected { border-right: 8px solid var(--danger); opacity: 0.7; }
+        .order-card.rejected { border-right: 8px solid var(--danger); opacity: 0.8; }
         
-        .order-id { font-size: 12px; color: #94a3b8; margin-bottom: 10px; display: flex; justify-content: space-between; }
-        
-        .exchange-box { background: rgba(15, 23, 42, 0.6); padding: 15px; border-radius: 15px; margin: 15px 0; border: 1px dashed var(--border); display: flex; align-items: center; justify-content: space-around; text-align: center; }
-        .exchange-box i { color: var(--main); font-size: 18px; }
-        .amount-text { font-size: 18px; font-weight: bold; }
-        
-        .user-info { font-size: 13px; color: #cbd5e1; margin-bottom: 15px; line-height: 1.6; }
-        .user-info b { color: white; }
+        .exchange-row { background: rgba(15, 23, 42, 0.5); padding: 12px; border-radius: 12px; margin: 12px 0; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); }
+        .exchange-row i { color: var(--main); }
 
-        /* Action Buttons */
-        .actions { display: flex; gap: 10px; }
-        .btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; color: white; }
-        .btn-success { background: var(--success); }
-        .btn-danger { background: var(--danger); }
-        .btn-delete { background: #475569; flex: 0.3; }
-        .btn:active { transform: scale(0.95); }
-
-        .image-preview { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; cursor: pointer; border: 2px solid var(--border); }
+        .btn-group { display: flex; gap: 8px; margin-top: 15px; }
+        .btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
+        .btn-acc { background: var(--success); }
+        .btn-rej { background: var(--danger); }
+        .btn-del { background: #475569; flex: 0.3; }
+        
+        .img-thumb { width: 55px; height: 55px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="sales-header">
-        <span>کۆی فرۆشی ئەمڕۆ (ئۆردەرە قبوڵکراوەکان)</span>
-        <b id="todaySales">0 IQD</b>
+    <div class="stats-grid">
+        <div class="stat-card sales-box">
+            <span>فرۆشی ئەمڕۆ (IQD)</span>
+            <b id="totalSales">0</b>
+        </div>
+        <div class="stat-card" style="border-bottom: 3px solid var(--success);">
+            <span>وەرگیراو</span>
+            <b id="accCount">0</b>
+        </div>
+        <div class="stat-card" style="border-bottom: 3px solid var(--danger);">
+            <span>ڕەتکراوە</span>
+            <b id="rejCount">0</b>
+        </div>
+        <div class="stat-card">
+            <span>کۆی گشتی</span>
+            <b id="totalCount">0</b>
+        </div>
     </div>
 
-    <h3 style="margin-bottom: 20px; font-size: 18px;"><i class="fas fa-list-ul" style="color: var(--main);"></i> داواکارییە نوێیەکان</h3>
     <div id="ordersList"></div>
 </div>
 
@@ -64,78 +72,83 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    let firstLoad = true;
+    let lastOrderCount = 0;
+
+    // فەنکشنی دەنگ
+    function playNewOrderSound() {
+        const msg = new SpeechSynthesisUtterance("New Order");
+        msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
+    }
+
     db.ref('orders').on('value', snap => {
         const data = snap.val();
         let html = ""; 
-        let totalSales = 0;
+        let sales = 0, acc = 0, rej = 0, total = 0;
 
         if(data) {
-            // گۆڕینی داتا بۆ لیست و پێچەوانەکردنەوە (بۆ ئەوەی نوێترین لە سەرەوە بێت)
-            const sortedOrders = Object.values(data).reverse();
+            const ordersArray = Object.values(data);
+            total = ordersArray.length;
 
-            sortedOrders.forEach(o => {
-                // تەنها ئەو ئۆردەرانەی قبوڵکراون پارەکەیان کۆ دەکرێتەوە
-                if(o.status === 'accepted') {
-                    totalSales += parseInt(o.amt) || 0;
-                }
+            // پشکنین بۆ ئۆردەری نوێ و لێدانی دەنگ
+            if (!firstLoad && total > lastOrderCount) {
+                playNewOrderSound();
+            }
+            lastOrderCount = total;
+            firstLoad = false;
 
-                let cardStatus = o.status === 'accepted' ? 'accepted' : (o.status === 'rejected' ? 'rejected' : '');
+            ordersArray.reverse().forEach(o => {
+                if(o.status === 'accepted') { sales += parseInt(o.amt) || 0; acc++; }
+                if(o.status === 'rejected') rej++;
+
+                let cls = o.status === 'accepted' ? 'accepted' : (o.status === 'rejected' ? 'rejected' : '');
 
                 html += `
-                <div class="order-card ${cardStatus}">
-                    <div class="order-id">
+                <div class="order-card ${cls}">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; color:#94a3b8;">
+                        <span>#${o.orderID}</span>
                         <span><i class="far fa-clock"></i> ${o.time}</span>
-                        <b>#${o.orderID}</b>
                     </div>
 
-                    <div class="exchange-box">
-                        <div>
-                            <small style="display:block; color:#94a3b8;">ناردوویەتی</small>
-                            <span class="amount-text" style="color:var(--main)">${o.amt} ${o.from}</span>
+                    <div class="exchange-row">
+                        <div style="text-align:center;">
+                            <small style="color:#94a3b8; display:block;">ناردوویەتی</small>
+                            <b style="color:var(--main)">${o.amt} ${o.from}</b>
                         </div>
                         <i class="fas fa-arrow-left"></i>
-                        <div>
-                            <small style="display:block; color:#94a3b8;">بۆی بکە بە</small>
-                            <span class="amount-text" style="color:var(--success)">${o.total} ${o.to}</span>
+                        <div style="text-align:center;">
+                            <small style="color:#94a3b8; display:block;">بۆی بکە بە</small>
+                            <b style="color:var(--success)">${o.total} ${o.to}</b>
                         </div>
                     </div>
 
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div class="user-info">
+                        <div style="font-size:13px; color:#cbd5e1;">
                             نێرەر: <b>${o.senderPh}</b><br>
-                            بۆ واڵێتی: <b>${o.userPh}</b>
+                            بۆ: <b>${o.userPh}</b>
                         </div>
-                        <img src="${o.image}" class="image-preview" onclick="window.open(this.src)">
+                        <img src="${o.image}" class="img-thumb" onclick="window.open(this.src)">
                     </div>
 
-                    <div class="actions">
-                        <button class="btn btn-success" onclick="updateStatus('${o.orderID}', 'accepted')">
-                            <i class="fas fa-check"></i> قبوڵکردن
-                        </button>
-                        <button class="btn btn-danger" onclick="updateStatus('${o.orderID}', 'rejected')">
-                            <i class="fas fa-times"></i> ڕەتکردنەوە
-                        </button>
-                        <button class="btn btn-delete" onclick="deleteOrder('${o.orderID}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <div class="btn-group">
+                        <button class="btn btn-acc" onclick="updateStatus('${o.orderID}', 'accepted')">قبوڵ</button>
+                        <button class="btn btn-rej" onclick="updateStatus('${o.orderID}', 'rejected')">ڕەت</button>
+                        <button class="btn btn-del" onclick="deleteOrder('${o.orderID}')"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>`;
             });
         }
         
-        document.getElementById('ordersList').innerHTML = html || "<center style='padding:50px; color:#475569;'>هیچ ئۆردەرێک بوونی نییە</center>";
-        document.getElementById('todaySales').innerText = totalSales.toLocaleString() + " IQD";
+        document.getElementById('ordersList').innerHTML = html || "<center style='margin-top:50px; color:#475569;'>لیستەکە بەتاڵە</center>";
+        document.getElementById('totalSales').innerText = sales.toLocaleString();
+        document.getElementById('accCount').innerText = acc;
+        document.getElementById('rejCount').innerText = rej;
+        document.getElementById('totalCount').innerText = total;
     });
 
-    function updateStatus(id, status) {
-        db.ref('orders/' + id).update({ status: status });
-    }
-
-    function deleteOrder(id) {
-        if(confirm('ئایا دڵنیای لە سڕینەوەی ئەم ئۆردەرە؟')) {
-            db.ref('orders/' + id).remove();
-        }
-    }
+    function updateStatus(id, s) { db.ref('orders/' + id).update({ status: s }); }
+    function deleteOrder(id) { if(confirm('بسڕێتەوە؟')) db.ref('orders/' + id).remove(); }
 </script>
 </body>
 </html>
