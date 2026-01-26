@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | Pro v5.1</title>
+    <title>Zana Exchange | Pro v5.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -94,10 +94,10 @@
         <div class="group">
             <label>لە کوێوە دەینێریت؟ (From)</label>
             <select id="from" onchange="updateWallet()">
-                <option value="USDT">USDT (TRC20 ترۆن)</option>
                 <option value="فاستپەی">FastPay (فاستپەی)</option>
                 <option value="ئیف ئای بی">FIB (ئیف ئای بی)</option>
-                <option value="کێ کارت">QiCard (کێ کارت)</option>
+                <option value="کی کارت">QiCard (کی کارت)</option>
+                <option value="USDT">USDT (TRC20 ترۆن)</option>
                 <option value="کۆڕەک">Korek (کۆڕەک)</option>
             </select>
         </div>
@@ -107,12 +107,12 @@
             <select id="to">
                 <option value="فاستپەی">FastPay (فاستپەی)</option>
                 <option value="ئیف ئای بی">FIB (ئیف ئای بی)</option>
-                <option value="کێ کارت">QiCard (کێ کارت)</option>
+                <option value="کی کارت">QiCard (کی کارت)</option>
             </select>
         </div>
 
         <div class="group"><label>ژمارەی نێرەر</label><input type="text" id="senderPhone" placeholder="07XXXXXXXX"></div>
-        <div class="group"><label id="amtLabel">بڕی USDT</label><input type="number" id="amt" placeholder="100" oninput="calc()"></div>
+        <div class="group"><label>بڕی پارە</label><input type="number" id="amt" placeholder="100000" oninput="calc()"></div>
         <div class="res-box"><span class="total" id="total">0 دینار</span></div>
         <div class="group"><label>ژمارەی وەرگر</label><input type="text" id="userPhone" placeholder="07XXXXXXXX"></div>
         
@@ -141,18 +141,9 @@
     function updateWallet() {
         const from = document.getElementById('from').value;
         const numElem = document.getElementById('myNum');
-        const amtLabel = document.getElementById('amtLabel');
-        
-        if(from === "کێ کارت") numElem.innerText = "07758887488";
+        if(from === "کی کارت") numElem.innerText = "07758887488";
         else if(from === "USDT") numElem.innerText = USDT_ADDR;
         else numElem.innerText = "07510074008";
-        
-        if(from === "USDT") {
-            amtLabel.innerText = "بڕی USDT";
-        } else {
-            amtLabel.innerText = "بڕی دینار";
-        }
-        
         calc();
     }
 
@@ -161,20 +152,8 @@
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const from = document.getElementById('from').value;
-        let totalVal = 0;
-
-        if(from === "USDT") {
-            // نرخی 100 دۆلار = 148,000 دینار
-            // یەک دۆلار دەبێتە 1480 دینار
-            // حمولەی 2% کەم دەکرێتەوە (لێکدانی 0.98)
-            totalVal = (amt * 1480) * 0.98;
-        } else if(from === "کۆڕەک") {
-            totalVal = amt * 0.82;
-        } else {
-            totalVal = amt * 0.98;
-        }
-
-        document.getElementById('total').innerText = Math.floor(totalVal).toLocaleString() + " دینار";
+        let fee = 0.98; if(from === "کۆڕەک") fee = 0.82;
+        document.getElementById('total').innerText = Math.floor(amt * fee).toLocaleString() + " دینار";
     }
 
     function previewImg() {
@@ -196,7 +175,7 @@
         try {
             await db.ref('orders/' + orderID).set({ orderID, from, to, senderPh, userPh, amt, total, status: 'pending', time: timeString });
             const formData = new FormData(); formData.append("chat_id", CHAT_ID); formData.append("photo", imgFile);
-            formData.append("caption", `🆔 #${orderID}\nنێردرا: ${from}\nوەرگیرا: ${to}\nنێرەر: ${senderPh}\nبڕ: ${amt}\nگۆڕین: ${total}\nوەرگر: ${userPh}`);
+            formData.append("caption", `🆔 #${orderID}\nنێردرا: ${from}\nوەرگیرا: ${to}\nنێرەر: ${senderPh}\nبڕ: ${parseFloat(amt).toLocaleString()}\nگۆڕین: ${total}\nوەرگر: ${userPh}`);
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData });
             
             alert("داواکارییەکەت نێردرا! #" + orderID);
@@ -213,13 +192,21 @@
         let html = "";
         if (data) {
             Object.values(data).reverse().slice(0, 5).forEach(o => {
-                let color = "var(--main)"; let statusText = "چاوەڕوانە";
-                if(o.status === 'accepted') { color = "var(--success)"; statusText = "وەرگیرا ✅"; }
-                else if(o.status === 'rejected') { color = "var(--danger)"; statusText = "ڕەتکرایەوە ❌"; }
+                let color = "var(--main)"; 
+                let statusText = "لە چاوەڕوانیدایە <i class='fas fa-hourglass-half'></i>";
+                
+                if(o.status === 'accepted') { 
+                    color = "var(--success)"; 
+                    statusText = "وەرگیرا <i class='fas fa-check-circle'></i>"; 
+                }
+                else if(o.status === 'rejected') { 
+                    color = "var(--danger)"; 
+                    statusText = "ڕەتکرایەوە <i class='fas fa-times-circle'></i>"; 
+                }
 
                 html += `<div class="hist-item" style="border-right-color: ${color}">
-                    <div class="hist-header"><b style="color:var(--main)">#${o.orderID}</b><span style="color:${color};font-weight:bold;">${statusText}</span></div>
-                    <div class="hist-row"><i class="fas fa-paper-plane" style="color:#60a5fa;"></i><span>نێردرا: <b>${o.amt}</b> <small style="opacity:0.7;">(${o.from})</small></span></div>
+                    <div class="hist-header"><b style="color:var(--main)">#${o.orderID}</b><span style="color:${color};font-weight:bold; font-size: 12px;">${statusText}</span></div>
+                    <div class="hist-row"><i class="fas fa-paper-plane" style="color:#60a5fa;"></i><span>نێردرا: <b>${parseFloat(o.amt).toLocaleString()}</b> <small style="opacity:0.7;">(${o.from})</small></span></div>
                     <div class="hist-row"><i class="fas fa-money-bill-wave" style="color:var(--success);"></i><span>وەرگیرا: <b>${o.total}</b> <small style="opacity:0.7;">(${o.to})</small></span></div>
                     <div class="hist-row"><i class="fas fa-user" style="color:#f87171;"></i><span>وەرگر: <b>${o.userPh}</b></span></div>
                     <div class="hist-row"><i class="fas fa-clock" style="color:var(--main);"></i><span style="font-size:11px; opacity:0.8;">کات: ${o.time}</span></div>
@@ -228,9 +215,6 @@
         }
         document.getElementById('historyList').innerHTML = html;
     });
-    
-    // بانگکردنی ئەپدەیت بۆ یەکەمجار
-    updateWallet();
 </script>
 </body>
 </html>
