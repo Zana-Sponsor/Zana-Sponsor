@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | Pro v2.5</title>
+    <title>Zana Exchange | v2.5 Stable</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -24,19 +24,21 @@
         .file-label { display: block; background: #334155; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px dashed var(--main); font-size: 12px; }
         #imageInput { display: none; }
         .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        
+        /* شێوازی نوێی مێژوو */
         .history-section { margin-top: 25px; }
-        .hist-item { background: #1e293b; padding: 12px; border-radius: 15px; margin-bottom: 10px; border-right: 5px solid var(--main); position: relative; }
-        .status-tag { font-size: 10px; padding: 2px 8px; border-radius: 4px; float: left; font-weight: bold; color: white; }
+        .hist-item { background: #1e293b; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-right: 5px solid var(--main); position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .status-tag { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: bold; color: white; }
+        .hist-row { display: flex; justify-content: space-between; font-size: 13px; margin-top: 5px; }
+        .hist-label { color: #94a3b8; }
+        .hist-val { font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="card">
-        <div class="logo-section">
-            <span class="logo-title">ZANA EXCHANGE</span>
-        </div>
-
+        <div class="logo-section"><span class="logo-title">ZANA EXCHANGE</span></div>
         <div class="wallet">
             <span style="font-size: 10px; color: var(--main);">بۆ ناردنی پارە (Send To)</span>
             <span class="num" id="myNum">07510074008</span>
@@ -53,10 +55,8 @@
         </div>
 
         <div class="group"><label>ژمارەی نێرەر</label><input type="text" id="senderPhone" placeholder="07XXXXXXXX"></div>
-        <div class="group"><label>بڕی ناردن</label><input type="number" id="amt" placeholder="100000" oninput="calc()"></div>
-
+        <div class="group"><label>بڕی ناردن (IQD)</label><input type="number" id="amt" placeholder="100000" oninput="calc()"></div>
         <div class="res-box"><span class="total" id="total">0 دینار</span></div>
-
         <div class="group"><label>ژمارەی وەرگر</label><input type="text" id="userPhone" placeholder="07XXXXXXXX"></div>
         <div class="group"><label for="imageInput" class="file-label">وێنەی وەسڵ دابنێ</label><input type="file" id="imageInput" accept="image/*"></div>
 
@@ -64,13 +64,12 @@
     </div>
 
     <div class="history-section">
-        <h4 style="color:var(--main)">🕒 دۆخی ئۆردەرەکانت</h4>
+        <h4 style="color:var(--main); margin-bottom: 15px;"><i class="fas fa-history"></i> دوایین مامەڵەکان</h4>
         <div id="historyList">باردەکرێت...</div>
     </div>
 </div>
 
 <script>
-    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU",
         authDomain: "zana-exchange.firebaseapp.com",
@@ -98,34 +97,49 @@
         if(!amt || !senderPh || !userPh) return alert("تکایە خانەکان پڕ بکەرەوە");
 
         const orderID = Math.floor(10000 + Math.random() * 90000);
+        const time = new Date().toLocaleTimeString('ku-IQ');
         
-        // پاشەکەوتکردن لە فایەربەیس
         await db.ref('orders/' + orderID).set({
-            orderID, senderPh, userPh, amt, total, from, status: 'pending', time: new Date().toLocaleTimeString()
+            orderID, senderPh, userPh, amt, total, from, to: "FIB/FastPay", status: 'pending', time: time
         });
 
         alert("داواکارییەکەت نێردرا! کۆدی تۆ: #" + orderID);
-        // لێرە دەتوانی کۆدی ناردنی تێلێگرامەکەش وەک خۆی بهێڵیتەوە ئەگەر ویستت
     }
 
-    // --- ئەمە ئەو بەشەیە کە "قبوڵ و ڕەتکردنەوە" لە فایەربەیسەوە دەخوێنێتەوە ---
+    // لێرەدا وردەکارییەکان بۆ بەشی مێژوو زیاد کراوە
     db.ref('orders').on('value', (snap) => {
         const data = snap.val();
         let html = "";
         if (data) {
-            Object.values(data).reverse().slice(0, 5).forEach(o => {
+            Object.values(data).reverse().slice(0, 10).forEach(o => {
                 let color = o.status === 'accepted' ? 'var(--success)' : o.status === 'rejected' ? 'var(--danger)' : 'var(--main)';
-                let text = o.status === 'pending' ? 'چاوەڕوان' : o.status === 'accepted' ? 'تەواو بوو' : 'ڕەتکراوە';
+                let text = o.status === 'pending' ? 'چاوەڕوان' : o.status === 'accepted' ? 'تەواو بوو ✅' : 'ڕەتکراوە ❌';
 
                 html += `
                     <div class="hist-item" style="border-right-color: ${color}">
-                        <span class="status-tag" style="background:${color}">${text}</span>
-                        <b>#${o.orderID}</b> | ${o.amt} IQD <br>
-                        <small style="opacity:0.7">${o.time}</small>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b style="color:var(--main)">#${o.orderID}</b>
+                            <span class="status-tag" style="background:${color}">${text}</span>
+                        </div>
+                        
+                        <div class="hist-row">
+                            <span class="hist-label">بڕی نێردراو:</span>
+                            <span class="hist-val">${o.amt} IQD (${o.from})</span>
+                        </div>
+                        
+                        <div class="hist-row">
+                            <span class="hist-label">بڕی وەرگیراو:</span>
+                            <span class="hist-val" style="color:var(--success)">${o.total}</span>
+                        </div>
+
+                        <div style="font-size: 10px; opacity:0.5; margin-top:8px; display:flex; justify-content:space-between;">
+                            <span>📱 ${o.userPh}</span>
+                            <span>⏰ ${o.time}</span>
+                        </div>
                     </div>`;
             });
         }
-        document.getElementById('historyList').innerHTML = html || "هیچ ئۆردەرێک نییە";
+        document.getElementById('historyList').innerHTML = html || "هیچ مامەڵەیەک نییە";
     });
 </script>
 </body>
