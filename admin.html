@@ -9,37 +9,30 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; --border: #334155; }
-        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; overflow-x: hidden; }
-        .container { max-width: 700px; margin: auto; display: none; padding-bottom: 50px; }
+        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
+        .container { max-width: 700px; margin: auto; display: none; }
         
-        /* Login Screen */
         #login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 10000; }
-        .login-box { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid var(--border); width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .login-box { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid var(--border); width: 320px; text-align: center; }
 
-        /* Stats & Tabs */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
         .stat-card span { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 5px; }
-        .stat-card b { font-size: 18px; display: block; white-space: nowrap; }
+        .stat-card b { font-size: 18px; display: block; }
         .sales-box { border: 1px solid var(--main); grid-column: span 3; padding: 20px; }
         .sales-box b { font-size: 28px; color: var(--main); }
 
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid var(--border); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; font-weight: bold; transition: 0.3s; }
-        .tab-btn.active { background: var(--main); color: #000; border-color: var(--main); }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid var(--border); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; font-weight: bold; }
+        .tab-btn.active { background: var(--main); color: #000; }
 
-        /* Sections */
-        .admin-box { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; display: none; animation: fadeIn 0.4s ease; }
+        .admin-box { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; display: none; }
         .admin-box.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #0f172a; color: white; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; outline: none; }
-        input:focus { border-color: var(--main); }
-        .btn-main { background: var(--main); color: black; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.98); }
+        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #0f172a; color: white; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; }
+        .btn-main { background: var(--main); color: black; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; }
 
-        /* Orders & Lists */
-        .order-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
+        .order-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .order-card.accepted { border-right: 8px solid var(--success); }
         .order-card.rejected { border-right: 8px solid var(--danger); opacity: 0.8; }
         
@@ -47,22 +40,25 @@
         .list-item { background: #0f172a; padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         
         .btn-group { display: flex; gap: 8px; margin-top: 15px; }
-        .btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
+        .btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; }
         .btn-acc { background: var(--success); }
         .btn-rej { background: var(--danger); }
         .btn-del { background: #475569; flex: 0.3; }
-        .img-thumb { width: 55px; height: 55px; border-radius: 8px; border: 1px solid var(--border); object-fit: cover; cursor: pointer; }
-        .tag { font-size: 10px; padding: 2px 6px; background: var(--main); color: #000; border-radius: 4px; margin-left: 5px; font-weight: bold; }
+        .img-thumb { width: 55px; height: 55px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; }
+        .tag { font-size: 10px; padding: 2px 6px; background: var(--main); color: #000; border-radius: 4px; margin-right: 5px; }
+
+        /* Preview for Notification in Admin */
+        .notif-preview { background: #facc15; color: black; padding: 10px; border-radius: 10px; margin-top: 10px; font-weight: bold; text-align: center; font-size: 14px; display: none; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
     <div class="login-box">
-        <i class="fas fa-shield-alt" style="font-size: 45px; color: var(--main); margin-bottom: 20px;"></i>
-        <h2 style="margin-bottom: 20px;">Zana Pro Panel</h2>
+        <i class="fas fa-lock" style="font-size: 40px; color: var(--main); margin-bottom: 20px;"></i>
+        <h2>چوونەژوورەوە</h2>
         <input type="password" id="adminPass" placeholder="وشەی نهێنی...">
-        <button class="btn-main" onclick="checkAuth()">چوونەژوورەوە</button>
+        <button class="btn-main" onclick="checkAuth()">Login</button>
     </div>
 </div>
 
@@ -86,7 +82,7 @@
     <div class="tabs">
         <button class="tab-btn active" onclick="openTab('orders-tab', this)">ئۆردەرەکان</button>
         <button class="tab-btn" onclick="openTab('wallets-tab', this)">واڵێت و نرخەکان</button>
-        <button class="tab-btn" onclick="openTab('notif-tab', this)">ئاگاداری</button>
+        <button class="tab-btn" onclick="openTab('notif-tab', this)">ئاگاداری (Notification)</button>
         <button class="tab-btn" onclick="location.reload()" style="background:#475569; color:white;">Logout</button>
     </div>
 
@@ -95,24 +91,26 @@
     </div>
 
     <div id="wallets-tab" class="admin-box">
-        <h3 style="margin-top:0;"><i class="fas fa-plus-circle" style="color:var(--main)"></i> زیادکردنی دراو</h3>
-        <input type="text" id="wName" placeholder="ناوی دراو (وەک: ZainCash)">
-        <input type="text" id="wNum" placeholder="ژمارەی وەرگرتنی پارە">
-        <input type="number" id="wFee" step="0.01" value="0.95" placeholder="حمولە (0.95 واتە 5% بڕین)">
+        <h3 style="margin-top:0;"><i class="fas fa-wallet" style="color:var(--main)"></i> دراوەکان</h3>
+        <input type="text" id="wName" placeholder="ناوی دراو">
+        <input type="text" id="wNum" placeholder="ژمارەی وەرگرتن">
+        <input type="number" id="wFee" step="0.01" value="0.95">
         <select id="wType">
-            <option value="both">Both (ناردن و وەرگرتن)</option>
-            <option value="from">تەنها ناردن (From)</option>
-            <option value="to">تەنها وەرگرتن (To)</option>
+            <option value="both">Both</option>
+            <option value="from">From</option>
+            <option value="to">To</option>
         </select>
-        <button class="btn-main" onclick="addMethod()">پاشەکەوتکردن</button>
-        <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
-        <div id="methodsList"></div>
+        <button class="btn-main" onclick="addMethod()">زیادکردن</button>
+        <div id="methodsList" style="margin-top:20px;"></div>
     </div>
 
     <div id="notif-tab" class="admin-box">
-        <h3 style="margin-top:0;"><i class="fas fa-bell" style="color:var(--main)"></i> نامەی گشتی بۆ کڕیار</h3>
-        <textarea id="notifMsg" rows="4" placeholder="نامەکە لێرە بنووسە تا لە سەرەوەی سایتی کڕیار دەربکەوێت..."></textarea>
-        <button class="btn-main" onclick="sendAlert()">ناردنی پەیام</button>
+        <h3 style="margin-top:0;"><i class="fas fa-bullhorn" style="color:var(--main)"></i> ئاگاداری سایتی سەرەکی</h3>
+        <textarea id="notifMsg" rows="3" placeholder="نامەیەک بنووسە بۆ کڕیاران..."></textarea>
+        <button class="btn-main" onclick="sendAlert()">بڵاوکردنەوەی ئاگاداری</button>
+        <button class="btn-main" onclick="deleteAlert()" style="background:#475569; color:white; margin-top:5px;">سڕینەوەی ئاگاداری</button>
+        
+        <div id="currentNotifPreview" class="notif-preview"></div>
     </div>
 </div>
 
@@ -134,7 +132,7 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('mainUI').style.display = 'block';
             startApp();
-        } else { alert("وشەی نهێنی هەڵەیە!"); }
+        } else { alert("هەڵەیە!"); }
     }
 
     function openTab(id, btn) {
@@ -145,101 +143,98 @@
     }
 
     function playNewOrderSound() {
-        try {
-            const msg = new SpeechSynthesisUtterance("New Order Received");
-            msg.lang = 'en-US';
-            msg.rate = 1;
-            window.speechSynthesis.speak(msg);
-        } catch(e) { console.log("Sound Error"); }
+        const msg = new SpeechSynthesisUtterance("New Order");
+        window.speechSynthesis.speak(msg);
     }
 
     function startApp() {
-        // Orders Listener
+        // Orders
         db.ref('orders').on('value', snap => {
             const data = snap.val();
             let html = ""; let sales = 0, acc = 0, rej = 0, total = 0;
             if(data) {
-                const ordersArray = Object.values(data);
-                total = ordersArray.length;
-                
+                const arr = Object.values(data);
+                total = arr.length;
                 if (!firstLoad && total > lastOrderCount) playNewOrderSound();
                 lastOrderCount = total; firstLoad = false;
-
-                ordersArray.reverse().forEach(o => {
+                arr.reverse().forEach(o => {
                     if(o.status === 'accepted') { sales += parseInt(o.amt) || 0; acc++; }
                     if(o.status === 'rejected') rej++;
                     let cls = o.status === 'accepted' ? 'accepted' : (o.status === 'rejected' ? 'rejected' : '');
-                    
-                    html += `
-                    <div class="order-card ${cls}">
-                        <div style="display:flex; justify-content:space-between; font-size:12px; color:#94a3b8; margin-bottom:10px;">
-                            <span>#${o.orderID}</span><span><i class="far fa-clock"></i> ${o.time}</span>
-                        </div>
+                    html += `<div class="order-card ${cls}">
+                        <div style="display:flex; justify-content:space-between; font-size:12px;"><span>#${o.orderID}</span><span>${o.time}</span></div>
                         <div class="exchange-row">
-                            <div style="text-align:center;"><small style="color:#94a3b8">ناردوویەتی</small><br><b style="color:var(--main)">${o.amt} ${o.from}</b></div>
-                            <i class="fas fa-chevron-left" style="color:var(--main)"></i>
-                            <div style="text-align:center;"><small style="color:#94a3b8">بۆی بکە بە</small><br><b style="color:var(--success)">${o.total} ${o.to}</b></div>
+                            <b>${o.amt} ${o.from}</b> <i class="fas fa-arrow-left"></i> <b>${o.total} ${o.to}</b>
                         </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
-                            <div style="font-size:13px; line-height:1.6;">نێرەر: <b>${o.senderPh}</b><br>بۆ: <b>${o.userPh}</b></div>
-                            <img src="${o.image || 'https://via.placeholder.com/100?text=No+Image'}" class="img-thumb" onclick="window.open(this.src)">
-                        </div>
+                        <div style="font-size:13px; margin-bottom:10px;">نێرەر: ${o.senderPh}<br>بۆ: ${o.userPh}</div>
                         <div class="btn-group">
-                            <button class="btn btn-acc" onclick="updateStatus('${o.orderID}', 'accepted')">قبوڵکردن</button>
-                            <button class="btn btn-rej" onclick="updateStatus('${o.orderID}', 'rejected')">ڕەتکردنەوە</button>
-                            <button class="btn btn-del" onclick="deleteOrder('${o.orderID}')"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-acc" onclick="updateStatus('${o.orderID}', 'accepted')">قبوڵ</button>
+                            <button class="btn btn-rej" onclick="updateStatus('${o.orderID}', 'rejected')">ڕەت</button>
+                            <button class="btn btn-del" onclick="deleteOrder('${o.orderID}')">X</button>
                         </div>
                     </div>`;
                 });
             }
-            document.getElementById('ordersList').innerHTML = html || "<center style='padding:50px; color:#64748b;'>هیچ داواکارییەک نییە</center>";
+            document.getElementById('ordersList').innerHTML = html;
             document.getElementById('totalSales').innerText = sales.toLocaleString();
             document.getElementById('accCount').innerText = acc;
             document.getElementById('rejCount').innerText = rej;
             document.getElementById('totalCount').innerText = total;
         });
 
-        // Methods Listener
+        // Wallets
         db.ref('methods').on('value', snap => {
             let html = ""; const data = snap.val();
             if(data) Object.keys(data).forEach(k => {
                 const m = data[k];
-                html += `
-                <div class="list-item">
-                    <div><b>${m.name}</b> <span class="tag">${m.type}</span><br>
-                    <small style="color:#94a3b8">${m.value} | حمولە: ${Math.round((1-m.fee)*100)}%</small></div>
-                    <button onclick="db.ref('methods/${k}').remove()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:18px;"><i class="fas fa-trash-alt"></i></button>
+                html += `<div class="list-item">
+                    <span>${m.name} (${m.type})</span>
+                    <button onclick="db.ref('methods/${k}').remove()" style="color:red; background:none; border:none;">X</button>
                 </div>`;
             });
             document.getElementById('methodsList').innerHTML = html;
         });
 
-        // Load existing notification
-        db.ref('settings/alertMsg').once('value', s => { if(s.val()) document.getElementById('notifMsg').value = s.val(); });
+        // Notification Listener (ئەوەی لەسەر سایتە لێرەش پیشان دەدرێت)
+        db.ref('settings/alertMsg').on('value', snap => {
+            const msg = snap.val();
+            const preview = document.getElementById('currentNotifPreview');
+            if(msg) {
+                preview.innerText = "ئێستا ئەمە لە سایتە: " + msg;
+                preview.style.display = "block";
+                document.getElementById('notifMsg').value = msg;
+            } else {
+                preview.style.display = "none";
+            }
+        });
     }
 
     function addMethod() {
         const name = document.getElementById('wName').value;
-        const val = document.getElementById('wNum').value;
         const fee = document.getElementById('wFee').value;
-        const type = document.getElementById('wType').value;
-        if(name && fee) {
-            db.ref('methods').push({ name, value: val || "---", fee: parseFloat(fee), type }).then(() => {
-                alert("بە سەرکەوتوویی زیاد کرا"); 
-                document.getElementById('wName').value = ""; 
-                document.getElementById('wNum').value = "";
-            });
-        } else { alert("تکایە ناو و حمولە بنووسە"); }
+        if(name) db.ref('methods').push({ name, value: document.getElementById('wNum').value, fee: parseFloat(fee), type: document.getElementById('wType').value });
     }
 
-    async function sendAlert() {
+    // --- فەنکشنە چاککراوەکانی ئاگاداری ---
+    function sendAlert() {
         const msg = document.getElementById('notifMsg').value;
-        await db.ref('settings').update({ alertMsg: msg });
-        alert("ئاگادارییەکە نوێکرایەوە!");
+        if(msg) {
+            db.ref('settings').update({ alertMsg: msg })
+            .then(() => alert("ئاگادارییەکە بڵاوکرایەوە!"))
+            .catch(err => alert("هەڵە: " + err));
+        }
+    }
+
+    function deleteAlert() {
+        db.ref('settings/alertMsg').remove()
+        .then(() => {
+            document.getElementById('notifMsg').value = "";
+            alert("ئاگادارییەکە سڕایەوە!");
+        });
     }
 
     function updateStatus(id, s) { db.ref('orders/' + id).update({ status: s }); }
-    function deleteOrder(id) { if(confirm('ئایا دڵنیای لە سڕینەوە؟')) db.ref('orders/' + id).remove(); }
+    function deleteOrder(id) { if(confirm('بسڕێتەوە؟')) db.ref('orders/' + id).remove(); }
 </script>
 </body>
 </html>
