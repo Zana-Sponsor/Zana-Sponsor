@@ -19,15 +19,15 @@
         .google-card { background: var(--card); padding: 40px 20px; border-radius: 30px; text-align: center; width: 85%; border: 1px solid var(--main); }
         .google-btn { background: white; color: black; border: none; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 20px; }
 
-        /* پۆپ ئەپی تێلیگرام */
-        #teleAlert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); display: none; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(8px); }
-        .alert-box { background: var(--card); padding: 35px 25px; border-radius: 35px; width: 85%; max-width: 320px; text-align: center; border: 2px solid var(--telegram); animation: popIn 0.4s ease-out; }
-        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        #teleAlert { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(5px); }
+        .alert-box { background: var(--card); padding: 30px; border-radius: 30px; width: 80%; max-width: 300px; text-align: center; border: 1px solid var(--telegram); }
+        .alert-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .alert-btns a, .alert-btns button { flex: 1; padding: 12px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; font-family: 'Tahoma'; text-decoration: none; font-size: 14px; }
+        .btn-join { background: var(--telegram); color: white; }
+        .btn-ok { background: #334155; color: white; }
 
-        /* پەیوەندی خێرا بە نوسینەوە */
         .social-links { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .social-btn { display: flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 12px; font-size: 13px; font-weight: bold; color: white; text-decoration: none; transition: 0.3s; }
-        .social-btn i { font-size: 18px; }
+        .social-btn { display: flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 12px; font-size: 13px; font-weight: bold; color: white; text-decoration: none; }
 
         .header-brand { text-align: center; margin-bottom: 25px; }
         .logo-icon { font-size: 55px; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -57,13 +57,13 @@
 
 <div id="teleAlert">
     <div class="alert-box">
-        <div style="background: var(--telegram); width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
-            <i class="fab fa-telegram-plane" style="font-size: 30px; color: white;"></i>
+        <i class="fas fa-headset" style="font-size: 40px; color: var(--main); margin-bottom: 15px;"></i>
+        <h3 style="margin: 0; color: white;">پەیوەندیمان پێوە بکە</h3>
+        <p style="font-size: 13px; color: #94a3b8; margin-top: 10px;">بۆ هەر کێشەیەک جۆینی تێلیگرام بن</p>
+        <div class="alert-btns">
+            <a href="https://t.me/zana_exchange" target="_blank" class="btn-join">جۆین بکە</a>
+            <button onclick="closeTeleAlert()" class="btn-ok">باشە</button>
         </div>
-        <h3 style="margin: 0 0 10px 0; color: white;">پەیوەندیمان پێوە بکەن</h3>
-        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">بۆ وەرگرتنی نوێترین نرخ، جۆینی کەناڵی فەرمی بن.</p>
-        <a href="https://t.me/zana_exchange" target="_blank" class="btn" style="background: var(--telegram); color: white; text-decoration: none; display: block; margin-bottom: 10px;">Telegram</a>
-        <button onclick="closeTeleAlert()" style="background:none; border:none; color: #64748b; cursor:pointer; font-size: 12px;">پاشان (باشە)</button>
     </div>
 </div>
 
@@ -162,6 +162,10 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
+    // زانیارییەکانی تێلیگرام کە ناردت
+    const TELE_TOKEN = "8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo";
+    const TELE_CHAT_ID = "6259019006";
+
     function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
     function closeTeleAlert() { document.getElementById('teleAlert').style.display = 'none'; }
 
@@ -213,18 +217,44 @@
         const user = auth.currentUser;
         const amt = document.getElementById('amt').value;
         const ph = document.getElementById('userPhone').value;
+        const from = document.getElementById('from').value;
+        const to = document.getElementById('to').value;
+        const sender = document.getElementById('senderPhone').value;
+        const total = document.getElementById('totalDisplay').innerText;
+
         if(!amt || !ph.startsWith('07') || ph.length !== 11) return alert("تکایە داتا دروست بنووسە");
         
         const id = Math.floor(10000 + Math.random() * 90000);
+        
+        // ١. پاشەکەوتکردن لە فایەربەیس
         await db.ref('orders/' + id).set({
             uEmail: user.email, orderID: id,
-            amt: (document.getElementById('from').value === 'USDT') ? amt + "$" : amt + " IQD",
-            total: document.getElementById('totalDisplay').innerText,
-            from: document.getElementById('from').value, to: document.getElementById('to').value,
-            userPh: ph, sender: document.getElementById('senderPhone').value,
+            amt: (from === 'USDT') ? amt + "$" : amt + " IQD",
+            total: total,
+            from: from, to: to,
+            userPh: ph, sender: sender,
             status: 'pending', time: new Date().toLocaleString('ku-IQ')
         });
-        alert("داواکاری نێردرا #" + id);
+
+        // ٢. ناردنی نامەی ئاگادارکەرەوە بۆ تێلیگرامەکەت
+        const text = `
+🆕 داواکاری نوێ: #${id}
+------------------------
+👤 نێرەر: ${sender}
+📥 ناردن لە: ${from}
+📤 وەرگرتن بە: ${to}
+💰 بڕی پارە: ${amt}
+✅ بڕی گۆڕاو: ${total}
+📞 ژمارەی وەرگر: ${ph}
+📧 ئیمەیڵ: ${user.email}
+------------------------
+⏰ کات: ${new Date().toLocaleString('ku-IQ')}
+        `;
+
+        fetch(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage?chat_id=${TELE_CHAT_ID}&text=${encodeURIComponent(text)}`)
+        .then(() => {
+            alert("داواکاری نێردرا #" + id);
+        });
     }
 
     function loadHistory(email) {
