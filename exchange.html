@@ -3,30 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Exchange | Phone Login</title>
+    <title>Zana Exchange | Secure Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; --gold: linear-gradient(135deg, #facc15 0%, #eab308 100%); }
+        :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --gold: linear-gradient(135deg, #facc15 0%, #eab308 100%); }
         body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; }
         .container { max-width: 400px; margin: auto; display: none; }
         
         /* Login Screen */
-        #loginScreen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 15px; }
-        .input-box { width: 85%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: white; text-align: center; font-size: 16px; }
-        .login-btn { background: var(--gold); color: #000; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 85%; }
+        #loginScreen { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px; }
+        .input-box { width: 85%; padding: 14px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: white; text-align: center; }
+        .login-btn { background: var(--gold); color: #000; border: none; padding: 14px; width: 85%; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .switch-btn { font-size: 12px; color: var(--main); cursor: pointer; text-decoration: underline; }
 
-        /* Header & Info */
-        .header-info { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 12px 15px; border-radius: 20px; margin-bottom: 15px; }
-        .user-profile { display: flex; align-items: center; gap: 10px; }
-        .user-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--main); color: #000; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        
+        .header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 20px; }
         .card { background: var(--card); padding: 25px; border-radius: 25px; border: 1px solid #334155; }
         .group { margin-bottom: 15px; }
         label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 6px; }
-        input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; text-align: inherit; }
+        input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
         .btn { background: var(--gold); color: #000; border: none; width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
@@ -34,44 +31,34 @@
 
 <div id="loginScreen">
     <h2 style="color:var(--main)">ZANA EXCHANGE</h2>
-    <p style="color:#94a3b8;">تکایە بە ژمارە مۆبایل بچۆ ژوورەوە</p>
+    <p id="loginTitle" style="color:#94a3b8; font-size: 14px;">چوونەژوورەوە</p>
     
-    <div id="phoneInputSection" style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-        <input type="tel" id="phoneNumber" class="input-box" placeholder="+964 7XX XXX XXXX">
-        <div id="recaptcha-container"></div>
-        <button class="login-btn" onclick="sendOTP()">کۆدی دڵنیایی بنێرە</button>
-    </div>
-
-    <div id="otpSection" style="width: 100%; display: none; flex-direction: column; align-items: center; gap: 10px;">
-        <input type="number" id="otpCode" class="input-box" placeholder="کۆدی 6 ژمارەیی">
-        <button class="login-btn" onclick="verifyOTP()">داخل بە</button>
-    </div>
+    <input type="email" id="userEmail" class="input-box" placeholder="Email (ئیمەیڵ)">
+    <input type="password" id="userPass" class="input-box" placeholder="Password (پاسوۆرد)">
+    
+    <button class="login-btn" id="mainBtn" onclick="handleAuth()">چوونەژوورەوە</button>
+    <p class="switch-btn" id="toggleLink" onclick="toggleMode()">هەژماری نوێ دروست بکە</p>
 </div>
 
 <div class="container" id="mainApp">
-    <div class="header-info">
-        <div class="user-profile">
-            <div class="user-icon"><i class="fas fa-user"></i></div>
-            <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                <span id="uPhoneDisplay" style="font-size: 12px; font-weight: bold;">...</span>
-                <span onclick="signOut()" style="color:var(--danger); font-size:10px; cursor:pointer;">Logout</span>
-            </div>
+    <div class="header">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <i class="fas fa-user-circle" style="font-size:30px; color:var(--main)"></i>
+            <span id="displayEmail" style="font-size:12px;">...</span>
         </div>
-        <div style="text-align: left;">
-            <span id="liveTime" style="font-size: 14px; font-weight: bold; color: var(--main); font-family: monospace; display: block;">00:00:00</span>
-        </div>
+        <button onclick="signOut()" style="background:none; border:1px solid red; color:red; padding:5px 10px; border-radius:8px; font-size:10px;">Logout</button>
     </div>
 
     <div class="card">
         <div class="group">
             <label>بڕی پارە</label>
-            <input type="number" id="amt" placeholder="100000" oninput="calc()">
+            <input type="number" id="amt" placeholder="100000">
         </div>
         <div class="group">
             <label>ژمارەی وەرگر</label>
-            <input type="tel" id="receiverPhone" placeholder="07XXXXXXXXX" maxlength="11">
+            <input type="tel" id="receiverPhone" placeholder="07XXXXXXXXX">
         </div>
-        <button class="btn" onclick="processOrder()">ناردنی داواکاری</button>
+        <button class="btn" onclick="sendOrder()">ناردنی داواکاری</button>
     </div>
 </div>
 
@@ -86,73 +73,30 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
-    let confirmationResult;
+    let isLoginMode = true;
 
-    // ئامادەکردنی ReCaptcha بۆ ئەمنیەت
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        'size': 'invisible'
-    });
-
-    function sendOTP() {
-        const phone = document.getElementById('phoneNumber').value;
-        if(!phone.startsWith('+')) return alert("تکایە ژمارەکە بە کۆدی وڵات بنووسە (نموونە: +964750...)");
-
-        auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
-            .then((result) => {
-                confirmationResult = result;
-                document.getElementById('phoneInputSection').style.display = 'none';
-                document.getElementById('otpSection').style.display = 'flex';
-                alert("کۆدەکە بۆ مۆبایلەکەت نێردرا");
-            }).catch((error) => {
-                alert("هەڵە: " + error.message);
-            });
+    function toggleMode() {
+        isLoginMode = !isLoginMode;
+        document.getElementById('loginTitle').innerText = isLoginMode ? "چوونەژوورەوە" : "دروستکردنی هەژمار";
+        document.getElementById('mainBtn').innerText = isLoginMode ? "چوونەژوورەوە" : "تۆمارکردن";
+        document.getElementById('toggleLink').innerText = isLoginMode ? "هەژماری نوێ دروست بکە" : "خۆم هەژمارم هەیە";
     }
 
-    function verifyOTP() {
-        const code = document.getElementById('otpCode').value;
-        confirmationResult.confirm(code).then((result) => {
-            console.log("Logged in!");
-        }).catch((error) => {
-            alert("کۆدەکە هەڵەیە");
-        });
+    function handleAuth() {
+        const email = document.getElementById('userEmail').value;
+        const pass = document.getElementById('userPass').value;
+
+        if(!email || !pass) return alert("تکایە خانەکان پڕ بکەرەوە");
+
+        if(isLoginMode) {
+            auth.signInWithEmailAndPassword(email, pass).catch(e => alert("هەڵە: " + e.message));
+        } else {
+            auth.createUserWithEmailAndPassword(email, pass).catch(e => alert("هەڵە: " + e.message));
+        }
     }
 
-    function signOut() { auth.signOut(); location.reload(); }
+    function signOut() { auth.signOut(); }
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('uPhoneDisplay').innerText = user.phoneNumber;
-        } else {
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('mainApp').style.display = 'none';
-        }
-    });
-
-    // کاتەکە
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('liveTime').innerText = now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Baghdad' });
-    }, 1000);
-
-    function calc() { /* لێرەدا کۆدی حیساباتەکە دابنێ */ }
-
-    async function processOrder() {
-        const user = auth.currentUser;
-        if(!user) return;
-        const amt = document.getElementById('amt').value;
-        const phone = document.getElementById('receiverPhone').value;
-        
-        await db.ref('orders').push({
-            uid: user.uid,
-            userPhone: user.phoneNumber,
-            amount: amt,
-            receiver: phone,
-            time: new Date().toLocaleString()
-        });
-        alert("داواکارییەکەت نێردرا!");
-    }
-</script>
-</body>
-</html>
+            document.getElementById('loginScreen').style.display =
