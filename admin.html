@@ -2,96 +2,139 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Zana Admin Fix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zana Sales Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { font-family: Tahoma; background: #0f172a; color: white; padding: 20px; text-align: right; }
-        .box { background: #1e293b; padding: 20px; border-radius: 15px; max-width: 500px; margin: auto; border: 1px solid #334155; }
-        input, select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #334155; box-sizing: border-box; }
-        button { background: #facc15; color: black; font-weight: bold; cursor: pointer; border: none; }
-        .item { background: #0f172a; padding: 10px; margin-top: 10px; border-radius: 8px; display: flex; justify-content: space-between; }
+        :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; --border: #334155; }
+        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; text-align: right; }
+        .container { max-width: 700px; margin: auto; }
+        
+        /* Stats Card */
+        .sales-header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 25px; border-radius: 25px; border: 1px solid var(--main); text-align: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .sales-header span { font-size: 14px; color: #94a3b8; display: block; margin-bottom: 5px; }
+        .sales-header b { font-size: 32px; color: var(--main); text-shadow: 0 0 10px rgba(250, 204, 21, 0.3); }
+
+        /* Order Card */
+        .order-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); transition: 0.3s; position: relative; overflow: hidden; }
+        .order-card.accepted { border-right: 8px solid var(--success); }
+        .order-card.rejected { border-right: 8px solid var(--danger); opacity: 0.7; }
+        
+        .order-id { font-size: 12px; color: #94a3b8; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        
+        .exchange-box { background: rgba(15, 23, 42, 0.6); padding: 15px; border-radius: 15px; margin: 15px 0; border: 1px dashed var(--border); display: flex; align-items: center; justify-content: space-around; text-align: center; }
+        .exchange-box i { color: var(--main); font-size: 18px; }
+        .amount-text { font-size: 18px; font-weight: bold; }
+        
+        .user-info { font-size: 13px; color: #cbd5e1; margin-bottom: 15px; line-height: 1.6; }
+        .user-info b { color: white; }
+
+        /* Action Buttons */
+        .actions { display: flex; gap: 10px; }
+        .btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; color: white; }
+        .btn-success { background: var(--success); }
+        .btn-danger { background: var(--danger); }
+        .btn-delete { background: #475569; flex: 0.3; }
+        .btn:active { transform: scale(0.95); }
+
+        .image-preview { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; cursor: pointer; border: 2px solid var(--border); }
     </style>
 </head>
 <body>
 
-<div class="box" id="login-div">
-    <h3>چوونەژوورەوە</h3>
-    <input type="password" id="pass" placeholder="پاسۆرد بنووسە">
-    <button onclick="login()">چوونەژوورەوە</button>
-</div>
+<div class="container">
+    <div class="sales-header">
+        <span>کۆی فرۆشی ئەمڕۆ (ئۆردەرە قبوڵکراوەکان)</span>
+        <b id="todaySales">0 IQD</b>
+    </div>
 
-<div class="box" id="admin-div" style="display:none;">
-    <h3>زیادکردنی واڵێت و حمولە</h3>
-    <input type="text" id="name" placeholder="ناوی دراو (FastPay)">
-    <input type="text" id="num" placeholder="ژمارەی وەرگرتن">
-    <input type="number" id="fee" step="0.01" value="0.95" placeholder="حمولە">
-    <select id="type">
-        <option value="both">Both</option>
-        <option value="from">From</option>
-        <option value="to">To</option>
-    </select>
-    <button onclick="saveToFirebase()">پاشەکەوتکردن</button>
-    <div id="list"></div>
+    <h3 style="margin-bottom: 20px; font-size: 18px;"><i class="fas fa-list-ul" style="color: var(--main);"></i> داواکارییە نوێیەکان</h3>
+    <div id="ordersList"></div>
 </div>
 
 <script>
-    const config = {
-        apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU",
-        authDomain: "zana-exchange.firebaseapp.com",
-        databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com",
-        projectId: "zana-exchange"
+    const firebaseConfig = { 
+        apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", 
+        authDomain: "zana-exchange.firebaseapp.com", 
+        databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", 
+        projectId: "zana-exchange" 
     };
-    firebase.initializeApp(config);
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function login() {
-        if(document.getElementById('pass').value === "zana2024") {
-            document.getElementById('login-div').style.display = 'none';
-            document.getElementById('admin-div').style.display = 'block';
-            showList();
-        } else { alert("پاسۆرد هەڵەیە!"); }
-    }
+    db.ref('orders').on('value', snap => {
+        const data = snap.val();
+        let html = ""; 
+        let totalSales = 0;
 
-    function saveToFirebase() {
-        const n = document.getElementById('name').value;
-        const v = document.getElementById('num').value;
-        const f = document.getElementById('fee').value;
-        const t = document.getElementById('type').value;
+        if(data) {
+            // گۆڕینی داتا بۆ لیست و پێچەوانەکردنەوە (بۆ ئەوەی نوێترین لە سەرەوە بێت)
+            const sortedOrders = Object.values(data).reverse();
 
-        if(n && f) {
-            // ئەوەی خوارەوە گرنگترین بەشە بۆ دڵنیابوون لەوەی ئیش دەکات
-            db.ref('methods').push({
-                name: n,
-                value: v || "---",
-                fee: parseFloat(f),
-                type: t
-            }, (error) => {
-                if (error) {
-                    alert("نەتوانرا پاشەکەوت بکرێت: " + error.message);
-                } else {
-                    alert("بە سەرکەوتوویی زیاد کرا!");
-                    document.getElementById('name').value = "";
-                    document.getElementById('num').value = "";
+            sortedOrders.forEach(o => {
+                // تەنها ئەو ئۆردەرانەی قبوڵکراون پارەکەیان کۆ دەکرێتەوە
+                if(o.status === 'accepted') {
+                    totalSales += parseInt(o.amt) || 0;
                 }
-            });
-        } else {
-            alert("ناو و حمولە بنووسە!");
-        }
-    }
 
-    function showList() {
-        db.ref('methods').on('value', (snap) => {
-            let html = "";
-            snap.forEach((child) => {
-                const d = child.val();
-                html += `<div class="item">
-                    <span>${d.name} (${Math.round((1-d.fee)*100)}%)</span>
-                    <button onclick="db.ref('methods/${child.key}').remove()" style="width:30px; padding:2px; background:red; color:white;">X</button>
+                let cardStatus = o.status === 'accepted' ? 'accepted' : (o.status === 'rejected' ? 'rejected' : '');
+
+                html += `
+                <div class="order-card ${cardStatus}">
+                    <div class="order-id">
+                        <span><i class="far fa-clock"></i> ${o.time}</span>
+                        <b>#${o.orderID}</b>
+                    </div>
+
+                    <div class="exchange-box">
+                        <div>
+                            <small style="display:block; color:#94a3b8;">ناردوویەتی</small>
+                            <span class="amount-text" style="color:var(--main)">${o.amt} ${o.from}</span>
+                        </div>
+                        <i class="fas fa-arrow-left"></i>
+                        <div>
+                            <small style="display:block; color:#94a3b8;">بۆی بکە بە</small>
+                            <span class="amount-text" style="color:var(--success)">${o.total} ${o.to}</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="user-info">
+                            نێرەر: <b>${o.senderPh}</b><br>
+                            بۆ واڵێتی: <b>${o.userPh}</b>
+                        </div>
+                        <img src="${o.image}" class="image-preview" onclick="window.open(this.src)">
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-success" onclick="updateStatus('${o.orderID}', 'accepted')">
+                            <i class="fas fa-check"></i> قبوڵکردن
+                        </button>
+                        <button class="btn btn-danger" onclick="updateStatus('${o.orderID}', 'rejected')">
+                            <i class="fas fa-times"></i> ڕەتکردنەوە
+                        </button>
+                        <button class="btn btn-delete" onclick="deleteOrder('${o.orderID}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>`;
             });
-            document.getElementById('list').innerHTML = html;
-        });
+        }
+        
+        document.getElementById('ordersList').innerHTML = html || "<center style='padding:50px; color:#475569;'>هیچ ئۆردەرێک بوونی نییە</center>";
+        document.getElementById('todaySales').innerText = totalSales.toLocaleString() + " IQD";
+    });
+
+    function updateStatus(id, status) {
+        db.ref('orders/' + id).update({ status: status });
+    }
+
+    function deleteOrder(id) {
+        if(confirm('ئایا دڵنیای لە سڕینەوەی ئەم ئۆردەرە؟')) {
+            db.ref('orders/' + id).remove();
+        }
     }
 </script>
 </body>
