@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>ZANA EXCHANGE | Pro History</title>
+    <title>ZANA EXCHANGE | Full Details</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -15,28 +15,26 @@
         :root { --accent: #00d2ff; --bg: #0a0a0c; --card-bg: #16161a; --text: #ffffff; }
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         .app-wrapper { width: 100%; max-width: 400px; display: none; }
-        .premium-card { background: var(--card-bg); border-radius: 22px; padding: 18px; margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .input-label { font-size: 12px; color: #888; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        select, input { width: 100%; background: #1f1f24; border: 1px solid #2d2d35; border-radius: 10px; padding: 12px; color: white; font-family: 'Vazirmatn'; text-align: center; outline: none; margin-bottom: 12px; box-sizing: border-box; font-size: 14px; }
+        .premium-card { background: var(--card-bg); border-radius: 22px; padding: 18px; margin-bottom: 15px; border: 1px solid rgba(255, 255, 255, 0.05); }
         
-        .file-upload { border: 2px dashed #2d2d35; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; margin-bottom: 15px; display: block; color: #888; }
-        #previewImg { width: 100%; border-radius: 10px; margin-top: 10px; display: none; border: 1px solid var(--accent); }
-
-        .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .balance-badge { background: rgba(0, 210, 255, 0.08); color: var(--accent); padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 12px; border: 1px solid rgba(0, 210, 255, 0.15); }
-        
-        /* Advanced Order History Style */
+        /* 🔥 Order Detail Card Style */
         .order-card { 
             background: #1f1f24; border-radius: 18px; padding: 15px; margin-bottom: 15px; 
             border: 1px solid #2d2d35; border-right: 4px solid var(--accent);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #2d2d35; padding-bottom: 8px; }
-        .order-detail { display: flex; align-items: center; gap: 10px; font-size: 13px; margin-bottom: 5px; color: #ccc; }
-        .order-detail i { color: var(--accent); width: 18px; text-align: center; }
-        .status-tag { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: bold; }
-        .waiting { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
-        .done { background: rgba(40, 167, 69, 0.15); color: #28a745; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #2d2d35; padding-bottom: 8px; }
+        .detail-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 13px; color: #eee; }
+        .detail-row i { color: var(--accent); width: 20px; text-align: center; font-size: 14px; }
+        .status-tag { font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: bold; }
+        .waiting { background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid #ffc107; }
+        .done { background: rgba(40, 167, 69, 0.1); color: #28a745; border: 1px solid #28a745; }
 
+        input, select { width: 100%; background: #1f1f24; border: 1px solid #2d2d35; border-radius: 10px; padding: 12px; color: white; font-family: 'Vazirmatn'; outline: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; }
+        .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .balance-badge { background: rgba(0, 210, 255, 0.08); color: var(--accent); padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 12px; border: 1px solid rgba(0, 210, 255, 0.15); }
+        .file-upload { border: 2px dashed #2d2d35; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; margin-bottom: 15px; display: block; }
+        #previewImg { width: 100%; border-radius: 10px; margin-top: 10px; display: none; }
         #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
     </style>
 </head>
@@ -44,8 +42,8 @@
 
 <div id="loginSection">
     <i class="fas fa-money-bill-transfer" style="font-size: 60px; color: var(--accent); margin-bottom: 20px;"></i>
-    <h2 style="margin:0;">ZANA EXCHANGE</h2>
-    <button class="btn-global" style="width: 280px; margin-top: 25px;" onclick="signIn()"><i class="fab fa-google"></i> چوونەژوورەوە بە Google</button>
+    <h2>ZANA EXCHANGE</h2>
+    <button class="btn-global" style="width: 250px; margin-top: 20px;" onclick="signIn()">Google Login</button>
 </div>
 
 <div class="app-wrapper" id="mainApp">
@@ -54,16 +52,15 @@
             <img id="userImg" src="" style="width:35px; border-radius:50%; border: 1px solid var(--accent);">
             <b id="userName" style="font-size: 13px;">...</b>
         </div>
-        <i class="fas fa-sign-out-alt" onclick="logout()" style="color:#666; cursor:pointer; font-size: 20px;"></i>
+        <i class="fas fa-sign-out-alt" onclick="logout()" style="color:#666; cursor:pointer;"></i>
     </div>
 
     <div class="premium-card">
-        <div style="background:#1f1f24; padding:12px; border-radius:12px; display:flex; justify-content:space-between; margin-bottom:15px; border-right: 4px solid var(--accent);">
-            <span style="font-size:13px;"><i class="fas fa-id-card"></i> ناردن بۆ: <b id="myNum" style="color:var(--accent)">---</b></span>
-            <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer; color:var(--accent); font-size: 18px;"></i>
+        <div style="background:#1f1f24; padding:10px; border-radius:12px; display:flex; justify-content:space-between; margin-bottom:15px; border-right: 4px solid var(--accent);">
+            <span style="font-size:13px;">ناردن بۆ: <b id="myNum" style="color:var(--accent)">---</b></span>
+            <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer; color:var(--accent)"></i>
         </div>
 
-        <span class="input-label"><i class="fas fa-upload"></i> ناردن لە:</span>
         <select id="from" onchange="updateWallet()">
             <option value="FastPay">💳 FastPay</option>
             <option value="FIB">🏦 FIB Bank</option>
@@ -72,9 +69,8 @@
             <option value="USDT">🪙 USDT ($)</option>
         </select>
 
-        <input type="number" id="amt" placeholder="بڕی پارەی ناردن" oninput="calc()">
+        <input type="number" id="amt" placeholder="بڕی ناردن" oninput="calc()">
 
-        <span class="input-label"><i class="fas fa-download"></i> وەرگرتن لە:</span>
         <select id="receiveVia" onchange="calc()">
             <option value="FastPay">FastPay</option>
             <option value="FIB">FIB</option>
@@ -82,23 +78,22 @@
         </select>
 
         <div class="balance-badge">
-            <small style="opacity:0.7">بڕی وەرگیراوی تۆ:</small>
-            <div id="totalDisplay" style="font-size:24px; font-weight:800;">0 IQD</div>
+            <small>بڕی وەرگیراو:</small>
+            <div id="totalDisplay" style="font-size:22px; font-weight:800;">0 IQD</div>
         </div>
 
-        <input type="tel" id="userPhone" placeholder="ژمارەی مۆبایلی وەرگر">
+        <input type="tel" id="userPhone" placeholder="ژمارەی مۆبایلەکەت">
 
         <label class="file-upload" for="fileInput">
-            <i class="fas fa-receipt" style="font-size: 24px; display: block; margin-bottom: 5px;"></i>
-            دانانی وێنەی وەسڵ
+            <i class="fas fa-receipt"></i> وێنەی وەسڵ
             <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="previewFile()">
             <img id="previewImg" src="">
         </label>
         
-        <button class="btn-global" id="submitBtn" onclick="processOrder()"><i class="fas fa-paper-plane"></i> جێبەجێکردنی داواکاری</button>
+        <button class="btn-global" id="submitBtn" onclick="processOrder()"><i class="fas fa-paper-plane"></i> ناردنی داواکاری</button>
     </div>
 
-    <h3 style="font-size:17px; margin: 20px 5px;"><i class="fas fa-list-check"></i> وردەکاری داواکارییەکان</h3>
+    <h3 style="font-size:16px; margin: 20px 5px;"><i class="fas fa-history"></i> مێژووی داواکارییەکانت</h3>
     <div id="historyList"></div>
 </div>
 
@@ -122,47 +117,35 @@
         const from = document.getElementById('from').value;
         const to = document.getElementById('receiveVia').value;
         let final = 0;
-        if (from === "Asiacell") final = (to==="FastPay") ? (amt/100000)*84000 : (to==="FIB" ? (amt/100000)*83000 : (amt/100000)*83500);
-        else if (from === "Korek") final = (to==="FastPay") ? (amt/100000)*82000 : (to==="FIB" ? (amt/100000)*81000 : (amt/100000)*81500);
-        else if (from === "USDT") final = (to==="FastPay") ? (amt/100)*145000 : (to==="FIB" ? (amt/100)*144000 : (amt/100)*144500);
+        if (from === "Asiacell") final = (amt/100000)*83000;
+        else if (from === "Korek") final = (amt/100000)*81000;
+        else if (from === "USDT") final = (amt/100)*145000;
         else final = amt * 0.99;
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " IQD";
     }
 
     function previewFile() {
         const file = document.getElementById('fileInput').files[0];
-        const preview = document.getElementById('previewImg');
-        if (file) { preview.src = URL.createObjectURL(file); preview.style.display = 'block'; }
+        if (file) { document.getElementById('previewImg').src = URL.createObjectURL(file); document.getElementById('previewImg').style.display = 'block'; }
     }
 
     async function processOrder() {
         const phone = document.getElementById('userPhone').value;
         const file = document.getElementById('fileInput').files[0];
-        if(phone.length < 10) return alert("⚠️ ژمارەی مۆبایل بنووسە!");
-        if(!file) return alert("⚠️ وێنەی وەسڵەکە دابنێ!");
-
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerText = "چاوەڕوان بە...";
+        if(phone.length < 10 || !file) return alert("⚠️ تکایە هەموو خانەکان پڕ بکەرەوە!");
 
         const orderId = Math.floor(1000 + Math.random() * 8999);
-        const timeStr = new Date().toLocaleString('ku-IQ');
-        
-        const caption = `🚀 #داواکاری_نوێ\n🆔 ID: #${orderId}\n👤 ناو: ${auth.currentUser.displayName}\n📱 ژمارە: ${phone}\n📥 ناردن: ${document.getElementById('from').value}\n📤 وەرگرتن: ${document.getElementById('receiveVia').value}\n💰 بڕ: ${document.getElementById('amt').value}\n💵 پوختە: ${document.getElementById('totalDisplay').innerText}`;
+        const date = new Date().toLocaleString('ku-IQ');
+        const caption = `🚀 داواکاری نوێ: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📱 ژمارە: ${phone}\n📥 ناردن: ${document.getElementById('from').value}\n📤 وەرگرتن: ${document.getElementById('receiveVia').value}\n💵 بڕ: ${document.getElementById('amt').value}\n💰 پوختە: ${document.getElementById('totalDisplay').innerText}`;
 
         const formData = new FormData();
-        formData.append("chat_id", TG_CHAT_ID);
-        formData.append("photo", file);
-        formData.append("caption", caption);
+        formData.append("chat_id", TG_CHAT_ID); formData.append("photo", file); formData.append("caption", caption);
 
         try {
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, { method: "POST", body: formData });
-            await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, amount: document.getElementById('amt').value, total: document.getElementById('totalDisplay').innerText, from: document.getElementById('from').value, to: document.getElementById('receiveVia').value, status: 'چاوەڕوانە', date: timeStr });
-            alert("نێردرا! ✅");
-            location.reload();
-        } catch (e) {
-            alert("هەڵە ڕوویدا!");
-            btn.disabled = false;
-        }
+            await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, from: document.getElementById('from').value, to: document.getElementById('receiveVia').value, amount: document.getElementById('amt').value, total: document.getElementById('totalDisplay').innerText, status: 'چاوەڕوانە', time: date, phone: phone });
+            alert("نێردرا ✅"); location.reload();
+        } catch(e) { alert("هەڵە ڕوویدا"); }
     }
 
     function loadHistory(email) {
@@ -170,17 +153,19 @@
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                const statusClass = o.status === 'چاوەڕوانە' ? 'waiting' : 'done';
+                const stClass = o.status === 'چاوەڕوانە' ? 'waiting' : 'done';
                 html = `
                 <div class="order-card">
                     <div class="order-header">
-                        <span style="font-weight:800; color:var(--accent)">#${c.key}</span>
-                        <span class="status-tag ${statusClass}">${o.status}</span>
+                        <span style="font-weight:800; color:var(--accent);">🆔 #${c.key}</span>
+                        <span class="status-tag ${stClass}"><i class="fas fa-circle-notch fa-spin"></i> ${o.status}</span>
                     </div>
-                    <div class="order-detail"><i class="fas fa-coins"></i> بڕی ناردن: <b>${o.amount}</b></div>
-                    <div class="order-detail"><i class="fas fa-wallet"></i> بڕی وەرگرتن: <b style="color:#28a745">${o.total}</b></div>
-                    <div class="order-detail"><i class="fas fa-right-left"></i> لە ${o.from} بۆ ${o.to}</div>
-                    <div class="order-detail"><i class="far fa-clock"></i> کات: <span style="font-size:11px">${o.date || 'نادیار'}</span></div>
+                    <div class="detail-row"><i class="fas fa-arrow-circle-up"></i> ڕێگەی ناردن: <b>${o.from}</b></div>
+                    <div class="detail-row"><i class="fas fa-arrow-circle-down"></i> وەرگرتن لەسەر: <b>${o.to}</b></div>
+                    <div class="detail-row"><i class="fas fa-money-bill-wave"></i> بڕی نێردراو: <b>${o.amount}</b></div>
+                    <div class="detail-row"><i class="fas fa-check-double"></i> بڕی وەرگیراو: <b style="color:#28a745">${o.total}</b></div>
+                    <div class="detail-row"><i class="fas fa-user-tag"></i> بۆ ژمارەی: <b>${o.phone}</b></div>
+                    <div class="detail-row"><i class="far fa-clock"></i> کاتی داواکاری: <span style="font-size:11px">${o.time}</span></div>
                 </div>` + html;
             });
             document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; color:#444;'>هیچ ئۆردەرێک نییە</p>";
