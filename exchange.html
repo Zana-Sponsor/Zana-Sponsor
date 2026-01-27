@@ -25,12 +25,14 @@
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .app-wrapper { width: 100%; max-width: 400px; display: none; }
         
+        /* Header */
         .header-section { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 10px 5px; }
         .user-info { display: flex; align-items: center; gap: 10px; }
-        .user-info img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--accent); }
+        .user-info img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--accent); }
         
         #newsBanner { width: 100%; background: linear-gradient(90deg, #3a7bd5, #00d2ff); color: #000; padding: 12px; border-radius: 15px; margin: 10px 0 20px 0; font-weight: 800; font-size: 13px; text-align: center; display: none; box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2); }
 
+        /* Main Card */
         .premium-card { background: var(--card-bg); border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); width: 100%; box-sizing: border-box; }
         
         input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: var(--text); font-family: 'Vazirmatn'; outline: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; font-size: 16px; }
@@ -38,13 +40,18 @@
         .formatted-amount { font-size: 14px; color: var(--accent); margin-top: -8px; margin-bottom: 12px; display: block; text-align: center; font-weight: 800; }
         .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 17px; }
         
+        /* Modal for Telegram */
         #tgModal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 30px; border: 1px solid var(--border); text-align: center; max-width: 320px; }
+        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 30px; border: 1px solid var(--border); text-align: center; max-width: 320px; animation: popUp 0.3s ease-out; }
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
+        /* Classic Order Design (The one you liked) */
         .order-card { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-right: 5px solid var(--accent); width: 100%; box-sizing: border-box; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--text); opacity: 0.8; }
         .detail-item i { color: var(--accent); width: 18px; text-align: center; }
         .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
+        .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
 
         #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
     </style>
@@ -53,11 +60,11 @@
 
 <div id="tgModal">
     <div class="modal-content">
-        <i class="fab fa-telegram" style="font-size: 50px; color: #0088cc; margin-bottom: 15px;"></i>
-        <h3>جۆینی تیلیگرام</h3>
-        <p>بۆ بینینی نرخەکان و کاتی وەرگرتن جۆین بن.</p>
+        <i class="fab fa-telegram" style="font-size: 55px; color: #0088cc; margin-bottom: 15px;"></i>
+        <h3>بۆ ئاگادارییەکان جۆین بن</h3>
+        <p style="font-size: 14px; opacity: 0.8; margin-bottom: 20px;">تکایە جۆینی تیلیگرام بکە بۆ بینینی دوایین نرخەکان و گۆڕانکارییەکان.</p>
         <button class="btn-global" onclick="goToTG()">جۆین بوون</button>
-        <button style="background:none; border:none; color:#777; margin-top:15px; cursor:pointer;" onclick="closeModal()">دواتر</button>
+        <button style="background:none; border:none; color:#777; margin-top:15px; cursor:pointer; font-weight:bold;" onclick="closeModal()">دواتر</button>
     </div>
 </div>
 
@@ -106,15 +113,16 @@
 
         <div style="background: rgba(0, 210, 255, 0.08); padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 15px; border: 1px solid rgba(0, 210, 255, 0.2);">
             <div id="totalDisplay" style="font-size:28px; font-weight:900; color: var(--accent);">0 IQD</div>
-            <div id="feeDisplay" style="font-size:13px; color:#ff9f43; margin-top:5px; font-weight: bold; height: 18px;"></div>
+            <div id="feeDisplay" style="font-size:12px; color:#ff9f43; margin-top:5px; font-weight: bold; height: 18px;"></div>
         </div>
 
         <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-        <input type="file" id="fileInput" accept="image/*" style="font-size:13px;">
+        <input type="file" id="fileInput" accept="image/*" style="font-size:13px; margin-top: 5px;">
         
         <button class="btn-global" id="submitBtn" onclick="processOrder()" style="margin-top: 15px;">ناردنی داواکاری</button>
     </div>
 
+    <h3 style="font-size:16px; margin: 10px 5px; width:100%;"><i class="fas fa-history"></i> مێژووی ئۆردەرەکان</h3>
     <div id="historyList" style="width: 100%;"></div>
 </div>
 
@@ -134,9 +142,11 @@
             document.getElementById('userImg').src = user.photoURL; 
             loadHistory(user.email); 
             listenToNews();
-            if(!sessionStorage.getItem('tgSeen')) {
+            
+            // Show Telegram Modal only once per login session
+            if(!sessionStorage.getItem('tgPrompted')) {
                 setTimeout(() => { document.getElementById('tgModal').style.display='flex'; }, 1000);
-                sessionStorage.setItem('tgSeen', 'true');
+                sessionStorage.setItem('tgPrompted', 'true');
             }
         } 
     });
@@ -177,31 +187,16 @@
             return; 
         }
 
-        let final = 0;
-        let fee = 0;
-
-        if (from === "Asiacell") {
-            final = amt * 0.84;
-            fee = amt - final;
-        } else if (from === "Korek") {
-            final = amt * 0.82;
-            fee = amt - final;
-        } else if (from === "USDT") {
-            final = amt * 1450;
-            fee = 0; // USDT معمولاً نرخ است نه فی مستقیم
-        } else {
-            // FastPay, FIB, QiCard
-            final = amt * 0.99;
-            fee = amt - final;
-        }
+        let final = 0; let fee = 0;
+        if (from === "Asiacell") { final = amt * 0.84; fee = amt - final; }
+        else if (from === "Korek") { final = amt * 0.82; fee = amt - final; }
+        else if (from === "USDT") { final = amt * 1450; fee = 0; }
+        else { final = amt * 0.99; fee = amt - final; }
 
         document.getElementById('totalDisplay').innerText = formatNum(Math.floor(final)) + " IQD";
-        
         if (amt > 0 && from !== "USDT") {
             document.getElementById('feeDisplay').innerText = "حمولە: " + formatNum(Math.floor(fee)) + " IQD";
-        } else {
-            document.getElementById('feeDisplay').innerText = "";
-        }
+        } else { document.getElementById('feeDisplay').innerText = ""; }
     }
 
     async function processOrder() {
@@ -211,13 +206,12 @@
         const from = document.getElementById('from').value;
         const to = document.getElementById('receiveVia').value;
 
-        if (from === to) return alert("⚠️ هەمان واڵێت نابێت!");
-        if (!phone.startsWith("07") || phone.length !== 11) return alert("⚠️ ژمارەی عێراقی ڕاست بنووسە!");
-        if(!file || !amtValue) return alert("⚠️ زانیارییەکان پڕ بکەرەوە!");
+        if (from === to) return alert("⚠️ ناتوانی بۆ هەمان واڵێت بنێریت!");
+        if (!phone.startsWith("07") || phone.length !== 11) return alert("⚠️ تەنها ژمارەی عێراقی (07) قبوڵە!");
+        if(!file || !amtValue) return alert("⚠️ هەموو زانیارییەکان پڕ بکەرەوە!");
 
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
-        
         const orderId = Math.floor(1000 + Math.random() * 8999);
         const displayAmt = (from === "USDT") ? `${formatNum(amtValue)}$` : `${formatNum(amtValue)} IQD`;
 
@@ -228,8 +222,8 @@
         try {
             await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: formData });
             await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, from, to, amount: displayAmt, total: document.getElementById('totalDisplay').innerText, phone, status: 'چاوەڕوانە', time: new Date().toLocaleString('ku-IQ') });
-            alert("نێردرا ✅"); location.reload();
-        } catch(e) { alert("هەڵە!"); btn.disabled = false; }
+            alert("داواکارییەکەت نێردرا ✅"); location.reload();
+        } catch(e) { alert("هەڵە ڕوویدا!"); btn.disabled = false; }
     }
 
     function loadHistory(email) {
@@ -237,16 +231,21 @@
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                html = `<div class="order-card">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <b>#${c.key}</b> <span class="status-badge">${o.status}</span>
+                let sClass = o.status === "وەرگیرا" ? "status-success" : "";
+                html = `
+                <div class="order-card">
+                    <div class="order-header">
+                        <span style="font-weight:800; color:var(--accent);">#${c.key}</span>
+                        <span class="status-badge ${sClass}">${o.status}</span>
                     </div>
                     <div class="detail-item"><i class="fas fa-exchange-alt"></i> ${o.from} ➔ ${o.to}</div>
-                    <div class="detail-item"><i class="fas fa-coins"></i> بڕ: ${o.amount} | وەرگیراو: <b style="color:#2ecc71">${o.total}</b></div>
-                    <div class="detail-item"><i class="fas fa-phone-alt"></i> ${o.phone}</div>
+                    <div class="detail-item"><i class="fas fa-coins"></i> بڕ: <b>${o.amount}</b></div>
+                    <div class="detail-item"><i class="fas fa-check-double"></i> بڕی وەرگیراو: <b style="color:#2ecc71">${o.total}</b></div>
+                    <div class="detail-item"><i class="fas fa-phone-alt"></i> ژمارەی وەرگرتن: ${o.phone}</div>
+                    <div class="detail-item"><i class="far fa-clock"></i> ${o.time}</div>
                 </div>` + html;
             });
-            document.getElementById('historyList').innerHTML = html;
+            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.5;'>هیچ ئۆردەرێک نییە</p>";
         });
     }
 
