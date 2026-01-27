@@ -154,7 +154,6 @@
             document.getElementById('userImg').src = user.photoURL; 
             loadHistory(user.email); 
             listenToNews();
-            // Show Telegram modal every time on refresh
             setTimeout(() => { document.getElementById('tgModal').style.display='flex'; }, 1000);
         } 
     });
@@ -189,22 +188,40 @@
         }
 
         let final = 0;
-        let fee = 0;
 
-        if (from === "Asiacell") { final = amt * 0.84; fee = amt - final; }
-        else if (from === "Korek") { final = amt * 0.82; fee = amt - final; }
-        else if (from === "USDT") { final = amt * 1450; fee = 0; }
-        else { 
-            // 1% fee for FastPay, FIB, QiCard
-            final = amt * 0.99; 
-            fee = amt - final; 
+        // Logic for Korek
+        if (from === "Korek") {
+            if (to === "FastPay") final = amt * 0.82;
+            else if (to === "FIB") final = amt * 0.825;
+            else if (to === "QiCard") final = amt * 0.81;
+        } 
+        // Logic for Asiacell
+        else if (from === "Asiacell") {
+            if (to === "FastPay") final = amt * 0.84;
+            else if (to === "FIB") final = amt * 0.82;
+            else if (to === "QiCard") final = amt * 0.835;
+        } 
+        // Logic for USDT
+        else if (from === "USDT") {
+            if (to === "FastPay") final = amt * 1450;
+            else if (to === "FIB") final = amt * 1440;
+            else if (to === "QiCard") final = amt * 1445;
+        } 
+        // Logic for Exchange (FastPay, FIB, QiCard) -> 1% Fee
+        else {
+            final = amt * 0.99;
         }
 
         document.getElementById('totalDisplay').innerText = formatNum(Math.floor(final)) + " IQD";
         
-        // Only show fee for IQD wallets (not USDT)
-        if (amt > 0 && from !== "USDT") {
-            document.getElementById('feeDisplay').innerText = "بڕی حمولە: " + formatNum(Math.floor(fee)) + " IQD";
+        // Fee display logic
+        if (amt > 0) {
+            let fee = (from === "USDT") ? 0 : (amt - final);
+            if (fee > 0) {
+                document.getElementById('feeDisplay').innerText = "بڕی حمولە: " + formatNum(Math.floor(fee)) + " IQD";
+            } else {
+                document.getElementById('feeDisplay').innerText = "";
+            }
         } else {
             document.getElementById('feeDisplay').innerText = "";
         }
@@ -215,7 +232,6 @@
         const file = document.getElementById('fileInput').files[0];
         const amtValue = document.getElementById('amt').value;
         
-        // Iraqi Number Validation (Must start with 07 and be 11 digits)
         if (!phone.startsWith("07") || phone.length !== 11) {
             return alert("⚠️ تکایە تەنها ژمارەی عێراقی (07) بە 11 ژمارە داخڵ بکە!");
         }
