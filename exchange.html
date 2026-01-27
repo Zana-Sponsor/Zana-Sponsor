@@ -20,16 +20,25 @@
             --text: #ffffff; 
             --input-bg: #1f1f24;
             --border: #2d2d35;
+            --tg-color: #0088cc;
+            --wa-color: #25d366;
         }
 
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .app-wrapper { width: 100%; max-width: 400px; display: none; }
         
-        /* Header */
-        .header-section { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 10px 5px; }
-        .user-info { display: flex; align-items: center; gap: 10px; }
-        .user-info img { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--accent); }
+        /* Header & Social Icons */
+        .header-section { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; padding: 10px 5px; }
+        .user-info { display: flex; flex-direction: column; gap: 8px; }
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .user-profile img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent); }
         
+        .social-mini-icons { display: flex; gap: 10px; margin-top: 5px; margin-right: 5px; }
+        .social-mini-icons a { color: var(--text); font-size: 18px; opacity: 0.7; transition: 0.3s; }
+        .social-mini-icons a:hover { opacity: 1; transform: translateY(-2px); }
+        .social-mini-icons .fa-telegram { color: var(--tg-color); }
+        .social-mini-icons .fa-whatsapp { color: var(--wa-color); }
+
         #newsBanner { width: 100%; background: linear-gradient(90deg, #3a7bd5, #00d2ff); color: #000; padding: 12px; border-radius: 15px; margin: 10px 0 20px 0; font-weight: 800; font-size: 13px; text-align: center; display: none; box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2); }
 
         /* Main Card */
@@ -38,14 +47,26 @@
         input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: var(--text); font-family: 'Vazirmatn'; outline: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; font-size: 16px; }
 
         .formatted-amount { font-size: 14px; color: var(--accent); margin-top: -8px; margin-bottom: 12px; display: block; text-align: center; font-weight: 800; }
-        .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 17px; }
+        .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 17px; text-decoration: none; }
         
-        /* Modal for Telegram */
-        #tgModal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 30px; border: 1px solid var(--border); text-align: center; max-width: 320px; animation: popUp 0.3s ease-out; }
-        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* Modern Modal for Telegram */
+        #tgModal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { 
+            background: linear-gradient(145deg, #16161a, #1f1f24); 
+            padding: 35px 25px; 
+            border-radius: 35px; 
+            border: 1px solid var(--border); 
+            text-align: center; 
+            max-width: 320px; 
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        @keyframes popUp { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* Classic Order Design (The one you liked) */
+        .tg-icon-wrapper { width: 80px; height: 80px; background: rgba(0, 136, 204, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+
+        /* Order History Style */
         .order-card { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-right: 5px solid var(--accent); width: 100%; box-sizing: border-box; }
         .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--text); opacity: 0.8; }
@@ -53,34 +74,47 @@
         .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
         .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
 
-        #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
+        #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="tgModal">
     <div class="modal-content">
-        <i class="fab fa-telegram" style="font-size: 55px; color: #0088cc; margin-bottom: 15px;"></i>
-        <h3>بۆ ئاگادارییەکان جۆین بن</h3>
-        <p style="font-size: 14px; opacity: 0.8; margin-bottom: 20px;">تکایە جۆینی تیلیگرام بکە بۆ بینینی دوایین نرخەکان و گۆڕانکارییەکان.</p>
-        <button class="btn-global" onclick="goToTG()">جۆین بوون</button>
-        <button style="background:none; border:none; color:#777; margin-top:15px; cursor:pointer; font-weight:bold;" onclick="closeModal()">دواتر</button>
+        <div class="tg-icon-wrapper">
+            <i class="fab fa-telegram" style="font-size: 45px; color: var(--tg-color);"></i>
+        </div>
+        <h2 style="margin: 0 0 10px 0; font-size: 22px;">ئاگاداری نرخەکان بە!</h2>
+        <p style="font-size: 14px; opacity: 0.7; line-height: 1.6; margin-bottom: 25px;">بۆ وەرگرتنی دوایین گۆڕانکارییەکانی بازاڕ و نرخی دراوەکان، جۆینی چەناڵی فەرمی تیلیگرام بکەن.</p>
+        <a href="https://t.me/zana_exchange" target="_blank" class="btn-global" onclick="closeModal()">
+            <i class="fab fa-telegram-plane"></i> ئێستا جۆین ببە
+        </a>
+        <button style="background:none; border:none; color:#777; margin-top:20px; cursor:pointer; font-weight:bold; font-size: 14px;" onclick="closeModal()">دواتر جۆین دەبم</button>
     </div>
 </div>
 
 <div id="loginSection">
     <i class="fas fa-money-bill-transfer" style="font-size: 70px; color: var(--accent); margin-bottom: 25px;"></i>
-    <h1>ZANA EXCHANGE</h1>
-    <button class="btn-global" style="width: 260px;" onclick="signIn()">چوونەژوورەوە بە گووگڵ</button>
+    <h1 style="letter-spacing: 2px;">ZANA EXCHANGE</h1>
+    <p style="opacity: 0.6; margin-bottom: 30px;">سیستەمی پێشکەوتووی ئاڵوگۆڕی دراو</p>
+    <button class="btn-global" style="width: 280px;" onclick="signIn()">
+        <i class="fab fa-google"></i> چوونەژوورەوە بە گووگڵ
+    </button>
 </div>
 
 <div class="app-wrapper" id="mainApp">
     <div class="header-section">
         <div class="user-info">
-            <img id="userImg" src="">
-            <b id="userName">...</b>
+            <div class="user-profile">
+                <img id="userImg" src="">
+                <b id="userName">...</b>
+            </div>
+            <div class="social-mini-icons">
+                <a href="https://t.me/zana_exchange" target="_blank" title="Telegram"><i class="fab fa-telegram"></i></a>
+                <a href="https://wa.me/9647510074008" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            </div>
         </div>
-        <i class="fas fa-power-off" onclick="logout()" style="color:#ff4d4d; cursor:pointer; font-size: 22px;"></i>
+        <i class="fas fa-power-off" onclick="logout()" style="color:#ff4d4d; cursor:pointer; font-size: 22px; margin-top: 10px;"></i>
     </div>
 
     <div id="newsBanner"><i class="fas fa-bullhorn"></i> <span id="newsText"></span></div>
@@ -127,6 +161,7 @@
 </div>
 
 <script>
+    // Config & Init
     const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); const db = firebase.database();
@@ -143,9 +178,9 @@
             loadHistory(user.email); 
             listenToNews();
             
-            // Show Telegram Modal only once per login session
+            // Show Modern Telegram Modal
             if(!sessionStorage.getItem('tgPrompted')) {
-                setTimeout(() => { document.getElementById('tgModal').style.display='flex'; }, 1000);
+                setTimeout(() => { document.getElementById('tgModal').style.display='flex'; }, 1500);
                 sessionStorage.setItem('tgPrompted', 'true');
             }
         } 
@@ -165,7 +200,6 @@
 
     function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
     function closeModal() { document.getElementById('tgModal').style.display='none'; }
-    function goToTG() { window.location.href = "tg://resolve?domain=ZanaSponsor"; closeModal(); }
 
     function updateWallet() { 
         const from = document.getElementById('from').value;
