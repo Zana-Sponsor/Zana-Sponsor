@@ -12,23 +12,40 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap');
-        :root { --accent: #00d2ff; --bg: #0a0a0c; --card-bg: #16161a; --text: #ffffff; }
-        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+        
+        :root { 
+            --accent: #00d2ff; 
+            --bg: #0a0a0c; 
+            --card-bg: #16161a; 
+            --text: #ffffff; 
+            --input-bg: #1f1f24;
+            --border: #2d2d35;
+        }
+
+        [data-theme="light"] {
+            --bg: #f5f6f8;
+            --card-bg: #ffffff;
+            --text: #1a1a1a;
+            --input-bg: #f0f2f5;
+            --border: #e0e0e0;
+        }
+
+        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
         .app-wrapper { width: 100%; max-width: 400px; display: none; }
-        .premium-card { background: var(--card-bg); border-radius: 22px; padding: 18px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); width: 100%; box-sizing: border-box; }
-        input, select { width: 100%; background: #1f1f24; border: 1px solid #2d2d35; border-radius: 12px; padding: 14px; color: white; font-family: 'Vazirmatn'; outline: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; }
+        .premium-card { background: var(--card-bg); border-radius: 22px; padding: 18px; margin-bottom: 20px; border: 1px solid var(--border); width: 100%; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; color: var(--text); font-family: 'Vazirmatn'; outline: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; }
         .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         
-        .order-card { background: #1c1c21; border-radius: 18px; padding: 15px; margin-bottom: 15px; border: 1px solid #2d2d35; border-right: 5px solid var(--accent); width: 100%; box-sizing: border-box; }
-        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #2d2d35; padding-bottom: 8px; }
-        .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: #ccc; }
+        .mode-toggle { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 8px 15px; border-radius: 50px; cursor: pointer; font-size: 12px; margin-bottom: 10px; }
+        
+        .order-card { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-right: 5px solid var(--accent); width: 100%; box-sizing: border-box; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--text); opacity: 0.8; }
         .detail-item i { color: var(--accent); width: 18px; text-align: center; }
         
         .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
         .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
         .status-danger { border-color: #e74c3c !important; color: #e74c3c !important; }
-
-        .note-box { background: rgba(255, 193, 7, 0.1); border: 1px dashed #ffc107; border-radius: 10px; padding: 10px; margin-top: 10px; font-size: 12px; color: #ffc107; line-height: 1.6; }
 
         .btn-cancel { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; border: 1px solid #ff4d4d; width: 100%; padding: 10px; border-radius: 12px; margin-top: 10px; cursor: pointer; font-family: 'Vazirmatn'; font-size: 12px; }
         #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
@@ -48,11 +65,12 @@
             <img id="userImg" src="" style="width:35px; border-radius:50%; border: 1px solid var(--accent);">
             <b id="userName" style="font-size: 13px;">...</b>
         </div>
+        <button class="mode-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i> گۆڕینی مۆد</button>
         <i class="fas fa-sign-out-alt" onclick="logout()" style="color:#666; cursor:pointer;"></i>
     </div>
 
     <div class="premium-card">
-        <div style="background:#1f1f24; padding:10px; border-radius:12px; display:flex; justify-content:space-between; margin-bottom:15px; border-right: 4px solid var(--accent);">
+        <div style="background:var(--input-bg); padding:10px; border-radius:12px; display:flex; justify-content:space-between; margin-bottom:15px; border-right: 4px solid var(--accent);">
             <span style="font-size:13px;"><i class="fas fa-university"></i> بنێرە بۆ: <b id="myNum" style="color:var(--accent)">---</b></span>
             <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer; color:var(--accent)"></i>
         </div>
@@ -60,6 +78,7 @@
         <select id="from" onchange="updateWallet()">
             <option value="FastPay">💳 FastPay</option>
             <option value="FIB">🏦 FIB Bank</option>
+            <option value="QiCard">💳 Qi Card</option>
             <option value="Asiacell">📱 Asiacell Transfer</option>
             <option value="Korek">📱 Korek Transfer</option>
             <option value="USDT">🪙 USDT ($)</option>
@@ -108,8 +127,22 @@
     function logout() { auth.signOut().then(() => location.reload()); }
     auth.onAuthStateChanged(user => { if (user) { document.getElementById('loginSection').style.display='none'; document.getElementById('mainApp').style.display='block'; document.getElementById('userName').innerText = user.displayName; document.getElementById('userImg').src = user.photoURL; loadHistory(user.email); } });
 
-    const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
+    const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "07510074008", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
     
+    function toggleTheme() {
+        const body = document.body;
+        const currentTheme = body.getAttribute('data-theme');
+        if (currentTheme === 'light') {
+            body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            body.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    if(localStorage.getItem('theme') === 'light') document.body.setAttribute('data-theme', 'light');
+
     function updateWallet() { 
         const from = document.getElementById('from').value;
         document.getElementById('myNum').innerText = wallets[from]; 
@@ -128,6 +161,13 @@
         const to = document.getElementById('receiveVia').value;
         let final = 0;
 
+        // ڕێگری لە ناردن بۆ هەمان واڵێت
+        if (from === to) {
+            document.getElementById('totalDisplay').innerText = "ناکرێت!";
+            document.getElementById('feeDisplay').innerText = "ناردن بۆ هەمان واڵێت ڕێگەپێنەدراوە";
+            return;
+        }
+
         if (from === "Asiacell") {
             if (to === "FastPay") final = amt * 0.84;
             else if (to === "FIB") final = amt * 0.83;
@@ -143,15 +183,19 @@
             else if (to === "FIB") final = amt * 1440;
             else if (to === "QiCard") final = amt * 1445;
         } 
+        else if (from === "QiCard") {
+            // حمولەی 1% بۆ کی کارت
+            final = amt * 0.99;
+        }
         else {
             final = amt * 0.99;
         }
 
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " IQD";
         
-        if(from !== "USDT" && amt > 0) {
-            let fee = amt - final;
-            document.getElementById('feeDisplay').innerText = `حمولە: ${Math.floor(fee).toLocaleString()} IQD`;
+        if(amt > 0) {
+            let fee = amt - (from === "USDT" ? 0 : final);
+            document.getElementById('feeDisplay').innerText = from === "USDT" ? "" : `حمولە: ${Math.floor(fee).toLocaleString()} IQD`;
         } else {
             document.getElementById('feeDisplay').innerText = "";
         }
@@ -162,23 +206,20 @@
         const file = document.getElementById('fileInput').files[0];
         const amtValue = parseFloat(document.getElementById('amt').value);
         const from = document.getElementById('from').value;
+        const to = document.getElementById('receiveVia').value;
 
+        if (from === to) return alert("⚠️ ناتوانی پارە بنێریت بۆ هەمان جۆری واڵێت!");
         if(!phone || !file || !amtValue) return alert("⚠️ تکایە هەموو زانیارییەکان پڕ بکەرەوە!");
-        
-        // مەرجی USDT بۆ کەمتر لە 10 دۆلار
-        if(from === "USDT" && amtValue < 10) {
-            return alert("⚠️ ناردنی USDT نابێت لە 10$ کەمتر بێت!");
-        }
+        if(from === "USDT" && amtValue < 10) return alert("⚠️ ناردنی USDT نابێت لە 10$ کەمتر بێت!");
 
         const btn = document.getElementById('submitBtn');
         btn.disabled = true; btn.innerText = "لە ناردندایە...";
 
         const orderId = Math.floor(1000 + Math.random() * 8999);
         const date = new Date().toLocaleString('ku-IQ');
-        const receiveMethod = document.getElementById('receiveVia').value;
         const currency = (from === "USDT") ? "$" : "IQD";
         
-        const caption = `🚀 ئۆردەری نوێ: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📥 ناردن لە: ${from}\n📤 وەرگرتن لە: ${receiveMethod}\n📱 ژمارە: ${phone}\n💵 بڕ: ${amtValue}${currency}\n💰 پوختە: ${document.getElementById('totalDisplay').innerText}\n🧾 کات: ${date}`;
+        const caption = `🚀 ئۆردەری نوێ: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📥 ناردن لە: ${from}\n📤 وەرگرتن لە: ${to}\n📱 ژمارە: ${phone}\n💵 بڕ: ${amtValue}${currency}\n💰 پوختە: ${document.getElementById('totalDisplay').innerText}\n🧾 کات: ${date}`;
 
         const formData = new FormData();
         formData.append("chat_id", TG_CHAT_ID); formData.append("photo", file); formData.append("caption", caption);
@@ -188,12 +229,11 @@
             await db.ref('orders/' + orderId).set({
                 uEmail: auth.currentUser.email,
                 from: from,
-                to: receiveMethod,
+                to: to,
                 amount: amtValue + (from === "USDT" ? "$" : " IQD"),
                 total: document.getElementById('totalDisplay').innerText,
                 phone: phone,
                 status: 'چاوەڕوانە',
-                note: '',
                 time: date
             });
             alert("داواکارییەکەت نێردرا ✅"); location.reload();
@@ -206,23 +246,18 @@
             snap.forEach(c => {
                 const o = c.val();
                 let statusClass = o.status === "وەرگیرا" ? "status-success" : (o.status === "ڕەتکرایەوە" ? "status-danger" : "");
-                let statusIcon = o.status === "وەرگیرا" ? '<i class="fas fa-check-circle"></i>' : (o.status === "ڕەتکرایەوە" ? '<i class="fas fa-times-circle"></i>' : '<i class="fas fa-clock"></i>');
-
                 html = `
                 <div class="order-card">
                     <div class="order-header">
                         <span style="font-weight:800; color:var(--accent);">ID: #${c.key}</span>
-                        <span class="status-badge ${statusClass}">${statusIcon} ${o.status}</span>
+                        <span class="status-badge ${statusClass}">${o.status}</span>
                     </div>
                     <div class="detail-item"><i class="fas fa-arrow-up"></i> ناردن لە: <b>${o.from}</b></div>
                     <div class="detail-item"><i class="fas fa-arrow-down"></i> وەرگرتن لە: <b>${o.to}</b></div>
                     <div class="detail-item"><i class="fas fa-coins"></i> بڕی نێردراو: <b>${o.amount}</b></div>
-                    <div class="detail-item"><i class="fas fa-check-double"></i> بڕی وەرگیراو: <b style="color:#00ffcc">${o.total}</b></div>
+                    <div class="detail-item"><i class="fas fa-check-double"></i> بڕی وەرگیراو: <b style="color:#2ecc71">${o.total}</b></div>
                     <div class="detail-item"><i class="fas fa-phone-alt"></i> ژمارەی وەرگرتن: <b>${o.phone}</b></div>
                     <div class="detail-item"><i class="far fa-clock"></i> کات: ${o.time}</div>
-                    
-                    ${o.note ? `<div class="note-box"><i class="fas fa-comment-dots"></i> <b>تێبینی ئەدمین:</b><br>${o.note}</div>` : ''}
-                    
                     ${o.status === 'چاوەڕوانە' ? `<button class="btn-cancel" onclick="cancelOrder('${c.key}')"><i class="fas fa-trash"></i> هەڵوەشاندنەوە</button>` : ''}
                 </div>` + html;
             });
