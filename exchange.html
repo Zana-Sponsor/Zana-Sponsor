@@ -40,7 +40,7 @@
         
         .wallet-copy-box { background: var(--input-bg); padding: 12px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-right: 5px solid var(--accent); }
 
-        /* Old Order Card Style */
+        /* Order Card Style */
         .order-card { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-right: 5px solid var(--accent); width: 100%; box-sizing: border-box; }
         .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--text); opacity: 0.8; }
@@ -135,15 +135,12 @@
             document.getElementById('userImg').src = user.photoURL; 
             loadHistory(user.email); 
             
-            // داوای جۆینی تیلیگرام دەکات تەنها دوای لۆگین
+            // داوای جۆینی تیلیگرام دەکات هەر کە کرایەوە
             setTimeout(() => {
-                if(!localStorage.getItem('tgPrompted')) {
-                    if(confirm("بەخێرهاتی! تکایە جۆینی تیلیگرام بن بۆ بینینی نوێکارییەکان؟")) {
-                        window.location.href = "tg://resolve?domain=ZanaSponsor";
-                    }
-                    localStorage.setItem('tgPrompted', 'true');
+                if(confirm("بەخێرهاتی بۆ ZANA EXCHANGE! تکایە جۆینی تیلیگرام بن بۆ بینینی نوێکارییەکان؟")) {
+                    window.location.href = "tg://resolve?domain=ZanaSponsor";
                 }
-            }, 1500);
+            }, 1000);
         } 
     });
 
@@ -190,7 +187,7 @@
         btn.disabled = true; btn.innerText = "لە پشکنیندایە...";
 
         if (!phone.startsWith("07") || phone.length !== 11) {
-            alert("⚠️ تکایە ژمارەیەکی ڕاستی عێراقی بنووسە کە بە 07 دەست پێ بکات");
+            alert("⚠️ تکایە ژمارەیەکی ڕاست بنووسە کە بە 07 دەست پێ بکات");
             btn.disabled = false; btn.innerText = "ناردنی داواکاری";
             return;
         }
@@ -203,14 +200,24 @@
 
         const orderId = Math.floor(1000 + Math.random() * 8999);
         const date = new Date().toLocaleString('ku-IQ');
-        const caption = `🚀 ئۆردەر: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📥 لە: ${from}\n📤 بۆ: ${to}\n📱 ژمارە: ${phone}\n💵 بڕ: ${formatNum(amtValue)}\n💰 پوختە: ${document.getElementById('totalDisplay').innerText}\n🧾 کات: ${date}`;
+        
+        // ئامادەکردنی نووسینی بڕەکە بۆ تیلیگرام
+        const displayAmt = (from === "USDT") ? `${formatNum(amtValue)}$` : `${formatNum(amtValue)} IQD`;
+
+        const caption = `🚀 ئۆردەر: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📥 لە: ${from}\n📤 بۆ: ${to}\n📱 ژمارە: ${phone}\n💵 بڕ: ${displayAmt}\n💰 پوختە: ${document.getElementById('totalDisplay').innerText}\n🧾 کات: ${date}`;
 
         const formData = new FormData();
         formData.append("chat_id", TG_CHAT_ID); formData.append("photo", file); formData.append("caption", caption);
 
         try {
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, { method: "POST", body: formData });
-            await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, from, to, amount: formatNum(amtValue), total: document.getElementById('totalDisplay').innerText, phone, status: 'چاوەڕوانە', time: date });
+            await db.ref('orders/' + orderId).set({ 
+                uEmail: auth.currentUser.email, 
+                from, to, 
+                amount: displayAmt, 
+                total: document.getElementById('totalDisplay').innerText, 
+                phone, status: 'چاوەڕوانە', time: date 
+            });
             alert("داواکارییەکەت نێردرا ✅"); location.reload();
         } catch(e) { alert("هەڵە ڕوویدا!"); btn.disabled = false; }
     }
@@ -228,7 +235,7 @@
                         <span class="status-badge ${statusClass}">${o.status}</span>
                     </div>
                     <div class="detail-item"><i class="fas fa-exchange-alt"></i> لە ${o.from} ➔ بۆ ${o.to}</div>
-                    <div class="detail-item"><i class="fas fa-coins"></i> بڕی نێردراو: <b>${o.amount}</b></div>
+                    <div class="detail-item"><i class="fas fa-coins"></i> بڕی نێردراو: <b style="color:white">${o.amount}</b></div>
                     <div class="detail-item"><i class="fas fa-check-double"></i> بڕی وەرگیراو: <b style="color:#2ecc71">${o.total}</b></div>
                     <div class="detail-item"><i class="fas fa-phone-alt"></i> ژمارەی وەرگرتن: ${o.phone}</div>
                     <div class="detail-item"><i class="far fa-clock"></i> ${o.time}</div>
