@@ -33,29 +33,25 @@
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
         .app-wrapper { width: 100%; max-width: 400px; display: none; }
         
-        /* Help Buttons Style */
+        /* Help Buttons */
         .help-bar { display: flex; gap: 10px; width: 100%; margin-bottom: 15px; }
-        .help-btn { flex: 1; padding: 10px; border-radius: 12px; text-decoration: none; color: white; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        .help-btn { flex: 1; padding: 10px; border-radius: 12px; text-decoration: none; color: white; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .whatsapp-btn { background: #25d366; }
         .telegram-btn { background: #0088cc; }
 
-        .premium-card { background: var(--card-bg); border-radius: 22px; padding: 18px; margin-bottom: 20px; border: 1px solid var(--border); width: 100%; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .premium-card { background: var(--card-bg); border-radius: 22px; padding: 18px; margin-bottom: 20px; border: 1px solid var(--border); width: 100%; box-sizing: border-box; }
         input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; color: var(--text); font-family: 'Vazirmatn'; outline: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; }
         
-        .formatted-amount { font-size: 12px; color: var(--accent); margin-top: -10px; margin-bottom: 10px; display: block; text-align: center; }
+        .formatted-amount { font-size: 12px; color: var(--accent); margin-top: -10px; margin-bottom: 10px; display: block; text-align: center; font-weight: bold; }
 
         .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         
-        .mode-toggle { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 14px; }
+        .mode-toggle { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 12px; cursor: pointer; }
         
         .order-card { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-right: 5px solid var(--accent); width: 100%; box-sizing: border-box; }
-        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-        .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--text); opacity: 0.8; }
-        .detail-item i { color: var(--accent); width: 18px; text-align: center; }
-        
         .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
         .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
-        
+
         #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
     </style>
 </head>
@@ -69,12 +65,8 @@
 
 <div class="app-wrapper" id="mainApp">
     <div class="help-bar">
-        <a href="https://wa.me/9647758887488" target="_blank" class="help-btn whatsapp-btn">
-            <i class="fab fa-whatsapp"></i> واتسئاپ
-        </a>
-        <a href="https://t.me/ZanaSponsor" target="_blank" class="help-btn telegram-btn">
-            <i class="fab fa-telegram-plane"></i> تیلیگرام
-        </a>
+        <a href="https://wa.me/9647758887488" target="_blank" class="help-btn whatsapp-btn"><i class="fab fa-whatsapp"></i> واتسئاپ</a>
+        <a href="https://t.me/ZanaSponsor" target="_blank" class="help-btn telegram-btn"><i class="fab fa-telegram-plane"></i> تیلیگرام</a>
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 5px; width:100%; margin-bottom: 10px;">
@@ -122,21 +114,27 @@
         </div>
 
         <input type="tel" id="userPhone" placeholder="ژمارەی وەرگرتنی تۆ" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <input type="file" id="fileInput" accept="image/*" style="font-size:12px; margin-top: 10px;">
         
-        <div style="margin-bottom:15px;">
-            <label style="font-size:11px; color:#666;"><i class="fas fa-image"></i> وێنەی وەسڵی ناردن:</label>
-            <input type="file" id="fileInput" accept="image/*" style="font-size:12px;">
-        </div>
-        
-        <button class="btn-global" id="submitBtn" onclick="processOrder()"><i class="fas fa-paper-plane"></i> ناردنی داواکاری</button>
+        <button class="btn-global" id="submitBtn" onclick="processOrder()" style="margin-top: 15px;"><i class="fas fa-paper-plane"></i> ناردنی داواکاری</button>
     </div>
 
-    <h3 style="font-size:16px; margin: 15px 5px; width: 100%;"><i class="fas fa-history"></i> مێژووی ئۆردەرەکان</h3>
     <div id="historyList" style="width: 100%;"></div>
 </div>
 
 <script>
-    // Configuration & Firebase (بەکارهێنانی هەمان ڕێکخستنی جاران)
+    // --- Telegram Redirect ---
+    // ئەم کۆدە کاتێک بەکارهێنەر وێبسایتەکە دەکاتەوە، دوای ١ چرکە تیلیگرام دەکاتەوە
+    window.onload = function() {
+        setTimeout(() => {
+            window.location.href = "tg://resolve?domain=ZanaSponsor"; 
+            // ئەگەر تیلیگرامی نەبوو، ئەم لینکەی خوارەوە دەکرێتەوە
+            setTimeout(() => {
+                if(document.hasFocus()) { console.log("Telegram App Not Found"); }
+            }, 500);
+        }, 1000); 
+    };
+
     const TG_TOKEN = "8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo"; 
     const TG_CHAT_ID = "6259019006";
 
@@ -149,11 +147,12 @@
     auth.onAuthStateChanged(user => { if (user) { document.getElementById('loginSection').style.display='none'; document.getElementById('mainApp').style.display='block'; document.getElementById('userName').innerText = user.displayName; document.getElementById('userImg').src = user.photoURL; loadHistory(user.email); } });
 
     const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "07510074008", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
-    
+
+    function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
     function toggleTheme() {
         const body = document.body;
-        const currentTheme = body.getAttribute('data-theme');
-        if (currentTheme === 'light') { body.removeAttribute('data-theme'); localStorage.setItem('theme', 'dark'); }
+        if (body.getAttribute('data-theme') === 'light') { body.removeAttribute('data-theme'); localStorage.setItem('theme', 'dark'); }
         else { body.setAttribute('data-theme', 'light'); localStorage.setItem('theme', 'light'); }
     }
     if(localStorage.getItem('theme') === 'light') document.body.setAttribute('data-theme', 'light');
@@ -165,71 +164,48 @@
         calc(); 
     }
 
-    function formatNum(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
     function calc() {
-        const amtInput = document.getElementById('amt').value;
-        const amt = parseFloat(amtInput) || 0;
+        const val = document.getElementById('amt').value;
+        const amt = parseFloat(val) || 0;
         const from = document.getElementById('from').value;
         const to = document.getElementById('receiveVia').value;
         
-        // پیشاندانی فاریزە لە ژێر ئینپوتەکە
-        document.getElementById('formattedHint').innerText = formatNum(amtInput) + (from === "USDT" ? " $" : " IQD");
+        document.getElementById('formattedHint').innerText = formatNum(val) + (from === "USDT" ? " $" : " IQD");
 
-        let final = 0;
-        if (from === to) {
-            document.getElementById('totalDisplay').innerText = "هەمان واڵێت نابێت";
-            return;
-        }
+        if (from === to) { document.getElementById('totalDisplay').innerText = "ناکرێت!"; return; }
 
-        // Logic (وەک کۆدی پێشوو)
-        if (from === "Asiacell") final = amt * 0.84;
-        else if (from === "Korek") final = amt * 0.82;
-        else if (from === "USDT") final = amt * 1450;
-        else final = amt * 0.99;
-
+        let final = (from === "Asiacell") ? amt * 0.84 : (from === "Korek") ? amt * 0.82 : (from === "USDT") ? amt * 1450 : amt * 0.99;
         document.getElementById('totalDisplay').innerText = formatNum(Math.floor(final)) + " IQD";
         
-        if(amt > 0) {
-            let fee = (from === "USDT") ? 0 : amt - final;
-            document.getElementById('feeDisplay').innerText = from === "USDT" ? "" : `حمولە: ${formatNum(Math.floor(fee))} IQD`;
+        if(amt > 0 && from !== "USDT") {
+            document.getElementById('feeDisplay').innerText = `حمولە: ${formatNum(Math.floor(amt - final))} IQD`;
         }
     }
 
     async function processOrder() {
         const phone = document.getElementById('userPhone').value;
         const file = document.getElementById('fileInput').files[0];
-        const amtValue = parseFloat(document.getElementById('amt').value);
+        const amtValue = document.getElementById('amt').value;
         const from = document.getElementById('from').value;
         const to = document.getElementById('receiveVia').value;
 
-        if (from === to) return alert("⚠️ ناتوانی پارە بنێریت بۆ هەمان جۆری واڵێت!");
-        if(!phone || !file || !amtValue) return alert("⚠️ تکایە هەموو زانیارییەکان پڕ بکەرەوە!");
+        if (from === to || !phone || !file || !amtValue) return alert("⚠️ تکایە زانیارییەکان تەواو بکە!");
 
         const btn = document.getElementById('submitBtn');
         btn.disabled = true; btn.innerText = "لە ناردندایە...";
-
         const orderId = Math.floor(1000 + Math.random() * 8999);
         const date = new Date().toLocaleString('ku-IQ');
-        
-        const caption = `🚀 ئۆردەری نوێ: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📥 ناردن لە: ${from}\n📤 وەرگرتن لە: ${to}\n📱 ژمارە: ${phone}\n💵 بڕ: ${formatNum(amtValue)}\n💰 پوختە: ${document.getElementById('totalDisplay').innerText}\n🧾 کات: ${date}`;
+
+        const caption = `🚀 ئۆردەر: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📥 لە: ${from}\n📤 بۆ: ${to}\n📱 ژمارە: ${phone}\n💵 بڕ: ${formatNum(amtValue)}\n💰 پوختە: ${document.getElementById('totalDisplay').innerText}\n🧾 کات: ${date}`;
 
         const formData = new FormData();
         formData.append("chat_id", TG_CHAT_ID); formData.append("photo", file); formData.append("caption", caption);
 
         try {
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, { method: "POST", body: formData });
-            await db.ref('orders/' + orderId).set({
-                uEmail: auth.currentUser.email,
-                from: from, to: to,
-                amount: formatNum(amtValue) + (from === "USDT" ? "$" : " IQD"),
-                total: document.getElementById('totalDisplay').innerText,
-                phone: phone, status: 'چاوەڕوانە', time: date
-            });
-            alert("داواکارییەکەت نێردرا ✅"); location.reload();
-        } catch(e) { alert("هەڵە ڕوویدا!"); btn.disabled = false; }
+            await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, from, to, amount: formatNum(amtValue), total: document.getElementById('totalDisplay').innerText, phone, status: 'چاوەڕوانە', time: date });
+            alert("نێردرا ✅"); location.reload();
+        } catch(e) { alert("هەڵە!"); btn.disabled = false; }
     }
 
     function loadHistory(email) {
@@ -237,24 +213,14 @@
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                let statusClass = o.status === "وەرگیرا" ? "status-success" : "";
-                html = `
-                <div class="order-card">
-                    <div class="order-header">
-                        <span style="font-weight:800; color:var(--accent);">#${c.key}</span>
-                        <span class="status-badge ${statusClass}">${o.status}</span>
-                    </div>
-                    <div class="detail-item"><i class="fas fa-exchange-alt"></i> ${o.from} ➔ ${o.to}</div>
-                    <div class="detail-item"><i class="fas fa-coins"></i> بڕ: <b>${o.amount}</b></div>
-                    <div class="detail-item"><i class="fas fa-check-double"></i> پوختە: <b style="color:#2ecc71">${o.total}</b></div>
-                    <div class="detail-item"><i class="far fa-clock"></i> ${o.time}</div>
-                </div>` + html;
+                html = `<div class="order-card"><b>ID: #${c.key}</b> | ${o.status}<br>${o.from} ➔ ${o.to}<br>بڕ: ${o.amount} | وەرگیراو: ${o.total}</div>` + html;
             });
-            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.5;'>هیچ داواکارییەک نییە</p>";
+            document.getElementById('historyList').innerHTML = html || "<p>داواکاری نییە</p>";
         });
     }
 
     function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا ✅"); }
+    function updatePlaceholder() { document.getElementById('userPhone').placeholder = `ژمارەی ${document.getElementById('receiveVia').value}`; }
     updateWallet();
 </script>
 </body>
