@@ -1,245 +1,124 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl">
+<html dir="rtl" lang="ku">
 <head>
+    <meta name="robots" content="noindex, nofollow">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Admin | Control Center</title>
+    <title>Zana Sponsor - Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script defer src="/_vercel/insights/script.js"></script>
+
+    <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+    var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+      ttq.load('D5N6ETJC77UFLMP0AO10');
+      ttq.page();
+
+      window.trackTikTokConversion = function(platform, event) {
+        event.preventDefault(); 
+        var url = event.currentTarget.href;
+        
+        if (platform === 'WhatsApp') {
+            var message = "سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی!";
+            url = "whatsapp://send?phone=+9647758887488&text=" + encodeURIComponent(message);
+        }
+
+        if (window.va) window.va('event', { name: 'Contact_Click', data: { platform: platform } });
+        if (typeof ttq !== 'undefined') {
+          ttq.track('Contact', {
+            "contents": [{ "content_name": platform }]
+          });
+        }
+
+        var frame = document.createElement('iframe');
+        frame.style.display = 'none';
+        frame.src = url;
+        document.body.appendChild(frame);
+        
+        setTimeout(function() {
+          document.body.removeChild(frame);
+        }, 150);
+      };
+    }(window, document, 'ttq');
+    </script>
+
     <style>
-        :root { --main: #facc15; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; --border: #334155; }
-        body { font-family: 'Tahoma', sans-serif; background: var(--bg); color: white; margin: 0; padding: 10px; text-align: right; overflow-x: hidden; }
-        .container { max-width: 700px; margin: auto; display: none; padding-bottom: 50px; }
-        
-        /* Login Screen */
-        #login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 10000; }
-        .login-box { background: var(--card); padding: 30px; border-radius: 25px; border: 1px solid var(--border); width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-
-        /* Stats & Tabs */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid var(--border); text-align: center; }
-        .stat-card span { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 5px; }
-        .stat-card b { font-size: 18px; display: block; white-space: nowrap; }
-        .sales-box { border: 1px solid var(--main); grid-column: span 3; padding: 20px; }
-        .sales-box b { font-size: 28px; color: var(--main); }
-
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        .tab-btn { background: #1e293b; color: #94a3b8; border: 1px solid var(--border); padding: 12px 20px; border-radius: 12px; cursor: pointer; white-space: nowrap; font-weight: bold; transition: 0.3s; }
-        .tab-btn.active { background: var(--main); color: #000; border-color: var(--main); }
-
-        /* Sections */
-        .admin-box { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; display: none; animation: fadeIn 0.4s ease; }
-        .admin-box.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #0f172a; color: white; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; outline: none; }
-        input:focus { border-color: var(--main); }
-        .btn-main { background: var(--main); color: black; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.98); }
-
-        /* Orders & Lists */
-        .order-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
-        .order-card.accepted { border-right: 8px solid var(--success); }
-        .order-card.rejected { border-right: 8px solid var(--danger); opacity: 0.8; }
-        
-        .exchange-row { background: rgba(15, 23, 42, 0.5); padding: 12px; border-radius: 12px; margin: 12px 0; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); }
-        .list-item { background: #0f172a; padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
-        
-        .btn-group { display: flex; gap: 8px; margin-top: 15px; }
-        .btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
-        .btn-acc { background: var(--success); }
-        .btn-rej { background: var(--danger); }
-        .btn-del { background: #475569; flex: 0.3; }
-        .img-thumb { width: 55px; height: 55px; border-radius: 8px; border: 1px solid var(--border); object-fit: cover; cursor: pointer; }
-        .tag { font-size: 10px; padding: 2px 6px; background: var(--main); color: #000; border-radius: 4px; margin-left: 5px; font-weight: bold; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; padding: 60px 20px; margin: 0;
+        }
+        .profile-container {
+            text-align: center; margin-bottom: 25px; background: white;
+            padding: 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            width: 100%; max-width: 350px;
+        }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #f8f9fa; object-fit: cover; margin-bottom: 15px; }
+        h1 { margin: 0; font-size: 22px; color: #2d3436; font-weight: 800; }
+        .main-instruction { color: #636e72; font-size: 16px; font-weight: 600; margin-top: 12px; }
+        .links-wrapper { width: 100%; max-width: 370px; display: flex; flex-direction: column; gap: 15px; }
+        .link-card {
+            display: flex; align-items: center; justify-content: center;
+            padding: 16px 25px; border-radius: 18px; text-decoration: none;
+            color: white; font-weight: 700; font-size: 19px; transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.07); animation: fast-pulse 0.8s infinite ease-in-out;
+        }
+        @keyframes fast-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
+        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); animation-delay: 0.1s; }
+        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); animation-delay: 0.2s; }
+        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); animation-delay: 0.3s; }
+        .link-card:hover { transform: translateY(-3px) scale(1.06); filter: brightness(1.1); }
+        .link-card i { font-size: 28px; margin-left: 12px; }
+        .sponsor-section { margin-top: 60px; text-align: center; }
+        .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
+        .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #1e8449, #27ae60); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; }
+        .legal-links { margin-top: 20px; font-size: 12px; color: #95a5a6; }
+        .legal-links a { color: #7f8c8d; text-decoration: none; margin: 0 8px; transition: color 0.2s; }
+        .legal-links a:hover { color: #2d3436; }
     </style>
 </head>
 <body>
 
-<div id="login-screen">
-    <div class="login-box">
-        <i class="fas fa-shield-alt" style="font-size: 45px; color: var(--main); margin-bottom: 20px;"></i>
-        <h2 style="margin-bottom: 20px;">Zana Pro Panel</h2>
-        <input type="password" id="adminPass" placeholder="وشەی نهێنی...">
-        <button class="btn-main" onclick="checkAuth()">چوونەژوورەوە</button>
+    <div class="profile-container">
+        <img src="https://image2url.com/r2/default/images/1769363386435-44ff883f-9276-460f-9d0f-463f14481dcf.png" 
+             class="profile-img" 
+             alt="Ahmad Amazon"
+             onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Ahmad+Amazon&background=0D8ABC&color=fff'">
+        
+        <h1>Ahmad Amazon</h1>
+        <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە</div>
     </div>
-</div>
 
-<div class="container" id="mainUI">
-    <div class="stats-grid">
-        <div class="stat-card sales-box">
-            <span>فرۆشی ئەمڕۆ (IQD)</span>
-            <b id="totalSales">0</b>
+    <div class="links-wrapper">
+        <a href="whatsapp://send?phone=+9647518826310" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
+            <i class="fab fa-whatsapp"></i>
+            <span>واتساپ</span>
+        </a>
+        <a href="viber://chat?number=+9647518826310" onclick="trackTikTokConversion('Viber', event)" class="link-card viber">
+            <i class="fab fa-viber"></i>
+            <span>ڤایبەر</span>
+        </a>
+        <a href="tel:+9647518826310" onclick="trackTikTokConversion('Phone', event)" class="link-card phone">
+            <i class="fas fa-phone-alt"></i>
+            <span>ژمارەی مۆبایل</span>
+        </a>
+    </div>
+
+    <div class="sponsor-section">
+        <div class="sponsor-text">دروست کراوە لەلایەن</div>
+        <a href="whatsapp://send?phone=+9647758887488&text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Zana Sponsor</a>
+        
+        <div class="legal-links">
+            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
+            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
         </div>
-        <div class="stat-card" style="border-bottom: 3px solid var(--success);">
-            <span>وەرگیراو</span><b id="accCount">0</b>
-        </div>
-        <div class="stat-card" style="border-bottom: 3px solid var(--danger);">
-            <span>ڕەتکراوە</span><b id="rejCount">0</b>
-        </div>
-        <div class="stat-card">
-            <span>کۆی گشتی</span><b id="totalCount">0</b>
-        </div>
     </div>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('orders-tab', this)">ئۆردەرەکان</button>
-        <button class="tab-btn" onclick="openTab('wallets-tab', this)">واڵێت و نرخەکان</button>
-        <button class="tab-btn" onclick="openTab('notif-tab', this)">ئاگاداری</button>
-        <button class="tab-btn" onclick="location.reload()" style="background:#475569; color:white;">Logout</button>
-    </div>
-
-    <div id="orders-tab" class="admin-box active">
-        <div id="ordersList"></div>
-    </div>
-
-    <div id="wallets-tab" class="admin-box">
-        <h3 style="margin-top:0;"><i class="fas fa-plus-circle" style="color:var(--main)"></i> زیادکردنی دراو</h3>
-        <input type="text" id="wName" placeholder="ناوی دراو (وەک: ZainCash)">
-        <input type="text" id="wNum" placeholder="ژمارەی وەرگرتنی پارە">
-        <input type="number" id="wFee" step="0.01" value="0.95" placeholder="حمولە (0.95 واتە 5% بڕین)">
-        <select id="wType">
-            <option value="both">Both (ناردن و وەرگرتن)</option>
-            <option value="from">تەنها ناردن (From)</option>
-            <option value="to">تەنها وەرگرتن (To)</option>
-        </select>
-        <button class="btn-main" onclick="addMethod()">پاشەکەوتکردن</button>
-        <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
-        <div id="methodsList"></div>
-    </div>
-
-    <div id="notif-tab" class="admin-box">
-        <h3 style="margin-top:0;"><i class="fas fa-bell" style="color:var(--main)"></i> نامەی گشتی بۆ کڕیار</h3>
-        <textarea id="notifMsg" rows="4" placeholder="نامەکە لێرە بنووسە تا لە سەرەوەی سایتی کڕیار دەربکەوێت..."></textarea>
-        <button class="btn-main" onclick="sendAlert()">ناردنی پەیام</button>
-    </div>
-</div>
-
-<script>
-    const firebaseConfig = { 
-        apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", 
-        authDomain: "zana-exchange.firebaseapp.com", 
-        databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", 
-        projectId: "zana-exchange" 
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    let firstLoad = true;
-    let lastOrderCount = 0;
-
-    function checkAuth() {
-        if(document.getElementById('adminPass').value === "zana2024") {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('mainUI').style.display = 'block';
-            startApp();
-        } else { alert("وشەی نهێنی هەڵەیە!"); }
-    }
-
-    function openTab(id, btn) {
-        document.querySelectorAll('.admin-box').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        btn.classList.add('active');
-    }
-
-    function playNewOrderSound() {
-        try {
-            const msg = new SpeechSynthesisUtterance("New Order Received");
-            msg.lang = 'en-US';
-            msg.rate = 1;
-            window.speechSynthesis.speak(msg);
-        } catch(e) { console.log("Sound Error"); }
-    }
-
-    function startApp() {
-        // Orders Listener
-        db.ref('orders').on('value', snap => {
-            const data = snap.val();
-            let html = ""; let sales = 0, acc = 0, rej = 0, total = 0;
-            if(data) {
-                const ordersArray = Object.values(data);
-                total = ordersArray.length;
-                
-                if (!firstLoad && total > lastOrderCount) playNewOrderSound();
-                lastOrderCount = total; firstLoad = false;
-
-                ordersArray.reverse().forEach(o => {
-                    if(o.status === 'accepted') { sales += parseInt(o.amt) || 0; acc++; }
-                    if(o.status === 'rejected') rej++;
-                    let cls = o.status === 'accepted' ? 'accepted' : (o.status === 'rejected' ? 'rejected' : '');
-                    
-                    html += `
-                    <div class="order-card ${cls}">
-                        <div style="display:flex; justify-content:space-between; font-size:12px; color:#94a3b8; margin-bottom:10px;">
-                            <span>#${o.orderID}</span><span><i class="far fa-clock"></i> ${o.time}</span>
-                        </div>
-                        <div class="exchange-row">
-                            <div style="text-align:center;"><small style="color:#94a3b8">ناردوویەتی</small><br><b style="color:var(--main)">${o.amt} ${o.from}</b></div>
-                            <i class="fas fa-chevron-left" style="color:var(--main)"></i>
-                            <div style="text-align:center;"><small style="color:#94a3b8">بۆی بکە بە</small><br><b style="color:var(--success)">${o.total} ${o.to}</b></div>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
-                            <div style="font-size:13px; line-height:1.6;">نێرەر: <b>${o.senderPh}</b><br>بۆ: <b>${o.userPh}</b></div>
-                            <img src="${o.image || 'https://via.placeholder.com/100?text=No+Image'}" class="img-thumb" onclick="window.open(this.src)">
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-acc" onclick="updateStatus('${o.orderID}', 'accepted')">قبوڵکردن</button>
-                            <button class="btn btn-rej" onclick="updateStatus('${o.orderID}', 'rejected')">ڕەتکردنەوە</button>
-                            <button class="btn btn-del" onclick="deleteOrder('${o.orderID}')"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>`;
-                });
-            }
-            document.getElementById('ordersList').innerHTML = html || "<center style='padding:50px; color:#64748b;'>هیچ داواکارییەک نییە</center>";
-            document.getElementById('totalSales').innerText = sales.toLocaleString();
-            document.getElementById('accCount').innerText = acc;
-            document.getElementById('rejCount').innerText = rej;
-            document.getElementById('totalCount').innerText = total;
-        });
-
-        // Methods Listener
-        db.ref('methods').on('value', snap => {
-            let html = ""; const data = snap.val();
-            if(data) Object.keys(data).forEach(k => {
-                const m = data[k];
-                html += `
-                <div class="list-item">
-                    <div><b>${m.name}</b> <span class="tag">${m.type}</span><br>
-                    <small style="color:#94a3b8">${m.value} | حمولە: ${Math.round((1-m.fee)*100)}%</small></div>
-                    <button onclick="db.ref('methods/${k}').remove()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:18px;"><i class="fas fa-trash-alt"></i></button>
-                </div>`;
-            });
-            document.getElementById('methodsList').innerHTML = html;
-        });
-
-        // Load existing notification
-        db.ref('settings/alertMsg').once('value', s => { if(s.val()) document.getElementById('notifMsg').value = s.val(); });
-    }
-
-    function addMethod() {
-        const name = document.getElementById('wName').value;
-        const val = document.getElementById('wNum').value;
-        const fee = document.getElementById('wFee').value;
-        const type = document.getElementById('wType').value;
-        if(name && fee) {
-            db.ref('methods').push({ name, value: val || "---", fee: parseFloat(fee), type }).then(() => {
-                alert("بە سەرکەوتوویی زیاد کرا"); 
-                document.getElementById('wName').value = ""; 
-                document.getElementById('wNum').value = "";
-            });
-        } else { alert("تکایە ناو و حمولە بنووسە"); }
-    }
-
-    async function sendAlert() {
-        const msg = document.getElementById('notifMsg').value;
-        await db.ref('settings').update({ alertMsg: msg });
-        alert("ئاگادارییەکە نوێکرایەوە!");
-    }
-
-    function updateStatus(id, s) { db.ref('orders/' + id).update({ status: s }); }
-    function deleteOrder(id) { if(confirm('ئایا دڵنیای لە سڕینەوە؟')) db.ref('orders/' + id).remove(); }
-</script>
 </body>
 </html>
