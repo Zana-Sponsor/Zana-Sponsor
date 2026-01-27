@@ -23,6 +23,11 @@
         event.preventDefault(); 
         var url = event.currentTarget.href;
         
+        if (platform === 'WhatsApp') {
+            var message = "سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی!";
+            url = "whatsapp://send?phone=+9647758887488&text=" + encodeURIComponent(message);
+        }
+
         if (window.va) window.va('event', { name: 'Contact_Click', data: { platform: platform } });
         if (typeof ttq !== 'undefined') {
           ttq.track('Contact', {
@@ -73,18 +78,25 @@
         .sponsor-section { margin-top: 60px; text-align: center; }
         .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
         .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #1e8449, #27ae60); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; }
+        .legal-links { margin-top: 20px; font-size: 12px; color: #95a5a6; }
+        .legal-links a { color: #7f8c8d; text-decoration: none; margin: 0 8px; transition: color 0.2s; }
+        .legal-links a:hover { color: #2d3436; }
     </style>
 </head>
 <body>
 
     <div class="profile-container">
-        <img src="https://image2url.com/r2/default/images/1769518231888-0e16f273-ee25-4445-9ebb-cbc9df2af34d.jpg" onerror="this.src='https://ui-avatars.com/api/?name=Zana+Sponsor&background=27ae60&color=fff'" class="profile-img">
+        <img src="https://image2url.com/r2/default/images/1769518231888-0e16f273-ee25-4445-9ebb-cbc9df2af34d.jpg" 
+             class="profile-img" 
+             alt="Zana Sponsor"
+             onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Zana+Amazon&background=0D8ABC&color=fff'">
+        
         <h1>Zana Sponsor</h1>
         <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە</div>
     </div>
 
     <div class="links-wrapper">
-        <a href="whatsapp://send?phone=+9647758887488&text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی!" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
+        <a href="whatsapp://send?phone=+96477588874888" onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <span>واتساپ</span>
         </a>
@@ -92,15 +104,20 @@
             <i class="fab fa-viber"></i>
             <span>ڤایبەر</span>
         </a>
-        <a href="tel:+9647758887488" onclick="trackTikTokConversion('Phone', event)" class="link-card phone">
+        <a href="tel:+9647510074008" onclick="trackTikTokConversion('Phone', event)" class="link-card phone">
             <i class="fas fa-phone-alt"></i>
             <span>ژمارەی مۆبایل</span>
         </a>
     </div>
 
     <div class="sponsor-section">
-        <div class="sponsor-text" style="font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600;">سپۆنسەر کراوە لەلایەن</div>
-        <a href="whatsapp://send?phone=+9647758887488&text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Zana Media</a>
+        <div class="sponsor-text">دروست کراوە لەلایەن</div>
+        <a href="whatsapp://send?phone=+9647758887488&text=سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم" class="footer-tag">Zana Sponsor</a>
+        
+        <div class="legal-links">
+            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
+            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
+        </div>
     </div>
 
 </body>
