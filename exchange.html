@@ -57,9 +57,11 @@
         @keyframes popUp { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .tg-icon-wrapper { width: 80px; height: 80px; background: rgba(0, 136, 204, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
 
-        /* History */
+        /* History Classic Design */
         .order-card { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-right: 5px solid var(--accent); width: 100%; box-sizing: border-box; }
         .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--text); opacity: 0.8; }
+        .detail-item i { color: var(--accent); width: 18px; text-align: center; }
         .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
         .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
 
@@ -72,7 +74,7 @@
     <div class="modal-content">
         <div class="tg-icon-wrapper"><i class="fab fa-telegram" style="font-size: 45px; color: var(--tg-color);"></i></div>
         <h2 style="margin: 0 0 10px 0; font-size: 22px;">ئاگاداری نرخەکان بە!</h2>
-        <p style="font-size: 14px; opacity: 0.7; line-height: 1.6; margin-bottom: 25px;">بۆ وەرگرتنی دوایین گۆڕانکارییەکان، جۆینی چەناڵی فەرمی تیلیگرام بکەن.</p>
+        <p style="font-size: 14px; opacity: 0.7; line-height: 1.6; margin-bottom: 25px;">بۆ وەرگرتنی دوایین گۆڕانکارییەکانی بازاڕ و نرخەکان، جۆینی تیلیگرام بکەن.</p>
         <a href="https://t.me/zana_exchange" target="_blank" class="btn-global" onclick="closeModal()"><i class="fab fa-telegram-plane"></i> ئێستا جۆین ببە</a>
         <button style="background:none; border:none; color:#777; margin-top:20px; cursor:pointer; font-weight:bold;" onclick="closeModal()">دواتر جۆین دەبم</button>
     </div>
@@ -102,7 +104,7 @@
     <div class="premium-card">
         <div style="background:var(--input-bg); padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:15px; border-right: 5px solid var(--accent);">
             <span style="font-size:13px;"><i class="fas fa-wallet"></i> بنێرە بۆ: <b id="myNum" style="color:var(--accent)">---</b></span>
-            <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer; color:var(--accent);"></i>
+            <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer; color:var(--accent); font-size: 18px;"></i>
         </div>
 
         <select id="from" onchange="updateWallet()">
@@ -114,8 +116,10 @@
             <option value="USDT">🪙 USDT ($)</option>
         </select>
         
-        <input type="number" id="amt" placeholder="بڕی پارە" oninput="calc()">
-        <span id="formattedHint" class="formatted-amount">0 IQD</span>
+        <div style="position: relative;">
+            <input type="number" id="amt" placeholder="بڕی پارە" oninput="calc()">
+            <span id="formattedHint" class="formatted-amount">0 IQD</span>
+        </div>
         
         <select id="receiveVia" onchange="updatePlaceholder(); calc();">
             <option value="FastPay">وەرگرتن لە FastPay</option>
@@ -128,18 +132,17 @@
             <div id="feeDisplay" style="font-size:12px; color:#ff9f43; margin-top:5px; font-weight: bold; height: 18px;"></div>
         </div>
 
-        <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11">
-        <input type="file" id="fileInput" accept="image/*">
+        <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <input type="file" id="fileInput" accept="image/*" style="font-size:13px; margin-top: 5px;">
         
         <button class="btn-global" id="submitBtn" onclick="processOrder()" style="margin-top: 15px;">ناردنی داواکاری</button>
     </div>
 
-    <h3 style="font-size:16px; margin: 10px 5px;"><i class="fas fa-history"></i> مێژووی ئۆردەرەکان</h3>
-    <div id="historyList"></div>
+    <h3 style="font-size:16px; margin: 10px 5px; width:100%;"><i class="fas fa-history"></i> مێژووی ئۆردەرەکان</h3>
+    <div id="historyList" style="width: 100%;"></div>
 </div>
 
 <script>
-    // Firebase Setup
     const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); const db = firebase.database();
@@ -195,12 +198,14 @@
         if (!phone || !file || !amtValue) return alert("⚠️ زانیارییەکان تەواو بکە!");
         const btn = document.getElementById('submitBtn'); btn.disabled = true;
         const orderId = Math.floor(1000 + Math.random() * 8999);
+        const displayAmt = (document.getElementById('from').value === "USDT") ? `${formatNum(amtValue)}$` : `${formatNum(amtValue)} IQD`;
+
         const formData = new FormData();
         formData.append("chat_id", "6259019006"); formData.append("photo", file);
-        formData.append("caption", `🚀 ئۆردەر: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📥 لە: ${document.getElementById('from').value}\n📤 بۆ: ${document.getElementById('receiveVia').value}\n📱 ژمارە: ${phone}\n💰 وەرگرتن: ${document.getElementById('totalDisplay').innerText}`);
+        formData.append("caption", `🚀 ئۆردەر: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📥 لە: ${document.getElementById('from').value}\n📤 بۆ: ${document.getElementById('receiveVia').value}\n📱 ژمارە: ${phone}\n💵 بڕ: ${displayAmt}\n💰 وەرگرتن: ${document.getElementById('totalDisplay').innerText}`);
         try {
             await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: formData });
-            await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, from: document.getElementById('from').value, to: document.getElementById('receiveVia').value, amount: amtValue, total: document.getElementById('totalDisplay').innerText, phone, status: 'چاوەڕوانە', time: new Date().toLocaleString('ku-IQ') });
+            await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, from: document.getElementById('from').value, to: document.getElementById('receiveVia').value, amount: displayAmt, total: document.getElementById('totalDisplay').innerText, phone, status: 'چاوەڕوانە', time: new Date().toLocaleString('ku-IQ') });
             alert("داواکارییەکەت نێردرا ✅"); location.reload();
         } catch(e) { alert("هەڵە ڕوویدا!"); btn.disabled = false; }
     }
@@ -210,12 +215,25 @@
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                html = `<div class="order-card"><div class="order-header"><span style="color:var(--accent);">#${c.key}</span><span class="status-badge ${o.status==='وەرگیرا'?'status-success':''}">${o.status}</span></div><div>${o.from} ➔ ${o.to}</div><div style="font-weight:bold; color:#2ecc71; margin-top:5px;">${o.total}</div></div>` + html;
+                let sClass = o.status === "وەرگیرا" ? "status-success" : "";
+                html = `
+                <div class="order-card">
+                    <div class="order-header">
+                        <span style="font-weight:800; color:var(--accent);">#${c.key}</span>
+                        <span class="status-badge ${sClass}">${o.status}</span>
+                    </div>
+                    <div class="detail-item"><i class="fas fa-exchange-alt"></i> ${o.from} ➔ ${o.to}</div>
+                    <div class="detail-item"><i class="fas fa-coins"></i> بڕ: <b>${o.amount}</b></div>
+                    <div class="detail-item"><i class="fas fa-check-double"></i> بڕی وەرگیراو: <b style="color:#2ecc71">${o.total}</b></div>
+                    <div class="detail-item"><i class="fas fa-phone-alt"></i> ژمارە: ${o.phone}</div>
+                    <div class="detail-item"><i class="far fa-clock"></i> ${o.time}</div>
+                </div>` + html;
             });
-            document.getElementById('historyList').innerHTML = html || "هیچ ئۆردەرێک نییە";
+            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.5;'>هیچ ئۆردەرێک نییە</p>";
         });
     }
     function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا ✅"); }
+    function updatePlaceholder() { document.getElementById('userPhone').placeholder = `ژمارەی ${document.getElementById('receiveVia').value}`; }
     updateWallet();
 </script>
 </body>
