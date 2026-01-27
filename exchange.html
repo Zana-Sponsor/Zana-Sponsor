@@ -40,8 +40,14 @@
         
         .wallet-copy-box { background: var(--input-bg); padding: 12px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-right: 5px solid var(--accent); }
 
+        /* Old Order Card Style */
         .order-card { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-right: 5px solid var(--accent); width: 100%; box-sizing: border-box; }
-        
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--text); opacity: 0.8; }
+        .detail-item i { color: var(--accent); width: 18px; text-align: center; }
+        .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
+        .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
+
         #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
     </style>
 </head>
@@ -97,7 +103,7 @@
             <div id="feeDisplay" style="font-size:12px; color:#ff9f43; margin-top:5px; font-weight: bold;"></div>
         </div>
 
-        <input type="tel" id="userPhone" placeholder="نموونە: 07700000000" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         <label style="font-size:12px; color:#888; display:block; margin-bottom:5px; padding-right:5px;">وێنەی وەسڵی ناردن:</label>
         <input type="file" id="fileInput" accept="image/*" style="font-size:13px; padding: 10px;">
         
@@ -106,14 +112,11 @@
         </button>
     </div>
 
+    <h3 style="font-size:16px; margin: 15px 5px; width: 100%;"><i class="fas fa-list-ul"></i> وردەکاری ئۆردەرەکان</h3>
     <div id="historyList" style="width: 100%;"></div>
 </div>
 
 <script>
-    window.onload = function() {
-        setTimeout(() => { window.location.href = "tg://resolve?domain=ZanaSponsor"; }, 1200); 
-    };
-
     const TG_TOKEN = "8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo"; 
     const TG_CHAT_ID = "6259019006";
 
@@ -123,7 +126,26 @@
 
     function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
     function logout() { auth.signOut().then(() => location.reload()); }
-    auth.onAuthStateChanged(user => { if (user) { document.getElementById('loginSection').style.display='none'; document.getElementById('mainApp').style.display='block'; document.getElementById('userName').innerText = user.displayName; document.getElementById('userImg').src = user.photoURL; loadHistory(user.email); } });
+
+    auth.onAuthStateChanged(user => { 
+        if (user) { 
+            document.getElementById('loginSection').style.display='none'; 
+            document.getElementById('mainApp').style.display='block'; 
+            document.getElementById('userName').innerText = user.displayName; 
+            document.getElementById('userImg').src = user.photoURL; 
+            loadHistory(user.email); 
+            
+            // داوای جۆینی تیلیگرام دەکات تەنها دوای لۆگین
+            setTimeout(() => {
+                if(!localStorage.getItem('tgPrompted')) {
+                    if(confirm("بەخێرهاتی! تکایە جۆینی تیلیگرام بن بۆ بینینی نوێکارییەکان؟")) {
+                        window.location.href = "tg://resolve?domain=ZanaSponsor";
+                    }
+                    localStorage.setItem('tgPrompted', 'true');
+                }
+            }, 1500);
+        } 
+    });
 
     const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "07510074008", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
 
@@ -167,18 +189,15 @@
         const btn = document.getElementById('submitBtn');
         btn.disabled = true; btn.innerText = "لە پشکنیندایە...";
 
-        // پشکنینی ژمارەی مۆبایل بۆ عێراق
         if (!phone.startsWith("07") || phone.length !== 11) {
-            alert("⚠️ تکایە ژمارەیەکی ڕاستی عێراقی بنووسە (11 ژمارە و بە 07 دەست پێ بکات)");
-            btn.disabled = false;
-            btn.innerText = "ناردنی داواکاری";
+            alert("⚠️ تکایە ژمارەیەکی ڕاستی عێراقی بنووسە کە بە 07 دەست پێ بکات");
+            btn.disabled = false; btn.innerText = "ناردنی داواکاری";
             return;
         }
 
         if (from === to || !file || !amtValue) {
-            alert("⚠️ هەموو زانیارییەکان بە ڕاستی پڕ بکەرەوە!");
-            btn.disabled = false;
-            btn.innerText = "ناردنی داواکاری";
+            alert("⚠️ تکایە هەموو زانیارییەکان تەواو بکە!");
+            btn.disabled = false; btn.innerText = "ناردنی داواکاری";
             return;
         }
 
@@ -193,7 +212,7 @@
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, { method: "POST", body: formData });
             await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, from, to, amount: formatNum(amtValue), total: document.getElementById('totalDisplay').innerText, phone, status: 'چاوەڕوانە', time: date });
             alert("داواکارییەکەت نێردرا ✅"); location.reload();
-        } catch(e) { alert("هەڵە ڕوویدا!"); btn.disabled = false; btn.innerText = "ناردنی داواکاری"; }
+        } catch(e) { alert("هەڵە ڕوویدا!"); btn.disabled = false; }
     }
 
     function loadHistory(email) {
@@ -201,14 +220,26 @@
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                html = `<div class="order-card"><b>ID: #${c.key}</b> | <span style="color:var(--accent)">${o.status}</span><br>${o.from} ➔ ${o.to}<br>بڕ: ${o.amount} | پوختە: ${o.total}</div>` + html;
+                let statusClass = o.status === "وەرگیرا" ? "status-success" : "";
+                html = `
+                <div class="order-card">
+                    <div class="order-header">
+                        <span style="font-weight:800; color:var(--accent);">#${c.key}</span>
+                        <span class="status-badge ${statusClass}">${o.status}</span>
+                    </div>
+                    <div class="detail-item"><i class="fas fa-exchange-alt"></i> لە ${o.from} ➔ بۆ ${o.to}</div>
+                    <div class="detail-item"><i class="fas fa-coins"></i> بڕی نێردراو: <b>${o.amount}</b></div>
+                    <div class="detail-item"><i class="fas fa-check-double"></i> بڕی وەرگیراو: <b style="color:#2ecc71">${o.total}</b></div>
+                    <div class="detail-item"><i class="fas fa-phone-alt"></i> ژمارەی وەرگرتن: ${o.phone}</div>
+                    <div class="detail-item"><i class="far fa-clock"></i> ${o.time}</div>
+                </div>` + html;
             });
-            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.5;'>مێژووی ئۆردەرەکان</p>";
+            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.5;'>هیچ داواکارییەک نییە</p>";
         });
     }
 
     function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا ✅"); }
-    function updatePlaceholder() { document.getElementById('userPhone').placeholder = `ژمارەی ${document.getElementById('receiveVia').value}ـی تۆ`; }
+    function updatePlaceholder() { document.getElementById('userPhone').placeholder = `ژمارەی ${document.getElementById('receiveVia').value}`; }
     updateWallet();
 </script>
 </body>
