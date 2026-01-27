@@ -24,10 +24,11 @@
         .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: #ccc; }
         .detail-item i { color: var(--accent); width: 18px; text-align: center; }
         
-        /* Status Styles */
         .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
         .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
         .status-danger { border-color: #e74c3c !important; color: #e74c3c !important; }
+
+        .note-box { background: rgba(255, 193, 7, 0.1); border: 1px dashed #ffc107; border-radius: 10px; padding: 10px; margin-top: 10px; font-size: 12px; color: #ffc107; }
 
         .btn-cancel { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; border: 1px solid #ff4d4d; width: 100%; padding: 10px; border-radius: 12px; margin-top: 10px; cursor: pointer; font-family: 'Vazirmatn'; font-size: 12px; }
         #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
@@ -119,7 +120,7 @@
         if(from === "Asiacell" || from === "Korek") rate = 0.82;
         if(from === "USDT") rate = 1450;
         
-        let final = (from === "USDT") ? amt * rate : amt * rate;
+        let final = amt * rate;
         let fee = amt - final;
 
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " IQD";
@@ -161,6 +162,7 @@
                 fee: feeInfo,
                 phone: phone,
                 status: 'چاوەڕوانە',
+                note: '', // بەتاڵە تا تۆ لە فایەربەیس دەستکاری دەکەیت
                 time: date
             });
             alert("داواکارییەکەت نێردرا ✅"); location.reload();
@@ -198,6 +200,9 @@
                     ${o.fee ? `<div class="detail-item"><i class="fas fa-percentage"></i> ${o.fee}</div>` : ''}
                     <div class="detail-item"><i class="fas fa-phone-alt"></i> ژمارەی ${o.to}: <b>${o.phone}</b></div>
                     <div class="detail-item"><i class="far fa-clock"></i> کات: ${o.time}</div>
+                    
+                    ${o.note ? `<div class="note-box"><i class="fas fa-comment-dots"></i> <b>تێبینی ئەدمین:</b><br>${o.note}</div>` : ''}
+                    
                     ${o.status === 'چاوەڕوانە' ? `<button class="btn-cancel" onclick="cancelOrder('${c.key}')"><i class="fas fa-trash"></i> هەڵوەشاندنەوە</button>` : ''}
                 </div>` + html;
             });
