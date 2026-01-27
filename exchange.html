@@ -24,11 +24,11 @@
         .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: #ccc; }
         .detail-item i { color: var(--accent); width: 18px; text-align: center; }
         
+        /* Status Styles */
         .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
         .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
         .status-danger { border-color: #e74c3c !important; color: #e74c3c !important; }
 
-        .note-box { background: rgba(255, 193, 7, 0.1); border: 1px dashed #ffc107; border-radius: 10px; padding: 10px; margin-top: 10px; font-size: 12px; color: #ffc107; }
         .btn-cancel { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; border: 1px solid #ff4d4d; width: 100%; padding: 10px; border-radius: 12px; margin-top: 10px; cursor: pointer; font-family: 'Vazirmatn'; font-size: 12px; }
         #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
     </style>
@@ -52,7 +52,7 @@
 
     <div class="premium-card">
         <div style="background:#1f1f24; padding:10px; border-radius:12px; display:flex; justify-content:space-between; margin-bottom:15px; border-right: 4px solid var(--accent);">
-            <span style="font-size:13px;"><i class="fas fa-university"></i> بنێرە بۆ: <b id="myNum" style="color:var(--accent)">بارگاوی دەبێت...</b></span>
+            <span style="font-size:13px;"><i class="fas fa-university"></i> بنێرە بۆ: <b id="myNum" style="color:var(--accent)">---</b></span>
             <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer; color:var(--accent)"></i>
         </div>
 
@@ -93,52 +93,19 @@
 </div>
 
 <script>
-    // --- قۆناغی یەکەم: کۆنفیگ و داتا ---
     const TG_TOKEN = "8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo"; 
     const TG_CHAT_ID = "6259019006";
+
     const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
-    
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth(); 
-    const db = firebase.database();
+    const auth = firebase.auth(); const db = firebase.database();
 
-    // گۆڕاوەکان بۆ هەڵگرتنی داتا لە فایەربەیسەوە
-    let remoteWallets = {};
-    let remoteRates = {};
-
-    // --- قۆناغی دووەم: خوێندنەوەی داتا لە Firebase (Live Settings) ---
-    function fetchSettings() {
-        db.ref('settings').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                remoteWallets = data.wallets || {};
-                remoteRates = data.rates || {};
-                updateWallet(); // تازەکردنەوەی ژمارەکان لە ڕووکارەکە
-            }
-        });
-    }
-
-    // --- قۆناغی سێیەم: فەنکشنەکانی ئەپ ---
     function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
     function logout() { auth.signOut().then(() => location.reload()); }
-    
-    auth.onAuthStateChanged(user => { 
-        if (user) { 
-            document.getElementById('loginSection').style.display='none'; 
-            document.getElementById('mainApp').style.display='block'; 
-            document.getElementById('userName').innerText = user.displayName; 
-            document.getElementById('userImg').src = user.photoURL; 
-            fetchSettings(); // خوێندنەوەی سێتینگەکان
-            loadHistory(user.email); 
-        } 
-    });
+    auth.onAuthStateChanged(user => { if (user) { document.getElementById('loginSection').style.display='none'; document.getElementById('mainApp').style.display='block'; document.getElementById('userName').innerText = user.displayName; document.getElementById('userImg').src = user.photoURL; loadHistory(user.email); } });
 
-    function updateWallet() {
-        const fromMethod = document.getElementById('from').value;
-        // ئەگەر لە فایەربەیس هەبوو نیشانی بدە، ئەگینا بنووسە چاوەڕوانبە
-        document.getElementById('myNum').innerText = remoteWallets[fromMethod] || "دیاری نەکراوە";
-        calc();
-    }
+    const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
+    function updateWallet() { document.getElementById('myNum').innerText = wallets[document.getElementById('from').value]; calc(); }
 
     function updatePlaceholder() {
         const receiveMethod = document.getElementById('receiveVia').value;
@@ -148,9 +115,9 @@
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const from = document.getElementById('from').value;
-        
-        // وەرگرتنی ڕێژەی نرخ لە فایەربەیس (ئەگەر نەبوو دیفۆڵت بەکاردێنێت)
-        let rate = remoteRates[from] || (from === "USDT" ? 1450 : 0.99);
+        let rate = 0.99;
+        if(from === "Asiacell" || from === "Korek") rate = 0.82;
+        if(from === "USDT") rate = 1450;
         
         let final = (from === "USDT") ? amt * rate : amt * rate;
         let fee = amt - final;
@@ -194,7 +161,6 @@
                 fee: feeInfo,
                 phone: phone,
                 status: 'چاوەڕوانە',
-                note: '',
                 time: date
             });
             alert("داواکارییەکەت نێردرا ✅"); location.reload();
@@ -206,8 +172,18 @@
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                let statusClass = o.status === "وەرگیرا" ? "status-success" : (o.status === "ڕەتکرایەوە" ? "status-danger" : "");
-                let statusIcon = o.status === "وەرگیرا" ? '<i class="fas fa-check-circle"></i>' : (o.status === "ڕەتکرایەوە" ? '<i class="fas fa-times-circle"></i>' : '<i class="fas fa-clock"></i>');
+                let statusClass = "";
+                let statusIcon = "";
+                
+                if(o.status === "وەرگیرا") {
+                    statusClass = "status-success";
+                    statusIcon = '<i class="fas fa-check-circle"></i>';
+                } else if(o.status === "ڕەتکرایەوە") {
+                    statusClass = "status-danger";
+                    statusIcon = '<i class="fas fa-times-circle"></i>';
+                } else {
+                    statusIcon = '<i class="fas fa-clock"></i>';
+                }
 
                 html = `
                 <div class="order-card">
@@ -222,7 +198,6 @@
                     ${o.fee ? `<div class="detail-item"><i class="fas fa-percentage"></i> ${o.fee}</div>` : ''}
                     <div class="detail-item"><i class="fas fa-phone-alt"></i> ژمارەی ${o.to}: <b>${o.phone}</b></div>
                     <div class="detail-item"><i class="far fa-clock"></i> کات: ${o.time}</div>
-                    ${o.note ? `<div class="note-box"><i class="fas fa-comment-dots"></i> <b>تێبینی:</b> ${o.note}</div>` : ''}
                     ${o.status === 'چاوەڕوانە' ? `<button class="btn-cancel" onclick="cancelOrder('${c.key}')"><i class="fas fa-trash"></i> هەڵوەشاندنەوە</button>` : ''}
                 </div>` + html;
             });
@@ -230,8 +205,12 @@
         });
     }
 
-    async function cancelOrder(id) { if(confirm("دڵنیای لە هەڵوەشاندنەوە؟")) { await db.ref('orders/' + id).remove(); } }
+    async function cancelOrder(id) {
+        if(confirm("دڵنیای لە هەڵوەشاندنەوە؟")) { await db.ref('orders/' + id).remove(); }
+    }
+
     function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا ✅"); }
+    updateWallet();
 </script>
 </body>
 </html>
