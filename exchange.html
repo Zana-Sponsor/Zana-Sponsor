@@ -24,7 +24,6 @@
         .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: #ccc; }
         .detail-item i { color: var(--accent); width: 18px; text-align: center; }
         
-        /* Status Styles */
         .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
         .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
         .status-danger { border-color: #e74c3c !important; color: #e74c3c !important; }
@@ -115,16 +114,34 @@
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const from = document.getElementById('from').value;
-        let rate = 0.99;
-        if(from === "Asiacell" || from === "Korek") rate = 0.82;
-        if(from === "USDT") rate = 1450;
-        
-        let final = (from === "USDT") ? amt * rate : amt * rate;
-        let fee = amt - final;
+        const to = document.getElementById('receiveVia').value;
+        let final = 0;
+
+        // نرخەکان بەپێی وەرگرتن و ناردن
+        if (from === "Asiacell") {
+            if (to === "FastPay") final = amt * 0.84;
+            else if (to === "FIB") final = amt * 0.83;
+            else if (to === "QiCard") final = amt * 0.835;
+        } 
+        else if (from === "Korek") {
+            if (to === "FastPay") final = amt * 0.82;
+            else if (to === "FIB") final = amt * 0.81;
+            else if (to === "QiCard") final = amt * 0.815;
+        } 
+        else if (from === "USDT") {
+            if (to === "FastPay") final = amt * 1450;
+            else if (to === "FIB") final = amt * 1440;
+            else if (to === "QiCard") final = amt * 1445;
+        } 
+        else {
+            // بۆ Fastpay و FIB نرخەکان وەک خۆیان (یان کەمێک حمولە)
+            final = amt * 0.99;
+        }
 
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " IQD";
         
         if(from !== "USDT" && amt > 0) {
+            let fee = amt - final;
             document.getElementById('feeDisplay').innerText = `حمولە: ${Math.floor(fee).toLocaleString()} IQD`;
         } else {
             document.getElementById('feeDisplay').innerText = "";
