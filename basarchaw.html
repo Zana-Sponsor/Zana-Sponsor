@@ -19,11 +19,16 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
+      // فەنکشنی چاککراو بۆ ئەوەی وەک Conversion لە Ads Manager پیشان بدات
       window.trackTikTokConversion = function(platform, event) {
         if (window.va) window.va('event', { name: 'App_Download_Click', data: { store: platform } });
+        
         if (typeof ttq !== 'undefined') {
-          ttq.track('ClickButton', {
-            "contents": [{ "content_name": platform }]
+          // ناردنی ڕووداوەکە وەک Conversion (CompleteRegistration یان Contact)
+          ttq.track('CompleteRegistration', {
+            "contents": [{ "content_name": platform }],
+            "value": 1.0,
+            "currency": "USD"
           });
         }
       };
@@ -93,7 +98,7 @@
 
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="https://wa.me/9647758887488" class="footer-tag">Zana Sponsor</a>
+        <a href="https://wa.me/9647758887488" onclick="trackTikTokConversion('Sponsor_Contact', event)" class="footer-tag">Zana Sponsor</a>
         
         <div class="legal-links">
             <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
