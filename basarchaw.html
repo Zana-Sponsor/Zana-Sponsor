@@ -19,90 +19,74 @@
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      // فەنکشنی چاککراو بۆ ئەوەی وەک Conversion لە Ads Manager پیشان بدات
-      window.trackTikTokConversion = function(platform, event) {
-        if (window.va) window.va('event', { name: 'App_Download_Click', data: { store: platform } });
-        
+      // فەنکشنی سەرەکی ناردنی Conversion
+      window.trackTikTokConversion = function(platform, event, url) {
+        event.preventDefault(); // ڕێگری لە گۆڕینی خێرای پەڕە دەکات
+
+        // ناردنی داتا بۆ تیکتۆک
         if (typeof ttq !== 'undefined') {
-          // ناردنی ڕووداوەکە وەک Conversion (CompleteRegistration یان Contact)
-          ttq.track('CompleteRegistration', {
+          ttq.track('ClickButton', {
             "contents": [{ "content_name": platform }],
             "value": 1.0,
             "currency": "USD"
           });
+          ttq.track('CompleteRegistration'); // ناردنی دووەم بۆ دڵنیایی
         }
+
+        if (window.va) window.va('event', { name: 'App_Download_Click', data: { store: platform } });
+
+        // دوای 300 میللی چرکە کڕیارەکە ڕەوانەی لینکەکە دەکات (بۆ ئەوەی کاتی هەبێت داتاکە بنێرێت)
+        setTimeout(function() {
+            window.location.href = url;
+        }, 300);
       };
     }(window, document, 'ttq');
     </script>
 
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding: 60px 20px; margin: 0;
-        }
-        .profile-container {
-            text-align: center; margin-bottom: 25px; background: white;
-            padding: 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-            width: 100%; max-width: 350px;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 60px 20px; margin: 0; }
+        .profile-container { text-align: center; margin-bottom: 25px; background: white; padding: 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); width: 100%; max-width: 350px; }
         .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #f8f9fa; object-fit: cover; margin-bottom: 15px; }
         h1 { margin: 0; font-size: 22px; color: #2d3436; font-weight: 800; }
         .main-instruction { color: #636e72; font-size: 16px; font-weight: 600; margin-top: 12px; }
         .links-wrapper { width: 100%; max-width: 370px; display: flex; flex-direction: column; gap: 15px; }
-        .link-card {
-            display: flex; align-items: center; justify-content: center;
-            padding: 16px 25px; border-radius: 18px; text-decoration: none;
-            color: white; font-weight: 700; font-size: 19px; transition: all 0.2s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.07); animation: fast-pulse 0.8s infinite ease-in-out;
-        }
+        .link-card { display: flex; align-items: center; justify-content: center; padding: 16px 25px; border-radius: 18px; text-decoration: none; color: white; font-weight: 700; font-size: 19px; transition: all 0.2s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.07); animation: fast-pulse 0.8s infinite ease-in-out; cursor: pointer; }
         @keyframes fast-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
-        
-        .appstore { background: linear-gradient(45deg, #000000, #434343); animation-delay: 0.1s; }
-        .playstore { background: linear-gradient(45deg, #34a853, #4285f4); animation-delay: 0.2s; }
-        
-        .link-card:hover { transform: translateY(-3px) scale(1.06); filter: brightness(1.1); }
+        .appstore { background: linear-gradient(45deg, #000000, #434343); }
+        .playstore { background: linear-gradient(45deg, #34a853, #4285f4); }
         .link-card i { font-size: 28px; margin-left: 12px; }
         .sponsor-section { margin-top: 60px; text-align: center; }
-        .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
-        .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #1e8449, #27ae60); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; }
+        .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #1e8449, #27ae60); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; cursor: pointer; }
         .legal-links { margin-top: 20px; font-size: 12px; color: #95a5a6; }
-        .legal-links a { color: #7f8c8d; text-decoration: none; margin: 0 8px; transition: color 0.2s; }
-        .legal-links a:hover { color: #2d3436; }
     </style>
 </head>
 <body>
 
     <div class="profile-container">
-        <img src="https://image2url.com/r2/default/images/1769616152796-3f3c5265-3b38-44b7-b4d8-da9e3c2d68d6.jpg" 
-             class="profile-img" 
-             alt="Basarchaw App"
-             onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Basar+Chaw&background=0D8ABC&color=fff'">
-        
+        <img src="https://image2url.com/r2/default/images/1769616152796-3f3c5265-3b38-44b7-b4d8-da9e3c2d68d6.jpg" class="profile-img" alt="Basarchaw App">
         <h1>Basarchaw App</h1>
         <div class="main-instruction">بۆ دابەزاندنی ئەپ کلیک بکە</div>
     </div>
 
     <div class="links-wrapper">
-        <a href="https://apps.apple.com/iq/app/basarchaw/id6741873991" onclick="trackTikTokConversion('AppStore', event)" class="link-card appstore">
+        <a href="https://apps.apple.com/iq/app/basarchaw/id6741873991" onclick="trackTikTokConversion('AppStore', event, 'https://apps.apple.com/iq/app/basarchaw/id6741873991')" class="link-card appstore">
             <i class="fab fa-apple"></i>
             <span>App Store</span>
         </a>
 
-        <a href="market://details?id=com.moxtasar.basarchaw" onclick="trackTikTokConversion('PlayStore', event)" class="link-card playstore">
+        <a href="market://details?id=com.moxtasar.basarchaw" onclick="trackTikTokConversion('PlayStore', event, 'market://details?id=com.moxtasar.basarchaw')" class="link-card playstore">
             <i class="fab fa-google-play"></i>
             <span>Play Store</span>
         </a>
     </div>
 
     <div class="sponsor-section">
-        <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="https://wa.me/9647758887488" onclick="trackTikTokConversion('Sponsor_Contact', event)" class="footer-tag">Zana Sponsor</a>
+        <div class="sponsor-text" style="font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600;">سپۆنسەر کراوە لەلایەن</div>
+        <a href="https://wa.me/9647758887488" onclick="trackTikTokConversion('Sponsor_Contact', event, 'https://wa.me/9647758887488')" class="footer-tag">Zana Sponsor</a>
         
         <div class="legal-links">
-            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
-            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
+            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank" style="text-decoration:none; color:#7f8c8d;">Privacy Policy</a> | 
+            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank" style="text-decoration:none; color:#7f8c8d;">Terms of Service</a>
         </div>
     </div>
 
