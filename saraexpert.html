@@ -17,6 +17,18 @@
     ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
+
+      // فەنکشنی چاککراو بۆ ناردنی Conversion
+      window.trackClick = function(label) {
+        if (typeof ttq !== 'undefined') {
+          ttq.track('Contact', { // وەک پەیوەندی (Contact) تۆماری دەکات
+            "contents": [{ "content_name": label }],
+            "value": 0.5,
+            "currency": "USD"
+          });
+        }
+        if (window.va) window.va('event', { name: 'Click', data: { label: label } });
+      };
     }(window, document, 'ttq');
     </script>
 
@@ -45,15 +57,12 @@
         @keyframes fast-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
         .telegram { background: linear-gradient(45deg, #0088cc, #24A1DE); }
         .link-card:hover { transform: translateY(-3px) scale(1.06); filter: brightness(1.1); }
-        
-        /* لێرە قەبارەی ئایکۆنەکەم بچووک کردووەتەوە */
         .link-card i { font-size: 22px; margin-left: 10px; }
-
         .sponsor-section { margin-top: 60px; text-align: center; }
         .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
-        .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #0088cc, #24A1DE); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; }
+        .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #0088cc, #24A1DE); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; cursor: pointer; }
         .legal-links { margin-top: 20px; font-size: 12px; color: #95a5a6; }
-        .legal-links a { color: #7f8c8d; text-decoration: none; margin: 0 8px; transition: color 0.2s; }
+        .legal-links a { color: #7f8c8d; text-decoration: none; margin: 0 8px; }
     </style>
 </head>
 <body>
@@ -61,15 +70,14 @@
     <div class="profile-container">
         <img src="https://image2url.com/r2/default/images/1769597797604-c901789c-dcc2-40e1-9302-8cb0cb1c16dd.jpg" 
              class="profile-img" 
-             alt="Sara Expert"
-             onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Sara+Expert&background=0D8ABC&color=fff'">
+             alt="Sara Expert">
         
         <h1>Sara Expert</h1>
         <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە</div>
     </div>
 
     <div class="links-wrapper">
-        <a href="https://t.me/SaraExpert" class="link-card telegram">
+        <a href="https://t.me/SaraExpert" onclick="trackClick('Telegram_Main')" class="link-card telegram">
             <i class="fab fa-telegram"></i>
             <span>تێلیگرام</span>
         </a>
@@ -77,7 +85,7 @@
 
     <div class="sponsor-section">
         <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="https://t.me/SaraExpert" class="footer-tag">Zana Sponsor</a>
+        <a href="https://t.me/SaraExpert" onclick="trackClick('Sponsor_Zana')" class="footer-tag">Zana Sponsor</a>
         
         <div class="legal-links">
             <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
