@@ -4,54 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Zana Sponsor - Links</title>
+    <title>Bawar Shoes - Links</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding: 40px 20px; margin: 0;
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(at 10% 10%, rgba(56, 189, 248, 0.1) 0, transparent 40%), 
+                              radial-gradient(at 90% 90%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
         }
-        .profile-container {
-            text-align: center; margin-bottom: 25px; background: white;
-            padding: 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            width: 100%; max-width: 350px;
+
+        .container {
+            width: 90%;
+            max-width: 360px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #f8f9fa; object-fit: cover; margin-bottom: 15px; }
-        h1 { margin: 0; font-size: 22px; color: #2d3436; font-weight: 800; }
-        .main-instruction { color: #636e72; font-size: 15px; margin-top: 10px; }
-        
-        .links-wrapper { width: 100%; max-width: 350px; display: flex; flex-direction: column; gap: 12px; }
+
+        .profile-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            padding: 25px 20px;
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .profile-img {
+            width: 90px; height: 90px; border-radius: 50%;
+            border: 3px solid var(--accent-color);
+            object-fit: cover; margin-bottom: 12px;
+        }
+
+        h1 { margin: 5px 0; font-size: 21px; font-weight: 900; }
+        .description { color: #94a3b8; font-size: 14px; }
+
+        @keyframes fastPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        .links-wrapper { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+
         .link-card {
-            display: flex; align-items: center; justify-content: center;
-            padding: 14px; border-radius: 15px; text-decoration: none;
-            color: white; font-weight: 700; font-size: 18px; transition: 0.3s;
-            animation: pulse 1.5s infinite ease-in-out;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 22px; border-radius: 16px; text-decoration: none;
+            color: white; font-weight: 700; font-size: 18px; 
+            animation: fastPulse 1.5s infinite ease-in-out;
+            cursor: pointer;
         }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
-        
-        .whatsapp { background: linear-gradient(45deg, #27ae60, #2ecc71); }
-        .viber { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
-        .phone { background: linear-gradient(45deg, #0984e3, #74b9ff); }
-        
-        .link-card:hover { transform: scale(1.05); filter: brightness(1.1); }
-        .link-card i { font-size: 24px; margin-left: 10px; }
-        
-        .sponsor-section { margin-top: 50px; text-align: center; }
-        .footer-tag { 
-            padding: 10px 30px; background: #1e8449; border-radius: 50px; 
-            color: white; text-decoration: none; font-weight: bold; display: inline-block;
+
+        .whatsapp { background: linear-gradient(135deg, #128C7E, #25D366); }
+        .viber { background: linear-gradient(135deg, #7360f2, #59267c); animation-delay: 0.2s; }
+        .phone { background: linear-gradient(135deg, #3b82f6, #1d4ed8); animation-delay: 0.4s; }
+
+        .link-card i { font-size: 32px; }
+
+        .footer {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
         }
-        .legal-links { margin-top: 15px; font-size: 11px; color: #95a5a6; }
-        .legal-links a { color: #7f8c8d; text-decoration: none; margin: 0 5px; }
+
+        .sponsor-label { font-size: 11px; color: #64748b; margin: 0; }
+
+        .sponsor-btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            border-radius: 50px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .legal-links { 
+            font-size: 11px; 
+            color: #475569; 
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 5px;
+        }
+        .legal-links a { color: inherit; text-decoration: none; opacity: 0.7; }
+        .separator { opacity: 0.2; }
     </style>
 
-    <script defer src="/_vercel/insights/script.js"></script>
     <script>
         !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=r+"?sdkid="+e+"&lib="+t;var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(a,s)};
-        ttq.load('D5N6ETJC77UFLMP0AO10');
+        
+        ttq.load('D5N6ETJC77UFLMP0AO10'); // Your Pixel ID
         ttq.page();
 
         window.trackClick = function(platform, url) {
@@ -65,31 +136,37 @@
 </head>
 <body>
 
-    <div class="profile-container">
-        <img src="https://image2url.com/r2/default/images/1769775081715-d6c7c3f0-0ca2-43a5-9f49-1271f7405f07.jpg" 
-             class="profile-img" alt="Bawar Shoes" onerror="this.src='https://ui-avatars.com/api/?name=Bawar+Shoes'">
-        <h1>Bawar Shoes</h1>
-        <div class="main-instruction">بۆ پەیوەندی کردن یەکێک لەمانە هەڵبژێرە:</div>
-    </div>
+    <div class="container">
+        <div class="profile-card">
+            <img src="https://image2url.com/r2/default/images/1769775081715-d6c7c3f0-0ca2-43a5-9f49-1271f7405f07.jpg" 
+                 class="profile-img" alt="Bawar Shoes" onerror="this.src='https://ui-avatars.com/api/?name=Bawar+Shoes'">
+            <h1>Bawar Shoes</h1>
+            <p class="description">بۆ پەیوەندی کردن یەکێک هەڵبژێرە:</p>
+        </div>
 
-    <div class="links-wrapper">
-        <a href="javascript:void(0)" onclick="trackClick('WhatsApp', 'https://wa.me/9647509664746')" class="link-card whatsapp">
-            <i class="fab fa-whatsapp"></i> <span>واتساپ</span>
-        </a>
-        <a href="javascript:void(0)" onclick="trackClick('Viber', 'viber://chat?number=+9647509664746')" class="link-card viber">
-            <i class="fab fa-viber"></i> <span>ڤایبەر</span>
-        </a>
-        <a href="javascript:void(0)" onclick="trackClick('Phone', 'tel:+9647509664746')" class="link-card phone">
-            <i class="fas fa-phone-alt"></i> <span>ژمارەی مۆبایل</span>
-        </a>
-    </div>
+        <div class="links-wrapper">
+            <a href="javascript:void(0)" onclick="trackClick('WhatsApp', 'https://wa.me/9647509664746')" class="link-card whatsapp">
+                <span>واتساپ</span> <i class="fab fa-whatsapp"></i>
+            </a>
+            
+            <a href="javascript:void(0)" onclick="trackClick('Viber', 'viber://chat?number=+9647509664746')" class="link-card viber">
+                <span>ڤایبەر</span> <i class="fab fa-viber"></i>
+            </a>
+            
+            <a href="javascript:void(0)" onclick="trackClick('Phone', 'tel:+9647509664746')" class="link-card phone">
+                <span>پەیوەندی تەلەفۆنی</span> <i class="fas fa-phone-alt"></i>
+            </a>
+        </div>
 
-    <div class="sponsor-section">
-        <p style="font-size: 13px; color: #636e72;">سپۆنسەر کراوە لەلایەن</p>
-        <a href="https://wa.me/9647758887488?text=سڵاو، دەمەوێت ڕیکلام بکەم" class="footer-tag">Zana Sponsor</a>
-        <div class="legal-links">
-            <a href="https://www.tiktok.com/legal/privacy-policy">Privacy Policy</a> | 
-            <a href="https://www.tiktok.com/legal/terms-of-service">Terms</a>
+        <div class="footer">
+            <p class="sponsor-label">سپۆنسەرکراوە لەلایەن</p>
+            <a href="https://wa.me/9647758887488?text=سڵاو، دەمەوێت ڕیکلام بکەم بۆ کاڵاکەم" class="sponsor-btn">Zana Sponsor - زانا سپۆنسەر</a>
+            
+            <div class="legal-links">
+                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Terms</a>
+                <span class="separator">|</span>
+                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Privacy Policy</a>
+            </div>
         </div>
     </div>
 
