@@ -13,7 +13,7 @@
             --bg-color: #0f172a;
             --card-bg: rgba(30, 41, 59, 0.85);
             --text-color: #f8fafc;
-            --accent-color: #ffd700; /* لێرەدا ڕەنگی سەرەکی کرا بە ئاڵتوونی */
+            --accent-color: #ffd700;
         }
 
         body {
@@ -44,13 +44,18 @@
 
         .profile-img {
             width: 90px; height: 90px; border-radius: 50%;
-            /* لێرەدا ڕەنگی Stroke گۆڕدراوە */
             border: 3px solid #ffd700; 
             object-fit: cover; 
             margin-bottom: 10px;
         }
 
-        b { font-size: 20px; margin: 5px 0; font-weight: 700; }
+        /* لێرەدا ناوەکە کرا بە Bold و تۆخ */
+        h1 { 
+            font-size: 22px; 
+            margin: 5px 0; 
+            font-weight: 900; 
+            color: #ffffff;
+        }
 
         @keyframes fastPulse {
             0%, 100% { transform: scale(1); }
@@ -92,7 +97,8 @@
         
         .sponsor-btn:hover { opacity: 0.9; transform: scale(1.02); }
 
-        .legal-links { font-size: 11px; color: #475569; display: flex; gap: 15px; align-items: center; }
+        /* ستایلی یاساکانی تیک تۆک */
+        .legal-links { font-size: 11px; color: #475569; display: flex; gap: 15px; align-items: center; margin-top: 5px; }
         .legal-links a { color: inherit; text-decoration: none; opacity: 0.7; }
         .sep { opacity: 0.3; }
     </style>
@@ -138,7 +144,7 @@
                  alt="Bawar Shoes"
                  onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Bawar+Shoes&background=ffd700&color=fff'">
             
-            </b>پێڵاو فرۆشی باوەڕ</b>
+            <h1>پێڵاو فرۆشی باوەڕ</h1>
             <p style="color: #94a3b8; font-size: 14px; margin-top: 15px; margin-bottom: 0;">بۆ پەیوەندی کردن کلیک لەم لینکە بکە :</p>
         </div>
 
@@ -162,6 +168,12 @@
         <div class="footer">
             <p style="font-size: 11px; color: #64748b; margin: 0;">سپۆنسەرکراوە لەلایەن</p>
             <a href="https://wa.me/9647758887488" class="sponsor-btn">Zana Sponsor - زانا سپۆنسەر</a>
+            
+            <div class="legal-links">
+                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
+                <span class="sep">|</span>
+                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
+            </div>
         </div>
     </div>
 
