@@ -116,6 +116,7 @@
         
         setTimeout(function() {
           if(document.body.contains(frame)) document.body.removeChild(frame);
+          window.location.href = url;
         }, 150);
       };
     }(window, document, 'ttq');
@@ -125,7 +126,11 @@
 
     <div class="container">
         <div class="profile-card">
-            <img src="https://image2url.com/r2/default/images/1769859004573-836c5e45-c926-4e64-8edc-ef2817860d61.jpeg" class="profile-img" alt="HaMa_Hawkar_Pubg⚜️">
+            <img src="https://image2url.com/r2/default/images/1769859004573-836c5e45-c926-4e64-8edc-ef2817860d61.jpeg" 
+                 class="profile-img" 
+                 alt="HaMa_Hawkar_Pubg⚜️"
+                 onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=HaMa+Hawkar&background=38bdf8&color=fff'">
+            
             <h1>HaMa_Hawkar_Pubg⚜️</h1>
             <p style="color: #94a3b8; font-size: 14px;">بۆ پەیوەندی کردن کلیک لەتیلیگرام بکە :</p>
         </div>
