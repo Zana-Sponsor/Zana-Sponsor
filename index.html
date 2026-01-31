@@ -45,6 +45,8 @@
             object-fit: cover; margin-bottom: 12px;
         }
 
+        h1 { font-size: 22px; margin: 10px 0; font-weight: 700; }
+
         @keyframes fastPulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.04); }
@@ -91,15 +93,35 @@
     </style>
 
     <script>
-        !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=r+"?sdkid="+e+"&lib="+t;var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(a,s)};
-        ttq.load('D5N6ETJC77UFLMP0AO10');
-        ttq.page();
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+    var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
 
-        function handleLinkClick(platform) {
-            if (typeof ttq !== 'undefined') {
-                ttq.track('Contact', { contents: [{ content_name: platform }] });
-            }
+      ttq.load('D5N6ETJC77UFLMP0AO10');
+      ttq.page();
+
+      window.trackTikTokConversion = function(platform, event) {
+        event.preventDefault(); 
+        var url = event.currentTarget.href;
+        
+        if (typeof ttq !== 'undefined') {
+          ttq.track('Contact', {
+            "contents": [{ "content_name": platform }]
+          });
         }
+
+        var frame = document.createElement('iframe');
+        frame.style.display = 'none';
+        frame.src = url;
+        document.body.appendChild(frame);
+        
+        setTimeout(function() {
+          if(document.body.contains(frame)) document.body.removeChild(frame);
+          window.location.href = url; // گواستنەوەی کڕیار بۆ لینکەکە دوای ناردنی داتا
+        }, 150);
+      };
+    }(window, document, 'ttq');
     </script>
 </head>
 <body>
@@ -113,17 +135,17 @@
 
         <div class="links-wrapper">
             <a href="https://wa.me/9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی !" 
-               onclick="handleLinkClick('WhatsApp')" class="link-card whatsapp">
+               onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
                 <span>واتساپ</span> <i class="fab fa-whatsapp"></i>
             </a>
             
             <a href="viber://chat?number=%2B9647758887488" 
-               onclick="handleLinkClick('Viber')" class="link-card viber">
+               onclick="trackTikTokConversion('Viber', event)" class="link-card viber">
                 <span>ڤایبەر</span> <i class="fab fa-viber"></i>
             </a>
             
             <a href="tel:+9647510074008" 
-               onclick="handleLinkClick('Phone')" class="link-card phone">
+               onclick="trackTikTokConversion('Phone', event)" class="link-card phone">
                 <span>ژمارەی تەلەفۆن</span> <i class="fas fa-phone-alt"></i>
             </a>
         </div>
