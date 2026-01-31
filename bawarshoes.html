@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
     <title>Bawar Shoes - Links</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
@@ -26,18 +25,10 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-image: radial-gradient(at 10% 10%, rgba(56, 189, 248, 0.1) 0, transparent 40%), 
-                              radial-gradient(at 90% 90%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+            background-image: radial-gradient(at 10% 10%, rgba(56, 189, 248, 0.1) 0, transparent 40%);
         }
 
-        .container {
-            width: 90%;
-            max-width: 360px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        .container { width: 90%; max-width: 360px; text-align: center; }
 
         .profile-card {
             background: var(--card-bg);
@@ -46,7 +37,6 @@
             border-radius: 22px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 25px;
-            width: 100%;
         }
 
         .profile-img {
@@ -55,22 +45,18 @@
             object-fit: cover; margin-bottom: 12px;
         }
 
-        h1 { margin: 5px 0; font-size: 21px; font-weight: 900; }
-        .description { color: #94a3b8; font-size: 14px; }
-
         @keyframes fastPulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.04); }
         }
 
-        .links-wrapper { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        .links-wrapper { display: flex; flex-direction: column; gap: 12px; }
 
         .link-card {
             display: flex; align-items: center; justify-content: space-between;
             padding: 18px 22px; border-radius: 16px; text-decoration: none;
             color: white; font-weight: 700; font-size: 18px; 
             animation: fastPulse 1.5s infinite ease-in-out;
-            cursor: pointer;
         }
 
         .whatsapp { background: linear-gradient(135deg, #128C7E, #25D366); }
@@ -80,93 +66,67 @@
         .link-card i { font-size: 32px; }
 
         .footer {
-            margin-top: 25px;
-            padding-top: 15px;
+            margin-top: 25px; padding-top: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
-
-        .sponsor-label { font-size: 11px; color: #64748b; margin: 0; }
 
         .sponsor-btn {
-            display: inline-block;
-            padding: 8px 20px;
-            background: rgba(56, 189, 248, 0.08);
+            padding: 8px 20px; background: rgba(56, 189, 248, 0.08);
             border: 1px solid rgba(56, 189, 248, 0.15);
-            border-radius: 50px;
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 13px;
-            transition: 0.3s;
+            border-radius: 50px; color: var(--accent-color);
+            text-decoration: none; font-size: 13px; font-weight: 700;
         }
 
-        .legal-links { 
-            font-size: 11px; 
-            color: #475569; 
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            margin-top: 5px;
-        }
+        .legal-links { font-size: 11px; color: #475569; display: flex; gap: 15px; }
         .legal-links a { color: inherit; text-decoration: none; opacity: 0.7; }
-        .separator { opacity: 0.2; }
     </style>
 
     <script>
         !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=r+"?sdkid="+e+"&lib="+t;var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(a,s)};
-        
         ttq.load('D5N6ETJC77UFLMP0AO10');
         ttq.page();
 
-        window.trackClick = function(platform, url) {
+        function handleLinkClick(e, platform, url) {
             if (typeof ttq !== 'undefined') {
                 ttq.track('Contact', { contents: [{ content_name: platform }] });
             }
-            // مەودایەکی کەم بۆ دڵنیابوون لەوەی پیکسڵەکە ئیش دەکات پاشان دەچێتە سەر لینکەکە
-            setTimeout(function() { window.location.href = url; }, 250);
-            return false;
-        };
+        }
     </script>
 </head>
 <body>
 
     <div class="container">
         <div class="profile-card">
-            <img src="https://image2url.com/r2/default/images/1769775081715-d6c7c3f0-0ca2-43a5-9f49-1271f7405f07.jpg" 
-                 class="profile-img" alt="Bawar Shoes" onerror="this.src='https://ui-avatars.com/api/?name=Bawar+Shoes'">
+            <img src="https://image2url.com/r2/default/images/1769775081715-d6c7c3f0-0ca2-43a5-9f49-1271f7405f07.jpg" class="profile-img" alt="Bawar Shoes">
             <h1>Bawar Shoes</h1>
-            <p class="description">بۆ پەیوەندی کردن یەکێک هەڵبژێرە:</p>
+            <p style="color: #94a3b8; font-size: 14px;">بۆ پەیوەندی کردن کلیک لەم لینکەی خوارەوە بکە :</p>
         </div>
 
         <div class="links-wrapper">
-            <a href="javascript:void(0)" onclick="trackClick('WhatsApp', 'https://wa.me/9647509664746')" class="link-card whatsapp">
+            <a href="https://wa.me/9647509664746?text=سڵاو%20بۆ%20پێڵاوی%20باوەر" 
+               onclick="handleLinkClick(event, 'WhatsApp')" class="link-card whatsapp">
                 <span>واتساپ</span> <i class="fab fa-whatsapp"></i>
             </a>
             
-            <a href="javascript:void(0)" onclick="trackClick('Viber', 'viber://add?number=9647509664746')" class="link-card viber">
+            <a href="viber://chat?number=%2B9647509664746" 
+               onclick="handleLinkClick(event, 'Viber')" class="link-card viber">
                 <span>ڤایبەر</span> <i class="fab fa-viber"></i>
             </a>
             
-            <a href="javascript:void(0)" onclick="trackClick('Phone', 'tel:+9647509664746')" class="link-card phone">
+            <a href="tel:+9647509664746" 
+               onclick="handleLinkClick(event, 'Phone')" class="link-card phone">
                 <span>پەیوەندی تەلەفۆنی</span> <i class="fas fa-phone-alt"></i>
             </a>
         </div>
 
         <div class="footer">
-            <p class="sponsor-label">سپۆنسەرکراوە لەلایەن</p>
-            <a href="https://wa.me/9647758887488?text=سڵاو، دەمەوێت ڕیکلام بکەم" class="sponsor-btn">Zana Sponsor - زانا سپۆنسەر</a>
+            <p style="font-size: 11px; color: #64748b; margin: 0;">سپۆنسەرکراوە لەلایەن</p>
+            <a href="https://wa.me/9647758887488" class="sponsor-btn">Zana Sponsor - زانا سپۆنسەر</a>
             
             <div class="legal-links">
-                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
-                <span class="separator">|</span>
-                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
+                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Terms</a>
+                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Privacy Policy</a>
             </div>
         </div>
     </div>
