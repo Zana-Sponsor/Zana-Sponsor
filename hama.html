@@ -14,7 +14,6 @@
             --card-bg: rgba(30, 41, 59, 0.85);
             --text-color: #f8fafc;
             --accent-color: #38bdf8;
-            --telegram-color: #0088cc;
         }
 
         body {
@@ -38,6 +37,13 @@
             border-radius: 22px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 25px;
+        }
+
+        /* لێرە ناوەکە بچووک کراوەتەوە بۆ 20px */
+        h1 {
+            font-size: 20px; 
+            margin: 10px 0;
+            font-weight: 700;
         }
 
         .profile-img {
@@ -91,12 +97,18 @@
 
     <script>
         !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=r+"?sdkid="+e+"&lib="+t;var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(a,s)};
+        
+        // پیکسڵەکەت
         ttq.load('D5N6ETJC77UFLMP0AO10');
         ttq.page();
 
+        // فەرمانی ناردنی داتا بۆ تیکتۆک
         function handleLinkClick(platform) {
-            if (typeof ttq !== 'undefined') {
-                ttq.track('Contact', { contents: [{ content_name: platform }] });
+            if (window.ttq) {
+                ttq.track('Contact', {
+                    content_name: platform,
+                    content_category: 'Social Media'
+                });
             }
         }
     </script>
@@ -106,7 +118,7 @@
     <div class="container">
         <div class="profile-card">
             <img src="https://image2url.com/r2/default/images/1769859004573-836c5e45-c926-4e64-8edc-ef2817860d61.jpeg" class="profile-img" alt="HaMa_Hawkar_Pubg⚜️">
-            <h1 style="font-size: 20px;">HaMa_Hawkar_Pubg⚜️</h1>
+            <h1>HaMa_Hawkar_Pubg⚜️</h1>
             <p style="color: #94a3b8; font-size: 14px;">بۆ پەیوەندی کردن کلیک لەتیلیگرام بکە :</p>
         </div>
 
