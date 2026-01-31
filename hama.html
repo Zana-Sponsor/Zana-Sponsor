@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zana Sponsor - Links</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --telegram-color: #0088cc;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(at 10% 10%, rgba(56, 189, 248, 0.1) 0, transparent 40%);
+        }
+
+        .container { width: 90%; max-width: 360px; text-align: center; }
+
+        .profile-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            padding: 25px 20px;
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .profile-img {
+            width: 90px; height: 90px; border-radius: 50%;
+            border: 3px solid var(--accent-color);
+            object-fit: cover; margin-bottom: 12px;
+        }
+
+        @keyframes fastPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        .links-wrapper { display: flex; flex-direction: column; gap: 12px; }
+
+        .link-card {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 22px; border-radius: 16px; text-decoration: none;
+            color: white; font-weight: 700; font-size: 18px; 
+            animation: fastPulse 1.5s infinite ease-in-out;
+            background: linear-gradient(135deg, #0088cc, #24A1DE);
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+        }
+
+        .link-card i { font-size: 32px; }
+
+        .footer {
+            margin-top: 25px; padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+
+        .sponsor-btn {
+            display: inline-block;
+            padding: 10px 22px;
+            background: #2C67E7;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 13px;
+            transition: 0.3s ease;
+        }
+        
+        .sponsor-btn:hover { opacity: 0.9; transform: scale(1.02); }
+
+        .legal-links { font-size: 11px; color: #475569; display: flex; gap: 15px; align-items: center; }
+        .legal-links a { color: inherit; text-decoration: none; opacity: 0.7; }
+        .sep { opacity: 0.3; }
+    </style>
+
+    <script>
+        !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=r+"?sdkid="+e+"&lib="+t;var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(a,s)};
+        ttq.load('D5N6ETJC77UFLMP0AO10');
+        ttq.page();
+
+        function handleLinkClick(platform) {
+            if (typeof ttq !== 'undefined') {
+                ttq.track('Contact', { contents: [{ content_name: platform }] });
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="profile-card">
+            <img src="https://image2url.com/r2/default/images/1769859004573-836c5e45-c926-4e64-8edc-ef2817860d61.jpeg" class="profile-img" alt="HaMa_Hawkar_Pubg⚜️">
+            <h1>HaMa_Hawkar_Pubg⚜️</h1>
+            <p style="color: #94a3b8; font-size: 14px;">بۆ پەیوەندی کردن کلیک لەتیلیگرام بکە :</p>
+        </div>
+
+        <div class="links-wrapper">
+            <a href="https://t.me/HaMa_Hawkar_Pubg" 
+               onclick="handleLinkClick('Telegram')" class="link-card">
+                <span>تیلیگرام</span> <i class="fab fa-telegram-plane"></i>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p style="font-size: 11px; color: #64748b; margin: 0;">سپۆنسەرکراوە لەلایەن</p>
+            <a href="https://wa.me/9647758887488" class="sponsor-btn">Zana Sponsor - زانا سپۆنسەر</a>
+            
+            <div class="legal-links">
+                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
+                <span class="sep">|</span>
+                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
