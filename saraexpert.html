@@ -1,95 +1,156 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ku">
 <head>
-    <meta name="robots" content="noindex, nofollow">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zana Sponsor - Links</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <script defer src="/_vercel/insights/script.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(at 10% 10%, rgba(56, 189, 248, 0.1) 0, transparent 40%);
+        }
+
+        .container { width: 90%; max-width: 360px; text-align: center; }
+
+        .profile-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            padding: 25px 20px;
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .profile-img {
+            width: 90px; height: 90px; border-radius: 50%;
+            border: 3px solid var(--accent-color);
+            object-fit: cover; margin-bottom: 12px;
+        }
+
+        h1 { font-size: 20px; margin: 10px 0; font-weight: 700; }
+
+        @keyframes fastPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        .links-wrapper { display: flex; flex-direction: column; gap: 12px; }
+
+        .link-card {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 22px; border-radius: 16px; text-decoration: none;
+            color: white; font-weight: 700; font-size: 18px; 
+            animation: fastPulse 1.5s infinite ease-in-out;
+            background: linear-gradient(135deg, #0088cc, #24A1DE);
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+        }
+
+        .link-card i { font-size: 32px; }
+
+        .footer {
+            margin-top: 25px; padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+
+        .sponsor-btn {
+            display: inline-block;
+            padding: 10px 22px;
+            background: #2C67E7;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 13px;
+            transition: 0.3s ease;
+        }
+        
+        .sponsor-btn:hover { opacity: 0.9; transform: scale(1.02); }
+
+        .legal-links { font-size: 11px; color: #475569; display: flex; gap: 15px; align-items: center; }
+        .legal-links a { color: inherit; text-decoration: none; opacity: 0.7; }
+        .sep { opacity: 0.3; }
+    </style>
 
     <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     !function (w, d, t) {
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
     var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
     ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      // فەنکشنی چاککراو بۆ ناردنی Conversion
-      window.trackClick = function(label) {
+      window.trackTikTokConversion = function(platform, event) {
+        event.preventDefault(); 
+        var url = event.currentTarget.href;
+        
         if (typeof ttq !== 'undefined') {
-          ttq.track('Contact', { // وەک پەیوەندی (Contact) تۆماری دەکات
-            "contents": [{ "content_name": label }],
-            "value": 0.5,
-            "currency": "USD"
+          ttq.track('Contact', {
+            "contents": [{ "content_name": platform }]
           });
         }
-        if (window.va) window.va('event', { name: 'Click', data: { label: label } });
+
+        var frame = document.createElement('iframe');
+        frame.style.display = 'none';
+        frame.src = url;
+        document.body.appendChild(frame);
+        
+        setTimeout(function() {
+          if(document.body.contains(frame)) document.body.removeChild(frame);
+          window.location.href = url;
+        }, 150);
       };
     }(window, document, 'ttq');
     </script>
-
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #dae2ee 100%);
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding: 60px 20px; margin: 0;
-        }
-        .profile-container {
-            text-align: center; margin-bottom: 25px; background: white;
-            padding: 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-            width: 100%; max-width: 350px;
-        }
-        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #f8f9fa; object-fit: cover; margin-bottom: 15px; }
-        h1 { margin: 0; font-size: 22px; color: #2d3436; font-weight: 800; }
-        .main-instruction { color: #636e72; font-size: 16px; font-weight: 600; margin-top: 12px; }
-        .links-wrapper { width: 100%; max-width: 370px; display: flex; flex-direction: column; gap: 15px; }
-        .link-card {
-            display: flex; align-items: center; justify-content: center;
-            padding: 16px 25px; border-radius: 18px; text-decoration: none;
-            color: white; font-weight: 700; font-size: 19px; transition: all 0.2s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.07); animation: fast-pulse 0.8s infinite ease-in-out;
-        }
-        @keyframes fast-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
-        .telegram { background: linear-gradient(45deg, #0088cc, #24A1DE); }
-        .link-card:hover { transform: translateY(-3px) scale(1.06); filter: brightness(1.1); }
-        .link-card i { font-size: 22px; margin-left: 10px; }
-        .sponsor-section { margin-top: 60px; text-align: center; }
-        .sponsor-text { font-size: 14px; color: #636e72; margin-bottom: 10px; font-weight: 600; }
-        .footer-tag { padding: 12px 35px; background: linear-gradient(45deg, #0088cc, #24A1DE); border-radius: 50px; color: #ffffff; font-size: 17px; display: inline-block; font-weight: 900; text-decoration: none; cursor: pointer; }
-        .legal-links { margin-top: 20px; font-size: 12px; color: #95a5a6; }
-        .legal-links a { color: #7f8c8d; text-decoration: none; margin: 0 8px; }
-    </style>
 </head>
 <body>
 
-    <div class="profile-container">
-        <img src="https://image2url.com/r2/default/images/1769597797604-c901789c-dcc2-40e1-9302-8cb0cb1c16dd.jpg" 
-             class="profile-img" 
-             alt="Sara Expert">
-        
-        <h1>Sara Expert</h1>
-        <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەیەکێک لەمانە بکە</div>
-    </div>
+    <div class="container">
+        <div class="profile-card">
+            <img src="https://image2url.com/r2/default/images/1769945389064-666e90bd-4863-4ad0-b155-e9513befc02a.jpg" 
+                 class="profile-img" 
+                 alt="Sara Expert"
+                 onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Sara+Expert&background=38bdf8&color=fff'">
+            
+            <h1>Sara Expert</h1>
+            <p style="color: #94a3b8; font-size: 14px;">بۆ پەیوەندی کردن کلیک لەتیلیگرام بکە :</p>
+        </div>
 
-    <div class="links-wrapper">
-        <a href="https://t.me/SaraExpert" onclick="trackClick('Telegram_Main')" class="link-card telegram">
-            <i class="fab fa-telegram"></i>
-            <span>تێلیگرام</span>
-        </a>
-    </div>
+        <div class="links-wrapper">
+            <a href="https://t.me/SaraExpert" 
+               onclick="trackTikTokConversion('Telegram', event)" class="link-card">
+                <span>تیلیگرام</span> <i class="fab fa-telegram-plane"></i>
+            </a>
+        </div>
 
-    <div class="sponsor-section">
-        <div class="sponsor-text">سپۆنسەر کراوە لەلایەن</div>
-        <a href="https://t.me/SaraExpert" onclick="trackClick('Sponsor_Zana')" class="footer-tag">Zana Sponsor</a>
-        
-        <div class="legal-links">
-            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a> | 
-            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
+        <div class="footer">
+            <p style="font-size: 11px; color: #64748b; margin: 0;">سپۆنسەرکراوە لەلایەن</p>
+            <a href="https://wa.me/9647758887488" class="sponsor-btn">Zana Sponsor - زانا سپۆنسەر</a>
+            
+            <div class="legal-links">
+                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
+                <span class="sep">|</span>
+                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
+            </div>
         </div>
     </div>
 
