@@ -44,12 +44,11 @@
 
         .profile-img {
             width: 90px; height: 90px; border-radius: 50%;
-            border: 3px solid #ffd700; 
+            border: 3px solid #8b5cf6; /* لێرە چوارچێوەکە گۆڕدرا بۆ مۆر */
             object-fit: cover; 
             margin-bottom: 10px;
         }
 
-        /* لێرەدا ناوەکە کرا بە Bold و تۆخ */
         h1 { 
             font-size: 22px; 
             margin: 5px 0; 
@@ -67,8 +66,9 @@
         .link-card {
             display: flex; align-items: center; justify-content: space-between;
             padding: 18px 22px; border-radius: 16px; text-decoration: none;
-            color: white; font-weight: 700; font-size: 18px; 
+            color: white !important; font-weight: 700; font-size: 18px; 
             animation: fastPulse 1.5s infinite ease-in-out;
+            cursor: pointer;
         }
 
         .whatsapp { background: linear-gradient(135deg, #128C7E, #25D366); }
@@ -92,15 +92,49 @@
             text-decoration: none;
             font-weight: 900;
             font-size: 13px;
-            transition: 0.3s ease;
         }
         
-        .sponsor-btn:hover { opacity: 0.9; transform: scale(1.02); }
-
-        /* ستایلی یاساکانی تیک تۆک */
         .legal-links { font-size: 11px; color: #475569; display: flex; gap: 15px; align-items: center; margin-top: 5px; }
         .legal-links a { color: inherit; text-decoration: none; opacity: 0.7; }
         .sep { opacity: 0.3; }
+
+        /* Popup Styles */
+        #question-modal {
+            display: none; position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); 
+            z-index: 9999; align-items: center; justify-content: center;
+        }
+
+        .modal-box {
+            background: #ffffff; width: 85%; max-width: 300px;
+            padding: 20px; border-radius: 20px; position: relative;
+            text-align: center; color: #1a1a1a;
+        }
+
+        .close-x {
+            position: absolute; top: 12px; left: 12px;
+            font-size: 20px; color: #94a3b8; cursor: pointer;
+            width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+            background: #f1f5f9; border-radius: 50%;
+        }
+
+        .q-title { font-size: 17px; font-weight: 900; margin: 10px 0 20px 0; color: #0f172a; }
+
+        .q-option {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; padding: 12px 15px; margin-bottom: 10px;
+            background: #f8fafc; border: 2px solid #e2e8f0;
+            border-radius: 12px; font-weight: 700; cursor: pointer;
+            color: #334155; transition: 0.2s; box-sizing: border-box;
+        }
+
+        .q-option.selected { border-color: #2ecc71; background: #f0fdf4; color: #065f46; }
+
+        .send-btn {
+            display: block; width: 100%; padding: 14px; margin-top: 15px;
+            color: white; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 900; cursor: pointer; font-family: 'Vazirmatn';
+        }
     </style>
 
     <script>
@@ -108,29 +142,32 @@
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
     var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
     ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      window.trackTikTokConversion = function(platform, event) {
-        event.preventDefault(); 
-        var url = event.currentTarget.href;
-        
-        if (typeof ttq !== 'undefined') {
-          ttq.track('Contact', {
-            "contents": [{ "content_name": platform }]
-          });
-        }
+      let currentP = ''; let currentM = 'دەمەوێت داوا بکەم'; const phone = "9647509664746";
 
-        var frame = document.createElement('iframe');
-        frame.style.display = 'none';
-        frame.src = url;
-        document.body.appendChild(frame);
-        
-        setTimeout(function() {
-          if(document.body.contains(frame)) document.body.removeChild(frame);
-          window.location.href = url;
-        }, 150);
+      window.openModal = function(p) {
+        currentP = p; document.getElementById('question-modal').style.display = 'flex';
+        const b = document.getElementById('final-btn');
+        if(p==='WhatsApp'){ b.style.background='#25D366'; b.innerText='ناردن بۆ واتساپ'; }
+        else if(p==='Viber'){ b.style.background='#7360f2'; b.innerText='ناردن بۆ ڤایبەر'; }
+        else { b.style.background='#3b82f6'; b.innerText='پەیوەندی بکە'; }
+      };
+
+      window.closeModal = () => document.getElementById('question-modal').style.display = 'none';
+      window.selectO = function(el, txt) {
+        document.querySelectorAll('.q-option').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected'); currentM = txt;
+      };
+
+      window.doAction = function() {
+        if (typeof ttq !== 'undefined') ttq.track('Contact', { "contents": [{ "content_name": currentM }] });
+        let link = "";
+        if(currentP==='WhatsApp') link=`https://wa.me/${phone}?text=${encodeURIComponent(currentM)}`;
+        else if(currentP==='Viber') link=`viber://chat?number=%2B${phone}&draft=${encodeURIComponent(currentM)}`;
+        else link=`tel:+${phone}`;
+        window.location.href = link;
       };
     }(window, document, 'ttq');
     </script>
@@ -139,41 +176,51 @@
 
     <div class="container">
         <div class="profile-card">
-            <img src="https://image2url.com/r2/default/images/1769775081715-d6c7c3f0-0ca2-43a5-9f49-1271f7405f07.jpg" 
-                 class="profile-img" 
-                 alt="Bawar Shoes"
-                 onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Bawar+Shoes&background=ffd700&color=fff'">
-            
+            <img src="https://image2url.com/r2/default/images/1769775081715-d6c7c3f0-0ca2-43a5-9f49-1271f7405f07.jpg" class="profile-img">
             <h1>پێڵاو فرۆشی باوەڕ</h1>
-            <p style="color: #94a3b8; font-size: 14px; margin-top: 15px; margin-bottom: 0;">بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکەن</p>
+            <p style="color: #94a3b8; font-size: 14px; margin-top: 15px;">بۆ پەیوەندی کردن، کلیک لە یەکێک لەمانە بکە</p>
         </div>
 
         <div class="links-wrapper">
-            <a href="https://wa.me/9647509664746?text=سڵاو" 
-               onclick="trackTikTokConversion('WhatsApp', event)" class="link-card whatsapp">
+            <div onclick="openModal('WhatsApp')" class="link-card whatsapp">
                 <span>واتساپ</span> <i class="fab fa-whatsapp"></i>
-            </a>
-            
-            <a href="viber://chat?number=%2B9647509664746" 
-               onclick="trackTikTokConversion('Viber', event)" class="link-card viber">
+            </div>
+            <div onclick="openModal('Viber')" class="link-card viber">
                 <span>ڤایبەر</span> <i class="fab fa-viber"></i>
-            </a>
-            
-            <a href="tel:+9647509664746" 
-               onclick="trackTikTokConversion('Phone', event)" class="link-card phone">
+            </div>
+            <div onclick="openModal('Phone')" class="link-card phone">
                 <span>ژمارەی تەلەفۆن</span> <i class="fas fa-phone-alt"></i>
-            </a>
+            </div>
         </div>
 
         <div class="footer">
-            <p style="font-size: 11px; color: #64748b; margin: 0;">سپۆنسەرکراوە لەلایەن</p>
+            <p style="font-size: 11px; color: #64748b; margin: 0;">سپۆنسەر کراوە لەلایەن</p>
             <a href="https://wa.me/9647758887488" class="sponsor-btn">Zana Sponsor - زانا سپۆنسەر</a>
             
             <div class="legal-links">
                 <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
                 <span class="sep">|</span>
-                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
+                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
             </div>
+        </div>
+    </div>
+
+    <div id="question-modal" onclick="if(event.target == this) closeModal()">
+        <div class="modal-box">
+            <div class="close-x" onclick="closeModal()">×</div>
+            <div class="q-title">چۆن دەتوانین یارمەتیت بدەین؟</div>
+            
+            <div class="q-option selected" onclick="selectO(this, 'دەمەوێت داوا بکەم')">
+                <span>دەمەوێت داوا بکەم</span> <i class="fas fa-shopping-basket" style="color:#2ecc71"></i>
+            </div>
+            <div class="q-option" onclick="selectO(this, 'دەمەوێت نرخەکان بزانم')">
+                <span>دەمەوێت نرخەکان بزانم</span> <i class="fas fa-tags" style="color:#f1c40f"></i>
+            </div>
+            <div class="q-option" onclick="selectO(this, 'پرسیاری ترم هەیە')">
+                <span>پرسیاری ترم هەیە</span> <i class="fas fa-comment-dots" style="color:#e74c3c"></i>
+            </div>
+
+            <button id="final-btn" class="send-btn" onclick="doAction()">ناردنی پەیام</button>
         </div>
     </div>
 
