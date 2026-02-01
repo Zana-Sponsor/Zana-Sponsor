@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SARA EXPERT - Links</title>
+    <title>Zana Sponsor - Links</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -44,7 +44,7 @@
 
         .profile-img {
             width: 90px; height: 90px; border-radius: 50%;
-            border: 3px solid #ffd700; 
+            border: 3px solid #0088cc; 
             object-fit: cover; 
             margin-bottom: 10px;
         }
@@ -63,7 +63,6 @@
 
         .links-wrapper { display: flex; flex-direction: column; gap: 12px; }
 
-        /* بەشی تیلیگرام بەو شێوازەی داوات کردبوو */
         .link-card {
             display: flex; align-items: center; justify-content: space-between;
             padding: 18px 22px; border-radius: 16px; text-decoration: none;
@@ -90,11 +89,8 @@
             text-decoration: none;
             font-weight: 900;
             font-size: 13px;
-            transition: 0.3s ease;
         }
         
-        .sponsor-btn:hover { opacity: 0.9; transform: scale(1.02); }
-
         .legal-links { font-size: 11px; color: #475569; display: flex; gap: 15px; align-items: center; margin-top: 5px; }
         .legal-links a { color: inherit; text-decoration: none; opacity: 0.7; }
         .sep { opacity: 0.3; }
@@ -105,29 +101,13 @@
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
     var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
     ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-
       ttq.load('D5N6ETJC77UFLMP0AO10');
       ttq.page();
 
-      window.trackTikTokConversion = function(platform, event) {
-        event.preventDefault(); 
-        var url = event.currentTarget.href;
-        
+      window.trackTikTokConversion = function(platform) {
         if (typeof ttq !== 'undefined') {
-          ttq.track('Contact', {
-            "contents": [{ "content_name": platform }]
-          });
+          ttq.track('Contact', { "contents": [{ "content_name": platform }] });
         }
-
-        var frame = document.createElement('iframe');
-        frame.style.display = 'none';
-        frame.src = url;
-        document.body.appendChild(frame);
-        
-        setTimeout(function() {
-          if(document.body.contains(frame)) document.body.removeChild(frame);
-          window.location.href = url;
-        }, 150);
       };
     }(window, document, 'ttq');
     </script>
@@ -136,30 +116,25 @@
 
     <div class="container">
         <div class="profile-card">
-            <img src="https://image2url.com/r2/default/images/1769945389064-666e90bd-4863-4ad0-b155-e9513befc02a.jpg" 
-                 class="profile-img" 
-                 alt="SARA EXPERT"
-                 onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=SARA+EXPERT&background=ffd700&color=fff'">
-            
+            <img src="https://image2url.com/r2/default/images/1769945389064-666e90bd-4863-4ad0-b155-e9513befc02a.jpg" class="profile-img">
             <h1>SARA EXPERT</h1>
             <p style="color: #94a3b8; font-size: 14px; margin-top: 15px;">بۆ پەیوەندی کردن، کلیک لەم لینکە بکەن</p>
         </div>
 
         <div class="links-wrapper">
-            <a href="https://t.me/SaraExpert" 
-               onclick="trackTikTokConversion('Telegram', event)" class="link-card">
+            <a href="https://t.me/SaraExpert" onclick="trackTikTokConversion('Telegram')" class="link-card">
                 <span>تیلیگرام</span> <i class="fab fa-telegram-plane"></i>
             </a>
         </div>
 
         <div class="footer">
-            <p style="font-size: 11px; color: #64748b; margin: 0;">سپۆنسەرکراوە لەلایەن</p>
+            <p style="font-size: 11px; color: #64748b; margin: 0;">سپۆنسەر کراوە لەلایەن</p>
             <a href="https://wa.me/9647758887488" class="sponsor-btn">Zana Sponsor - زانا سپۆنسەر</a>
             
             <div class="legal-links">
-                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
+                <a href="#">مەرجەکان</a>
                 <span class="sep">|</span>
-                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
+                <a href="#">سیاسەتی پاراستنی نهێنی</a>
             </div>
         </div>
     </div>
