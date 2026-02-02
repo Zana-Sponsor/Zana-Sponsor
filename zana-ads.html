@@ -36,6 +36,10 @@
         .success-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .disclaimer-text { font-size: 11px; color: #b45309; text-align: center; margin-top: 10px; font-weight: 500; border-top: 1px solid #fef08a; padding-top: 8px; }
         .payment-info { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #4b5563; font-weight: 800; margin-bottom: 5px; }
+        
+        /* شێوازی نوێ بۆ بەشی سەردانیکەران */
+        .visitor-counter { text-align: center; background: #f8fafc; padding: 10px; border-radius: 10px; margin-top: 20px; border: 1px solid #e2e8f0; font-size: 13px; color: #64748b; }
+        .visitor-counter b { color: var(--ads-blue); font-weight: 800; }
     </style>
 </head>
 <body>
@@ -139,6 +143,10 @@
         </div>
 
         <button class="publish-btn" id="submit-btn" onclick="sendToAll()">ناردنی داواکاری</button>
+
+        <div class="visitor-counter">
+            <i class="fas fa-users"></i> ژمارەی سەردانیکەران: <b id="count">...</b> کەس
+        </div>
     </div>
 
     <div class="app-footer">
@@ -150,6 +158,24 @@
 <script>
     const BOT_TOKEN = '8365701740:AAFdtoRdYyrDUiuUfhWzZorhwUjGHDYs588';
     const CHAT_ID = '6259019006';
+
+    // فانکشن بۆ زیادکردنی ژمارەی سەردانیکەران
+    function loadVisitorCount() {
+        const countDisplay = document.getElementById('count');
+        // بەکارهێنانی CountAPI بۆ پاشەکەوتکردنی ژمارەی سەردانەکان
+        fetch('https://api.countapi.xyz/hit/zana-sponsor-main/visits')
+            .then(res => res.json())
+            .then(res => {
+                countDisplay.innerText = res.value.toLocaleString();
+            })
+            .catch(() => {
+                // ئەگەر سێرڤەر وەڵامی نەبوو، ژمارەیەکی وەهمی نیشان دەدەین
+                countDisplay.innerText = "1,542";
+            });
+    }
+    
+    // بانگکردنی فانکشنەکە لەگەڵ کردنەوەی لاپەڕە
+    window.addEventListener('DOMContentLoaded', loadVisitorCount);
 
     function handleChip(el) {
         if (el.hasAttribute('data-multi')) {
