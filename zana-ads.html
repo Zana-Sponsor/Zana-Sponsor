@@ -15,10 +15,14 @@
         .form-body { padding: 20px; }
         .step-title { font-size: 14px; font-weight: 800; color: #111; margin: 25px 0 12px; border-right: 4px solid var(--ads-blue); padding-right: 10px; }
         .selection-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-        .chip { padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; background: #fff; transition: all 0.2s ease; user-select: none; border-bottom: 3px solid #ddd; position: relative; z-index: 5; }
+        .chip { padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; background: #fff; transition: all 0.2s ease; user-select: none; border-bottom: 3px solid #ddd; position: relative; z-index: 5; text-align: center; }
         .chip.active { background: var(--ads-blue) !important; color: #fff !important; border-color: var(--ads-blue); border-bottom-color: #1e40af; font-weight: 700; transform: translateY(2px); }
+        .chip small { display: block; font-size: 10px; font-weight: normal; opacity: 0.8; margin-top: 2px; }
         .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #374151; }
+        .label-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        label { display: block; font-size: 13px; font-weight: 700; color: #374151; }
+        .tutorial-link { font-size: 11px; color: var(--ads-blue); text-decoration: none; font-weight: 800; }
+        .tutorial-link i { margin-left: 3px; }
         input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Vazirmatn'; box-sizing: border-box; font-size: 14px; background: #f9fafb; outline: none; transition: 0.2s; }
         .result-box { background: #fffbeb; border: 1px solid #fef08a; padding: 15px; border-radius: 10px; margin-top: 15px; display: none; }
         .result-item { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; }
@@ -57,8 +61,14 @@
 
         <div class="step-title">٢. ئامانج و بینەر</div>
         <div class="selection-group" id="obj-group">
-            <div class="chip active" onclick="handleChip(this)">Video Views</div>
-            <div class="chip" onclick="handleChip(this)">Website Traffic</div>
+            <div class="chip active" onclick="handleChip(this)">
+                Video Views
+                <small>بۆ زیادکردنی بینەر و کارلێک</small>
+            </div>
+            <div class="chip" onclick="handleChip(this)">
+                Website Traffic
+                <small>بۆ زیادکردنی فرۆش و نامە</small>
+            </div>
         </div>
         <div class="selection-group" id="audience-group">
             <div class="chip active" onclick="handleChip(this)">بینەری کورد</div>
@@ -97,7 +107,15 @@
             <div class="input-group"><label>ڕۆژ</label><input type="number" id="days" value="1" oninput="calculate()"></div>
         </div>
         <div class="input-group"><label>لینکی ڤیدیۆ</label><input type="text" id="main_link" placeholder="https://vt.tiktok.com/..."></div>
-        <div class="input-group"><label>کۆدی ڤیدیۆ</label><input type="text" id="video_code" placeholder="#6721..."></div>
+        <div class="input-group">
+            <div class="label-flex">
+                <label>کۆدی ڤیدیۆ</label>
+                <a href="https://t.me/zana_ads/2" target="_blank" class="tutorial-link">
+                    <i class="fas fa-question-circle"></i> چۆنیەتی دەرهێنانی کۆد
+                </a>
+            </div>
+            <input type="text" id="video_code" placeholder="#6721...">
+        </div>
 
         <div id="result-info" class="result-box">
             <div class="result-item"><span>کۆی گشتی بە دینار:</span> <b id="res-iqd">0 IQD</b></div>
@@ -166,7 +184,7 @@
             let minV = (b/20) * 100000 * d * multiplier;
             let maxV = (b/20) * 180000 * d * multiplier;
             document.getElementById('res-views-display').innerText = Math.round(minV/1000) + "k - " + Math.round(maxV/1000) + "k Views";
-            if(objEl.innerText === "Website Traffic") {
+            if(objEl.innerText.includes("Website Traffic")) {
                 document.getElementById('msgs-row').style.display = 'flex';
                 let minW = Math.round((b/20) * 350 * d * multiplier);
                 let maxW = Math.round((b/20) * 3000 * d * multiplier);
@@ -210,7 +228,8 @@
 
         try {
             const aud = document.querySelector('#audience-group .chip.active').innerText;
-            const obj = document.querySelector('#obj-group .chip.active').innerText;
+            const objRaw = document.querySelector('#obj-group .chip.active').innerText;
+            const obj = objRaw.split('\n')[0].trim();
             const gender = document.querySelector('#gender-group .chip.active').innerText;
             const ages = Array.from(document.querySelectorAll('#age-group .chip.active')).map(c => c.innerText).join(', ');
 
@@ -242,7 +261,7 @@
             document.getElementById('success-overlay').style.display = 'flex';
             
             setTimeout(() => { 
-                window.location.href = `https://wa.me/9647758887488?text=${encodeURIComponent(msg)}`;
+                window.location.href = `https://wa.me/9647510074008?text=${encodeURIComponent(msg)}`;
                 setTimeout(() => { location.reload(); }, 1000);
             }, 2000);
             
