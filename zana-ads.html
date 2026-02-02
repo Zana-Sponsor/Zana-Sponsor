@@ -27,14 +27,11 @@
         .copy-box { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 14px; border-radius: 8px; border: 1px solid #d1d5db; cursor: pointer; font-weight: 800; }
         .upload-area { border: 2px dashed #cbd5e1; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; background: #f9fafb; transition: 0.2s; position: relative; }
         .publish-btn { background: var(--ads-blue); color: #fff; border: none; padding: 16px; border-radius: 8px; font-weight: 800; cursor: pointer; font-family: 'Vazirmatn'; font-size: 16px; width: 100%; margin-top: 25px; }
-        
-        /* Footer Styles */
         .app-footer { background: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid var(--border); margin-top: 10px; }
         .powered-by { font-size: 14px; font-weight: 800; color: #64748b; margin-bottom: 5px; }
         .version-text { font-size: 11px; color: #94a3b8; margin-bottom: 15px; }
         .contact-link { display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-size: 13px; font-weight: 800; transition: 0.3s; }
         .contact-link:hover { background: #128c7e; transform: scale(1.05); }
-
         .success-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; justify-content: center; align-items: center; text-align: center; padding: 20px; }
     </style>
 </head>
@@ -43,7 +40,7 @@
 <div id="success-overlay" class="success-overlay">
     <div style="max-width: 400px;">
         <div style="font-size: 60px; color: var(--success); margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
-        <div style="font-size: 17px; font-weight: 800; line-height: 1.8;">داواکاریەکەت نێردرا!<br>پەڕەکە دەگوازرێتەوە بۆ واتسئاپ و پاشان نوێ دەبێتەوە...</div>
+        <div style="font-size: 17px; font-weight: 800; line-height: 1.8;">داواکاریەکەت نێردرا!<br>پەڕەکە دەگوازرێتەوە بۆ واتسئاپ...</div>
     </div>
 </div>
 
@@ -87,19 +84,19 @@
             <div class="chip" data-target="ph-box" onclick="handleChip(this)">تەلەفۆن</div>
         </div>
         <div id="contact-inputs" class="dynamic-box">
-            <div id="ws-box" class="input-group" style="display:none;"><input type="text" id="in-ws" placeholder="ژمارەی واتساپ"></div>
-            <div id="vb-box" class="input-group" style="display:none;"><input type="text" id="in-vb" placeholder="ژمارەی ڤایبەر"></div>
+            <div id="ws-box" class="input-group" style="display:none;"><input type="text" id="in-ws" placeholder="دەبێت بە 07 دەستپێبکات"></div>
+            <div id="vb-box" class="input-group" style="display:none;"><input type="text" id="in-vb" placeholder="دەبێت بە 07 دەستپێبکات"></div>
             <div id="tg-box" class="input-group" style="display:none;"><input type="text" id="in-tg" placeholder="https://t.me/..."></div>
-            <div id="ph-box" class="input-group" style="display:none;"><input type="text" id="in-ph" placeholder="ژمارەی مۆبایل"></div>
+            <div id="ph-box" class="input-group" style="display:none;"><input type="text" id="in-ph" placeholder="دەبێت بە 07 دەستپێبکات"></div>
         </div>
 
         <div class="step-title">٥. بودجە و کۆد</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="input-group"><label>بودجە ($)</label><input type="number" id="budget" oninput="calculate()" placeholder="20"></div>
+            <div class="input-group"><label>بودجە ($)</label><input type="number" id="budget" oninput="calculate()" placeholder="کەمترین 20"></div>
             <div class="input-group"><label>ڕۆژ</label><input type="number" id="days" value="1" oninput="calculate()"></div>
         </div>
         <div class="input-group"><label>لینکی ڤیدیۆ</label><input type="text" id="main_link" placeholder="https://vt.tiktok.com/..."></div>
-        <div class="input-group"><label>کۆدی ڤیدیۆ</label><input type="text" id="video_code" placeholder="#8VFDwdOhT0KRO..."></div>
+        <div class="input-group"><label>کۆدی ڤیدیۆ</label><input type="text" id="video_code" placeholder="# دەستپێبکات"></div>
 
         <div id="result-info" class="result-box">
             <div class="result-item"><span>کۆی گشتی بە دینار:</span> <b id="res-iqd">0 IQD</b></div>
@@ -119,7 +116,7 @@
 
     <div class="app-footer">
         <div class="powered-by">Powered By Zana Sponsor</div>
-        <div class="version-text">Version 2.1.0</div>
+        <div class="version-text">Version 2.2.0</div>
         <a href="https://wa.me/9647510074008" class="contact-link">
             <i class="fab fa-whatsapp"></i> Contact Us
         </a>
@@ -155,31 +152,20 @@
         const audEl = document.querySelector('#audience-group .chip.active');
         const objEl = document.querySelector('#obj-group .chip.active');
         
-        let res = { iqd: "0 IQD", views: "0 Views", msgs: "" };
-        if(!audEl || !objEl) return res;
-
-        if(b > 0) {
+        if(b >= 20 && d >= 1) {
             document.getElementById('result-info').style.display = 'block';
-            res.iqd = (Math.round((b/20)*38000*d)).toLocaleString() + " IQD";
-            document.getElementById('res-iqd').innerText = res.iqd;
+            let iqd = (Math.round((b/20)*38000*d)).toLocaleString() + " IQD";
+            document.getElementById('res-iqd').innerText = iqd;
             
             let multiplier = audEl.innerText.includes("عەرەب") ? 0.75 : 1.0;
             let v = (b/20)*100000*d*multiplier;
-            res.views = Math.round(v/1000)+"k - "+Math.round((v*1.8)/1000)+"k Views";
-            document.getElementById('res-views-display').innerText = res.views;
+            document.getElementById('res-views-display').innerText = Math.round(v/1000)+"k - "+Math.round((v*1.8)/1000)+"k Views";
 
             if(objEl.innerText === "Website Traffic") {
                 document.getElementById('msgs-row').style.display = 'flex';
-                res.msgs = Math.round((b/20)*50*d) + " - " + Math.round((b/20)*150*d) + " نامە";
-                document.getElementById('res-msgs-display').innerText = res.msgs;
-            } else {
-                document.getElementById('msgs-row').style.display = 'none';
-                res.msgs = "";
-            }
-        } else {
-            document.getElementById('result-info').style.display = 'none';
-        }
-        return res;
+                document.getElementById('res-msgs-display').innerText = Math.round((b/20)*50*d) + " - " + Math.round((b/20)*150*d) + " نامە";
+            } else { document.getElementById('msgs-row').style.display = 'none'; }
+        } else { document.getElementById('result-info').style.display = 'none'; }
     }
 
     function copyNum() { 
@@ -197,44 +183,88 @@
     }
 
     async function sendToAll() {
-        const brand = document.getElementById('brand_name').value;
-        const budget = document.getElementById('budget').value;
+        const brand = document.getElementById('brand_name').value.trim();
+        const budget = parseFloat(document.getElementById('budget').value);
+        const days = parseFloat(document.getElementById('days').value);
+        const link = document.getElementById('main_link').value.trim();
+        const code = document.getElementById('video_code').value.trim();
         const logo = document.getElementById('logo_file').files[0];
         const receipt = document.getElementById('receipt').files[0];
 
-        if(!brand || !budget || !logo || !receipt) return alert("تکایە هەموو زانیارییەکان پڕبکەوە!");
+        // 1. Basic Empty Validation
+        if(!brand || isNaN(budget) || !logo || !receipt || !link || !code) {
+            return alert("تکایە هەموو خانەکان پڕبکەوە و وێنەکان باربکە!");
+        }
+
+        // 2. Budget & Days Rule
+        if(budget < 20) return alert("هەڵە: بودجە نابێت لە 20$ کەمتر بێت!");
+        if(days < 1) return alert("هەڵە: ماوەکە نابێت لە 1 ڕۆژ کەمتر بێت!");
+
+        // 3. TikTok Link Rule (STRICT)
+        if(!link.startsWith("https://vt.tiktok.com/")) {
+            return alert("هەڵە: لینکی ڤیدیۆ دەبێت تەنها بە https://vt.tiktok.com/ دەستپێبکات!");
+        }
+
+        // 4. Video Code Rule (STRICT)
+        if(!code.startsWith("#")) {
+            return alert("هەڵە: کۆدی ڤیدیۆ دەبێت تەنها بە نیشانەی # دەستپێبکات!");
+        }
+
+        // 5. Phone Rules (STRICT)
+        const phoneInputs = [
+            { id: 'in-ws', name: 'واتساپ' },
+            { id: 'in-vb', name: 'ڤایبەر' },
+            { id: 'in-ph', name: 'تەلەفۆن' }
+        ];
+
+        for(let item of phoneInputs) {
+            const el = document.getElementById(item.id);
+            if(el && el.parentElement.style.display !== 'none') {
+                const val = el.value.trim();
+                if(!val.startsWith("07")) {
+                    return alert(`هەڵە لە ژمارەی ${item.name}: دەبێت تەنها بە 07 دەستپێبکات!`);
+                }
+                if(val.length < 10 || isNaN(val)) {
+                    return alert(`هەڵە لە ژمارەی ${item.name}: تکایە ژمارەیەکی ڕاست و دروستی عێراقی بنووسە!`);
+                }
+            }
+        }
+
+        // 6. Telegram Link Rule
+        const tgInput = document.getElementById('in-tg');
+        if(tgInput && tgInput.parentElement.style.display !== 'none') {
+            if(!tgInput.value.trim().startsWith("https://t.me/")) {
+                return alert("https://t.me/");
+            }
+        }
 
         const btn = document.getElementById('submit-btn');
-        btn.disabled = true; btn.innerText = "خەریکی ناردنە...";
+        btn.disabled = true; btn.innerText = "خەریکی پشکنین و ناردنە...";
 
         const obj = document.querySelector('#obj-group .chip.active').innerText;
         const aud = document.querySelector('#audience-group .chip.active').innerText;
         const gnd = document.querySelector('#gender-group .chip.active').innerText;
         const ages = Array.from(document.querySelectorAll('#age-group .chip.active')).map(c => c.innerText).join(', ');
         
-        const calcRes = calculate();
+        const iqdVal = (Math.round((budget/20)*38000*days)).toLocaleString();
         const time = new Date().toLocaleString('ku-IQ');
 
         let message = `🌟 *داواکاری نوێی سپۆنسەر*\n\n` +
-                      `👤 پەیج: ${brand}\n💰 بودجە: $${budget}\n📅 ڕۆژ: ${document.getElementById('days').value}\n` +
-                      `🎯 ئامانج: ${obj}\n🌍 بینەر: ${aud}\n👫 ڕەگەز: ${gnd}\n🎂 تەمەن: ${ages}\n` +
-                      `👀 بینەر: ${calcRes.views}\n`;
-        
-        if(calcRes.msgs) message += `📩 نامە: ${calcRes.msgs}\n`;
-        message += `🔑 کۆدی ڤیدیۆ: ${document.getElementById('video_code').value}\n🔗 لینک: ${document.getElementById('main_link').value}\n⏰ کات: ${time}`;
+                      `👤 پەیج: ${brand}\n💰 بودجە: $${budget}\n📅 ڕۆژ: ${days}\n` +
+                      `💵 کۆی گشتی: ${iqdVal} IQD\n🎯 ئامانج: ${obj}\n🌍 بینەر: ${aud}\n👫 ڕەگەز: ${gnd}\n🎂 تەمەن: ${ages}\n` +
+                      `🔑 کۆدی: ${code}\n🔗 لینک: ${link}\n⏰ کات: ${time}`;
 
         try {
             await sendPhoto(logo, message);
-            await sendPhoto(receipt, `🧾 وەسڵ - ${brand}`);
+            await sendPhoto(receipt, `🧾 وەسڵی پارەدان - ${brand}`);
             document.getElementById('success-overlay').style.display = 'flex';
             setTimeout(() => {
                 window.open(`https://wa.me/9647758887488?text=${encodeURIComponent(message)}`, '_blank');
                 location.reload();
             }, 2000);
         } catch(e) { 
-            alert("هەڵە ڕوویدا!"); 
-            btn.disabled = false; 
-            btn.innerText = "ناردنی داواکاری";
+            alert("هەڵەیەک ڕوویدا لە ناردن!"); 
+            btn.disabled = false; btn.innerText = "ناردنی داواکاری";
         }
     }
 </script>
