@@ -156,10 +156,7 @@
             document.getElementById('result-info').style.display = 'block';
             document.getElementById('res-iqd').innerText = (Math.round((b/20)*38000*d)).toLocaleString() + " IQD";
             
-            // ئەگەر بینەری عەرەب بوو 30% کەمتر پیشان بدە
             let multiplier = audEl.innerText.includes("عەرەب") ? 0.70 : 1.0;
-            
-            // هەر 20 دۆلار = 100k بۆ 180k ڤیو بۆ کورد
             let minV = (b/20) * 100000 * d * multiplier;
             let maxV = (b/20) * 180000 * d * multiplier;
             
@@ -191,7 +188,13 @@
         const link = document.getElementById('main_link').value;
         const code = document.getElementById('video_code').value;
 
-        if(!logo || !receipt || !brand || !budget || !link || !code) return alert("تکایە هەموو خانەکان پڕبکەوە!");
+        // کۆکردنەوەی زانیارییەکانی پەیوەندی
+        const whatsapp = document.getElementById('in-ws').value;
+        const viber = document.getElementById('in-vb').value;
+        const telegram = document.getElementById('in-tg').value;
+        const phone = document.getElementById('in-ph').value;
+
+        if(!logo || !receipt || !brand || !budget || !link || !code) return alert("تکایە هەموو خانە سەرەکییەکان پڕبکەوە!");
 
         const btn = document.getElementById('submit-btn');
         btn.disabled = true; btn.innerText = "خەریکی ناردنە...";
@@ -199,14 +202,34 @@
         try {
             const aud = document.querySelector('#audience-group .chip.active').innerText;
             const obj = document.querySelector('#obj-group .chip.active').innerText;
-            let msg = `🌟 *داواکاری نوێ*\n\nپەیج: ${brand}\nبودجە: $${budget}\nئامانج: ${obj}\nبینەر: ${aud}\nکۆد: ${code}\nلینک: ${link}`;
+            const gender = document.querySelector('#gender-group .chip.active').innerText;
             
+            // کۆکردنەوەی تەمەنە هەڵبژێردراوەکان
+            const ages = Array.from(document.querySelectorAll('#age-group .chip.active')).map(c => c.innerText).join(', ');
+
+            let msg = `🌟 *داواکاری نوێی سپۆنسەر*\n\n`;
+            msg += `👤 پەیج: ${brand}\n`;
+            msg += `💰 بودجە: $${budget}\n`;
+            msg += `📅 ڕۆژ: ${document.getElementById('days').value}\n`;
+            msg += `🎯 ئامانج: ${obj}\n`;
+            msg += `🌍 بینەر: ${aud}\n`;
+            msg += `🚻 ڕەگەز: ${gender}\n`;
+            msg += `🔞 تەمەن: ${ages}\n`;
+            msg += `🔢 کۆد: \`${code}\`\n`;
+            msg += `🔗 لینک: ${link}\n\n`;
+            
+            msg += `📞 *زانیاری پەیوەندی:*\n`;
+            if(whatsapp) msg += `🟢 واتسئاپ: ${whatsapp}\n`;
+            if(viber) msg += `🟣 ڤایبەر: ${viber}\n`;
+            if(telegram) msg += `🔵 تیلیگرام: ${telegram}\n`;
+            if(phone) msg += `☎️ تەلەفۆن: ${phone}\n`;
+
             const fd1 = new FormData();
-            fd1.append('chat_id', CHAT_ID); fd1.append('photo', logo); fd1.append('caption', msg);
+            fd1.append('chat_id', CHAT_ID); fd1.append('photo', logo); fd1.append('caption', msg); fd1.append('parse_mode', 'Markdown');
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd1 });
 
             const fd2 = new FormData();
-            fd2.append('chat_id', CHAT_ID); fd2.append('photo', receipt); fd2.append('caption', `وەسڵی: ${brand}`);
+            fd2.append('chat_id', CHAT_ID); fd2.append('photo', receipt); fd2.append('caption', `🧾 وەسڵی پارەدان - ${brand}`);
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd2 });
 
             document.getElementById('success-overlay').style.display = 'flex';
