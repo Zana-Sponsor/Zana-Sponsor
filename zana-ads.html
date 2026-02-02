@@ -2,128 +2,140 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Sponsor - Links</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zana Sponsor - Create Ads</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --ads-blue: #2563eb; --bg-gray: #f4f7fa; --border: #e5e7eb; --success: #059669; }
-        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg-gray); margin: 0; padding: 10px; color: #1f2937; }
-        .manager-card { max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; position: relative; z-index: 1; }
-        .top-banner { background: linear-gradient(135deg, #111827 0%, #2563eb 100%); padding: 25px; text-align: center; color: #fff; }
-        .top-banner h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 1px; }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg-gray); margin: 0; padding: 10px; color: #1f2937; -webkit-tap-highlight-color: transparent; }
+        
+        .manager-card { max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
+        .top-banner { background: linear-gradient(135deg, #111827 0%, #2563eb 100%); padding: 25px; text-align: center; color: #fff; pointer-events: none; }
+        .top-banner h1 { margin: 0; font-size: 20px; font-weight: 800; }
+        
         .form-body { padding: 20px; }
-        .step-title { font-size: 14px; font-weight: 800; color: #111; margin: 25px 0 12px; border-right: 4px solid var(--ads-blue); padding-right: 10px; }
-        .selection-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; position: relative; z-index: 10; }
-        .chip { padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; background: #fff; transition: all 0.2s ease; user-select: none; border-bottom: 3px solid #ddd; }
+        .step-title { font-size: 14px; font-weight: 800; color: #111; margin: 25px 0 12px; border-right: 4px solid var(--ads-blue); padding-right: 10px; pointer-events: none; }
+        
+        .selection-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        .chip { padding: 10px 18px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; background: #fff; border-bottom: 3px solid #ddd; transition: 0.1s; user-select: none; pointer-events: auto; display: block; }
         .chip.active { background: var(--ads-blue) !important; color: #fff !important; border-color: var(--ads-blue); border-bottom-color: #1e40af; font-weight: 700; transform: translateY(2px); }
+        
         .input-group { margin-bottom: 15px; }
         label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #374151; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Vazirmatn'; box-sizing: border-box; font-size: 14px; background: #f9fafb; outline: none; transition: 0.2s; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Vazirmatn'; box-sizing: border-box; font-size: 14px; background: #f9fafb; outline: none; }
+        
         .result-box { background: #fffbeb; border: 1px solid #fef08a; padding: 15px; border-radius: 10px; margin-top: 15px; display: none; }
         .result-item { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; }
         .result-item b { color: #854d0e; font-weight: 800; }
+        
+        .disclaimer { font-size: 11px; color: #b45309; text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #fef08a; font-weight: 500; }
+        
         .dynamic-box { background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 15px; display: none; }
-        .copy-box { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 14px; border-radius: 8px; border: 1px solid #d1d5db; cursor: pointer; font-weight: 800; }
-        .upload-area { border: 2px dashed #cbd5e1; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; background: #f9fafb; transition: 0.2s; position: relative; }
-        .publish-btn { background: var(--ads-blue); color: #fff; border: none; padding: 16px; border-radius: 8px; font-weight: 800; cursor: pointer; font-family: 'Vazirmatn'; font-size: 16px; width: 100%; margin-top: 25px; }
-        .app-footer { background: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid var(--border); margin-top: 10px; }
-        .powered-by { font-size: 14px; font-weight: 800; color: #64748b; margin-bottom: 5px; }
-        .version-text { font-size: 11px; color: #94a3b8; margin-bottom: 15px; }
-        .contact-link { display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-size: 13px; font-weight: 800; transition: 0.3s; }
-        .contact-link:hover { background: #128c7e; transform: scale(1.05); }
-        .success-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        .disclaimer-text { font-size: 11px; color: #b45309; text-align: center; margin-top: 10px; font-weight: 500; border-top: 1px solid #fef08a; padding-top: 8px; }
+        .upload-area { border: 2px dashed #cbd5e1; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; background: #f9fafb; margin-top: 10px; display: block; }
+        
+        .copy-box { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 14px; border-radius: 8px; border: 1px solid #d1d5db; cursor: pointer; font-weight: 800; margin-bottom: 10px; }
+        
+        .publish-btn { background: var(--ads-blue); color: #fff; border: none; padding: 18px; border-radius: 8px; font-weight: 800; cursor: pointer; font-family: 'Vazirmatn'; font-size: 16px; width: 100%; margin-top: 25px; display: block; }
+        
+        .app-footer { background: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid var(--border); }
+        .contact-link { display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: white; padding: 10px 20px; border-radius: 50px; text-decoration: none; font-size: 13px; font-weight: 800; margin-top: 10px; }
+
+        .success-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; justify-content: center; align-items: center; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="success-overlay" class="success-overlay">
-    <div style="max-width: 400px;">
-        <div style="font-size: 60px; color: var(--success); margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
-        <div style="font-size: 17px; font-weight: 800; line-height: 1.8;">داواکاریەکەت نێردرا!<br>پەڕەکە دەگوازرێتەوە بۆ واتسئاپ...</div>
+    <div>
+        <i class="fas fa-check-circle" style="font-size: 60px; color: var(--success);"></i>
+        <p style="font-size: 17px; font-weight: 800; margin-top: 20px;">داواکاریەکەت نێردرا!<br>پەڕەکە دەگوازرێتەوە بۆ واتسئاپ...</p>
     </div>
 </div>
 
 <div class="manager-card">
     <div class="top-banner"><h1>ZANA SPONSOR - CREATE ADS</h1></div>
     <div class="form-body">
+        
         <div class="step-title">١. ناو و لۆگۆی تیک تۆک</div>
-        <div class="input-group"><label>ناوی پەیجی تیک تۆک</label><input type="text" id="brand_name" placeholder="..."></div>
         <div class="input-group">
-            <input type="file" id="logo_file" hidden onchange="updateLabel('logo_file', 'logo-text')">
-            <div class="upload-area" onclick="document.getElementById('logo_file').click()">
-                <i class="fas fa-image"></i><br><span id="logo-text">لۆگۆی پەیج باربکە</span>
-            </div>
+            <label>ناوی پەیجی تیک تۆک</label>
+            <input type="text" id="brand_name" placeholder="ناوی پەیجەکەت بنووسە...">
         </div>
+        <label class="upload-area">
+            <input type="file" id="logo_file" style="display:none;" onchange="updateLabel('logo_file', 'logo-text')">
+            <i class="fas fa-image"></i><br><span id="logo-text">لۆگۆی پەیج باربکە</span>
+        </label>
 
         <div class="step-title">٢. ئامانج و بینەر</div>
-        <div class="selection-group" id="obj-group">
-            <div class="chip active" onclick="handleChip(this)">Video Views</div>
-            <div class="chip" onclick="handleChip(this)">Profile Visit</div>
-            <div class="chip" onclick="handleChip(this)">Website Traffic</div>
+        <div class="selection-group">
+            <div class="chip active" onclick="handleChip(this, 'obj')">Video Views</div>
+            <div class="chip" onclick="handleChip(this, 'obj')">Website Traffic</div>
         </div>
-        <div class="selection-group" id="audience-group">
-            <div class="chip active" onclick="handleChip(this)">بینەری کورد</div><div class="chip" onclick="handleChip(this)">بینەری عەرەب</div>
+        <div class="selection-group">
+            <div class="chip active" onclick="handleChip(this, 'aud')">بینەری کورد</div>
+            <div class="chip" onclick="handleChip(this, 'aud')">بینەری عەرەب</div>
         </div>
 
         <div class="step-title">٣. تەمەن و ڕەگەز</div>
-        <div class="selection-group" id="gender-group">
-            <div class="chip active" onclick="handleChip(this)">هەردوو ڕەگەز</div><div class="chip" onclick="handleChip(this)">نێر</div><div class="chip" onclick="handleChip(this)">مێ</div>
+        <div class="selection-group">
+            <div class="chip active" onclick="handleChip(this, 'gen')">هەردوو ڕەگەز</div>
+            <div class="chip" onclick="handleChip(this, 'gen')">نێر</div>
+            <div class="chip" onclick="handleChip(this, 'gen')">مێ</div>
         </div>
         <div class="selection-group" id="age-group">
-            <div class="chip active" data-multi="true" onclick="handleChip(this)">13-17</div>
-            <div class="chip active" data-multi="true" onclick="handleChip(this)">18-24</div>
-            <div class="chip active" data-multi="true" onclick="handleChip(this)">25-34</div>
-            <div class="chip" data-multi="true" onclick="handleChip(this)">35-44</div>
-            <div class="chip" data-multi="true" onclick="handleChip(this)">45+</div>
+            <div class="chip active" onclick="this.classList.toggle('active'); calculate();">13-17</div>
+            <div class="chip active" onclick="this.classList.toggle('active'); calculate();">18-24</div>
+            <div class="chip active" onclick="this.classList.toggle('active'); calculate();">25-34</div>
+            <div class="chip" onclick="this.classList.toggle('active'); calculate();">35-44</div>
+            <div class="chip" onclick="this.classList.toggle('active'); calculate();">45+</div>
         </div>
 
         <div class="step-title">٤. پەیوەندی ناو سپۆنسەر</div>
-        <div class="selection-group" id="contact-chips">
-            <div class="chip" data-target="ws-box" onclick="handleChip(this)">واتساپ</div>
-            <div class="chip" data-target="vb-box" onclick="handleChip(this)">ڤایبەر</div>
-            <div class="chip" data-target="tg-box" onclick="handleChip(this)">تیلیگرام (لینک)</div>
-            <div class="chip" data-target="ph-box" onclick="handleChip(this)">تەلەفۆن</div>
+        <div class="selection-group">
+            <div class="chip" onclick="toggleContact(this, 'in-ws')">واتساپ</div>
+            <div class="chip" onclick="toggleContact(this, 'in-vb')">ڤایبەر</div>
+            <div class="chip" onclick="toggleContact(this, 'in-tg')">تیلیگرام</div>
+            <div class="chip" onclick="toggleContact(this, 'in-ph')">تەلەفۆن</div>
         </div>
         <div id="contact-inputs" class="dynamic-box">
-            <div id="ws-box" class="input-group" style="display:none;"><input type="text" id="in-ws" placeholder="دەبێت بە 07 دەستپێبکات"></div>
-            <div id="vb-box" class="input-group" style="display:none;"><input type="text" id="in-vb" placeholder="دەبێت بە 07 دەستپێبکات"></div>
-            <div id="tg-box" class="input-group" style="display:none;"><input type="text" id="in-tg" placeholder="https://t.me/..."></div>
-            <div id="ph-box" class="input-group" style="display:none;"><input type="text" id="in-ph" placeholder="دەبێت بە 07 دەستپێبکات"></div>
+            <input type="text" id="in-ws" style="display:none; margin-bottom:10px;" placeholder="ژمارەی واتساپ 07..." class="input-group">
+            <input type="text" id="in-vb" style="display:none; margin-bottom:10px;" placeholder="ژمارەی ڤایبەر 07..." class="input-group">
+            <input type="text" id="in-tg" style="display:none; margin-bottom:10px;" placeholder="لینکی تیلیگرام t.me/..." class="input-group">
+            <input type="text" id="in-ph" style="display:none; margin-bottom:10px;" placeholder="ژمارەی تەلەفۆن 07..." class="input-group">
         </div>
 
         <div class="step-title">٥. بودجە و کۆد</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="input-group"><label>بودجە ($)</label><input type="number" id="budget" oninput="calculate()" placeholder="20$ کەمترین"></div>
+            <div class="input-group"><label>بودجە ($)</label><input type="number" id="budget" oninput="calculate()" placeholder="20"></div>
             <div class="input-group"><label>ڕۆژ</label><input type="number" id="days" value="1" oninput="calculate()"></div>
         </div>
         <div class="input-group"><label>لینکی ڤیدیۆ</label><input type="text" id="main_link" placeholder="https://vt.tiktok.com/..."></div>
-        <div class="input-group"><label>کۆدی ڤیدیۆ</label><input type="text" id="video_code" placeholder="# دەستپێبکات"></div>
+        <div class="input-group"><label>کۆدی ڤیدیۆ</label><input type="text" id="video_code" placeholder="#6677..."></div>
 
         <div id="result-info" class="result-box">
-            <div class="result-item"><span>کۆی گشتی بە دینار:</span> <b id="res-iqd">0 IQD</b></div>
+            <div class="result-item"><span>کۆی گشتی:</span> <b id="res-iqd">0 IQD</b></div>
             <div class="result-item"><span>بینەری پێشبینیکراو:</span> <b id="res-views-display">0 Views</b></div>
-            <div class="result-item" id="msgs-row" style="display:none;"><span id="visit-label">سەردانی پێشبینیکراو:</span> <b id="res-msgs-display">0 سەردان</b></div>
-            <div class="disclaimer-text">ئەم پێشبینیە گرەنتی نییە، لەوانەیە کەمتر بێت یان زیاتر بێت</div>
+            <div class="result-item" id="msgs-row" style="display:none;"><span>سەردانی پەڕە:</span> <b id="res-msgs-display">0 سەردان</b></div>
+            <div class="disclaimer">ئەم پێشبینیە گرەنتی نییە، لەوانەیە کەمتر بێت یان زیاتر بێت</div>
         </div>
 
         <div class="step-title">٦. وەسڵی پارەدان</div>
-        <div class="copy-box" onclick="copyNum()"><span>07510074008</span> <i class="far fa-copy"></i></div>
-        <div class="upload-area" style="margin-top: 15px;" onclick="document.getElementById('receipt').click()">
-            <input type="file" id="receipt" hidden onchange="updateLabel('receipt', 'receipt-text')">
-            <i class="fas fa-file-invoice"></i> <span id="receipt-text">وێنەی وەسڵ باربکە</span>
+        <div class="copy-box" onclick="copyNum()">
+            <span>07510074008</span>
+            <i class="far fa-copy"></i>
         </div>
+        <label class="upload-area">
+            <input type="file" id="receipt_file" style="display:none;" onchange="updateLabel('receipt_file', 'receipt-text')">
+            <i class="fas fa-file-invoice"></i> <span id="receipt-text">وێنەی وەسڵ باربکە</span>
+        </label>
 
-        <button class="publish-btn" id="submit-btn" onclick="sendToAll()">ناردنی داواکاری</button>
+        <button type="button" class="publish-btn" id="submit-btn" onclick="sendToAll()">ناردنی داواکاری</button>
     </div>
 
     <div class="app-footer">
-        <div class="powered-by">Powered By Zana Sponsor</div>
-        <div class="version-text">Version 2.2.0</div>
-        <a href="https://wa.me/9647510074008" class="contact-link">
-            <i class="fab fa-whatsapp"></i> Contact Us
-        </a>
+        <div style="font-weight: 800; color: #64748b;">Powered By Zana Sponsor</div>
+        <a href="https://wa.me/9647510074008" class="contact-link"><i class="fab fa-whatsapp"></i> Contact Us</a>
     </div>
 </div>
 
@@ -131,98 +143,86 @@
     const BOT_TOKEN = '8365701740:AAFdtoRdYyrDUiuUfhWzZorhwUjGHDYs588';
     const CHAT_ID = '6259019006';
 
-    function handleChip(el) {
-        if (el.hasAttribute('data-multi')) {
-            el.classList.toggle('active');
-        } else if (el.hasAttribute('data-target')) {
-            el.classList.toggle('active');
-            const target = document.getElementById(el.getAttribute('data-target'));
-            target.style.display = el.classList.contains('active') ? 'block' : 'none';
-            document.getElementById('contact-inputs').style.display = !!document.querySelector('#contact-chips .chip.active') ? 'block' : 'none';
-        } else {
-            el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-        }
+    function handleChip(el, group) {
+        el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
         calculate();
     }
 
-    function updateLabel(id, textId) { 
-        if(document.getElementById(id).files[0]) document.getElementById(textId).innerText = "✅ بارکرا"; 
+    function toggleContact(el, targetId) {
+        el.classList.toggle('active');
+        const input = document.getElementById(targetId);
+        if(input) input.style.display = el.classList.contains('active') ? 'block' : 'none';
+        
+        const anyActive = document.querySelectorAll('#contact-inputs input[style*="display: block"]').length > 0;
+        document.getElementById('contact-inputs').style.display = anyActive ? 'block' : 'none';
+    }
+
+    function updateLabel(id, textId) {
+        const file = document.getElementById(id).files[0];
+        if(file) document.getElementById(textId).innerText = "✅ وێنەکە هەڵبژێردرا";
     }
 
     function calculate() {
         const b = parseFloat(document.getElementById('budget').value) || 0;
         const d = parseFloat(document.getElementById('days').value) || 1;
-        const audEl = document.querySelector('#audience-group .chip.active');
-        const objEl = document.querySelector('#obj-group .chip.active');
+        const chips = document.querySelectorAll('.chip.active');
+        let obj = "";
+        chips.forEach(c => { if(c.innerText.includes("Views") || c.innerText.includes("Traffic")) obj = c.innerText; });
         
-        if(b >= 20 && d >= 1) {
+        if(b >= 20) {
             document.getElementById('result-info').style.display = 'block';
-            let iqd = (Math.round((b/20)*38000*d)).toLocaleString() + " IQD";
-            document.getElementById('res-iqd').innerText = iqd;
-            
-            let multiplier = audEl.innerText.includes("عەرەب") ? 0.75 : 1.0;
-            let v = (b/20)*100000*d*multiplier;
+            document.getElementById('res-iqd').innerText = (Math.round((b/20)*38000*d)).toLocaleString() + " IQD";
+            let v = (b/20)*100000*d;
             document.getElementById('res-views-display').innerText = Math.round(v/1000)+"k - "+Math.round((v*1.8)/1000)+"k Views";
 
-            if(objEl.innerText === "Website Traffic" || objEl.innerText === "Profile Visit") {
+            if(obj === "Website Traffic") {
                 document.getElementById('msgs-row').style.display = 'flex';
-                document.getElementById('visit-label').innerText = objEl.innerText === "Profile Visit" ? "سەردانی پێشبینیکراو (پڕۆفایل):" : "سەردانی پێشبینیکراو (پەڕە):";
-                let minV = Math.round((b/20) * 350 * d);
-                let maxV = Math.round((b/20) * 3000 * d);
-                document.getElementById('res-msgs-display').innerText = minV.toLocaleString() + " - " + maxV.toLocaleString() + " سەردان";
-            } else { 
-                document.getElementById('msgs-row').style.display = 'none'; 
-            }
-        } else { 
-            document.getElementById('result-info').style.display = 'none'; 
-        }
+                document.getElementById('res-msgs-display').innerText = Math.round((b/20)*350*d).toLocaleString() + " - " + Math.round((b/20)*3000*d).toLocaleString();
+            } else { document.getElementById('msgs-row').style.display = 'none'; }
+        } else { document.getElementById('result-info').style.display = 'none'; }
     }
 
-    function copyNum() { 
-        navigator.clipboard.writeText("07510074008"); 
-        alert("ژمارەکە کۆپی کرا ✅"); 
-    }
-
-    async function sendPhoto(file, cap) {
-        const fd = new FormData();
-        fd.append('chat_id', CHAT_ID);
-        fd.append('photo', file);
-        if(cap) fd.append('caption', cap);
-        fd.append('parse_mode', 'Markdown');
-        return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+    function copyNum() {
+        navigator.clipboard.writeText("07510074008");
+        alert("ژمارەکە کۆپی کرا ✅");
     }
 
     async function sendToAll() {
-        const brand = document.getElementById('brand_name').value.trim();
-        const budget = parseFloat(document.getElementById('budget').value);
-        const days = parseFloat(document.getElementById('days').value);
-        const link = document.getElementById('main_link').value.trim();
-        const code = document.getElementById('video_code').value.trim();
+        const btn = document.getElementById('submit-btn');
         const logo = document.getElementById('logo_file').files[0];
-        const receipt = document.getElementById('receipt').files[0];
+        const receipt = document.getElementById('receipt_file').files[0];
+        const brand = document.getElementById('brand_name').value;
 
-        if(!brand || isNaN(budget) || !logo || !receipt || !link || !code) {
-            return alert("تکایە هەموو خانەکان پڕبکەوە و وێنەکان باربکە!");
+        if(!logo || !receipt || !brand) {
+            alert("تکایە هەموو زانیارییەکان و وێنەکان پڕبکەوە");
+            return;
         }
 
-        const btn = document.getElementById('submit-btn');
         btn.disabled = true; btn.innerText = "خەریکی ناردنە...";
-
-        const obj = document.querySelector('#obj-group .chip.active').innerText;
-        const iqdVal = (Math.round((budget/20)*38000*days)).toLocaleString();
-        let message = `🌟 *داواکاری نوێی سپۆنسەر*\n\nپەیج: ${brand}\nبودجە: $${budget}\nکۆی گشتی: ${iqdVal} IQD\nئامانج: ${obj}\nکۆد: ${code}\nلینک: ${link}`;
+        const budget = document.getElementById('budget').value;
+        const link = document.getElementById('main_link').value;
+        const code = document.getElementById('video_code').value;
+        
+        let msg = `🌟 داواکاری نوێ\nپەیج: ${brand}\nبودجە: $${budget}\nکۆد: ${code}\nلینک: ${link}`;
 
         try {
-            await sendPhoto(logo, message);
-            await sendPhoto(receipt, `🧾 وەسڵی پارەدان - ${brand}`);
+            const fd1 = new FormData();
+            fd1.append('chat_id', CHAT_ID);
+            fd1.append('photo', logo);
+            fd1.append('caption', msg);
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {method:'POST', body:fd1});
+
+            const fd2 = new FormData();
+            fd2.append('chat_id', CHAT_ID);
+            fd2.append('photo', receipt);
+            fd2.append('caption', `وەسڵی: ${brand}`);
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {method:'POST', body:fd2});
+
             document.getElementById('success-overlay').style.display = 'flex';
-            setTimeout(() => {
-                window.open(`https://wa.me/9647510074008?text=${encodeURIComponent(message)}`, '_blank');
-                location.reload();
-            }, 2000);
-        } catch(e) { 
-            alert("هەڵەیەک ڕوویدا!"); 
+            setTimeout(() => { window.location.href = `https://wa.me/9647510074008?text=${encodeURIComponent(msg)}`; }, 2000);
+        } catch(e) {
+            alert("هەڵەیەک ڕوویدا");
             btn.disabled = false; btn.innerText = "ناردنی داواکاری";
         }
     }
