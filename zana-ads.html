@@ -3,141 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SARA EXPERT ADS</title>
+    <title>ZANA SPONSOR - ADS</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --ads-blue: #2563eb; --bg-gray: #f4f7fa; --border: #e5e7eb; }
+        :root { --ads-blue: #2563eb; --bg-gray: #f4f7fa; --border: #e5e7eb; --success: #059669; }
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg-gray); margin: 0; padding: 10px; color: #1f2937; }
         .manager-card { max-width: 600px; margin: 0 auto; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
         .top-banner { background: linear-gradient(135deg, #111827 0%, #2563eb 100%); padding: 25px; text-align: center; color: #fff; }
         .top-banner h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 1px; }
         .form-body { padding: 20px; }
         .step-title { font-size: 14px; font-weight: 800; color: #111; margin: 25px 0 12px; border-right: 4px solid var(--ads-blue); padding-right: 10px; }
-        
         .selection-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
         .chip { padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; background: #fff; transition: all 0.2s ease; user-select: none; border-bottom: 3px solid #ddd; }
         .chip.active { background: var(--ads-blue) !important; color: #fff !important; border-color: var(--ads-blue); border-bottom-color: #1e40af; font-weight: 700; transform: translateY(2px); }
-
         .input-group { margin-bottom: 15px; }
         label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #374151; }
         input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Vazirmatn'; box-sizing: border-box; font-size: 14px; background: #f9fafb; outline: none; transition: 0.2s; }
-        input:focus { border-color: var(--ads-blue); background: #fff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-
-        .result-box { background: #fffbeb; border: 1px solid #fef08a; padding: 15px; border-radius: 10px; margin-top: 15px; display: none; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .result-box { background: #fffbeb; border: 1px solid #fef08a; padding: 15px; border-radius: 10px; margin-top: 15px; display: none; }
         .result-item { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; }
         .result-item b { color: #854d0e; font-weight: 800; }
-
         .dynamic-box { background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 15px; display: none; }
-        .copy-box { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 14px; border-radius: 8px; border: 1px solid #d1d5db; cursor: pointer; font-weight: 800; margin-top: 10px; }
+        .copy-box { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 14px; border-radius: 8px; border: 1px solid #d1d5db; cursor: pointer; font-weight: 800; }
         .upload-area { border: 2px dashed #cbd5e1; padding: 20px; border-radius: 10px; text-align: center; cursor: pointer; background: #f9fafb; transition: 0.2s; }
-        .upload-area:hover { border-color: var(--ads-blue); background: #f0f7ff; }
-        
-        .publish-btn { background: var(--ads-blue); color: #fff; border: none; padding: 16px; border-radius: 8px; font-weight: 800; cursor: pointer; font-family: 'Vazirmatn'; font-size: 16px; width: 100%; margin-top: 25px; transition: 0.3s; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
-        .publish-btn:active { transform: scale(0.98); }
+        .publish-btn { background: var(--ads-blue); color: #fff; border: none; padding: 16px; border-radius: 8px; font-weight: 800; cursor: pointer; font-family: 'Vazirmatn'; font-size: 16px; width: 100%; margin-top: 25px; }
+        .success-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 100; justify-content: center; align-items: center; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
+
+<div id="success-overlay" class="success-overlay">
+    <div style="max-width: 400px;">
+        <div style="font-size: 60px; color: var(--success); margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
+        <div style="font-size: 17px; font-weight: 800; line-height: 1.8;">داواکاریەکەت بەسەرکەوتوویی نێردرا.<br>لە کاتی چالاک بوونی سپۆنسەرەکەت ئاگادارت دەکەینەوە...<br><br><span style="color: var(--ads-blue);">سوپاس بۆ چاوەڕوانیت</span></div>
+    </div>
+</div>
 
 <div class="manager-card">
     <div class="top-banner"><h1>ZANA SPONSOR - ADS</h1></div>
     <div class="form-body">
         
         <div class="step-title">١. ناو و لۆگۆی تیک تۆک (پێویستە)</div>
-        <div class="input-group"><label>ناوی پەیجی تیک تۆکت</label><input type="text" id="brand_name" placeholder="ناوی پەیجی تیک تۆکت لێرە بنووسە..."></div>
+        <div class="input-group"><label>ناوی پەیجی تیک تۆک</label><input type="text" id="brand_name" placeholder="..."></div>
         <div class="input-group">
-            <div class="upload-area" id="logo-btn">
-                <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: #64748b;"></i><br>
-                <span id="logo-text" style="font-size: 13px;">لۆگۆی پەیجی تیک تۆکت باربکە</span>
-                <input type="file" id="logo_file" hidden>
+            <div class="upload-area" onclick="document.getElementById('logo_file').click()">
+                <i class="fas fa-image"></i><br><span id="logo-text">لۆگۆی پەیج باربکە</span>
+                <input type="file" id="logo_file" hidden onchange="updateLabel('logo_file', 'logo-text')">
             </div>
         </div>
 
-        <div class="step-title">٢. ئامانج و بینەر</div>
-        <label>ئامانجی سپۆنسەر (پێویستە)</label>
+        <div class="step-title">٢. ئامانج و بینەر (پێویستە)</div>
         <div class="selection-group" id="obj-group">
-            <div class="chip active">Video Views</div>
-            <div class="chip">Website Traffic</div>
+            <div class="chip active">Video Views</div><div class="chip">Website Traffic</div>
         </div>
-
-        <label>جۆری بینەر (پێویستە)</label>
         <div class="selection-group" id="audience-group">
-            <div class="chip active">بینەری کورد</div>
-            <div class="chip">بینەری عەرەب</div>
+            <div class="chip active">بینەری کورد</div><div class="chip">بینەری عەرەب</div>
         </div>
 
-        <div class="step-title">(پێویستە) ٣. دیاریکردنی تەمەن و ڕەگەز</div>
+        <div class="step-title">٣. دیاریکردنی تەمەن و ڕەگەز (پێویستە)</div>
         <label>ڕەگەز</label>
         <div class="selection-group" id="gender-group">
-            <div class="chip active">هەردوو ڕەگەز</div>
-            <div class="chip">نێر</div>
-            <div class="chip">مێ</div>
+            <div class="chip active">هەردوو ڕەگەز</div><div class="chip">نێر</div><div class="chip">مێ</div>
         </div>
-
-        <label>تەمەن (دەتوانی چەند دانەیەک هەڵبژێری)</label>
+        <label>تەمەن (چەند دانەیەک هەڵبژێرە)</label>
         <div class="selection-group" id="age-group">
-            <div class="chip active" data-multi="true">13-17</div>
-            <div class="chip active" data-multi="true">18-24</div>
-            <div class="chip active" data-multi="true">25-34</div>
-            <div class="chip" data-multi="true">35-44</div>
-            <div class="chip" data-multi="true">45+</div>
+            <div class="chip active" data-multi="true">13-17</div><div class="chip active" data-multi="true">18-24</div><div class="chip active" data-multi="true">25-34</div><div class="chip" data-multi="true">35-44</div><div class="chip" data-multi="true">45+</div>
         </div>
 
-        <div class="step-title">٤. دوگمەی پەیوەندی ناو سپۆنسەر (پێویستە)</div>
+        <div class="step-title">٤. پەیوەندی ناو سپۆنسەر (پێویستە)</div>
         <div class="selection-group" id="contact-chips">
-            <div class="chip" data-target="ws-box">واتساپ</div>
-            <div class="chip" data-target="vb-box">ڤایبەر</div>
-            <div class="chip" data-target="tg-box">تیلیگرام</div>
-            <div class="chip" data-target="ph-box">تەلەفۆن</div>
+            <div class="chip" data-target="ws-box">واتساپ</div><div class="chip" data-target="vb-box">ڤایبەر</div><div class="chip" data-target="tg-box">تیلیگرام (لینک)</div><div class="chip" data-target="ph-box">تەلەفۆن</div>
         </div>
         <div id="contact-inputs" class="dynamic-box">
-            <div id="ws-box" class="input-group" style="display:none;"><label>ژمارەی واتساپ</label><input type="text" id="in-ws" placeholder="0750xxxxxxx"></div>
-            <div id="vb-box" class="input-group" style="display:none;"><label>ژمارەی ڤایبەر</label><input type="text" id="in-vb" placeholder="0750xxxxxxx"></div>
-            <div id="tg-box" class="input-group" style="display:none;"><label>یوزەرنەیمی تیلیگرام</label><input type="text" id="in-tg" placeholder="@username"></div>
-            <div id="ph-box" class="input-group" style="display:none;"><label>ژمارەی مۆبایل</label><input type="text" id="in-ph" placeholder="0750xxxxxxx"></div>
+            <div id="ws-box" class="input-group" style="display:none;"><label>واتساپ</label><input type="text" id="in-ws" placeholder="0750xxxxxxx"></div>
+            <div id="vb-box" class="input-group" style="display:none;"><label>ڤایبەر</label><input type="text" id="in-vb" placeholder="0750xxxxxxx"></div>
+            <div id="tg-box" class="input-group" style="display:none;"><label>لینکی تیلیگرام</label><input type="text" id="in-tg" placeholder="https://t.me/..."></div>
+            <div id="ph-box" class="input-group" style="display:none;"><label>مۆبایل</label><input type="text" id="in-ph" placeholder="0750xxxxxxx"></div>
         </div>
 
         <div class="step-title">٥. بودجە و نرخ (پێویستە)</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="input-group"><label>بودجە ($)</label><input type="number" id="budget" placeholder="20"></div>
-            <div class="input-group"><label>ڕۆژ</label><input type="number" id="days" value="1"></div>
+            <div class="input-group"><label>بودجە ($)</label><input type="number" id="budget" oninput="calculate()"></div>
+            <div class="input-group"><label>ڕۆژ</label><input type="number" id="days" value="1" oninput="calculate()"></div>
         </div>
         <div class="input-group"><label>لینکی سپۆنسەر</label><input type="text" id="main_link" placeholder="https://..."></div>
-        <div class="input-group"><label>کۆدی ڤیدیۆ</label><input type="text" id="video_code" placeholder="Video Auth Code..."></div>
+        <div class="input-group"><label>کۆدی ڤیدیۆ</label><input type="text" id="video_code"></div>
 
         <div id="result-info" class="result-box">
             <div class="result-item"><span>کۆ بە دینار:</span> <b id="res-iqd">0 IQD</b></div>
-            <div class="result-item"><span>بینەری پێشبینیکراو:</span> <b id="res-views">0</b></div>
+            <div class="result-item"><span>بینەر:</span> <b id="res-views">0</b></div>
         </div>
 
-        <div class="step-title">٦. پارەدان (پێویستە)</div>
-        <div class="copy-box" onclick="copyNum()">
-            <span>07510074008</span> <i class="far fa-copy" style="color: var(--ads-blue);"></i>
-        </div>
+        <div class="step-title">٦. پارەدان و وەسڵ (پێویستە)</div>
+        <div class="copy-box" onclick="copyNum()"><span>07510074008</span> <i class="far fa-copy"></i></div>
         <div class="input-group" style="margin-top: 15px;">
-            <div class="upload-area" id="receipt-btn">
+            <div class="upload-area" onclick="document.getElementById('receipt').click()">
                 <i class="fas fa-file-invoice"></i> <span id="receipt-text">وێنەی وەسڵ باربکە</span>
-                <input type="file" id="receipt" hidden>
+                <input type="file" id="receipt" hidden onchange="updateLabel('receipt', 'receipt-text')">
             </div>
         </div>
 
-        <button class="publish-btn" onclick="sendToAll()">ناردنی داواکاری</button>
+        <button class="publish-btn" id="submit-btn" onclick="sendToAll()">ناردنی داواکاری</button>
     </div>
 </div>
 
 <script>
-    // لۆژیکی داگیرانی دوگمەکان بە بێ کێشە
+    const BOT_TOKEN = '8365701740:AAFdtoRdYyrDUiuUfhWzZorhwUjGHDYs588';
+    const CHAT_ID = '6259019006';
+
     document.querySelectorAll('.chip').forEach(chip => {
         chip.addEventListener('click', function() {
-            if (this.dataset.multi === "true") {
+            if (this.hasAttribute('data-multi')) {
                 this.classList.toggle('active');
-            } else if (this.dataset.target) {
+            } else if (this.hasAttribute('data-target')) {
                 this.classList.toggle('active');
-                const targetBox = document.getElementById(this.dataset.target);
-                targetBox.style.display = this.classList.contains('active') ? 'block' : 'none';
-                const anyActive = !!document.querySelector('#contact-chips .chip.active');
-                document.getElementById('contact-inputs').style.display = anyActive ? 'block' : 'none';
+                const target = document.getElementById(this.getAttribute('data-target'));
+                if (target) target.style.display = this.classList.contains('active') ? 'block' : 'none';
+                document.getElementById('contact-inputs').style.display = !!document.querySelector('#contact-chips .chip.active') ? 'block' : 'none';
             } else {
                 this.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
@@ -146,69 +128,66 @@
         });
     });
 
-    // لۆژیکی نرخ و بودجە
-    const budgetInput = document.getElementById('budget');
-    const daysInput = document.getElementById('days');
-
-    [budgetInput, daysInput].forEach(input => {
-        input.addEventListener('input', calculate);
-    });
+    function updateLabel(inputId, textId) {
+        if(document.getElementById(inputId).files[0]) document.getElementById(textId).innerText = "✅ بارکرا";
+    }
 
     function calculate() {
-        const budget = parseFloat(budgetInput.value) || 0;
-        const days = parseFloat(daysInput.value) || 1;
-        const obj = document.querySelector('#obj-group .chip.active').innerText;
+        const b = parseFloat(document.getElementById('budget').value) || 0;
+        const d = parseFloat(document.getElementById('days').value) || 1;
         const aud = document.querySelector('#audience-group .chip.active').innerText;
-        const resultBox = document.getElementById('result-info');
-
-        if (budget > 0) {
-            resultBox.style.display = 'block';
-            // نرخەکە: هەر 20 دۆلار بەرامبەر 38 هەزار دینار
-            const iqd = (budget / 20) * 38000 * days;
-            document.getElementById('res-iqd').innerText = Math.round(iqd).toLocaleString() + " IQD";
-
-            // لۆژیکی ڤیو: وێبسایت کەمترە، عەرەب کەمترە
-            let baseMin = (obj === "Video Views") ? 100000 : 80000;
-            let multiplier = (aud === "بینەری عەرەب") ? 0.75 : 1.0;
-            
-            let finalMin = (budget / 20) * baseMin * days * multiplier;
-            let finalMax = finalMin * 1.8;
-            
-            document.getElementById('res-views').innerText = 
-                Math.round(finalMin/1000) + "k - " + Math.round(finalMax/1000) + "k Views";
-        } else {
-            resultBox.style.display = 'none';
-        }
+        if(b > 0) {
+            document.getElementById('result-info').style.display = 'block';
+            document.getElementById('res-iqd').innerText = (Math.round((b/20)*38000*d)).toLocaleString() + " IQD";
+            let m = aud.includes("عەرەب") ? 0.75 : 1.0;
+            let v = (b/20)*100000*d*m;
+            document.getElementById('res-views').innerText = Math.round(v/1000)+"k - "+Math.round((v*1.8)/1000)+"k Views";
+        } else { document.getElementById('result-info').style.display = 'none'; }
     }
 
-    // بارکردنی وێنەکان
-    document.getElementById('logo-btn').onclick = () => document.getElementById('logo_file').click();
-    document.getElementById('receipt-btn').onclick = () => document.getElementById('receipt').click();
-    
-    document.getElementById('logo_file').onchange = function() { document.getElementById('logo-text').innerText = "لۆگۆ هەڵبژێردرا ✅"; };
-    document.getElementById('receipt').onchange = function() { document.getElementById('receipt-text').innerText = "وەسڵ هەڵبژێردرا ✅"; };
+    function copyNum() { navigator.clipboard.writeText("07510074008"); alert("کۆپی کرا ✅"); }
 
-    function copyNum() {
-        navigator.clipboard.writeText("07510074008");
-        alert("ژمارەکە کۆپی کرا ✅");
+    async function sendPhoto(file, cap) {
+        const fd = new FormData();
+        fd.append('chat_id', CHAT_ID);
+        fd.append('photo', file);
+        if(cap) fd.append('caption', cap);
+        fd.append('parse_mode', 'Markdown');
+        return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
     }
 
-    // ناردنی کۆتایی
     async function sendToAll() {
         const brand = document.getElementById('brand_name').value;
-        const budget = budgetInput.value;
-        if(!brand || !budget) { alert("تکایە ناوی پەیج و بودجە بنووسە"); return; }
+        const budget = document.getElementById('budget').value;
+        const logo = document.getElementById('logo_file').files[0];
+        const receipt = document.getElementById('receipt').files[0];
+        const hasContact = !!document.querySelector('#contact-chips .chip.active');
 
-        const telegramMsg = `🎯 *NEW ORDER*%0A🏷 *Brand:* ${brand}%0A💰 *Budget:* $${budget}%0A📅 *Days:* ${daysInput.value}%0A🌍 *Audience:* ${document.querySelector('#audience-group .chip.active').innerText}`;
+        if(!brand || !budget || !logo || !receipt || !hasContact) return alert("تکایە هەموو زانیارییەکان و وێنەکان پڕبکەوە !");
+
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true; btn.innerText = "خەریکی ناردنە...";
+
+        const obj = document.querySelector('#obj-group .chip.active').innerText;
+        const aud = document.querySelector('#audience-group .chip.active').innerText;
+        const gnd = document.querySelector('#gender-group .chip.active').innerText;
+        const ages = Array.from(document.querySelectorAll('#age-group .chip.active')).map(c => c.innerText).join(', ');
+        
+        let cnt = "";
+        if(document.getElementById('ws-box').style.display === 'block') cnt += "WS: " + document.getElementById('in-ws').value + " | ";
+        if(document.getElementById('vb-box').style.display === 'block') cnt += "VB: " + document.getElementById('in-vb').value + " | ";
+        if(document.getElementById('tg-box').style.display === 'block') cnt += "TG: " + document.getElementById('in-tg').value + " | ";
+        if(document.getElementById('ph-box').style.display === 'block') cnt += "PH: " + document.getElementById('in-ph').value;
+
+        const details = `🎯 *NEW ORDER*%0A━━━━━━━━━━━━━━%0A🏷 *Brand:* ${brand}%0A🚀 *Obj:* ${obj}%0A🌍 *Target:* ${aud}%0A👫 *Gender:* ${gnd}%0A🎂 *Ages:* ${ages}%0A💰 *Budget:* $${budget}%0A📅 *Days:* ${document.getElementById('days').value}%0A🔗 *Link:* ${document.getElementById('main_link').value}%0A🔑 *Code:* ${document.getElementById('video_code').value}%0A📞 *Contact:* ${cnt}`;
 
         try {
-            await fetch(`https://api.telegram.org/bot8365701740:AAFdtoRdYyrDUiuUfhWzZorhwUjGHDYs588/sendMessage?chat_id=6259019006&text=${telegramMsg}&parse_mode=Markdown`);
-            window.location.href = `https://wa.me/9647758887488?text=${encodeURIComponent("سڵاو من داواکاری سپۆنسەرم پێشکەش کرد و بۆ تیلیگرامم نارد")}`;
-        } catch(e) {
-            alert("کێشەیەک لە ناردن هەیە");
-        }
+            await sendPhoto(logo, details);
+            await sendPhoto(receipt, `🧾 Receipt for: ${brand}`);
+            document.getElementById('success-overlay').style.display = 'flex';
+            setTimeout(() => { window.location.href = `https://wa.me/9647758887488?text=داواکاریەکەم نارد`; }, 3500);
+        } catch(e) { alert("هەڵە لە ناردن"); btn.disabled = false; btn.innerText = "ناردنی داواکاری"; }
     }
 </script>
-
 </body>
 </html>
