@@ -35,15 +35,14 @@
 <div id="success-overlay" class="success-overlay">
     <div style="max-width: 400px;">
         <div style="font-size: 60px; color: var(--success); margin-bottom: 20px;"><i class="fas fa-check-circle"></i></div>
-        <div style="font-size: 17px; font-weight: 800; line-height: 1.8;">داواکاریەکەت بەسەرکەوتوویی نێردرا.<br>لە کاتی چالاک بوونی سپۆنسەرەکەت ئاگادارت دەکەینەوە...<br><br><span style="color: var(--ads-blue);">سوپاس بۆ چاوەڕوانیت</span></div>
+        <div style="font-size: 17px; font-weight: 800; line-height: 1.8;">داواکاریەکەت نێردرا!<br>پەڕەکە دەگوازرێتەوە بۆ واتسئاپ و پاشان نوێ دەبێتەوە...</div>
     </div>
 </div>
 
 <div class="manager-card">
     <div class="top-banner"><h1>ZANA SPONSOR - ADS</h1></div>
     <div class="form-body">
-        
-        <div class="step-title">١. ناو و لۆگۆی تیک تۆک (پێویستە)</div>
+        <div class="step-title">١. ناو و لۆگۆی تیک تۆک</div>
         <div class="input-group"><label>ناوی پەیجی تیک تۆک</label><input type="text" id="brand_name" placeholder="..."></div>
         <div class="input-group">
             <div class="upload-area" onclick="document.getElementById('logo_file').click()">
@@ -52,7 +51,7 @@
             </div>
         </div>
 
-        <div class="step-title">٢. ئامانج و بینەر (پێویستە)</div>
+        <div class="step-title">٢. ئامانج و بینەر</div>
         <div class="selection-group" id="obj-group">
             <div class="chip active">Video Views</div><div class="chip">Website Traffic</div>
         </div>
@@ -60,47 +59,42 @@
             <div class="chip active">بینەری کورد</div><div class="chip">بینەری عەرەب</div>
         </div>
 
-        <div class="step-title">٣. دیاریکردنی تەمەن و ڕەگەز (پێویستە)</div>
-        <label>ڕەگەز</label>
+        <div class="step-title">٣. تەمەن و ڕەگەز</div>
         <div class="selection-group" id="gender-group">
             <div class="chip active">هەردوو ڕەگەز</div><div class="chip">نێر</div><div class="chip">مێ</div>
         </div>
-        <label>تەمەن (چەند دانەیەک هەڵبژێرە)</label>
         <div class="selection-group" id="age-group">
             <div class="chip active" data-multi="true">13-17</div><div class="chip active" data-multi="true">18-24</div><div class="chip active" data-multi="true">25-34</div><div class="chip" data-multi="true">35-44</div><div class="chip" data-multi="true">45+</div>
         </div>
 
-        <div class="step-title">٤. پەیوەندی ناو سپۆنسەر (پێویستە)</div>
+        <div class="step-title">٤. پەیوەندی ناو سپۆنسەر</div>
         <div class="selection-group" id="contact-chips">
             <div class="chip" data-target="ws-box">واتساپ</div><div class="chip" data-target="vb-box">ڤایبەر</div><div class="chip" data-target="tg-box">تیلیگرام (لینک)</div><div class="chip" data-target="ph-box">تەلەفۆن</div>
         </div>
         <div id="contact-inputs" class="dynamic-box">
-            <div id="ws-box" class="input-group" style="display:none;"><label>واتساپ</label><input type="text" id="in-ws" placeholder="0750xxxxxxx"></div>
-            <div id="vb-box" class="input-group" style="display:none;"><label>ڤایبەر</label><input type="text" id="in-vb" placeholder="0750xxxxxxx"></div>
-            <div id="tg-box" class="input-group" style="display:none;"><label>لینکی تیلیگرام</label><input type="text" id="in-tg" placeholder="https://t.me/..."></div>
-            <div id="ph-box" class="input-group" style="display:none;"><label>مۆبایل</label><input type="text" id="in-ph" placeholder="0750xxxxxxx"></div>
+            <div id="ws-box" class="input-group" style="display:none;"><input type="text" id="in-ws" placeholder="واتساپ"></div>
+            <div id="vb-box" class="input-group" style="display:none;"><input type="text" id="in-vb" placeholder="ڤایبەر"></div>
+            <div id="tg-box" class="input-group" style="display:none;"><input type="text" id="in-tg" placeholder="https://t.me/..."></div>
+            <div id="ph-box" class="input-group" style="display:none;"><input type="text" id="in-ph" placeholder="مۆبایل"></div>
         </div>
 
-        <div class="step-title">٥. بودجە و نرخ (پێویستە)</div>
+        <div class="step-title">٥. بودجە و کۆد</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div class="input-group"><label>بودجە ($)</label><input type="number" id="budget" oninput="calculate()"></div>
             <div class="input-group"><label>ڕۆژ</label><input type="number" id="days" value="1" oninput="calculate()"></div>
         </div>
-        <div class="input-group"><label>لینکی سپۆنسەر</label><input type="text" id="main_link" placeholder="https://..."></div>
+        <div class="input-group"><label>لینکی ڤیدیۆ</label><input type="text" id="main_link"></div>
         <div class="input-group"><label>کۆدی ڤیدیۆ</label><input type="text" id="video_code"></div>
 
         <div id="result-info" class="result-box">
             <div class="result-item"><span>کۆ بە دینار:</span> <b id="res-iqd">0 IQD</b></div>
-            <div class="result-item"><span>بینەر:</span> <b id="res-views">0</b></div>
         </div>
 
-        <div class="step-title">٦. پارەدان و وەسڵ (پێویستە)</div>
+        <div class="step-title">٦. وەسڵی پارەدان</div>
         <div class="copy-box" onclick="copyNum()"><span>07510074008</span> <i class="far fa-copy"></i></div>
-        <div class="input-group" style="margin-top: 15px;">
-            <div class="upload-area" onclick="document.getElementById('receipt').click()">
-                <i class="fas fa-file-invoice"></i> <span id="receipt-text">وێنەی وەسڵ باربکە</span>
-                <input type="file" id="receipt" hidden onchange="updateLabel('receipt', 'receipt-text')">
-            </div>
+        <div class="upload-area" style="margin-top: 15px;" onclick="document.getElementById('receipt').click()">
+            <i class="fas fa-file-invoice"></i> <span id="receipt-text">وێنەی وەسڵ باربکە</span>
+            <input type="file" id="receipt" hidden onchange="updateLabel('receipt', 'receipt-text')">
         </div>
 
         <button class="publish-btn" id="submit-btn" onclick="sendToAll()">ناردنی داواکاری</button>
@@ -113,12 +107,10 @@
 
     document.querySelectorAll('.chip').forEach(chip => {
         chip.addEventListener('click', function() {
-            if (this.hasAttribute('data-multi')) {
+            if (this.hasAttribute('data-multi')) this.classList.toggle('active');
+            else if (this.hasAttribute('data-target')) {
                 this.classList.toggle('active');
-            } else if (this.hasAttribute('data-target')) {
-                this.classList.toggle('active');
-                const target = document.getElementById(this.getAttribute('data-target'));
-                if (target) target.style.display = this.classList.contains('active') ? 'block' : 'none';
+                document.getElementById(this.getAttribute('data-target')).style.display = this.classList.contains('active') ? 'block' : 'none';
                 document.getElementById('contact-inputs').style.display = !!document.querySelector('#contact-chips .chip.active') ? 'block' : 'none';
             } else {
                 this.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -128,21 +120,15 @@
         });
     });
 
-    function updateLabel(inputId, textId) {
-        if(document.getElementById(inputId).files[0]) document.getElementById(textId).innerText = "✅ بارکرا";
-    }
+    function updateLabel(id, textId) { if(document.getElementById(id).files[0]) document.getElementById(textId).innerText = "✅ بارکرا"; }
 
     function calculate() {
         const b = parseFloat(document.getElementById('budget').value) || 0;
         const d = parseFloat(document.getElementById('days').value) || 1;
-        const aud = document.querySelector('#audience-group .chip.active').innerText;
         if(b > 0) {
             document.getElementById('result-info').style.display = 'block';
             document.getElementById('res-iqd').innerText = (Math.round((b/20)*38000*d)).toLocaleString() + " IQD";
-            let m = aud.includes("عەرەب") ? 0.75 : 1.0;
-            let v = (b/20)*100000*d*m;
-            document.getElementById('res-views').innerText = Math.round(v/1000)+"k - "+Math.round((v*1.8)/1000)+"k Views";
-        } else { document.getElementById('result-info').style.display = 'none'; }
+        }
     }
 
     function copyNum() { navigator.clipboard.writeText("07510074008"); alert("کۆپی کرا ✅"); }
@@ -161,9 +147,8 @@
         const budget = document.getElementById('budget').value;
         const logo = document.getElementById('logo_file').files[0];
         const receipt = document.getElementById('receipt').files[0];
-        const hasContact = !!document.querySelector('#contact-chips .chip.active');
 
-        if(!brand || !budget || !logo || !receipt || !hasContact) return alert("تکایە هەموو زانیارییەکان و وێنەکان پڕبکەوە !");
+        if(!brand || !budget || !logo || !receipt) return alert("تکایە هەموو شتێک پڕبکەوە!");
 
         const btn = document.getElementById('submit-btn');
         btn.disabled = true; btn.innerText = "خەریکی ناردنە...";
@@ -172,21 +157,35 @@
         const aud = document.querySelector('#audience-group .chip.active').innerText;
         const gnd = document.querySelector('#gender-group .chip.active').innerText;
         const ages = Array.from(document.querySelectorAll('#age-group .chip.active')).map(c => c.innerText).join(', ');
-        
-        let cnt = "";
-        if(document.getElementById('ws-box').style.display === 'block') cnt += "WS: " + document.getElementById('in-ws').value + " | ";
-        if(document.getElementById('vb-box').style.display === 'block') cnt += "VB: " + document.getElementById('in-vb').value + " | ";
-        if(document.getElementById('tg-box').style.display === 'block') cnt += "TG: " + document.getElementById('in-tg').value + " | ";
-        if(document.getElementById('ph-box').style.display === 'block') cnt += "PH: " + document.getElementById('in-ph').value;
+        const link = document.getElementById('main_link').value;
+        const code = document.getElementById('video_code').value;
+        const time = new Date().toLocaleString('ku-IQ');
 
-        const details = `🎯 *NEW ORDER*%0A━━━━━━━━━━━━━━%0A🏷 *Brand:* ${brand}%0A🚀 *Obj:* ${obj}%0A🌍 *Target:* ${aud}%0A👫 *Gender:* ${gnd}%0A🎂 *Ages:* ${ages}%0A💰 *Budget:* $${budget}%0A📅 *Days:* ${document.getElementById('days').value}%0A🔗 *Link:* ${document.getElementById('main_link').value}%0A🔑 *Code:* ${document.getElementById('video_code').value}%0A📞 *Contact:* ${cnt}`;
+        const message = `🌟 *داواکاری نوێی سپۆنسەر*\n\n` +
+                        `👤 ناوی پەیج: ${brand}\n` +
+                        `💰 بودجە: $${budget}\n` +
+                        `📅 ڕۆژ: ${document.getElementById('days').value}\n` +
+                        `🎯 ئامانج: ${obj}\n` +
+                        `🌍 بینەر: ${aud}\n` +
+                        `👫 ڕەگەز: ${gnd}\n` +
+                        `🎂 تەمەن: ${ages}\n` +
+                        `🔑 کۆدی ڤیدیۆ: ${code}\n` +
+                        `🔗 لینکی ڤیدیۆ: ${link}\n` +
+                        `⏰ کاتی ناردن: ${time}`;
 
         try {
-            await sendPhoto(logo, details);
-            await sendPhoto(receipt, `🧾 Receipt for: ${brand}`);
+            await sendPhoto(logo, message);
+            await sendPhoto(receipt, `🧾 وەسڵی پارەدان - ${brand}`);
+            
             document.getElementById('success-overlay').style.display = 'flex';
-            setTimeout(() => { window.location.href = `https://wa.me/9647758887488?text=داواکاریەکەم نارد`; }, 3500);
-        } catch(e) { alert("هەڵە لە ناردن"); btn.disabled = false; btn.innerText = "ناردنی داواکاری"; }
+            
+            setTimeout(() => {
+                const waUrl = `https://wa.me/9647758887488?text=${encodeURIComponent(message)}`;
+                window.open(waUrl, '_blank');
+                location.reload(); // ڕێفرێشکردنی پەڕەکە
+            }, 2500);
+            
+        } catch(e) { alert("هەڵە هەیە"); btn.disabled = false; }
     }
 </script>
 </body>
