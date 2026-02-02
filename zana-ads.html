@@ -72,22 +72,23 @@
             <div class="chip" data-target="ws-box">واتساپ</div><div class="chip" data-target="vb-box">ڤایبەر</div><div class="chip" data-target="tg-box">تیلیگرام (لینک)</div><div class="chip" data-target="ph-box">تەلەفۆن</div>
         </div>
         <div id="contact-inputs" class="dynamic-box">
-            <div id="ws-box" class="input-group" style="display:none;"><input type="text" id="in-ws" placeholder="واتساپ"></div>
-            <div id="vb-box" class="input-group" style="display:none;"><input type="text" id="in-vb" placeholder="ڤایبەر"></div>
+            <div id="ws-box" class="input-group" style="display:none;"><input type="text" id="in-ws" placeholder="ژمارەی واتساپ"></div>
+            <div id="vb-box" class="input-group" style="display:none;"><input type="text" id="in-vb" placeholder="ژمارەی ڤایبەر"></div>
             <div id="tg-box" class="input-group" style="display:none;"><input type="text" id="in-tg" placeholder="https://t.me/..."></div>
-            <div id="ph-box" class="input-group" style="display:none;"><input type="text" id="in-ph" placeholder="مۆبایل"></div>
+            <div id="ph-box" class="input-group" style="display:none;"><input type="text" id="in-ph" placeholder="ژمارەی مۆبایل"></div>
         </div>
 
         <div class="step-title">٥. بودجە و کۆد</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="input-group"><label>بودجە ($)</label><input type="number" id="budget" oninput="calculate()"></div>
+            <div class="input-group"><label>بودجە ($)</label><input type="number" id="budget" oninput="calculate()" placeholder="20"></div>
             <div class="input-group"><label>ڕۆژ</label><input type="number" id="days" value="1" oninput="calculate()"></div>
         </div>
-        <div class="input-group"><label>لینکی ڤیدیۆ</label><input type="text" id="main_link"></div>
-        <div class="input-group"><label>کۆدی ڤیدیۆ</label><input type="text" id="video_code"></div>
+        <div class="input-group"><label>لینکی ڤیدیۆ</label><input type="text" id="main_link" placeholder="https://vt.tiktok.com/..."></div>
+        <div class="input-group"><label>کۆدی ڤیدیۆ</label><input type="text" id="video_code" placeholder="Auth Code"></div>
 
         <div id="result-info" class="result-box">
             <div class="result-item"><span>کۆ بە دینار:</span> <b id="res-iqd">0 IQD</b></div>
+            <div class="result-item"><span>بینەری پێشبینیکراو:</span> <b id="res-views-display">0 Views</b></div>
         </div>
 
         <div class="step-title">٦. وەسڵی پارەدان</div>
@@ -125,13 +126,28 @@
     function calculate() {
         const b = parseFloat(document.getElementById('budget').value) || 0;
         const d = parseFloat(document.getElementById('days').value) || 1;
+        const aud = document.querySelector('#audience-group .chip.active').innerText;
+        
         if(b > 0) {
             document.getElementById('result-info').style.display = 'block';
-            document.getElementById('res-iqd').innerText = (Math.round((b/20)*38000*d)).toLocaleString() + " IQD";
+            // حسابکردنی دینار
+            const iqd = (Math.round((b/20)*38000*d)).toLocaleString();
+            document.getElementById('res-iqd').innerText = iqd + " IQD";
+            
+            // حسابکردنی بینەر
+            let multiplier = aud.includes("عەرەب") ? 0.75 : 1.0;
+            let v = (b/20)*100000*d*multiplier;
+            let range = Math.round(v/1000)+"k - "+Math.round((v*1.8)/1000)+"k Views";
+            
+            document.getElementById('res-views-display').innerText = range;
+            return range;
+        } else {
+            document.getElementById('result-info').style.display = 'none';
         }
+        return "0";
     }
 
-    function copyNum() { navigator.clipboard.writeText("07510074008"); alert("کۆپی کرا ✅"); }
+    function copyNum() { navigator.clipboard.writeText("07510074008"); alert("ژمارەی ئاسیاکە کۆپی کرا ✅"); }
 
     async function sendPhoto(file, cap) {
         const fd = new FormData();
@@ -148,7 +164,7 @@
         const logo = document.getElementById('logo_file').files[0];
         const receipt = document.getElementById('receipt').files[0];
 
-        if(!brand || !budget || !logo || !receipt) return alert("تکایە هەموو شتێک پڕبکەوە!");
+        if(!brand || !budget || !logo || !receipt) return alert("تکایە هەموو زانیارییەکان و وێنەکان پڕبکەوە!");
 
         const btn = document.getElementById('submit-btn');
         btn.disabled = true; btn.innerText = "خەریکی ناردنە...";
@@ -159,6 +175,7 @@
         const ages = Array.from(document.querySelectorAll('#age-group .chip.active')).map(c => c.innerText).join(', ');
         const link = document.getElementById('main_link').value;
         const code = document.getElementById('video_code').value;
+        const views = calculate();
         const time = new Date().toLocaleString('ku-IQ');
 
         const message = `🌟 *داواکاری نوێی سپۆنسەر*\n\n` +
@@ -169,6 +186,7 @@
                         `🌍 بینەر: ${aud}\n` +
                         `👫 ڕەگەز: ${gnd}\n` +
                         `🎂 تەمەن: ${ages}\n` +
+                        `👀 بینەری پێشبینیکراو: ${views}\n` +
                         `🔑 کۆدی ڤیدیۆ: ${code}\n` +
                         `🔗 لینکی ڤیدیۆ: ${link}\n` +
                         `⏰ کاتی ناردن: ${time}`;
@@ -182,10 +200,14 @@
             setTimeout(() => {
                 const waUrl = `https://wa.me/9647758887488?text=${encodeURIComponent(message)}`;
                 window.open(waUrl, '_blank');
-                location.reload(); // ڕێفرێشکردنی پەڕەکە
+                location.reload();
             }, 2500);
             
-        } catch(e) { alert("هەڵە هەیە"); btn.disabled = false; }
+        } catch(e) { 
+            alert("کێشەیەک لە ناردن هەیە، ئینتەرنێتەکەت بپشکنە"); 
+            btn.disabled = false; 
+            btn.innerText = "ناردنی داواکاری";
+        }
     }
 </script>
 </body>
