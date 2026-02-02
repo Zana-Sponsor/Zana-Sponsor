@@ -31,6 +31,7 @@
         .contact-link { display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-size: 13px; font-weight: 800; }
         .success-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .disclaimer-text { font-size: 11px; color: #b45309; text-align: center; margin-top: 10px; font-weight: 500; border-top: 1px solid #fef08a; padding-top: 8px; }
+        .payment-info { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #4b5563; font-weight: 800; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -106,7 +107,14 @@
         </div>
 
         <div class="step-title">٦. وەسڵی پارەدان</div>
-        <div class="copy-box" onclick="copyNum()"><span>07510074008</span> <i class="far fa-copy"></i></div>
+        <div class="payment-info">
+            <i class="fas fa-wallet" style="color: #2563eb;"></i>
+            <span>ژمارەی Fastpay و FIB:</span>
+        </div>
+        <div class="copy-box" onclick="copyNum()">
+            <span style="letter-spacing: 1px;">07510074008</span> 
+            <i class="far fa-copy" style="color: var(--ads-blue);"></i>
+        </div>
         <div class="upload-area" style="margin-top: 15px;" onclick="document.getElementById('receipt').click()">
             <input type="file" id="receipt" hidden onchange="updateLabel('receipt', 'receipt-text')">
             <i class="fas fa-file-invoice"></i> <span id="receipt-text">وێنەی وەسڵ باربکە</span>
@@ -233,10 +241,8 @@
 
             document.getElementById('success-overlay').style.display = 'flex';
             
-            // گواستنەوە بۆ واتسئاپ و پاشان ڕێفرێشکردنی لاپەڕەکە
             setTimeout(() => { 
                 window.location.href = `https://wa.me/9647758887488?text=${encodeURIComponent(msg)}`;
-                // ئەمەی خوارەوە دوای ماوەیەکی کەم پەڕەکە تازە دەکاتەوە
                 setTimeout(() => { location.reload(); }, 1000);
             }, 2000);
             
