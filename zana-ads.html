@@ -84,10 +84,10 @@
             <div class="chip" data-target="ph-box" onclick="handleChip(this)">تەلەفۆن</div>
         </div>
         <div id="contact-inputs" class="dynamic-box">
-            <div id="ws-box" class="input-group" style="display:none;"><input type="text" id="in-ws" placeholder="ژمارەی واتساپ"></div>
-            <div id="vb-box" class="input-group" style="display:none;"><input type="text" id="in-vb" placeholder="ژمارەی ڤایبەر"></div>
+            <div id="ws-box" class="input-group" style="display:none;"><input type="tel" id="in-ws" placeholder="07XXXXXXXXX" maxlength="11"></div>
+            <div id="vb-box" class="input-group" style="display:none;"><input type="tel" id="in-vb" placeholder="07XXXXXXXXX" maxlength="11"></div>
             <div id="tg-box" class="input-group" style="display:none;"><input type="text" id="in-tg" placeholder="لینکی تیلیگرام"></div>
-            <div id="ph-box" class="input-group" style="display:none;"><input type="text" id="in-ph" placeholder="ژمارەی تەلەفۆن"></div>
+            <div id="ph-box" class="input-group" style="display:none;"><input type="tel" id="in-ph" placeholder="07XXXXXXXXX" maxlength="11"></div>
         </div>
 
         <div class="step-title">٥. بودجە و کۆد</div>
@@ -132,7 +132,6 @@
             el.classList.toggle('active');
             const target = document.getElementById(el.getAttribute('data-target'));
             if(target) target.style.display = el.classList.contains('active') ? 'block' : 'none';
-            
             const anyActive = !!document.querySelector('#contact-chips .chip.active');
             document.getElementById('contact-inputs').style.display = anyActive ? 'block' : 'none';
         } else {
@@ -152,33 +151,31 @@
         const audEl = document.querySelector('#audience-group .chip.active');
         const objEl = document.querySelector('#obj-group .chip.active');
         
-        // ڕێگری لە پیشاندانی ئەنجام ئەگەر بودجە کەمتر بوو لە ٢٠
         if(b >= 20) {
             document.getElementById('result-info').style.display = 'block';
             document.getElementById('res-iqd').innerText = (Math.round((b/20)*38000*d)).toLocaleString() + " IQD";
-            
             let multiplier = audEl.innerText.includes("عەرەب") ? 0.70 : 1.0;
             let minV = (b/20) * 100000 * d * multiplier;
             let maxV = (b/20) * 180000 * d * multiplier;
-            
             document.getElementById('res-views-display').innerText = Math.round(minV/1000) + "k - " + Math.round(maxV/1000) + "k Views";
-
             if(objEl.innerText === "Website Traffic") {
                 document.getElementById('msgs-row').style.display = 'flex';
                 let minW = Math.round((b/20) * 350 * d * multiplier);
                 let maxW = Math.round((b/20) * 3000 * d * multiplier);
                 document.getElementById('res-msgs-display').innerText = minW.toLocaleString() + " - " + maxW.toLocaleString() + " کلیک";
-            } else { 
-                document.getElementById('msgs-row').style.display = 'none'; 
-            }
-        } else { 
-            document.getElementById('result-info').style.display = 'none'; 
-        }
+            } else { document.getElementById('msgs-row').style.display = 'none'; }
+        } else { document.getElementById('result-info').style.display = 'none'; }
     }
 
     function copyNum() { 
         navigator.clipboard.writeText("07510074008"); 
         alert("ژمارەکە کۆپی کرا ✅"); 
+    }
+
+    function isValidIraqiNumber(num) {
+        if (!num) return true;
+        const regex = /^07[0-9]{9}$/;
+        return regex.test(num);
     }
 
     async function sendToAll() {
@@ -189,12 +186,15 @@
         const link = document.getElementById('main_link').value;
         const code = document.getElementById('video_code').value;
 
-        // ١. پشکنینی هەموو خانەکان
-        if(!logo || !receipt || !brand || !budget || !link || !code) return alert("تکایە هەموو خانە سەرەکییەکان پڕبکەوە!");
+        const ws = document.getElementById('in-ws').value;
+        const vb = document.getElementById('in-vb').value;
+        const tg = document.getElementById('in-tg').value;
+        const ph = document.getElementById('in-ph').value;
 
-        // ٢. مەرجی ٢٠ دۆلار
-        if(budget < 20) {
-            return alert("ببورە، کەمترین بڕی سپۆنسەر پێویستە ٢٠ دۆلار بێت!");
+        if(!logo || !receipt || !brand || !budget || !link || !code) return alert("تکایە هەموو خانە سەرەکییەکان پڕبکەوە!");
+        if(budget < 20) return alert("ببورە، کەمترین بڕی سپۆنسەر پێویستە ٢٠ دۆلار بێت!");
+        if(!isValidIraqiNumber(ws) || !isValidIraqiNumber(vb) || !isValidIraqiNumber(ph)) {
+            return alert("تکایە ژمارەی مۆبایل بە دروستی بنووسە (دەبێت بە 07 دەست پێ بکات و 11 ژمارە بێت)");
         }
 
         const btn = document.getElementById('submit-btn');
@@ -205,12 +205,6 @@
             const obj = document.querySelector('#obj-group .chip.active').innerText;
             const gender = document.querySelector('#gender-group .chip.active').innerText;
             const ages = Array.from(document.querySelectorAll('#age-group .chip.active')).map(c => c.innerText).join(', ');
-
-            // زانیارییەکانی پەیوەندی
-            const whatsapp = document.getElementById('in-ws').value;
-            const viber = document.getElementById('in-vb').value;
-            const telegram = document.getElementById('in-tg').value;
-            const phone = document.getElementById('in-ph').value;
 
             let msg = `🌟 *داواکاری نوێی سپۆنسەر*\n\n`;
             msg += `👤 پەیج: ${brand}\n`;
@@ -224,10 +218,10 @@
             msg += `🔗 لینک: ${link}\n\n`;
             
             msg += `📞 *زانیاری پەیوەندی:*\n`;
-            if(whatsapp) msg += `🟢 واتسئاپ: ${whatsapp}\n`;
-            if(viber) msg += `🟣 ڤایبەر: ${viber}\n`;
-            if(telegram) msg += `🔵 تیلیگرام: ${telegram}\n`;
-            if(phone) msg += `☎️ تەلەفۆن: ${phone}\n`;
+            if(ws) msg += `🟢 واتسئاپ: ${ws}\n`;
+            if(vb) msg += `🟣 ڤایبەر: ${vb}\n`;
+            if(tg) msg += `🔵 تیلیگرام: ${tg}\n`;
+            if(ph) msg += `☎️ تەلەفۆن: ${ph}\n`;
 
             const fd1 = new FormData();
             fd1.append('chat_id', CHAT_ID); fd1.append('photo', logo); fd1.append('caption', msg); fd1.append('parse_mode', 'Markdown');
@@ -238,7 +232,14 @@
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd2 });
 
             document.getElementById('success-overlay').style.display = 'flex';
-            setTimeout(() => { window.location.href = `https://wa.me/9647758887488?text=${encodeURIComponent(msg)}`; }, 2000);
+            
+            // گواستنەوە بۆ واتسئاپ و پاشان ڕێفرێشکردنی لاپەڕەکە
+            setTimeout(() => { 
+                window.location.href = `https://wa.me/9647758887488?text=${encodeURIComponent(msg)}`;
+                // ئەمەی خوارەوە دوای ماوەیەکی کەم پەڕەکە تازە دەکاتەوە
+                setTimeout(() => { location.reload(); }, 1000);
+            }, 2000);
+            
         } catch(e) { 
             alert("هەڵەیەک ڕوویدا لە کاتی ناردن!"); 
             btn.disabled = false; btn.innerText = "ناردنی داواکاری";
