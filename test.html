@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zana Sponsor - Links</title>
+
+<script>
+!function (w, d, t) {
+  w.ttq = w.ttq || [];
+  ttq.methods = ["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];
+  ttq.setAndDefer = function (t, e) { t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } };
+  for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
+  ttq.load = function (e, n) {
+    var i = "https://analytics.tiktok.com/i18n/pixel/events.js";
+    ttq._i = ttq._i || {}, ttq._i[e] = [], ttq._i[e]._u = i;
+    var o = d.createElement("script");
+    o.type = "text/javascript"; o.async = !0;
+    o.src = i + "?sdkid=" + e + "&lib=" + t;
+    var a = d.getElementsByTagName("script")[0];
+    a.parentNode.insertBefore(o, a)
+  };
+  ttq.load('D5N6ETJC77UFLMP0AO10');
+  ttq.page();
+}(window, document, 'ttq');
+
+function trackClick(){
+  ttq.track('Contact');
+}
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+@font-face {
+  font-family: 'Rudaw';
+  src: url('rudawbold.ttf') format('truetype');
+}
+
+:root{
+  --bg:#0f172a;
+  --card:rgba(30,41,59,.85);
+  --text:#f8fafc;
+}
+
+body{
+  font-family:'Rudaw','Vazirmatn',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.container{
+  width:90%;
+  max-width:360px;
+  text-align:center;
+}
+
+.profile-card{
+  background:var(--card);
+  backdrop-filter:blur(14px);
+  padding:22px 20px 26px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.1);
+  margin-bottom:22px;
+}
+
+.profile-img{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-bottom:8px;
+}
+
+h1{
+  font-size:20px;
+  margin:0 0 10px;
+  font-weight:900;
+}
+
+.profile-desc{
+  font-size:14px;
+  color:#aabbd3;
+  margin:0;
+}
+
+.links-wrapper{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* ===== BUTTONS ===== */
+.link-card{
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 22px;
+  border-radius:16px;
+  text-decoration:none;
+  color:#fff;
+  font-size:18px;
+  font-weight:700;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.12),
+    0 8px 22px rgba(0,0,0,.35);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+
+/* soft glow */
+.link-card::before{
+  content:"";
+  position:absolute;
+  inset:-4px;
+  border-radius:inherit;
+  background:radial-gradient(
+    circle at center,
+    rgba(255,255,255,.35),
+    transparent 70%
+  );
+  opacity:.6;
+  pointer-events:none;
+}
+
+/* soft shine */
+.link-card::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-120%;
+  width:60%;
+  height:100%;
+  background:linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,.35),
+    transparent
+  );
+  animation:shine 3s infinite;
+}
+
+@keyframes shine{
+  0%{left:-120%}
+  100%{left:120%}
+}
+
+.link-card:hover{
+  box-shadow:
+    0 0 14px rgba(255,255,255,.28),
+    0 0 32px rgba(255,255,255,.2);
+}
+
+.link-card:active{
+  transform:scale(.97);
+}
+
+.link-card i{
+  font-size:32px;
+}
+
+/* colors */
+.tiktok{background:linear-gradient(135deg,#000,#25F4EE,#FE2C55)}
+.whatsapp{background:linear-gradient(135deg,#128C7E,#25D366)}
+.viber{background:linear-gradient(135deg,#7360f2,#59267c)}
+.phone{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
+
+/* ===== FOOTER ===== */
+.footer{
+  margin-top:25px;
+  padding-top:15px;
+  border-top:1px solid rgba(255,255,255,.05);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+
+.footer p{
+  font-size:11px;
+  color:#64748b;
+  margin:0;
+}
+
+.sponsor-btn{
+  padding:10px 22px;
+  background:#2C67E7;
+  border-radius:50px;
+  color:#fff;
+  text-decoration:none;
+  font-weight:900;
+  font-size:13px;
+}
+
+.legal-links{
+  font-size:11px;
+  color:#475569;
+  display:flex;
+  gap:10px;
+}
+
+.legal-links a{
+  color:inherit;
+  text-decoration:none;
+}
+
+.sep{opacity:.3}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="profile-card">
+    <img class="profile-img" src="https://image2url.com/r2/default/images/1770125110029-df401d73-afb7-49fa-aea1-9a2d494a6717.jpg">
+    <h1>عەقارات قاڵاسنج</h1>
+    <p class="profile-desc">بۆ پەیوەندی کردن، کلیک لەم دووگمەیەی خوارەوە بکە</p>
+  </div>
+
+  <div class="links-wrapper">
+    <a class="link-card tiktok" href="#" onclick="trackClick()">
+      <span>تیک تۆک</span>
+      <i class="fab fa-tiktok"></i>
+    </a>
+
+    <a class="link-card whatsapp" href="https://wa.me/9647504488065" onclick="trackClick()">
+      <span>واتساپ</span>
+      <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <a class="link-card viber" href="viber://chat?number=%2B9647504488065" onclick="trackClick()">
+      <span>ڤایبەر</span>
+      <i class="fab fa-viber"></i>
+    </a>
+
+    <a class="link-card phone" href="tel:+9647504488065" onclick="trackClick()">
+      <span>ژمارەی تەلەفۆن</span>
+      <i class="fas fa-phone-alt"></i>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>سپۆنسەرکراوە لەلایەن</p>
+    <a class="sponsor-btn" href="https://wa.me/9647758887488">Zana Sponsor - زانا سپۆنسەر</a>
+    <div class="legal-links">
+      <a href="#">سیاسەتی پاراستنی نهێنی</a>
+      <span class="sep">|</span>
+      <a href="#">مەرجەکان</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
