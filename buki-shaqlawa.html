@@ -32,7 +32,7 @@
             width: 100%; max-width: 380px; display: flex; align-items: center;
             justify-content: center; padding: 15px; margin-bottom: 15px;
             border-radius: 50px; text-decoration: none; color: white;
-            font-weight: 600; font-size: 18px; transition: 0.3s;
+            font-weight: 400; font-size: 18px; transition: 0.3s;
             position: relative; overflow: hidden;
         }
 
@@ -41,7 +41,7 @@
             content: ''; position: absolute; top: 0; left: -100%;
             width: 50%; height: 100%;
             background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
-            transform: skewX(-25deg); animation: softShine 4s infinite;
+            transform: skewX(-25deg); animation: softShine 6s infinite;
         }
         @keyframes softShine {
             0% { left: -100%; } 20% { left: 150%; } 100% { left: 150%; }
@@ -91,6 +91,62 @@
 
     <div class="profile-container">
         <div class="profile-img-auto">BS</div>
+        <h1>ماسی بوکی شەقلاوە</h1>
+        <p>بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</p>
+    </div>
+
+    <a href="javascript:void(0)" onclick="openModal()" class="link-card whatsapp">
+        واتساپ <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <a href="viber://chat?number=+9647501901913" class="link-card viber">
+        ڤایبەر <i class="fab fa-viber"></i>
+    </a>
+
+    <a href="tel:+9647501901913" class="link-card phone">
+        ژمارەی مۆبایل <i class="fas fa-phone-alt"></i>
+    </a>
+
+    <div class="footer">
+        <p style="font-size: 11px; color: #64748b; margin: 0;">سپۆنسەر کراوە لەلایەن</p>
+        <a href="https://wa.me/9647758887488" class="sponsor-btn">Zana Sponsor - زانا سپۆنسەر</a>
+        
+        <div class="legal-links">
+            <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
+            <span>|</span>
+            <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
+        </div>
+    </div>
+
+    <div id="question-modal" onclick="if(event.target == this) closeModal()">
+        <div class="modal-box">
+            <div class="q-title">چۆن دەتوانین یارمەتیت بدەین؟</div>
+            <div class="q-option selected" onclick="selectO(this, 'دەمەوێت داوا بکەم')">
+                <span>دەمەوێت داوا بکەم</span> <i class="fas fa-shopping-basket" style="color:#2ecc71"></i>
+            </div>
+            <div class="q-option" onclick="selectO(this, 'دەمەوێت نرخەکان بزانم')">
+                <span>دەمەوێت نرخەکان بزانم</span> <i class="fas fa-tags" style="color:#f1c40f"></i>
+            </div>
+            <button class="send-btn" onclick="doAction()">ناردنی پەیام</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedText = "دەمەوێت داوا بکەم";
+        function openModal() { document.getElementById('question-modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('question-modal').style.display = 'none'; }
+        function selectO(el, text) {
+            document.querySelectorAll('.q-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedText = text;
+        }
+        function doAction() {
+            window.open("https://wa.me/+9647501901913?text=" + encodeURIComponent(selectedText), '_blank');
+            closeModal();
+        }
+    </script>
+</body>
+</html>
         <h1>ماسی بوکی شەقلاوە</h1>
         <p>بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</p>
     </div>
