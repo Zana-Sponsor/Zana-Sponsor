@@ -24,8 +24,20 @@
   ttq.page();
 }(window, document, 'ttq');
 
-function trackClick(){
-  ttq.track('Contact');
+// فەنکشنی چاککراو بۆ هەژمارکردنی وردی کۆنڤێرژن
+function trackConversion(platform, eventUrl) {
+  ttq.track('Contact', {
+    contents: [{ content_name: platform }]
+  });
+  
+  // کەمێک چاوەڕێ دەکات بۆ دڵنیابوون لە ناردنی داتاکە بۆ تیکتۆک
+  setTimeout(function() {
+    if (platform === 'Phone') {
+      window.location.href = eventUrl;
+    } else {
+      window.open(eventUrl, '_blank');
+    }
+  }, 300);
 }
 </script>
 
@@ -112,23 +124,22 @@ h1{
   font-weight:700;
   box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 8px 22px rgba(0,0,0,.35);
   transition:transform 0.25s ease;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  font-family: inherit;
 }
 
 .link-card::after{
   content:"";
   position:absolute;
-  top:0;
-  left:-120%;
-  width:60%;
-  height:100%;
+  top:0; left:-120%; width:60%; height:100%;
   background:linear-gradient(120deg, transparent, rgba(255,255,255,.25), transparent);
   animation:shine 4s infinite;
 }
 
 @keyframes shine{
-  0%{left:-120%}
-  20%{left:120%}
-  100%{left:120%}
+  0%{left:-120%} 20%{left:120%} 100%{left:120%}
 }
 
 .link-card:active{ transform:scale(.97); }
@@ -187,20 +198,20 @@ h1{
   </div>
 
   <div class="links-wrapper">
-    <a id="wa-link" class="link-card whatsapp" href="#" onclick="trackClick()" target="_blank">
+    <button id="wa-btn" class="link-card whatsapp">
       <span>واتساپ</span>
       <i class="fab fa-whatsapp"></i>
-    </a>
+    </button>
 
-    <a id="viber-link" class="link-card viber" href="#" onclick="trackClick()">
+    <button id="viber-btn" class="link-card viber">
       <span>ڤایبەر</span>
       <i class="fab fa-viber"></i>
-    </a>
+    </button>
 
-    <a class="link-card phone" href="tel:+9647512371060" onclick="trackClick()">
+    <button id="phone-btn" class="link-card phone">
       <span>ژمارەی تەلەفۆن</span>
       <i class="fas fa-phone-alt"></i>
-    </a>
+    </button>
   </div>
 
   <div class="footer">
@@ -218,20 +229,29 @@ h1{
 <script>
   function setupLinks() {
     const urlParams = new URLSearchParams(window.location.search);
-    const videoUrl = urlParams.get('v');
-    const defaultLink = "https://vt.tiktok.com/ZSaTGgkwF/";
+    const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSaTGgkwF/";
     
-    let currentVideo = videoUrl ? decodeURIComponent(videoUrl) : defaultLink;
+    let currentVideo = decodeURIComponent(videoUrl);
     let message = "سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی\n" + currentVideo;
-    
-    let encodedMsg = encodeURIComponent(message);
     let phoneNumber = "9647512371060";
-    
-    // واتساپ
-    document.getElementById('wa-link').href = "https://wa.me/" + phoneNumber + "?text=" + encodedMsg;
-    
-    // ڤایبەر (وەک خۆی گەڕایەوە)
-    document.getElementById('viber-link').href = "viber://contact?number=" + phoneNumber;
+
+    // کلیکی واتساپ
+    document.getElementById('wa-btn').onclick = function() {
+      let url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
+      trackConversion('WhatsApp', url);
+    };
+
+    // کلیکی ڤایبەر
+    document.getElementById('viber-btn').onclick = function() {
+      let url = "viber://contact?number=" + phoneNumber;
+      trackConversion('Viber', url);
+    };
+
+    // کلیکی تەلەفۆن
+    document.getElementById('phone-btn').onclick = function() {
+      let url = "tel:+" + phoneNumber;
+      trackConversion('Phone', url);
+    };
   }
 
   setupLinks();
