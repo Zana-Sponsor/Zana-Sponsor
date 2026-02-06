@@ -24,20 +24,19 @@
   ttq.page();
 }(window, document, 'ttq');
 
-// فەنکشنی چاککراو بۆ هەژمارکردنی وردی کۆنڤێرژن
+// --- تەنها ئەم بەشە چاککراوە بۆ Conversion ---
 function trackConversion(platform, eventUrl) {
   ttq.track('Contact', {
-    contents: [{ content_name: platform }]
+    contents: [{
+      content_name: platform,
+      content_type: 'product'
+    }],
+    event_id: 'contact_' + Date.now() 
   });
   
-  // کەمێک چاوەڕێ دەکات بۆ دڵنیابوون لە ناردنی داتاکە بۆ تیکتۆک
   setTimeout(function() {
-    if (platform === 'Phone') {
-      window.location.href = eventUrl;
-    } else {
-      window.open(eventUrl, '_blank');
-    }
-  }, 300);
+    window.location.href = eventUrl;
+  }, 500);
 }
 </script>
 
@@ -191,10 +190,10 @@ h1{
         <img src="https://image2url.com/r2/default/images/1769823308364-cf924f1a-3c02-4741-ae33-2719b6acaa22.jpg" 
              class="profile-img" 
              alt="Logo"
-             onerror="this.src='https://ui-avatars.com/api/?name=Z+Pbackground=2C67E7&color=fff&size=128'">
+             onerror="this.src='https://ui-avatars.com/api/?name=Z+P&background=2C67E7&color=fff&size=128'">
         
-        <h1>Zana Sponsor - زانا سپۆنسەر</h1>
-        <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکانە بکەن</div>
+        <h1>زانا سپۆنسەر - Zana Sponsor</h1>
+        <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەیەکێک لەم لینکانە بکە</div>
   </div>
 
   <div class="links-wrapper">
@@ -229,25 +228,22 @@ h1{
 <script>
   function setupLinks() {
     const urlParams = new URLSearchParams(window.location.search);
-    const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSaTGgkwF/";
+    const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSawFJNPS/";
     
     let currentVideo = decodeURIComponent(videoUrl);
     let message = "سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی\n" + currentVideo;
     let phoneNumber = "9647758887488";
 
-    // کلیکی واتساپ
     document.getElementById('wa-btn').onclick = function() {
       let url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
       trackConversion('WhatsApp', url);
     };
 
-    // کلیکی ڤایبەر
     document.getElementById('viber-btn').onclick = function() {
       let url = "viber://contact?number=" + phoneNumber;
       trackConversion('Viber', url);
     };
 
-    // کلیکی تەلەفۆن
     document.getElementById('phone-btn').onclick = function() {
       let url = "tel:+" + phoneNumber;
       trackConversion('Phone', url);
