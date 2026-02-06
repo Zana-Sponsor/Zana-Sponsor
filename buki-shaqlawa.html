@@ -24,8 +24,19 @@
   ttq.page();
 }(window, document, 'ttq');
 
-function trackClick(){
-  ttq.track('Contact');
+// --- سیستەمی چاککراوی کۆنڤێرژن ---
+function trackClick(e, platform) {
+    e.preventDefault(); // ڕێگری لە گۆڕینی لاپەڕە دەکات تا پیکسڵەکە کار دەکات
+    var url = e.currentTarget.href;
+
+    ttq.track('Contact', {
+        contents: [{ content_name: platform }]
+    });
+
+    // کەمێک چاوەڕێ دەکات (300 میللی چرکە) پاشان لینکەکە دەکاتەوە
+    setTimeout(function() {
+        window.location.href = url;
+    }, 300);
 }
 </script>
 
@@ -67,7 +78,7 @@ body{
   padding:25px 20px;
   border-radius:22px;
   border:1px solid rgba(255,255,255,.1);
-  margin-bottom: 25px; /* بۆشایی نێوان کارتەکە و دوگمەکان */
+  margin-bottom: 25px;
 }
 
 .profile-img{
@@ -95,10 +106,9 @@ h1{
 .links-wrapper{
   display:flex;
   flex-direction:column;
-  gap:15px; /* بۆشایی نێوان دوگمەکان */
+  gap:15px;
 }
 
-/* ===== BUTTONS WITH SOFT SHINE ===== */
 .link-card{
   position:relative;
   overflow:hidden;
@@ -138,7 +148,6 @@ h1{
 .whatsapp{background:linear-gradient(135deg,#128C7E,#25D366)}
 .phone{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
 
-/* ===== FOOTER ===== */
 .footer{
   margin-top:35px;
   padding-top:15px;
@@ -188,12 +197,12 @@ h1{
   </div>
 
   <div class="links-wrapper">
-    <a class="link-card whatsapp" href="https://wa.me/9647501901913?text=سڵاو، نرخی یەک کیلۆ ماسی برژاو بەچەندە؟" onclick="trackClick()">
+    <a class="link-card whatsapp" href="https://wa.me/9647501901913?text=سڵاو، نرخی یەک کیلۆ ماسی برژاو بەچەندە؟" onclick="trackClick(event, 'WhatsApp')">
       <span>واتساپ</span>
       <i class="fab fa-whatsapp"></i>
     </a>
 
-    <a class="link-card phone" href="tel:+9647501901913" onclick="trackClick()">
+    <a class="link-card phone" href="tel:+9647501901913" onclick="trackClick(event, 'Phone')">
       <span>ژمارەی تەلەفۆن</span>
       <i class="fas fa-phone-alt"></i>
     </a>
@@ -201,7 +210,7 @@ h1{
 
   <div class="footer">
     <p>سپۆنسەر کراوە لەلایەن</p>
-    <a class="sponsor-btn" href="https://wa.me/9647758887488?text=سڵاو، سپۆنسەرم دەوێت">Zana Sponsor - زانا سپۆنسەر</a>
+    <a class="sponsor-btn" href="https://wa.me/9647758887488?text=سڵاو">Zana Sponsor</a>
     <div class="legal-links">
       <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">سیاسەتی پاراستنی نهێنی</a>
       <span class="sep">|</span>
