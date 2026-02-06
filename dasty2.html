@@ -177,9 +177,10 @@ h1{
 <div class="container">
 
   <div class="profile-container">
-        <img src="https://ui-avatars.com/api/?name=K+N&background=2C67E7&color=fff&size=128" 
+        <img src="IMAGE_URL_HERE" 
              class="profile-img" 
-             alt="Logo">
+             alt="Logo"
+             onerror="this.src='https://ui-avatars.com/api/?name=K+N&background=2C67E7&color=fff&size=128'">
         
         <h1>کڕین و فرۆشتنی ئەشیای ناو ماڵ</h1>
         <div class="main-instruction">بۆ کڕینی ئەشیای ناو ماڵ بەگونجاوترین نرخ</div>
@@ -191,7 +192,7 @@ h1{
       <i class="fab fa-whatsapp"></i>
     </a>
 
-    <a id="viber-link" class="link-card viber" href="#" onclick="trackClick()" target="_blank">
+    <a id="viber-link" class="link-card viber" href="#" onclick="trackClick()">
       <span>ڤایبەر</span>
       <i class="fab fa-viber"></i>
     </a>
@@ -215,24 +216,25 @@ h1{
 </div>
 
 <script>
-  function getVideoInfo() {
+  function setupLinks() {
     const urlParams = new URLSearchParams(window.location.search);
     const videoUrl = urlParams.get('v');
-    
-    // ئەگەر هیچ ڤیدیۆیەک لە لینکەکە نەبوو، ئەم دوو لینکەی خوارەوە بە بنەڕەت وەردەگرێت
     const defaultLink = "https://vt.tiktok.com/ZSaTGgkwF/";
     
     let currentVideo = videoUrl ? decodeURIComponent(videoUrl) : defaultLink;
-    let message = "\n\nسڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی\n" + currentVideo;
+    let message = "سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی\n" + currentVideo;
     
     let encodedMsg = encodeURIComponent(message);
+    let phoneNumber = "9647512371060";
     
-    // نوێکردنەوەی ژمارە و نامە بۆ واتساپ و ڤایبەر
-    document.getElementById('wa-link').href = "https://wa.me/9647512371060?text=" + encodedMsg;
-    document.getElementById('viber-link').href = "viber://pa?chatURI&text=" + encodedMsg;
+    // واتساپ
+    document.getElementById('wa-link').href = "https://wa.me/" + phoneNumber + "?text=" + encodedMsg;
+    
+    // ڤایبەر (وەک خۆی گەڕایەوە)
+    document.getElementById('viber-link').href = "viber://contact?number=" + phoneNumber;
   }
 
-  getVideoInfo();
+  setupLinks();
 </script>
 
 </body>
