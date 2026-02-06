@@ -19,14 +19,24 @@
             text-align: center;
             margin-bottom: 30px;
         }
-        .profile-img {
+        
+        /* لۆگۆی خۆکار بەپێی پیتەکان */
+        .profile-img-auto {
             width: 130px;
             height: 130px;
             border-radius: 50%;
-            border: 4px solid white;
+            background: linear-gradient(135deg, #42e36d, #4096ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            object-fit: cover;
+            border: 4px solid white;
         }
+
         h1 { margin: 15px 0 5px; font-size: 26px; color: #333; font-weight: bold; }
         p { color: #777; font-size: 15px; margin-bottom: 30px; }
         
@@ -44,6 +54,32 @@
             font-weight: 600;
             font-size: 20px;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden; /* پێویستە بۆ بریقەکە */
+        }
+
+        /* Soft Shine Effect */
+        .link-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                to right, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent
+            );
+            transform: skewX(-25deg);
+            animation: softShine 4s infinite;
+        }
+
+        @keyframes softShine {
+            0% { left: -100%; }
+            20% { left: 150%; }
+            100% { left: 150%; }
         }
 
         .link-card i {
@@ -63,7 +99,6 @@
         .sponsor-section {
             margin-top: 50px;
             text-align: center;
-            padding-bottom: 20px;
         }
         .sponsor-text {
             font-size: 13px;
@@ -86,6 +121,26 @@
             color: white;
             transform: translateY(-3px);
         }
+
+        /* بەشی یاساکانی تیک تۆک */
+        .tiktok-policy {
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            max-width: 400px;
+            text-align: center;
+        }
+        .tiktok-policy p {
+            font-size: 11px;
+            color: #aaa;
+            line-height: 1.5;
+            margin-bottom: 5px;
+        }
+        .tiktok-policy a {
+            color: #888;
+            text-decoration: underline;
+        }
+
         .copyright-text {
             margin-top: 15px;
             font-size: 12px;
@@ -97,7 +152,7 @@
 <body>
 
     <div class="profile-container">
-        <img src="https://img.sanishtech.com/u/15d31c94341664a70cda74d37b224c8b.png" alt=" ماسی بوکی شەقلاوە " class="profile-img">
+        <div class="profile-img-auto">م ب</div>
         <h1>ماسی بوکی شەقلاوە</h1>
         <p>بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</p>
     </div>
@@ -114,15 +169,34 @@
         ژمارەی مۆبایل <i class="fas fa-phone-alt"></i>
     </a>
 
-    <div class="sponsor-section">
-        <div class="sponsor-text">سپۆنسەرکراوە لەلایەن</div>
-        
-        <a href="https://wa.me/+9647758887488?text=سڵاو بەڕێز، دەمەوێت سپۆنسەر بۆ کاڵاکەم بکەم !" class="footer-tag">
-            Zana Sponsor
-        </a>
-        
-        <div class="copyright-text">
-            Produced By Zana Sponsor © 2026
+    <div class="footer">
+            <p style="font-size: 11px; color: #64748b; margin: 0;">سپۆنسەر کراوە لەلایەن</p>
+            <a href="https://wa.me/9647758887488" class="sponsor-btn">Zana Sponsor - زانا سپۆنسەر</a>
+            
+            <div class="legal-links">
+                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
+                <span class="sep">|</span>
+                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="question-modal" onclick="if(event.target == this) closeModal()">
+        <div class="modal-box">
+            <div class="close-x" onclick="closeModal()">×</div>
+            <div class="q-title">چۆن دەتوانین یارمەتیت بدەین؟</div>
+            
+            <div class="q-option selected" onclick="selectO(this, 'دەمەوێت داوا بکەم')">
+                <span>دەمەوێت داوا بکەم</span> <i class="fas fa-shopping-basket" style="color:#2ecc71"></i>
+            </div>
+            <div class="q-option" onclick="selectO(this, 'دەمەوێت نرخەکان بزانم')">
+                <span>دەمەوێت نرخەکان بزانم</span> <i class="fas fa-tags" style="color:#f1c40f"></i>
+            </div>
+            <div class="q-option" onclick="selectO(this, 'پرسیاری ترم هەیە')">
+                <span>پرسیاری ترم هەیە</span> <i class="fas fa-comment-dots" style="color:#e74c3c"></i>
+            </div>
+
+            <button id="final-btn" class="send-btn" onclick="doAction()">ناردنی پەیام</button>
         </div>
     </div>
 
