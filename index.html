@@ -20,23 +20,28 @@
     var a = d.getElementsByTagName("script")[0];
     a.parentNode.insertBefore(o, a)
   };
+
   ttq.load('D5N6ETJC77UFLMP0AO10');
   ttq.page();
 }(window, document, 'ttq');
 
-// --- تەنها ئەم بەشە چاککراوە بۆ Conversion ---
+// --- Optimized Conversion Logic ---
 function trackConversion(platform, eventUrl) {
-  ttq.track('Contact', {
-    contents: [{
-      content_name: platform,
-      content_type: 'product'
-    }],
-    event_id: 'contact_' + Date.now() 
-  });
+  if (window.ttq) {
+    ttq.track('Contact', {
+      contents: [{
+        content_name: platform,
+        content_type: 'product'
+      }],
+      value: 0,
+      currency: 'USD'
+    });
+  }
   
+  // چاوەڕێکردنی 800ms بۆ دڵنیابوون لە ناردنی داتاکە بەرلە گواستنەوە
   setTimeout(function() {
     window.location.href = eventUrl;
-  }, 500);
+  }, 800);
 }
 </script>
 
@@ -127,6 +132,7 @@ h1{
   border: none;
   width: 100%;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 .link-card::after{
@@ -197,20 +203,20 @@ h1{
   </div>
 
   <div class="links-wrapper">
-    <button id="wa-btn" class="link-card whatsapp">
+    <div id="wa-btn" class="link-card whatsapp">
       <span>واتساپ</span>
       <i class="fab fa-whatsapp"></i>
-    </button>
+    </div>
 
-    <button id="viber-btn" class="link-card viber">
+    <div id="viber-btn" class="link-card viber">
       <span>ڤایبەر</span>
       <i class="fab fa-viber"></i>
-    </button>
+    </div>
 
-    <button id="phone-btn" class="link-card phone">
+    <div id="phone-btn" class="link-card phone">
       <span>ژمارەی تەلەفۆن</span>
       <i class="fas fa-phone-alt"></i>
-    </button>
+    </div>
   </div>
 
   <div class="footer">
@@ -250,7 +256,12 @@ h1{
     };
   }
 
-  setupLinks();
+  // دڵنیابوون لەوەی کاتێک لاپەڕە بار دەبێت فەنکشنەکە ئامادەیە
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    setupLinks();
+  } else {
+    document.addEventListener("DOMContentLoaded", setupLinks);
+  }
 </script>
 
 </body>
