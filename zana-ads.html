@@ -90,12 +90,14 @@
                 <div class="chip" data-target="ws-box" onclick="handleChip(this)">واتساپ</div>
                 <div class="chip" data-target="vb-box" onclick="handleChip(this)">ڤایبەر</div>
                 <div class="chip" data-target="tg-box" onclick="handleChip(this)">تیلیگرام</div>
+                <div class="chip" data-target="ig-box" onclick="handleChip(this)">ئینستاگرام</div>
                 <div class="chip" data-target="ph-box" onclick="handleChip(this)">تەلەفۆن</div>
             </div>
             <div id="contact-inputs" class="dynamic-box">
                 <div id="ws-box" class="input-group" style="display:none;"><input type="tel" id="in-ws" placeholder="07XXXXXXXXX" maxlength="11"></div>
                 <div id="vb-box" class="input-group" style="display:none;"><input type="tel" id="in-vb" placeholder="07XXXXXXXXX" maxlength="11"></div>
                 <div id="tg-box" class="input-group" style="display:none;"><input type="text" id="in-tg" placeholder="لینکی تیلیگرام"></div>
+                <div id="ig-box" class="input-group" style="display:none;"><input type="text" id="in-ig" placeholder="لینکی ئینستاگرام"></div>
                 <div id="ph-box" class="input-group" style="display:none;"><input type="tel" id="in-ph" placeholder="07XXXXXXXXX" maxlength="11"></div>
             </div>
         </div>
@@ -305,7 +307,6 @@
         const btn = document.getElementById('submit-btn');
         btn.disabled = true; btn.innerText = "خەریکی ناردنە...";
         // ... rest of sendToAll logic ...
-        // (Truncated for readability, keep your original sendToAll function here)
     }
 </script>
 </body>
