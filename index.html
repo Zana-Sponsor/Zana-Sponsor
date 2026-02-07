@@ -20,15 +20,13 @@
     var a = d.getElementsByTagName("script")[0];
     a.parentNode.insertBefore(o, a)
   };
-
   ttq.load('D5N6ETJC77UFLMP0AO10');
   ttq.page();
 }(window, document, 'ttq');
 
-// --- فەنکشنی چاککراو بۆ تۆمارکردنی Conversion ---
+// --- بەشی چاککراوی Conversion ---
 function trackConversion(platform, eventUrl) {
   if (window.ttq) {
-    // تۆمارکردنی ڕووداوەکە لە تیکتۆک
     ttq.track('Contact', {
       contents: [{
         content_name: platform,
@@ -36,9 +34,8 @@ function trackConversion(platform, eventUrl) {
       }]
     });
   }
-
-  // چاوەڕێکردنی 800 میلی چرکە پاشان گواستنەوە بۆ لینکەکە
-  // ئەمە دەرفەت بە پیکسڵەکە دەدات داتاکە بنێرێت
+  
+  // پێدانی کات (800ms) بە تیکتۆک بۆ ناردنی داتاکە پێش گواستنەوە
   setTimeout(function() {
     window.location.href = eventUrl;
   }, 800);
@@ -132,7 +129,6 @@ h1{
   border: none;
   width: 100%;
   font-family: inherit;
-  box-sizing: border-box;
 }
 
 .link-card::after{
@@ -240,25 +236,28 @@ h1{
     let message = "سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم\n" + currentVideo;
     let phoneNumber = "9647758887488";
 
-    // دیاریکردنی کلیکەکان بە شێوازی AddEventListener بۆ ئەوەی جێگیرتر بێت
-    document.getElementById('wa-btn').addEventListener('click', function() {
+    // بەکارهێنانی EventListener بۆ ئەوەی کرداری گواستنەوەکە کۆنترۆڵ بکەین
+    document.getElementById('wa-btn').addEventListener('click', function(e) {
+      e.preventDefault();
       let url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
       trackConversion('WhatsApp', url);
     });
 
-    document.getElementById('viber-btn').addEventListener('click', function() {
+    document.getElementById('viber-btn').addEventListener('click', function(e) {
+      e.preventDefault();
       let url = "viber://contact?number=" + phoneNumber;
       trackConversion('Viber', url);
     });
 
-    document.getElementById('phone-btn').addEventListener('click', function() {
+    document.getElementById('phone-btn').addEventListener('click', function(e) {
+      e.preventDefault();
       let url = "tel:+" + phoneNumber;
       trackConversion('Phone', url);
     });
   }
 
-  // دڵنیابوون لەوەی DOM باربووە پێش کارپێکردنی سکریپتەکە
-  document.addEventListener('DOMContentLoaded', setupLinks);
+  // دڵنیابوون لە کارکردنی فەنکشنەکە دوای باربوونی لاپەڕە
+  window.addEventListener('DOMContentLoaded', setupLinks);
 </script>
 
 </body>
