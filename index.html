@@ -25,20 +25,20 @@
   ttq.page();
 }(window, document, 'ttq');
 
-// --- Optimized Conversion Logic ---
+// --- فەنکشنی چاککراو بۆ تۆمارکردنی Conversion ---
 function trackConversion(platform, eventUrl) {
   if (window.ttq) {
+    // تۆمارکردنی ڕووداوەکە لە تیکتۆک
     ttq.track('Contact', {
       contents: [{
         content_name: platform,
         content_type: 'product'
-      }],
-      value: 0,
-      currency: 'USD'
+      }]
     });
   }
-  
-  // چاوەڕێکردنی 800ms بۆ دڵنیابوون لە ناردنی داتاکە بەرلە گواستنەوە
+
+  // چاوەڕێکردنی 800 میلی چرکە پاشان گواستنەوە بۆ لینکەکە
+  // ئەمە دەرفەت بە پیکسڵەکە دەدات داتاکە بنێرێت
   setTimeout(function() {
     window.location.href = eventUrl;
   }, 800);
@@ -203,20 +203,20 @@ h1{
   </div>
 
   <div class="links-wrapper">
-    <div id="wa-btn" class="link-card whatsapp">
+    <button id="wa-btn" class="link-card whatsapp">
       <span>واتساپ</span>
       <i class="fab fa-whatsapp"></i>
-    </div>
+    </button>
 
-    <div id="viber-btn" class="link-card viber">
+    <button id="viber-btn" class="link-card viber">
       <span>ڤایبەر</span>
       <i class="fab fa-viber"></i>
-    </div>
+    </button>
 
-    <div id="phone-btn" class="link-card phone">
+    <button id="phone-btn" class="link-card phone">
       <span>ژمارەی تەلەفۆن</span>
       <i class="fas fa-phone-alt"></i>
-    </div>
+    </button>
   </div>
 
   <div class="footer">
@@ -240,28 +240,25 @@ h1{
     let message = "سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم\n" + currentVideo;
     let phoneNumber = "9647758887488";
 
-    document.getElementById('wa-btn').onclick = function() {
+    // دیاریکردنی کلیکەکان بە شێوازی AddEventListener بۆ ئەوەی جێگیرتر بێت
+    document.getElementById('wa-btn').addEventListener('click', function() {
       let url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
       trackConversion('WhatsApp', url);
-    };
+    });
 
-    document.getElementById('viber-btn').onclick = function() {
+    document.getElementById('viber-btn').addEventListener('click', function() {
       let url = "viber://contact?number=" + phoneNumber;
       trackConversion('Viber', url);
-    };
+    });
 
-    document.getElementById('phone-btn').onclick = function() {
+    document.getElementById('phone-btn').addEventListener('click', function() {
       let url = "tel:+" + phoneNumber;
       trackConversion('Phone', url);
-    };
+    });
   }
 
-  // دڵنیابوون لەوەی کاتێک لاپەڕە بار دەبێت فەنکشنەکە ئامادەیە
-  if (document.readyState === "complete" || document.readyState === "interactive") {
-    setupLinks();
-  } else {
-    document.addEventListener("DOMContentLoaded", setupLinks);
-  }
+  // دڵنیابوون لەوەی DOM باربووە پێش کارپێکردنی سکریپتەکە
+  document.addEventListener('DOMContentLoaded', setupLinks);
 </script>
 
 </body>
