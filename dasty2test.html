@@ -7,37 +7,21 @@
 
 <script>
 !function (w, d, t) {
-  w.ttq = w.ttq || [];
-  ttq.methods = ["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];
-  ttq.setAndDefer = function (t, e) { t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } };
-  for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
-  ttq.load = function (e, n) {
-    var i = "https://analytics.tiktok.com/i18n/pixel/events.js";
-    ttq._i = ttq._i || {}, ttq._i[e] = [], ttq._i[e]._u = i;
-    var o = d.createElement("script");
-    o.type = "text/javascript"; o.async = !0;
-    o.src = i + "?sdkid=" + e + "&lib=" + t;
-    var a = d.getElementsByTagName("script")[0];
-    a.parentNode.insertBefore(o, a)
-  };
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  
   ttq.load('D5N6ETJC77UFLMP0AO10');
   ttq.page();
-}(window, document, 'ttq');
 
-// --- تەنها ئەم بەشە چاککراوە بۆ Conversion ---
-function trackConversion(platform, eventUrl) {
-  ttq.track('Contact', {
-    contents: [{
-      content_name: platform,
-      content_type: 'product'
-    }],
-    event_id: 'contact_' + Date.now() 
-  });
-  
-  setTimeout(function() {
-    window.location.href = eventUrl;
-  }, 500);
-}
+  window.trackTikTokConversion = function(platform) {
+    if (typeof ttq !== 'undefined') {
+      ttq.track('Contact', { 
+        "contents": [{ "content_name": platform }] 
+      });
+    }
+  };
+}(window, document, 'ttq');
 </script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -174,10 +158,8 @@ h1{
 .legal-links{
   font-size:11px;
   color:#475569;
-  display:flex;
-  gap:10px;
+  display:flex; gap:10px;
 }
-
 .legal-links a{ color:inherit; text-decoration:none; }
 .sep{opacity:.3}
 </style>
@@ -187,10 +169,10 @@ h1{
 <div class="container">
 
   <div class="profile-container">
-        <img src="IMAGE_URL_HERE" 
+        <img src="" 
              class="profile-img" 
              alt="Logo"
-             onerror="this.src='https://ui-avatars.com/api/?name=K+N&background=2C67E7&color=fff&size=128'">
+             onerror="this.src='https://ui-avatars.com/api/?name=Home+Furniture&background=2C67E7&color=fff&size=128'">
         
         <h1>کڕین و فرۆشتنی ئەشیای ناو ماڵ</h1>
         <div class="main-instruction">بۆ کڕینی ئەشیای ناو ماڵ بەگونجاوترین نرخ</div>
@@ -215,7 +197,7 @@ h1{
 
   <div class="footer">
     <p>سپۆنسەر کراوە لەلایەن</p>
-    <a class="sponsor-btn" href="https://wa.me/9647758887488?text=سڵاو، سپۆنسەرم دەوێت">Zana Sponsor - زانا سپۆنسەر</a>
+    <a class="sponsor-btn" href="https://wa.me/9647758887488?text=سڵاو، سپۆنسەرم دەوێت" onclick="trackTikTokConversion('Sponsor')">Zana Sponsor - زانا سپۆنسەر</a>
     <div class="legal-links">
       <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">سیاسەتی پاراستنی نهێنی</a>
       <span class="sep">|</span>
@@ -234,19 +216,28 @@ h1{
     let message = "سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی\n" + currentVideo;
     let phoneNumber = "9647512371060";
 
+    // کلیکی واتساپ
     document.getElementById('wa-btn').onclick = function() {
-      let url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
-      trackConversion('WhatsApp', url);
+      trackTikTokConversion('WhatsApp');
+      setTimeout(function() {
+        window.location.href = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
+      }, 500);
     };
 
+    // کلیکی ڤایبەر - گۆڕدرا بۆ چاتی ڕاستەوخۆ
     document.getElementById('viber-btn').onclick = function() {
-      let url = "viber://contact?number=" + phoneNumber;
-      trackConversion('Viber', url);
+      trackTikTokConversion('Viber');
+      setTimeout(function() {
+        window.location.href = "viber://chat?number=" + phoneNumber;
+      }, 500);
     };
 
+    // کلیکی تەلەفۆن
     document.getElementById('phone-btn').onclick = function() {
-      let url = "tel:+" + phoneNumber;
-      trackConversion('Phone', url);
+      trackTikTokConversion('Phone');
+      setTimeout(function() {
+        window.location.href = "tel:+" + phoneNumber;
+      }, 500);
     };
   }
 
