@@ -8,7 +8,7 @@
 <script>
 !function (w, d, t) {
   w.ttq = w.ttq || [];
-  ttq.methods = ["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];
+  ttq.methods = ["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"];
   ttq.setAndDefer = function (t, e) { t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } };
   for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
   ttq.load = function (e, n) {
@@ -20,26 +20,29 @@
     var a = d.getElementsByTagName("script")[0];
     a.parentNode.insertBefore(o, a)
   };
+
   ttq.load('D5N6ETJC77UFLMP0AO10');
   ttq.page();
-}(window, document, 'ttq');
 
-// --- فەنکشنی سەرەکی Conversion ---
-function trackConversion(platform, eventUrl) {
-  if (window.ttq) {
-    ttq.track('Contact', {
-      contents: [{
-        content_name: platform,
-        content_type: 'product'
-      }]
-    });
-  }
-  
-  // چاوەڕێکردنی ١ چرکە بۆ دڵنیابوون لە ناردنی داتا
-  setTimeout(function() {
-    window.location.href = eventUrl;
-  }, 1000);
-}
+  // فەنکشنی ناردنی Conversion و ڕەوانەکردنی کڕیار
+  window.sendConversion = function(label, event, url) {
+    event.preventDefault(); // ڕێگری لە گۆڕینی خێرای پەڕە
+
+    if (typeof ttq !== 'undefined') {
+      ttq.track('ClickButton', {
+        "contents": [{ "content_name": label }],
+        "value": 1.0,
+        "currency": "USD"
+      });
+      ttq.track('Contact'); // ناردنی ڕووداوێکی تریش بۆ دڵنیایی زیاتر
+    }
+
+    // کەمێک وەستان بۆ ئەوەی داتاکە بگات (600ms)، پاشان کردنەوەی لینکەکە
+    setTimeout(function() {
+      window.location.href = url;
+    }, 600);
+  };
+}(window, document, 'ttq');
 </script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -126,9 +129,6 @@ h1{
   box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 8px 22px rgba(0,0,0,.35);
   transition:transform 0.25s ease;
   cursor: pointer;
-  border: none;
-  width: 100%;
-  font-family: inherit;
 }
 
 .link-card::after{
@@ -199,69 +199,67 @@ h1{
   </div>
 
   <div class="links-wrapper">
-    <button id="wa-btn" class="link-card whatsapp">
+    <a href="https://wa.me/9647758887488" id="wa-link" class="link-card whatsapp">
       <span>واتساپ</span>
       <i class="fab fa-whatsapp"></i>
-    </button>
+    </a>
 
-    <button id="viber-btn" class="link-card viber">
+    <a href="viber://contact?number=9647758887488" id="viber-link" class="link-card viber">
       <span>ڤایبەر</span>
       <i class="fab fa-viber"></i>
-    </button>
+    </a>
 
-    <button id="phone-btn" class="link-card phone">
+    <a href="tel:+9647758887488" id="phone-link" class="link-card phone">
       <span>ژمارەی تەلەفۆن</span>
       <i class="fas fa-phone-alt"></i>
-    </button>
+    </a>
   </div>
 
   <div class="footer">
     <p>سپۆنسەر کراوە لەلایەن</p>
-    <a class="sponsor-btn" href="https://wa.me/9647758887488?text=سڵاو، سپۆنسەرم دەوێت">Zana Sponsor - زانا سپۆنسەر</a>
+    <a class="sponsor-btn" id="sponsor-link" href="https://wa.me/9647758887488?text=سڵاو">Zana Sponsor - زانا سپۆنسەر</a>
     <div class="legal-links">
-      <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">سیاسەتی پاراستنی نهێنی</a>
+      <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy</a>
       <span class="sep">|</span>
-      <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">مەرجەکان</a>
+      <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
     </div>
   </div>
 
 </div>
 
 <script>
-  function setupLinks() {
+  // لۆژیکی دینامیکی بۆ وەرگرتنی لینک و ناردنی داتا
+  document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSawF5kMg/";
-    
-    let currentVideo = decodeURIComponent(videoUrl);
-    let message = "سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم\n" + currentVideo;
-    let phoneNumber = "9647758887488";
+    const currentVideo = decodeURIComponent(videoUrl);
+    const phoneNumber = "9647758887488";
+    const waMessage = "سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم\n" + currentVideo;
 
-    // دیاریکردنی دوگمەکان و جێبەجێکردنی Conversion
-    document.getElementById('wa-btn').addEventListener('click', function(e) {
-      e.preventDefault();
-      let url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
-      trackConversion('WhatsApp', url);
-    });
+    // واتساپ
+    document.getElementById('wa-link').onclick = function(e) {
+      const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(waMessage);
+      sendConversion('WhatsApp', e, url);
+    };
 
-    document.getElementById('viber-btn').addEventListener('click', function(e) {
-      e.preventDefault();
-      let url = "viber://contact?number=" + phoneNumber;
-      trackConversion('Viber', url);
-    });
+    // ڤایبەر
+    document.getElementById('viber-link').onclick = function(e) {
+      const url = "viber://contact?number=" + phoneNumber;
+      sendConversion('Viber', e, url);
+    };
 
-    document.getElementById('phone-btn').addEventListener('click', function(e) {
-      e.preventDefault();
-      let url = "tel:+" + phoneNumber;
-      trackConversion('Phone', url);
-    });
-  }
+    // مۆبایل
+    document.getElementById('phone-link').onclick = function(e) {
+      const url = "tel:+" + phoneNumber;
+      sendConversion('Phone', e, url);
+    };
 
-  // دڵنیابوون لەوەی DOM باربووە
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupLinks);
-  } else {
-    setupLinks();
-  }
+    // سپۆنسەر
+    document.getElementById('sponsor-link').onclick = function(e) {
+      const url = "https://wa.me/" + phoneNumber + "?text=سڵاو";
+      sendConversion('Sponsor_Zana', e, url);
+    };
+  });
 </script>
 
 </body>
