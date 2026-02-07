@@ -24,7 +24,7 @@
   ttq.page();
 }(window, document, 'ttq');
 
-// --- بەشی چاککراوی Conversion ---
+// --- فەنکشنی سەرەکی Conversion ---
 function trackConversion(platform, eventUrl) {
   if (window.ttq) {
     ttq.track('Contact', {
@@ -35,10 +35,10 @@ function trackConversion(platform, eventUrl) {
     });
   }
   
-  // پێدانی کات (800ms) بە تیکتۆک بۆ ناردنی داتاکە پێش گواستنەوە
+  // چاوەڕێکردنی ١ چرکە بۆ دڵنیابوون لە ناردنی داتا
   setTimeout(function() {
     window.location.href = eventUrl;
-  }, 800);
+  }, 1000);
 }
 </script>
 
@@ -236,7 +236,7 @@ h1{
     let message = "سڵاو، دەمەوێت ڕیکلام بۆ کاڵاکەم بکەم\n" + currentVideo;
     let phoneNumber = "9647758887488";
 
-    // بەکارهێنانی EventListener بۆ ئەوەی کرداری گواستنەوەکە کۆنترۆڵ بکەین
+    // دیاریکردنی دوگمەکان و جێبەجێکردنی Conversion
     document.getElementById('wa-btn').addEventListener('click', function(e) {
       e.preventDefault();
       let url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
@@ -256,8 +256,12 @@ h1{
     });
   }
 
-  // دڵنیابوون لە کارکردنی فەنکشنەکە دوای باربوونی لاپەڕە
-  window.addEventListener('DOMContentLoaded', setupLinks);
+  // دڵنیابوون لەوەی DOM باربووە
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupLinks);
+  } else {
+    setupLinks();
+  }
 </script>
 
 </body>
