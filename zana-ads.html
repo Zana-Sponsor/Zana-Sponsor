@@ -36,8 +36,6 @@
         .success-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 9999; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .disclaimer-text { font-size: 11px; color: #b45309; text-align: center; margin-top: 10px; font-weight: 500; border-top: 1px solid #fef08a; padding-top: 8px; }
         .payment-info { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #4b5563; font-weight: 800; margin-bottom: 5px; }
-        
-        /* شێوازی نوێ بۆ بەشی سەردانیکەران */
         .visitor-counter { text-align: center; background: #f8fafc; padding: 10px; border-radius: 10px; margin-top: 20px; border: 1px solid #e2e8f0; font-size: 13px; color: #64748b; }
         .visitor-counter b { color: var(--ads-blue); font-weight: 800; }
     </style>
@@ -54,32 +52,51 @@
 <div class="manager-card">
     <div class="top-banner"><h1>ZANA SPONSOR - CREATE ADS</h1></div>
     <div class="form-body">
-        <div class="step-title">١. ناو و لۆگۆی تیک تۆک</div>
-        <div class="input-group"><label>ناوی پەیجی تیک تۆک</label><input type="text" id="brand_name" placeholder="ناوی پەیج لێرە بنووسە"></div>
-        <div class="input-group">
-            <input type="file" id="logo_file" hidden onchange="updateLabel('logo_file', 'logo-text')">
-            <div class="upload-area" onclick="document.getElementById('logo_file').click()">
-                <i class="fas fa-image"></i><br><span id="logo-text">لۆگۆی پەیج باربکە</span>
-            </div>
-        </div>
-
-        <div class="step-title">٢. ئامانج و بینەر</div>
+        
+        <div class="step-title">١. دیاریکردنی ئامانج</div>
         <div class="selection-group" id="obj-group">
-            <div class="chip active" onclick="handleChip(this)">
+            <div class="chip" onclick="handleChip(this)">
                 Video Views
                 <small>بۆ زیادکردنی بینەر و کارلێک</small>
             </div>
-            <div class="chip" onclick="handleChip(this)">
+            <div class="chip active" onclick="handleChip(this)">
                 Website Traffic
                 <small>بۆ زیادکردنی فرۆش و نامە</small>
             </div>
         </div>
+
+        <div id="website-extra-fields">
+            <div class="step-title">٢. ناو و لۆگۆی پەیج</div>
+            <div class="input-group"><label>ناوی پەیجی تیک تۆک</label><input type="text" id="brand_name" placeholder="ناوی پەیج لێرە بنووسە"></div>
+            <div class="input-group">
+                <input type="file" id="logo_file" hidden onchange="updateLabel('logo_file', 'logo-text')">
+                <div class="upload-area" onclick="document.getElementById('logo_file').click()">
+                    <i class="fas fa-image"></i><br><span id="logo-text">لۆگۆی پەیج باربکە</span>
+                </div>
+            </div>
+
+            <div class="step-title">٣. پەیوەندی ناو سپۆنسەر</div>
+            <div class="selection-group" id="contact-chips">
+                <div class="chip" data-target="ws-box" onclick="handleChip(this)">واتساپ</div>
+                <div class="chip" data-target="vb-box" onclick="handleChip(this)">ڤایبەر</div>
+                <div class="chip" data-target="tg-box" onclick="handleChip(this)">تیلیگرام</div>
+                <div class="chip" data-target="ph-box" onclick="handleChip(this)">تەلەفۆن</div>
+            </div>
+            <div id="contact-inputs" class="dynamic-box">
+                <div id="ws-box" class="input-group" style="display:none;"><input type="tel" id="in-ws" placeholder="07XXXXXXXXX" maxlength="11"></div>
+                <div id="vb-box" class="input-group" style="display:none;"><input type="tel" id="in-vb" placeholder="07XXXXXXXXX" maxlength="11"></div>
+                <div id="tg-box" class="input-group" style="display:none;"><input type="text" id="in-tg" placeholder="لینکی تیلیگرام"></div>
+                <div id="ph-box" class="input-group" style="display:none;"><input type="tel" id="in-ph" placeholder="07XXXXXXXXX" maxlength="11"></div>
+            </div>
+        </div>
+
+        <div class="step-title">٤. جۆری بینەر</div>
         <div class="selection-group" id="audience-group">
             <div class="chip active" onclick="handleChip(this)">بینەری کورد</div>
             <div class="chip" onclick="handleChip(this)">بینەری عەرەب</div>
         </div>
 
-        <div class="step-title">٣. تەمەن و ڕەگەز</div>
+        <div class="step-title">٥. تەمەن و ڕەگەز</div>
         <div class="selection-group" id="gender-group">
             <div class="chip active" onclick="handleChip(this)">هەردوو ڕەگەز</div><div class="chip" onclick="handleChip(this)">نێر</div><div class="chip" onclick="handleChip(this)">مێ</div>
         </div>
@@ -91,21 +108,7 @@
             <div class="chip" data-multi="true" onclick="handleChip(this)">45+</div>
         </div>
 
-        <div class="step-title">٤. پەیوەندی ناو سپۆنسەر</div>
-        <div class="selection-group" id="contact-chips">
-            <div class="chip" data-target="ws-box" onclick="handleChip(this)">واتساپ</div>
-            <div class="chip" data-target="vb-box" onclick="handleChip(this)">ڤایبەر</div>
-            <div class="chip" data-target="tg-box" onclick="handleChip(this)">تیلیگرام</div>
-            <div class="chip" data-target="ph-box" onclick="handleChip(this)">تەلەفۆن</div>
-        </div>
-        <div id="contact-inputs" class="dynamic-box">
-            <div id="ws-box" class="input-group" style="display:none;"><input type="tel" id="in-ws" placeholder="07XXXXXXXXX" maxlength="11"></div>
-            <div id="vb-box" class="input-group" style="display:none;"><input type="tel" id="in-vb" placeholder="07XXXXXXXXX" maxlength="11"></div>
-            <div id="tg-box" class="input-group" style="display:none;"><input type="text" id="in-tg" placeholder="لینکی تیلیگرام"></div>
-            <div id="ph-box" class="input-group" style="display:none;"><input type="tel" id="in-ph" placeholder="07XXXXXXXXX" maxlength="11"></div>
-        </div>
-
-        <div class="step-title">٥. بودجە و کۆد</div>
+        <div class="step-title">٦. بودجە و کۆد</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div class="input-group"><label>بودجە ($) - کەمترین ٢٠</label><input type="number" id="budget" oninput="calculate()" placeholder="20"></div>
             <div class="input-group"><label>ڕۆژ</label><input type="number" id="days" value="1" oninput="calculate()"></div>
@@ -128,7 +131,7 @@
             <div class="disclaimer-text">ئەم پێشبینیە گرەنتی نییە، لەوانەیە کەمتر بێت یان زیاتر بێت</div>
         </div>
 
-        <div class="step-title">٦. وەسڵی پارەدان</div>
+        <div class="step-title">٧. وەسڵی پارەدان</div>
         <div class="payment-info">
             <i class="fas fa-wallet" style="color: #2563eb;"></i>
             <span>ژمارەی Fastpay و FIB:</span>
@@ -159,23 +162,42 @@
     const BOT_TOKEN = '8365701740:AAFdtoRdYyrDUiuUfhWzZorhwUjGHDYs588';
     const CHAT_ID = '6259019006';
 
-    // فانکشن بۆ زیادکردنی ژمارەی سەردانیکەران
-    function loadVisitorCount() {
+    // --- بەشی نوێکراوەی ژمارەی سەردانیکەران ---
+    function updateVisitorCount() {
         const countDisplay = document.getElementById('count');
-        // بەکارهێنانی CountAPI بۆ پاشەکەوتکردنی ژمارەی سەردانەکان
-        fetch('https://api.countapi.xyz/hit/zana-sponsor-main/visits')
-            .then(res => res.json())
-            .then(res => {
-                countDisplay.innerText = res.value.toLocaleString();
-            })
-            .catch(() => {
-                // ئەگەر سێرڤەر وەڵامی نەبوو، ژمارەیەکی وەهمی نیشان دەدەین
-                countDisplay.innerText = "1,542";
-            });
+        
+        // وەرگرتنی ژمارەی پاشەکەوتکراو لە میمۆری بڕاوسەرەکەدا
+        let currentVisits = localStorage.getItem('zana_visitor_count');
+        
+        if (!currentVisits) {
+            // ئەگەر جاری یەکەم بوو، ژمارەیەکی بنەڕەتی بۆ دابنێ
+            currentVisits = 1542; 
+        } else {
+            // لەگەڵ هەر ڕیفرێشێک بە شێوەی هەڕەمەکی ١ بۆ ٣ کەس زیاد بکە
+            currentVisits = parseInt(currentVisits) + Math.floor(Math.random() * 3) + 1;
+        }
+
+        // پاشەکەوتکردنەوەی ژمارە نوێیەکە
+        localStorage.setItem('zana_visitor_count', currentVisits);
+        
+        // پیشاندانی ژمارەکە بە فۆرماتی جوان
+        countDisplay.innerText = currentVisits.toLocaleString();
     }
     
-    // بانگکردنی فانکشنەکە لەگەڵ کردنەوەی لاپەڕە
-    window.addEventListener('DOMContentLoaded', loadVisitorCount);
+    window.addEventListener('DOMContentLoaded', () => {
+        updateVisitorCount();
+        toggleWebsiteFields();
+    });
+
+    function toggleWebsiteFields() {
+        const objEl = document.querySelector('#obj-group .chip.active');
+        const extraFields = document.getElementById('website-extra-fields');
+        if (objEl && objEl.innerText.includes("Website Traffic")) {
+            extraFields.style.display = 'block';
+        } else {
+            extraFields.style.display = 'none';
+        }
+    }
 
     function handleChip(el) {
         if (el.hasAttribute('data-multi')) {
@@ -190,6 +212,8 @@
             el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
         }
+        
+        toggleWebsiteFields();
         calculate();
     }
 
@@ -206,11 +230,11 @@
         if(b >= 20) {
             document.getElementById('result-info').style.display = 'block';
             document.getElementById('res-iqd').innerText = (Math.round((b/20)*38000*d)).toLocaleString() + " IQD";
-            let multiplier = audEl.innerText.includes("عەرەب") ? 0.70 : 1.0;
+            let multiplier = (audEl && audEl.innerText.includes("عەرەب")) ? 0.70 : 1.0;
             let minV = (b/20) * 100000 * d * multiplier;
             let maxV = (b/20) * 180000 * d * multiplier;
             document.getElementById('res-views-display').innerText = Math.round(minV/1000) + "k - " + Math.round(maxV/1000) + "k Views";
-            if(objEl.innerText.includes("Website Traffic")) {
+            if(objEl && objEl.innerText.includes("Website Traffic")) {
                 document.getElementById('msgs-row').style.display = 'flex';
                 let minW = Math.round((b/20) * 350 * d * multiplier);
                 let maxW = Math.round((b/20) * 3000 * d * multiplier);
@@ -226,28 +250,25 @@
 
     function isValidIraqiNumber(num) {
         if (!num) return true;
-        const regex = /^07[0-9]{9}$/;
-        return regex.test(num);
+        return /^07[0-9]{9}$/.test(num);
     }
 
     async function sendToAll() {
-        const logo = document.getElementById('logo_file').files[0];
+        const activeObj = document.querySelector('#obj-group .chip.active');
+        const isWebsite = activeObj && activeObj.innerText.includes("Website Traffic");
         const receipt = document.getElementById('receipt').files[0];
-        const brand = document.getElementById('brand_name').value;
         const budget = parseFloat(document.getElementById('budget').value) || 0;
         const link = document.getElementById('main_link').value;
         const code = document.getElementById('video_code').value;
 
-        const ws = document.getElementById('in-ws').value;
-        const vb = document.getElementById('in-vb').value;
-        const tg = document.getElementById('in-tg').value;
-        const ph = document.getElementById('in-ph').value;
-
-        if(!logo || !receipt || !brand || !budget || !link || !code) return alert("تکایە هەموو خانە سەرەکییەکان پڕبکەوە!");
-        if(budget < 20) return alert("ببورە، کەمترین بڕی سپۆنسەر پێویستە ٢٠ دۆلار بێت!");
-        if(!isValidIraqiNumber(ws) || !isValidIraqiNumber(vb) || !isValidIraqiNumber(ph)) {
-            return alert("تکایە ژمارەی مۆبایل بە دروستی بنووسە (دەبێت بە 07 دەست پێ بکات و 11 ژمارە بێت)");
+        if(isWebsite) {
+            const logo = document.getElementById('logo_file').files[0];
+            const brand = document.getElementById('brand_name').value;
+            if(!logo || !brand) return alert("تکایە ناوی پەیج و لۆگۆ بنووسە!");
         }
+
+        if(!receipt || !budget || !link || !code) return alert("تکایە خانە سەرەکییەکان پڕبکەوە!");
+        if(budget < 20) return alert("کەمترین بڕی سپۆنسەر ٢٠ دۆلارە!");
 
         const btn = document.getElementById('submit-btn');
         btn.disabled = true; btn.innerText = "خەریکی ناردنە...";
@@ -260,7 +281,7 @@
             const ages = Array.from(document.querySelectorAll('#age-group .chip.active')).map(c => c.innerText).join(', ');
 
             let msg = `🌟 *داواکاری نوێی سپۆنسەر*\n\n`;
-            msg += `👤 پەیج: ${brand}\n`;
+            if(isWebsite) msg += `👤 پەیج: ${document.getElementById('brand_name').value}\n`;
             msg += `💰 بودجە: $${budget}\n`;
             msg += `📅 ڕۆژ: ${document.getElementById('days').value}\n`;
             msg += `🎯 ئامانج: ${obj}\n`;
@@ -270,29 +291,40 @@
             msg += `🔢 کۆد: \`${code}\`\n`;
             msg += `🔗 لینک: ${link}\n\n`;
             
-            msg += `📞 *زانیاری پەیوەندی:*\n`;
-            if(ws) msg += `🟢 واتسئاپ: ${ws}\n`;
-            if(vb) msg += `🟣 ڤایبەر: ${vb}\n`;
-            if(tg) msg += `🔵 تیلیگرام: ${tg}\n`;
-            if(ph) msg += `☎️ تەلەفۆن: ${ph}\n`;
+            if(isWebsite) {
+                msg += `📞 *زانیاری پەیوەندی:*\n`;
+                const ws = document.getElementById('in-ws').value;
+                const vb = document.getElementById('in-vb').value;
+                const tg = document.getElementById('in-tg').value;
+                const ph = document.getElementById('in-ph').value;
+                if(ws) msg += `🟢 واتسئاپ: ${ws}\n`;
+                if(vb) msg += `🟣 ڤایبەر: ${vb}\n`;
+                if(tg) msg += `🔵 تیلیگرام: ${tg}\n`;
+                if(ph) msg += `☎️ تەلەفۆن: ${ph}\n`;
+            }
 
             const fd1 = new FormData();
-            fd1.append('chat_id', CHAT_ID); fd1.append('photo', logo); fd1.append('caption', msg); fd1.append('parse_mode', 'Markdown');
+            fd1.append('chat_id', CHAT_ID);
+            const photoToSend = (isWebsite && document.getElementById('logo_file').files[0]) ? document.getElementById('logo_file').files[0] : receipt;
+            fd1.append('photo', photoToSend);
+            fd1.append('caption', msg);
+            fd1.append('parse_mode', 'Markdown');
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd1 });
 
-            const fd2 = new FormData();
-            fd2.append('chat_id', CHAT_ID); fd2.append('photo', receipt); fd2.append('caption', `🧾 وەسڵی پارەدان - ${brand}`);
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd2 });
+            if(isWebsite && document.getElementById('logo_file').files[0]) {
+                const fd2 = new FormData();
+                fd2.append('chat_id', CHAT_ID); fd2.append('photo', receipt); fd2.append('caption', `🧾 وەسڵی پارەدان`);
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd2 });
+            }
 
             document.getElementById('success-overlay').style.display = 'flex';
-            
             setTimeout(() => { 
                 window.location.href = `https://wa.me/9647510074008?text=${encodeURIComponent(msg)}`;
                 setTimeout(() => { location.reload(); }, 1000);
             }, 2000);
             
         } catch(e) { 
-            alert("هەڵەیەک ڕوویدا لە کاتی ناردن!"); 
+            alert("هەڵەیەک ڕوویدا!"); 
             btn.disabled = false; btn.innerText = "ناردنی داواکاری";
         }
     }
