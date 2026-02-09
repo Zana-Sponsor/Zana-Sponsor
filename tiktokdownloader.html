@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl" id="htmlTag">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zana TikTok Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; background: #000; color: #fff; transition: 0.3s; overflow-x: hidden; }
+        .cyber-card { background: rgba(15, 15, 15, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 0 40px rgba(0, 0, 0, 1); }
+        .neon-border { position: relative; overflow: hidden; }
+        .neon-border::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent, transparent, transparent, #00f2ea); animation: rotate 4s linear infinite; z-index: -1; }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        .btn-speed { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-speed:active { transform: scale(0.95); }
+        .nav-link { cursor: pointer; transition: 0.3s; opacity: 0.5; }
+        .nav-link.active { opacity: 1; color: #00f2ea; border-bottom: 2px solid #00f2ea; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center">
+
+    <nav class="w-full max-w-4xl flex justify-between items-center p-6">
+        <div class="text-2xl font-black italic tracking-tighter">ZANA <span class="text-cyan-400">PRO</span></div>
+        <div class="flex gap-6 text-sm font-bold bg-zinc-900/50 px-4 py-2 rounded-full border border-zinc-800">
+            <span onclick="setLang('ku')" id="lang-ku" class="nav-link active">کوردی</span>
+            <span onclick="setLang('ar')" id="lang-ar" class="nav-link">العربية</span>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex flex-col items-center justify-center w-full px-4">
+        <div class="max-w-xl w-full cyber-card p-10 rounded-[2rem] border border-zinc-800">
+            
+            <div class="text-center mb-10">
+                <h1 id="main-title" class="text-4xl font-black mb-3">دابەزێنەری خێرا</h1>
+                <p id="sub-title" class="text-zinc-500 text-sm">ڤیدیۆی تیکتۆک بێ لۆگۆ بە کوالێتی 4K</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="relative">
+                    <input type="text" id="videoUrl" placeholder="لینکی ڤیدیۆ لێرە دابنێ..." 
+                        class="w-full bg-zinc-900 border border-zinc-800 p-5 rounded-2xl outline-none focus:border-cyan-500 transition-all text-center text-zinc-200">
+                    <button onclick="pasteLink()" class="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 text-xs font-bold hover:text-white transition">PASTE</button>
+                </div>
+
+                <button onclick="downloadVideo()" id="btn-text"
+                    class="w-full btn-speed bg-cyan-500 hover:bg-cyan-400 text-black py-5 rounded-2xl font-black text-xl shadow-lg shadow-cyan-500/20">
+                    دابەزاندن
+                </button>
+            </div>
+
+            <div id="result" class="mt-8 hidden">
+                <div id="loading" class="text-center py-4">
+                    <div class="inline-block w-6 h-6 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                
+                <div id="videoDetails" class="hidden text-center bg-zinc-900/50 p-6 rounded-3xl border border-zinc-800/50">
+                    <img id="thumb" class="w-32 h-32 mx-auto rounded-2xl object-cover mb-4 shadow-2xl" src="" alt="">
+                    <h3 id="vTitle" class="text-xs text-zinc-400 mb-6 truncate px-4"></h3>
+                    <div class="flex flex-col gap-3">
+                        <a id="downloadLink" href="#" target="_blank" 
+                            class="bg-white text-black py-3 rounded-xl font-bold hover:bg-zinc-200 transition">Download Video (HD)</a>
+                        <a id="musicLink" href="#" target="_blank" 
+                            class="text-zinc-400 text-xs underline">Download Music (MP3)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="p-10 text-center">
+        <p class="text-[10px] text-zinc-600 uppercase tracking-[5px] font-medium">
+            Powered By <span class="text-zinc-200">Zana</span>
+        </p>
+    </footer>
+
+    <script>
+        const translations = {
+            ku: { title: "دابەزێنەری خێرا", sub: "ڤیدیۆی تیکتۆک بێ لۆگۆ بە کوالێتی 4K", btn: "دابەزاندن", placeholder: "لینکی ڤیدیۆ لێرە دابنێ...", loading: "خەریکە ڤیدیۆکە دەهێنین..." },
+            ar: { title: "تحميل تيك توك", sub: "فيديو بدون علامة مائية بدقة 4K", btn: "تحميل الآن", placeholder: "ضع الرابط هنا...", loading: "جاري جلب الفيديو..." }
+        };
+
+        function setLang(lang) {
+            const t = translations[lang];
+            document.getElementById('main-title').innerText = t.title;
+            document.getElementById('sub-title').innerText = t.sub;
+            document.getElementById('btn-text').innerText = t.btn;
+            document.getElementById('videoUrl').placeholder = t.placeholder;
+            document.getElementById('htmlTag').dir = lang === 'ku' || lang === 'ar' ? 'rtl' : 'ltr';
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            document.getElementById(`lang-${lang}`).classList.add('active');
+        }
+
+        async function pasteLink() {
+            const text = await navigator.clipboard.readText();
+            document.getElementById('videoUrl').value = text;
+        }
+
+        async function downloadVideo() {
+            const url = document.getElementById('videoUrl').value;
+            if (!url) return;
+
+            const resDiv = document.getElementById('result');
+            const loader = document.getElementById('loading');
+            const details = document.getElementById('videoDetails');
+
+            resDiv.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            details.classList.add('hidden');
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'x-rapidapi-host': 'tiktok-video-no-watermark2.p.rapidapi.com',
+                    'x-rapidapi-key': 'ca45e7a725mshf089a5d107b5799p1d217ajsn64bf12f1cc21'
+                },
+                body: new URLSearchParams({ url: url, hd: '1' })
+            };
+
+            try {
+                const response = await fetch('https://tiktok-video-no-watermark2.p.rapidapi.com/', options);
+                const result = await response.json();
+
+                if (result.code === 0) {
+                    loader.classList.add('hidden');
+                    details.classList.remove('hidden');
+                    document.getElementById('thumb').src = result.data.cover;
+                    document.getElementById('vTitle').innerText = result.data.title;
+                    document.getElementById('downloadLink').href = result.data.play;
+                    document.getElementById('musicLink').href = result.data.music;
+                } else {
+                    alert("لینکەکە هەڵەیە یان ڤیدیۆکە نەدۆزرایەوە");
+                    resDiv.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error(error);
+                alert("هەڵەیەک لە پەیوەندی ڕوویدا");
+            }
+        }
+    </script>
+</body>
+</html>
