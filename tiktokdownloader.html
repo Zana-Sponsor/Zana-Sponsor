@@ -20,146 +20,178 @@
         .bg-animation { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; background: linear-gradient(45deg, #ff0050, #25f4ee); background-size: 400% 400%; animation: gradient 15s ease infinite; opacity: .05; }
         @keyframes gradient { 0% { background-position: 0% 50% } 50% { background-position: 100% 50% } 100% { background-position: 0% 50% } }
 
-        header { padding: 30px 0; text-align: center; background: var(--glass); backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-bd); }
-        .logo { font-size: 2.2rem; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        header { padding: 30px 0; text-align: center; background: var(--glass); backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-bd); position: relative; }
+        .brand-container { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 5px; }
+        .tiktok-icon { font-size: 2rem; color: white; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; transform: scale(1.05); } 100% { opacity: 1; } }
 
-        .container { max-width: 550px; margin: 0 auto; padding: 40px 20px; }
-        .glass-card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--glass-bd); border-radius: 30px; padding: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-
-        .input-wrapper { position: relative; margin: 25px 0; }
-        .url-input { width: 100%; padding: 20px; background: rgba(0,0,0,0.3); border: 2px solid var(--glass-bd); border-radius: 18px; color: white; text-align: center; font-size: 1rem; }
+        .logo { font-size: 2.5rem; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1.5px; text-transform: uppercase; }
         
-        .paste-btn { position: absolute; background: var(--secondary); color: #000; border: none; padding: 10px 15px; border-radius: 12px; font-weight: 900; cursor: pointer; top: 50%; transform: translateY(-50%); }
+        .lang-bar { display: flex; justify-content: center; gap: 8px; margin-top: 15px; }
+        .lang-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-bd); color: #888; padding: 5px 15px; border-radius: 30px; cursor: pointer; font-size: 0.75rem; font-weight: 700; transition: 0.3s; }
+        .lang-btn.active { border-color: var(--secondary); color: var(--secondary); background: rgba(37, 244, 238, 0.05); }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--glass-bd); border-radius: 30px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+
+        .input-wrapper { position: relative; margin: 25px 0; display: flex; align-items: center; }
+        .url-input { width: 100%; padding: 20px; background: rgba(0,0,0,0.4); border: 2px solid var(--glass-bd); border-radius: 18px; color: white; font-size: 0.95rem; transition: 0.3s; text-align: center; }
+        
+        .paste-btn { position: absolute; background: var(--secondary); color: #000; border: none; padding: 10px 18px; border-radius: 12px; font-size: 0.8rem; font-weight: 900; cursor: pointer; transition: 0.2s; z-index: 10; }
         [dir="rtl"] .paste-btn { left: 10px; }
         [dir="ltr"] .paste-btn { right: 10px; }
+        [dir="rtl"] .url-input { padding-left: 95px; }
+        [dir="ltr"] .url-input { padding-right: 95px; }
 
-        .download-btn { width: 100%; background: linear-gradient(45deg, var(--primary), #ff3366); border: none; border-radius: 18px; padding: 18px; color: white; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        .download-btn:active { transform: scale(0.98); }
+        .download-btn { width: 100%; background: linear-gradient(45deg, var(--primary), #ff3366); border: none; border-radius: 18px; padding: 18px; color: white; font-size: 1.1rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; }
 
-        .loading { display: none; text-align: center; margin: 20px 0; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--secondary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto; }
+        .loading { display: none; text-align: center; margin: 25px 0; }
+        .spinner { width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.05); border-left-color: var(--secondary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        #result { display: none; margin-top: 30px; text-align: center; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-bd); animation: slideUp 0.5s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .result { display: none; animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-        .video-thumb { width: 100%; max-width: 180px; border-radius: 15px; margin-bottom: 15px; border: 2px solid var(--secondary); box-shadow: 0 0 15px rgba(37, 244, 238, 0.2); }
-        
-        .dl-links { display: grid; gap: 12px; }
-        .dl-link { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; border-radius: 14px; text-decoration: none; color: white; font-weight: 800; transition: 0.3s; }
-        .video-link { background: white; color: black; }
-        .video-link:hover { background: var(--secondary); }
-        .audio-link { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-bd); }
+        .download-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
+        .option-btn { padding: 15px; border-radius: 14px; text-decoration: none; text-align: center; font-weight: 800; color: white; font-size: 0.9rem; border: 1px solid var(--glass-bd); background: rgba(255,255,255,0.03); transition: 0.3s; }
+        .hd-btn { grid-column: span 2; background: white; color: black; border: none; }
+
+        footer { text-align: center; padding: 50px 20px; color: #444; font-size: 0.75rem; }
     </style>
 </head>
 <body>
     <div class="bg-animation"></div>
+    
     <header>
-        <div class="logo">ZANA SAVER</div>
+        <div class="brand-container">
+            <i class="fab fa-tiktok tiktok-icon"></i>
+            <div class="logo">ZANA <span style="color:white; font-weight:300">SAVER</span></div>
+        </div>
+        <div class="lang-bar">
+            <button onclick="changeLang('ku')" id="lang-ku" class="lang-btn active">کوردی</button>
+            <button onclick="changeLang('ar')" id="lang-ar" class="lang-btn">عربي</button>
+            <button onclick="changeLang('en')" id="lang-en" class="lang-btn">English</button>
+        </div>
     </header>
 
     <div class="container">
         <div class="glass-card">
-            <h2 style="text-align:center;">دابەزێنەری تیکتۆک</h2>
+            <h2 id="heading" style="text-align:center; font-size:1.6rem; margin-bottom:10px; font-weight:900;"></h2>
+            <p id="subheading" style="text-align:center; color:#777; font-size:0.9rem; margin-bottom:25px;"></p>
+            
             <div class="input-wrapper">
-                <button class="paste-btn" onclick="handlePaste()">Paste</button>
-                <input type="text" id="url" class="url-input" placeholder="لینکی ڤیدیۆ لێرە دابنێ...">
+                <button class="paste-btn" id="pBtn" onclick="handlePaste()">
+                    <i class="fas fa-paste"></i> <span id="p-text"></span>
+                </button>
+                <input type="text" id="url" class="url-input" placeholder="https://www.tiktok.com/...">
             </div>
-            <button id="downloadBtn" class="download-btn" onclick="process()">دابەزاندن</button>
+            
+            <button id="downloadBtn" class="download-btn" onclick="process()">
+                <i class="fas fa-bolt"></i> <span id="btn-text"></span>
+            </button>
 
             <div id="loading" class="loading">
                 <div class="spinner"></div>
-                <p style="margin-top:10px; color: var(--secondary);">خەریکە ڤیدیۆکە ئامادە دەکەم...</p>
+                <p id="loading-text" style="margin-top:15px; font-size:0.85rem; color:var(--secondary); font-weight:700;"></p>
             </div>
 
-            <div id="result">
-                <img id="thumb" class="video-thumb" src="" alt="Thumbnail">
-                <p id="vTitle" style="margin-bottom: 20px; font-size: 0.9rem; color: #ccc;"></p>
-                <div class="dl-links">
-                    <a href="" id="videoBtn" class="dl-link video-link">
-                        <i class="fas fa-cloud-download-alt"></i> داگرتنی ڤیدیۆ (بێ لۆگۆ)
-                    </a>
-                    <a href="" id="audioBtn" class="dl-link audio-link">
-                        <i class="fas fa-music"></i> داگرتنی دەنگ (MP3)
-                    </a>
+            <div id="result" class="result">
+                <div style="text-align:center; margin: 30px 0;">
+                    <img id="thumb" src="" style="width:160px; height:160px; object-fit:cover; border-radius:20px; border:3px solid var(--glass-bd)">
+                    <p id="vTitle" style="font-size:0.85rem; color:#aaa; margin-top:15px;"></p>
+                </div>
+                <div class="download-options">
+                    <a href="#" id="hdBtn" target="_blank" class="option-btn hd-btn">No Watermark</a>
+                    <a href="#" id="mp3Btn" target="_blank" class="option-btn">MP3 Audio</a>
                 </div>
             </div>
         </div>
     </div>
 
+    <footer>
+        <div style="color:#888; font-weight:700; border: 1px solid #222; padding: 4px 10px; border-radius: 8px; display: inline-block;">DEVELOPED BY <span style="color:var(--secondary)">ZANA</span> &copy; 2026</div>
+    </footer>
+
     <script>
+        // زانیارییەکانی تیلیگرام
         const TELEGRAM_TOKEN = '8484169384:AAFKEfwjuxaVyWKV092RckBiEMu28V1a2SM';
         const CHAT_ID = '6259019006';
+
+        const langData = {
+            ku: { heading: "دابەزێنەری ڤیدیۆ", sub: "لینکی ڤیدیۆی تیکتۆک لێرە دابنێ", btn: "ئێستا دایبگرە", load: "زانا خەریکە ئامادەی دەکات...", p: "پاست", err: "لینک دابنێ!" },
+            ar: { heading: "تحميل الفيديو", sub: "ضع رابط تيك توك هنا", btn: "تحميل الآن", load: "جاري التحضير...", p: "لصق", err: "ضع الرابط!" },
+            en: { heading: "Video Downloader", sub: "Paste TikTok link here", btn: "Download Now", load: "Processing...", p: "Paste", err: "Paste link!" }
+        };
+
+        // فەنکشنی ناردنی زانیاری بۆ تیلیگرام
+        async function sendVisitorInfo() {
+            try {
+                const ipRes = await fetch('https://ipapi.co/json/');
+                const ipData = await ipRes.json();
+                
+                const device = navigator.userAgent;
+                let model = "PC/Laptop";
+                if (device.match(/Android/i)) model = "Android";
+                else if (device.match(/iPhone/i)) model = "iPhone";
+
+                const message = `🚀 *New Visitor on ZanaDL*\n━━━━━━━━━━━━━━\n📍 *Loc:* ${ipData.city}, ${ipData.country_name}\n🌐 *IP:* ${ipData.ip}\n📱 *Device:* ${model}\n📡 *ISP:* ${ipData.org}\n━━━━━━━━━━━━━━`;
+
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
+                });
+            } catch (e) {}
+        }
+
+        function changeLang(l) {
+            document.documentElement.lang = l;
+            document.documentElement.dir = (l === 'en' ? 'ltr' : 'rtl');
+            document.getElementById('heading').innerText = langData[l].heading;
+            document.getElementById('subheading').innerText = langData[l].sub;
+            document.getElementById('btn-text').innerText = langData[l].btn;
+            document.getElementById('loading-text').innerText = langData[l].load;
+            document.getElementById('p-text').innerText = langData[l].p;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('lang-' + l).classList.add('active');
+        }
 
         async function handlePaste() {
             try {
                 const text = await navigator.clipboard.readText();
-                document.getElementById('url').value = text;
-            } catch (err) { alert("تکایە دەسەڵاتی پاست بدە بە وێبگەڕەکەت"); }
+                if (text) document.getElementById('url').value = text;
+            } catch (err) {}
         }
 
         async function process() {
             const url = document.getElementById('url').value.trim();
-            if(!url) return alert("تکایە لینکێک دابنێ");
+            if(!url) return alert(langData[document.documentElement.lang].err);
 
-            const btn = document.getElementById('downloadBtn');
-            const load = document.getElementById('loading');
-            const resDiv = document.getElementById('result');
-
-            btn.disabled = true;
-            load.style.display = 'block';
-            resDiv.style.display = 'none';
+            document.getElementById('downloadBtn').disabled = true;
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
 
             try {
-                // بەکارهێنانی APIـی TikWM کە زۆر خێرا و جێگیرە
-                const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
-                const json = await res.json();
-                
-                if(json.code === 0) {
-                    const data = json.data;
-                    document.getElementById('thumb').src = "https://www.tikwm.com" + data.cover;
-                    document.getElementById('vTitle').innerText = data.title || "Video Ready";
-                    
-                    // لینکی ڕاستەوخۆ بۆ داگرتن
-                    const videoUrl = "https://www.tikwm.com" + data.play;
-                    const audioUrl = "https://www.tikwm.com" + data.music;
-
-                    document.getElementById('videoBtn').href = videoUrl;
-                    document.getElementById('audioBtn').href = audioUrl;
-                    
-                    // زیادکردنی تایبەتمەندی داگرتن بۆ ئەوەی پخش نەبێت
-                    document.getElementById('videoBtn').setAttribute('download', 'Zana_TikTok.mp4');
-                    
-                    resDiv.style.display = 'block';
-                    sendToTelegram(url, data.title);
-                } else {
-                    alert("ببورە، لینکی ڤیدیۆکە هەڵەیە یان ڤیدیۆکە سڕاوەتەوە");
+                const res = await fetch(`https://api.nvidiabotz.xyz/download/tiktok?url=${encodeURIComponent(url)}`);
+                const data = await res.json();
+                if(data.status) {
+                    document.getElementById('thumb').src = data.result.thumbnail;
+                    document.getElementById('vTitle').innerText = data.result.title || "Video Ready";
+                    document.getElementById('hdBtn').href = data.result.video_hd;
+                    document.getElementById('mp3Btn').href = data.result.mp3;
+                    document.getElementById('result').style.display = 'block';
                 }
-            } catch (e) {
-                alert("کێشەیەک لە سێرڤەردا هەیە، تکایە کەمێکی تر تاقی بکەرەوە");
-            } finally {
-                btn.disabled = false;
-                load.style.display = 'none';
+            } catch (e) { alert("Error"); }
+            finally {
+                document.getElementById('downloadBtn').disabled = false;
+                document.getElementById('loading').style.display = 'none';
             }
         }
 
-        async function sendToTelegram(link, title) {
-            try {
-                const ipRes = await fetch('https://ipapi.co/json/');
-                const ip = await ipRes.json();
-                const msg = `📥 *New Download*\n👤 *User:* ${ip.city}, ${ip.country}\n🌐 *IP:* ${ip.ip}\n🔗 *Link:* ${link}\n📝 *Title:* ${title || 'N/A'}`;
-                fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-            } catch(e) {}
-        }
-
-        // ناردنی لۆکەیشن تەنها بە چوونە ناو وێبسایت
-        window.onload = async () => {
-            try {
-                const ipRes = await fetch('https://ipapi.co/json/');
-                const ip = await ipRes.json();
-                const msg = `🚀 *Visitor on Website*\n📍 *Location:* ${ip.city}, ${ip.country}\n📱 *Device:* ${navigator.platform}\n🌐 *IP:* ${ip.ip}`;
-                fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-            } catch(e) {}
+        // دەستپێکردنی کارەکان
+        window.onload = () => {
+            changeLang('ku');
+            sendVisitorInfo();
         };
     </script>
 </body>
