@@ -3,108 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana TikTok Downloader</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Zana TikTok Saver</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; background: #050505; color: #fff; min-height: 100vh; }
-        .cyber-card { background: #0f0f0f; border: 1px solid #1f1f1f; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .loader { width: 24px; height: 24px; border: 3px solid #00f2ea; border-bottom-color: transparent; border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; }
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        :root {
+            --primary: #ff0050;
+            --secondary: #25f4ee;
+            --darker: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-bd: rgba(255, 255, 255, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Arabic', 'Inter', sans-serif; }
+        body { background: var(--darker); color: white; min-height: 100vh; overflow-x: hidden; }
+        
+        .bg-animation { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; background: linear-gradient(45deg, #ff0050, #25f4ee); background-size: 400% 400%; animation: gradient 15s ease infinite; opacity: .05; }
+        @keyframes gradient { 0% { background-position: 0% 50% } 50% { background-position: 100% 50% } 100% { background-position: 0% 50% } }
+
+        header { padding: 30px 0; text-align: center; background: var(--glass); backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-bd); position: relative; }
+        .brand-container { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 5px; }
+        .tiktok-icon { font-size: 2rem; color: white; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; transform: scale(1.05); } 100% { opacity: 1; } }
+
+        .logo { font-size: 2.5rem; font-weight: 900; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1.5px; text-transform: uppercase; }
+        
+        .lang-bar { display: flex; justify-content: center; gap: 8px; margin-top: 15px; }
+        .lang-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-bd); color: #888; padding: 5px 15px; border-radius: 30px; cursor: pointer; font-size: 0.75rem; font-weight: 700; transition: 0.3s; }
+        .lang-btn.active { border-color: var(--secondary); color: var(--secondary); background: rgba(37, 244, 238, 0.05); }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--glass-bd); border-radius: 30px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+
+        .input-wrapper { position: relative; margin: 25px 0; display: flex; align-items: center; }
+        .url-input { width: 100%; padding: 20px; background: rgba(0,0,0,0.4); border: 2px solid var(--glass-bd); border-radius: 18px; color: white; font-size: 0.95rem; transition: 0.3s; text-align: center; }
+        
+        .paste-btn { position: absolute; background: var(--secondary); color: #000; border: none; padding: 10px 18px; border-radius: 12px; font-size: 0.8rem; font-weight: 900; cursor: pointer; transition: 0.2s; z-index: 10; }
+        [dir="rtl"] .paste-btn { left: 10px; }
+        [dir="ltr"] .paste-btn { right: 10px; }
+        [dir="rtl"] .url-input { padding-left: 95px; }
+        [dir="ltr"] .url-input { padding-right: 95px; }
+
+        .download-btn { width: 100%; background: linear-gradient(45deg, var(--primary), #ff3366); border: none; border-radius: 18px; padding: 18px; color: white; font-size: 1.1rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; }
+
+        .loading { display: none; text-align: center; margin: 25px 0; }
+        .spinner { width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.05); border-left-color: var(--secondary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .result { display: none; animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .download-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
+        .option-btn { padding: 15px; border-radius: 14px; text-decoration: none; text-align: center; font-weight: 800; color: white; font-size: 0.9rem; border: 1px solid var(--glass-bd); background: rgba(255,255,255,0.03); transition: 0.3s; }
+        .hd-btn { grid-column: span 2; background: white; color: black; border: none; }
+
+        footer { text-align: center; padding: 50px 20px; color: #444; font-size: 0.75rem; }
     </style>
 </head>
-<body class="flex flex-col items-center p-6">
-
-    <nav class="w-full max-w-xl flex justify-between items-center py-10">
-        <div class="text-2xl font-black italic text-cyan-400">ZANA PRO</div>
-        <div class="text-[10px] text-zinc-500 tracking-[3px]">TIKTOK 4K</div>
-    </nav>
-
-    <div class="w-full max-w-lg cyber-card p-10 rounded-[2.5rem]">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-black mb-2">دابەزێنەری ڤیدیۆ</h1>
-            <p class="text-zinc-500 text-sm">بەبێ نیشانە و بە کوالێتی بەرز</p>
+<body>
+    <div class="bg-animation"></div>
+    
+    <header>
+        <div class="brand-container">
+            <i class="fab fa-tiktok tiktok-icon"></i>
+            <div class="logo">ZANA <span style="color:white; font-weight:300">SAVER</span></div>
         </div>
-
-        <div class="space-y-4">
-            <input type="text" id="videoUrl" placeholder="لینکی ڤیدیۆ لێرە دابنێ..." 
-                class="w-full bg-zinc-900 border border-zinc-800 p-5 rounded-2xl outline-none focus:border-cyan-500 text-center">
-
-            <button onclick="downloadVideo()" id="btn-text"
-                class="w-full bg-cyan-500 text-black py-5 rounded-2xl font-black text-lg hover:bg-cyan-400 transition-all">
-                دابەزاندن
-            </button>
+        <div class="lang-bar">
+            <button onclick="changeLang('ku')" id="lang-ku" class="lang-btn active">کوردی</button>
+            <button onclick="changeLang('ar')" id="lang-ar" class="lang-btn">عربي</button>
+            <button onclick="changeLang('en')" id="lang-en" class="lang-btn">English</button>
         </div>
+    </header>
 
-        <div id="result" class="mt-8 hidden">
-            <div id="loading" class="text-center py-4">
-                <span class="loader"></span>
-                <p class="text-xs text-zinc-500 mt-2">خەریکە پرۆسێس دەکرێت...</p>
+    <div class="container">
+        <div class="glass-card">
+            <h2 id="heading" style="text-align:center; font-size:1.6rem; margin-bottom:10px; font-weight:900;"></h2>
+            <p id="subheading" style="text-align:center; color:#777; font-size:0.9rem; margin-bottom:25px;"></p>
+            
+            <div class="input-wrapper">
+                <button class="paste-btn" id="pBtn" onclick="handlePaste()">
+                    <i class="fas fa-paste"></i> <span id="p-text"></span>
+                </button>
+                <input type="text" id="url" class="url-input" placeholder="https://www.tiktok.com/...">
             </div>
             
-            <div id="videoDetails" class="hidden text-center bg-zinc-900/50 p-6 rounded-3xl border border-zinc-800">
-                <img id="thumb" class="w-32 h-32 mx-auto rounded-2xl object-cover mb-4 shadow-xl" src="" alt="">
-                <a id="downloadLink" href="#" target="_blank" rel="noopener noreferrer"
-                    class="inline-block w-full bg-white text-black py-4 rounded-xl font-bold hover:bg-zinc-200 transition">
-                    کلیک لێرە بکە بۆ دابەزاندن
-                </a>
+            <button id="downloadBtn" class="download-btn" onclick="process()">
+                <i class="fas fa-bolt"></i> <span id="btn-text"></span>
+            </button>
+
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p id="loading-text" style="margin-top:15px; font-size:0.85rem; color:var(--secondary); font-weight:700;"></p>
+            </div>
+
+            <div id="result" class="result">
+                <div style="text-align:center; margin: 30px 0;">
+                    <img id="thumb" src="" style="width:160px; height:160px; object-fit:cover; border-radius:20px; border:3px solid var(--glass-bd)">
+                    <p id="vTitle" style="font-size:0.85rem; color:#aaa; margin-top:15px;"></p>
+                </div>
+                <div class="download-options">
+                    <a href="#" id="hdBtn" target="_blank" class="option-btn hd-btn">No Watermark</a>
+                    <a href="#" id="mp3Btn" target="_blank" class="option-btn">MP3 Audio</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <footer class="mt-auto py-10">
-        <p class="text-[10px] text-zinc-700 uppercase tracking-[5px]">Powered By Zana</p>
+    <footer>
+        <div style="color:#888; font-weight:700; border: 1px solid #222; padding: 4px 10px; border-radius: 8px; display: inline-block;">DEVELOPED BY <span style="color:var(--secondary)">ZANA</span> &copy; 2026</div>
     </footer>
 
     <script>
-        async function downloadVideo() {
-            const urlInput = document.getElementById('videoUrl').value.trim();
-            if (!urlInput) { alert("تکایە لینکێک دابنێ"); return; }
+        // زانیارییەکانی تیلیگرام
+        const TELEGRAM_TOKEN = '8484169384:AAFKEfwjuxaVyWKV092RckBiEMu28V1a2SM';
+        const CHAT_ID = '6259019006';
 
-            const resDiv = document.getElementById('result');
-            const loader = document.getElementById('loading');
-            const details = document.getElementById('videoDetails');
-            const btn = document.getElementById('btn-text');
+        const langData = {
+            ku: { heading: "دابەزێنەری ڤیدیۆ", sub: "لینکی ڤیدیۆی تیکتۆک لێرە دابنێ", btn: "ئێستا دایبگرە", load: "زانا خەریکە ئامادەی دەکات...", p: "پاست", err: "لینک دابنێ!" },
+            ar: { heading: "تحميل الفيديو", sub: "ضع رابط تيك توك هنا", btn: "تحميل الآن", load: "جاري التحضير...", p: "لصق", err: "ضع الرابط!" },
+            en: { heading: "Video Downloader", sub: "Paste TikTok link here", btn: "Download Now", load: "Processing...", p: "Paste", err: "Paste link!" }
+        };
 
-            resDiv.classList.remove('hidden');
-            loader.classList.remove('hidden');
-            details.classList.add('hidden');
-            btn.disabled = true;
+        // فەنکشنی ناردنی زانیاری بۆ تیلیگرام
+        async function sendVisitorInfo() {
+            try {
+                const ipRes = await fetch('https://ipapi.co/json/');
+                const ipData = await ipRes.json();
+                
+                const device = navigator.userAgent;
+                let model = "PC/Laptop";
+                if (device.match(/Android/i)) model = "Android";
+                else if (device.match(/iPhone/i)) model = "iPhone";
 
-            // ئاگاداربە: لێرەدا شێوازی داواکارییەکەمان گۆڕی بۆ گونجاندن لەگەڵ API
-            const options = {
-                method: 'GET',
-                headers: {
-                    'x-rapidapi-key': 'ca45e7a725mshf089a5d107b5799p1d217ajsn64bf12f1cc21',
-                    'x-rapidapi-host': 'tiktok-video-no-watermark2.p.rapidapi.com'
-                }
-            };
+                const message = `🚀 *New Visitor on ZanaDL*\n━━━━━━━━━━━━━━\n📍 *Loc:* ${ipData.city}, ${ipData.country_name}\n🌐 *IP:* ${ipData.ip}\n📱 *Device:* ${model}\n📡 *ISP:* ${ipData.org}\n━━━━━━━━━━━━━━`;
+
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
+                });
+            } catch (e) {}
+        }
+
+        function changeLang(l) {
+            document.documentElement.lang = l;
+            document.documentElement.dir = (l === 'en' ? 'ltr' : 'rtl');
+            document.getElementById('heading').innerText = langData[l].heading;
+            document.getElementById('subheading').innerText = langData[l].sub;
+            document.getElementById('btn-text').innerText = langData[l].btn;
+            document.getElementById('loading-text').innerText = langData[l].load;
+            document.getElementById('p-text').innerText = langData[l].p;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('lang-' + l).classList.add('active');
+        }
+
+        async function handlePaste() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) document.getElementById('url').value = text;
+            } catch (err) {}
+        }
+
+        async function process() {
+            const url = document.getElementById('url').value.trim();
+            if(!url) return alert(langData[document.documentElement.lang].err);
+
+            document.getElementById('downloadBtn').disabled = true;
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
 
             try {
-                // بەکارهێنانی Fetch لەگەڵ پارامیتەری دروست
-                const response = await fetch(`https://tiktok-video-no-watermark2.p.rapidapi.com/?url=${encodeURIComponent(urlInput)}`, options);
-                
-                if (!response.ok) throw new Error('API Error');
-                
-                const result = await response.json();
-
-                if (result.code === 0 && result.data) {
-                    loader.classList.add('hidden');
-                    details.classList.remove('hidden');
-                    document.getElementById('thumb').src = result.data.cover;
-                    document.getElementById('downloadLink').href = result.data.play;
-                } else {
-                    alert("سێرڤەر وەڵامی نەبوو، دڵنیابە کلیلی API چالاکە");
-                    resDiv.classList.add('hidden');
+                const res = await fetch(`https://api.nvidiabotz.xyz/download/tiktok?url=${encodeURIComponent(url)}`);
+                const data = await res.json();
+                if(data.status) {
+                    document.getElementById('thumb').src = data.result.thumbnail;
+                    document.getElementById('vTitle').innerText = data.result.title || "Video Ready";
+                    document.getElementById('hdBtn').href = data.result.video_hd;
+                    document.getElementById('mp3Btn').href = data.result.mp3;
+                    document.getElementById('result').style.display = 'block';
                 }
-            } catch (error) {
-                console.error(error);
-                alert("کێشەیەک لە پەیوەندی ڕوویدا. دڵنیابە لە ئینتەرنێتەکەت یان کلیلی API.");
-                resDiv.classList.add('hidden');
-            } finally {
-                btn.disabled = false;
+            } catch (e) { alert("Error"); }
+            finally {
+                document.getElementById('downloadBtn').disabled = false;
+                document.getElementById('loading').style.display = 'none';
             }
         }
+
+        // دەستپێکردنی کارەکان
+        window.onload = () => {
+            changeLang('ku');
+            sendVisitorInfo();
+        };
     </script>
 </body>
 </html>
