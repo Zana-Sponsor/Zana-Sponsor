@@ -168,7 +168,7 @@
         });
     }
 
-    const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "2879264048", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
+    const wallets = { "FastPay": "7510074008", "FIB": "7510074008", "QiCard": "2879264048", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
     function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
     function closeModal() { document.getElementById('tgModal').style.display='none'; }
     function updateWallet() { document.getElementById('myNum').innerText = wallets[document.getElementById('from').value]; calc(); }
@@ -193,7 +193,7 @@
         if (from === "Korek") {
             if (to === "FastPay") final = amt * 0.815;
             else if (to === "FIB") final = amt * 0.80;
-            else if (to === "QiCard") final = amt * 0.850;
+            else if (to === "QiCard") final = amt * 0.805;
         } 
         // Logic for Asiacell
         else if (from === "Asiacell") {
@@ -209,7 +209,7 @@
         } 
         // Logic for Exchange (FastPay, FIB, QiCard) -> 1% Fee
         else {
-            final = amt * 0.99;
+            final = amt * 0.98;
         }
 
         document.getElementById('totalDisplay').innerText = formatNum(Math.floor(final)) + " IQD";
