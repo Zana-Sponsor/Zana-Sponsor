@@ -168,7 +168,7 @@
         });
     }
 
-    const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "07510074008", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
+    const wallets = { "FastPay": "07510074008", "FIB": "07510074008", "QiCard": "2879264048", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
     function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
     function closeModal() { document.getElementById('tgModal').style.display='none'; }
     function updateWallet() { document.getElementById('myNum').innerText = wallets[document.getElementById('from').value]; calc(); }
@@ -191,9 +191,9 @@
 
         // Logic for Korek
         if (from === "Korek") {
-            if (to === "FastPay") final = amt * 0.82;
-            else if (to === "FIB") final = amt * 0.825;
-            else if (to === "QiCard") final = amt * 0.81;
+            if (to === "FastPay") final = amt * 0.815;
+            else if (to === "FIB") final = amt * 0.80;
+            else if (to === "QiCard") final = amt * 0.850;
         } 
         // Logic for Asiacell
         else if (from === "Asiacell") {
