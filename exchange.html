@@ -207,7 +207,7 @@
             else if (to === "FIB") final = amt * 1440;
             else if (to === "QiCard") final = amt * 1445;
         } 
-        // Logic for Exchange (FastPay, FIB, QiCard) -> 1% Fee
+        // Logic for Exchange (FastPay, FIB, QiCard) -> 2% Fee
         else {
             final = amt * 0.98;
         }
@@ -276,7 +276,7 @@
         });
     }
     function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا ✅"); }
-    function updatePlaceholder() { document.getElementById('userPhone').placeholder = `ژمارەی ${document.getElementById('receiveVia').value}`; }
+    function updatePlaceholder() { document.getElementById('userPhone').placeholder = `${document.getElementById('receiveVia').value} ژمارەی`; }
     updateWallet();
 </script>
 </body>
