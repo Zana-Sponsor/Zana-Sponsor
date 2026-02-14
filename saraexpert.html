@@ -46,13 +46,12 @@ body{
 }
 
 .container{
-  width:90%;
+  width:95%;
   max-width:360px;
   text-align:center;
   padding: 20px 0;
 }
 
-/* ستایلی بەشی سەرەوە ڕێک وەک نموونەکە */
 .profile-container {
   background:var(--card);
   backdrop-filter:blur(14px);
@@ -60,6 +59,9 @@ body{
   border-radius:22px;
   border:1px solid rgba(255,255,255,.1);
   margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .profile-img{
@@ -84,34 +86,18 @@ h1{
   margin-top: 10px;
 }
 
-.links-wrapper{
-  display:flex;
-  flex-direction:column;
-  gap:15px;
-}
+.links-wrapper { display: flex; flex-direction: column; gap: 12px; }
 
-.link-card{
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:18px 22px;
-  border-radius:16px;
-  text-decoration:none;
-  color:#fff;
-  font-size:18px;
-  font-weight:700;
-  box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 8px 22px rgba(0,0,0,.35);
-  transition:transform 0.25s ease;
-  cursor: pointer;
-  border: none;
-  width: 100%;
-  font-family: inherit;
-  background: linear-gradient(135deg, #0088cc, #24A1DE);
-}
+.link-card {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 22px; border-radius: 16px; text-decoration: none;
+            color: white; font-weight: 700; font-size: 18px; 
+            animation: fastPulse 1.5s infinite ease-in-out;
+            background: linear-gradient(135deg, #0088cc, #24A1DE);
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+        }
 
-/* ستایلی بریسکە */
+/* ئەنیمەیشنی بریسکە */
 .link-card::after{
   content:"";
   position:absolute;
@@ -125,11 +111,11 @@ h1{
 }
 
 .link-card:active{ transform:scale(.97); }
-.link-card i{ font-size:28px; }
+.link-card i{ font-size:26px; }
 
-/* ستایلی ئیمۆجی */
+/* ڕێکخستنی ئیمۆجی */
 .wa-emoji {
-  margin-right: 12px;
+  margin-right: 10px;
   display: inline-block;
   font-size: 22px;
   vertical-align: middle;
@@ -161,7 +147,6 @@ h1{
   text-decoration:none;
   font-weight:900;
   font-size:13px;
-  transition: 0.3s;
 }
 
 .legal-links{
@@ -210,7 +195,6 @@ h1{
 
 <script>
   window.onload = function() {
-    // لادانی ئیمۆجی دوای 4 چرکە
     setTimeout(function() {
       const emoji = document.getElementById('target-emoji');
       if (emoji) {
