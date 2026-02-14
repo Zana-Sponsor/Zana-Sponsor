@@ -132,6 +132,20 @@ h1{
 .viber{background:linear-gradient(135deg,#7360f2,#5941a9)}
 .phone{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
 
+/* ڕێکخستنی ئیمۆجی گەورەتر */
+.wa-emoji {
+  margin-right: 20px;
+  display: inline-block;
+  font-size: 22px; /* قەبارەی گەورەتر */
+  vertical-align: middle;
+  animation: point-text 0.6s infinite alternate;
+}
+
+@keyframes point-text {
+  from { transform: translateX(0); }
+  to { transform: translateX(10px); }
+}
+
 .footer{
   margin-top:35px;
   padding-top:15px;
@@ -172,15 +186,18 @@ h1{
         <img src="https://image2url.com/r2/default/images/1769823308364-cf924f1a-3c02-4741-ae33-2719b6acaa22.jpg" 
              class="profile-img" 
              alt="Logo"
-             onerror="this.src='https://ui-avatars.com/api/?name=Z+P&background=2C67E7&color=fff&size=128'">
+             onerror="this.src='https://ui-avatars.com/api/?name=Z+S&background=2C67E7&color=fff&size=128'">
         
-        <h1>زانا سپۆنسەر - Zana Sponsor</h1>
+        <h1>Zana Sponsor - زانا سپۆنسەر</h1>
         <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</div>
   </div>
 
   <div class="links-wrapper">
     <button id="wa-btn" class="link-card whatsapp">
-      <span>واتساپ</span>
+      <div style="display: flex; align-items: center;">
+        <span>واتساپ</span>
+        <span id="target-emoji" class="wa-emoji">👉</span>
+      </div>
       <i class="fab fa-whatsapp"></i>
     </button>
 
@@ -209,14 +226,21 @@ h1{
 
 <script>
   function setupLinks() {
+    // لادانی ئیمۆجی دوای 4 چرکە
+    setTimeout(function() {
+      const emoji = document.getElementById('target-emoji');
+      if (emoji) {
+        emoji.style.display = 'none';
+      }
+    }, 4000);
+
     const urlParams = new URLSearchParams(window.location.search);
-    const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSm1DhGRT/";
+    const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSmMoUJa2/";
     
     let currentVideo = decodeURIComponent(videoUrl);
-    let message = "مرحبًا! هل يمكنني الحصول على مزيد من المعلومات حول هذا؟\n" + currentVideo;
-    let phoneNumber = "9647758887488";
+    let message = "سڵاو! ئایا دەتوانم زانیاری زیاترم دەست بکەوێت دەربارەی ئەمە؟\n" + currentVideo;
+    let phoneNumber = "+9647758887488";
 
-    // کلیکی واتساپ
     document.getElementById('wa-btn').onclick = function() {
       trackTikTokConversion('WhatsApp');
       setTimeout(function() {
@@ -224,7 +248,6 @@ h1{
       }, 500);
     };
 
-    // کلیکی ڤایبەر - گۆڕدرا بۆ چاتی ڕاستەوخۆ
     document.getElementById('viber-btn').onclick = function() {
       trackTikTokConversion('Viber');
       setTimeout(function() {
@@ -232,7 +255,6 @@ h1{
       }, 500);
     };
 
-    // کلیکی تەلەفۆن
     document.getElementById('phone-btn').onclick = function() {
       trackTikTokConversion('Phone');
       setTimeout(function() {
