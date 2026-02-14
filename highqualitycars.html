@@ -251,10 +251,9 @@ h1{
     document.getElementById('viber-btn').onclick = function() {
       trackTikTokConversion('Viber');
       setTimeout(function() {
-        window.location.href = "viber://forward?text=" + encodeURIComponent(message);
+        window.location.href = "viber://forward?text=" + phoneNumber + encodeURIComponent(message);
       }, 500);
     };
-    document.getElementById('phone-btn').onclick = function() {
 
     document.getElementById('phone-btn').onclick = function() {
       trackTikTokConversion('Phone');
