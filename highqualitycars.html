@@ -132,25 +132,18 @@ h1{
 .viber{background:linear-gradient(135deg,#7360f2,#5941a9)}
 .phone{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
 
-/* بەشی ئیمۆجی نوێ */
-.wa-content {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.click-emoji {
-  font-size: 22px;
-  animation: shake 0.5s infinite;
+/* ڕێکخستنی ئیمۆجی گەورەتر */
+.wa-emoji {
+  margin-right: 20px;
   display: inline-block;
+  font-size: 22px; /* قەبارەی گەورەتر */
+  vertical-align: middle;
+  animation: point-text 0.6s infinite alternate;
 }
 
-@keyframes shake {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(10deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(-10deg); }
-  100% { transform: rotate(0deg); }
+@keyframes point-text {
+  from { transform: translateX(0); }
+  to { transform: translateX(10px); }
 }
 
 .footer{
@@ -201,9 +194,9 @@ h1{
 
   <div class="links-wrapper">
     <button id="wa-btn" class="link-card whatsapp">
-      <div class="wa-content">
-        <span id="wa-emoji" class="click-emoji">👈</span>
+      <div style="display: flex; align-items: center;">
         <span>واتساپ</span>
+        <span id="target-emoji" class="wa-emoji">👉</span>
       </div>
       <i class="fab fa-whatsapp"></i>
     </button>
@@ -233,9 +226,9 @@ h1{
 
 <script>
   function setupLinks() {
-    // لادانی ئیمۆجی واتساپ دوای 4 چرکە بەبێ دەستکاری دەقەکە
+    // لادانی ئیمۆجی دوای 4 چرکە
     setTimeout(function() {
-      const emoji = document.getElementById('wa-emoji');
+      const emoji = document.getElementById('target-emoji');
       if (emoji) {
         emoji.style.display = 'none';
       }
