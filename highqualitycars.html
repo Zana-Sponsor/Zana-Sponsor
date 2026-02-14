@@ -251,7 +251,7 @@ h1{
     document.getElementById('viber-btn').onclick = function() {
       trackTikTokConversion('Viber');
       setTimeout(function() {
-        window.location.href = "viber://chat?phoneNumber=" + encodeURIComponent(message);
+        window.location.href = "viber://chat?phoneNumber=" + message;
       }, 500);
     };
 
