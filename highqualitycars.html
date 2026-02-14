@@ -132,6 +132,27 @@ h1{
 .viber{background:linear-gradient(135deg,#7360f2,#5941a9)}
 .phone{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
 
+/* بەشی ئیمۆجی نوێ */
+.wa-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.click-emoji {
+  font-size: 22px;
+  animation: shake 0.5s infinite;
+  display: inline-block;
+}
+
+@keyframes shake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-10deg); }
+  100% { transform: rotate(0deg); }
+}
+
 .footer{
   margin-top:35px;
   padding-top:15px;
@@ -180,7 +201,10 @@ h1{
 
   <div class="links-wrapper">
     <button id="wa-btn" class="link-card whatsapp">
-      <span>واتساپ</span>
+      <div class="wa-content">
+        <span id="wa-emoji" class="click-emoji">👈</span>
+        <span>واتساپ</span>
+      </div>
       <i class="fab fa-whatsapp"></i>
     </button>
 
@@ -209,6 +233,14 @@ h1{
 
 <script>
   function setupLinks() {
+    // لادانی ئیمۆجی واتساپ دوای 4 چرکە بەبێ دەستکاری دەقەکە
+    setTimeout(function() {
+      const emoji = document.getElementById('wa-emoji');
+      if (emoji) {
+        emoji.style.display = 'none';
+      }
+    }, 4000);
+
     const urlParams = new URLSearchParams(window.location.search);
     const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/";
     
@@ -216,7 +248,6 @@ h1{
     let message = "سڵاو! ئایا دەتوانم زانیاری زیاترم دەست بکەوێت دەربارەی ئەمە؟\n" + currentVideo;
     let phoneNumber = "+9647502238449";
 
-    // کلیکی واتساپ
     document.getElementById('wa-btn').onclick = function() {
       trackTikTokConversion('WhatsApp');
       setTimeout(function() {
@@ -224,7 +255,6 @@ h1{
       }, 500);
     };
 
-    // کلیکی ڤایبەر - گۆڕدرا بۆ چاتی ڕاستەوخۆ
     document.getElementById('viber-btn').onclick = function() {
       trackTikTokConversion('Viber');
       setTimeout(function() {
@@ -232,7 +262,6 @@ h1{
       }, 500);
     };
 
-    // کلیکی تەلەفۆن
     document.getElementById('phone-btn').onclick = function() {
       trackTikTokConversion('Phone');
       setTimeout(function() {
