@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>ZANA EXCHANGE | Pro System</title>
+    <title>ZANA EXCHANGE | ئاڵوگۆڕی دراو</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -143,6 +143,14 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); const db = firebase.database();
 
+    // نرخە بنەڕەتییەکان (Default) ئەگەر لە فایەربەیس دانەخرابوون
+    let exchangeRates = {
+        korek_fastpay: 0.81, korek_fib: 0.80, korek_qicard: 0.805,
+        asia_fastpay: 0.82, asia_fib: 0.81, asia_qicard: 0.815,
+        usdt_fastpay: 1450, usdt_fib: 1440, usdt_qicard: 1445,
+        default_fee: 0.98
+    };
+
     function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
     function logout() { auth.signOut().then(() => location.reload()); }
 
@@ -154,6 +162,7 @@
             document.getElementById('userImg').src = user.photoURL; 
             loadHistory(user.email); 
             listenToNews();
+            listenToRates(); // گوێگرتن لە نرخەکان لێرە دەستپێدەکات
             setTimeout(() => { document.getElementById('tgModal').style.display='flex'; }, 1000);
         } 
     });
@@ -165,6 +174,17 @@
                 document.getElementById('newsText').innerText = data.text;
                 document.getElementById('newsBanner').style.display = 'block';
             } else { document.getElementById('newsBanner').style.display = 'none'; }
+        });
+    }
+
+    // فەنکشن بۆ هێنانی نرخەکان لە Firebase
+    function listenToRates() {
+        db.ref('rates').on('value', (snap) => {
+            const data = snap.val();
+            if (data) {
+                exchangeRates = { ...exchangeRates, ...data };
+                calc(); // هەرکات نرخ گۆڕا، حیسابەکە نوێ دەبێتەوە
+            }
         });
     }
 
@@ -189,39 +209,32 @@
 
         let final = 0;
 
-        // Logic for Korek
+        // بەکارهێنانی نرخە گۆڕاوەکان
         if (from === "Korek") {
-            if (to === "FastPay") final = amt * 0.81;
-            else if (to === "FIB") final = amt * 0.80;
-            else if (to === "QiCard") final = amt * 0.805;
+            if (to === "FastPay") final = amt * exchangeRates.korek_fastpay;
+            else if (to === "FIB") final = amt * exchangeRates.korek_fib;
+            else if (to === "QiCard") final = amt * exchangeRates.korek_qicard;
         } 
-        // Logic for Asiacell
         else if (from === "Asiacell") {
-            if (to === "FastPay") final = amt * 0.82;
-            else if (to === "FIB") final = amt * 0.81;
-            else if (to === "QiCard") final = amt * 0.815;
+            if (to === "FastPay") final = amt * exchangeRates.asia_fastpay;
+            else if (to === "FIB") final = amt * exchangeRates.asia_fib;
+            else if (to === "QiCard") final = amt * exchangeRates.asia_qicard;
         } 
-        // Logic for USDT
         else if (from === "USDT") {
-            if (to === "FastPay") final = amt * 1450;
-            else if (to === "FIB") final = amt * 1440;
-            else if (to === "QiCard") final = amt * 1445;
+            if (to === "FastPay") final = amt * exchangeRates.usdt_fastpay;
+            else if (to === "FIB") final = amt * exchangeRates.usdt_fib;
+            else if (to === "QiCard") final = amt * exchangeRates.usdt_qicard;
         } 
-        // Logic for Exchange (FastPay, FIB, QiCard) -> 2% Fee
         else {
-            final = amt * 0.98;
+            // گۆڕینەوەی ئاسایی (FastPay, FIB, QiCard)
+            final = amt * exchangeRates.default_fee;
         }
 
         document.getElementById('totalDisplay').innerText = formatNum(Math.floor(final)) + " IQD";
         
-        // Fee display logic
         if (amt > 0) {
             let fee = (from === "USDT") ? 0 : (amt - final);
-            if (fee > 0) {
-                document.getElementById('feeDisplay').innerText = "بڕی حمولە: " + formatNum(Math.floor(fee)) + " IQD";
-            } else {
-                document.getElementById('feeDisplay').innerText = "";
-            }
+            document.getElementById('feeDisplay').innerText = fee > 0 ? "بڕی حمولە: " + formatNum(Math.floor(fee)) + " IQD" : "";
         } else {
             document.getElementById('feeDisplay').innerText = "";
         }
