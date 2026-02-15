@@ -2,172 +2,120 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>ZANA ADMIN | وەڵامدانەوەی چات و بەڕێوەبردن</title>
+    <title>ZANA ADMIN PRO | وەشانی کۆتایی</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
-        :root { --primary: #00d2ff; --bg: #0a0a0c; --card: #16161a; --border: #2d2d35; --text: #ffffff; }
+        :root { --p: #00d2ff; --bg: #050505; --c: #121212; --b: #222; --t: #fff; }
+        body { font-family: 'Vazirmatn'; background: var(--bg); color: var(--t); margin: 0; padding: 20px; }
+        .dashboard { display: grid; grid-template-columns: 300px 1fr 300px; gap: 20px; height: 90vh; }
+        .box { background: var(--c); border: 1px solid var(--b); border-radius: 15px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; }
+        .btn { padding: 8px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin: 2px; font-family: 'Vazirmatn'; }
+        .btn-ok { background: #2ecc71; color: #fff; }
+        .btn-no { background: #e74c3c; color: #fff; }
+        .btn-del { background: #555; color: #fff; }
         
-        body { font-family: 'Vazirmatn', Tahoma; background: var(--bg); color: var(--text); margin: 0; padding: 20px; direction: rtl; }
-        .grid-container { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
-        .box { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 20px; }
+        /* چات */
+        .chat-area { flex: 1; background: #000; border-radius: 10px; margin: 10px 0; padding: 10px; display: flex; flex-direction: column; }
+        .m { padding: 8px; border-radius: 8px; margin-bottom: 5px; font-size: 13px; max-width: 85%; }
+        .m.in { background: #222; align-self: flex-start; }
+        .m.out { background: var(--p); color: #000; align-self: flex-end; }
         
-        /* 💬 Admin Chat Style */
-        .chat-list-item { padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
-        .chat-list-item:hover { background: #1f1f24; }
-        .chat-active { border-right: 4px solid var(--primary); background: #1f1f24; }
-        
-        .chat-view { height: 400px; display: flex; flex-direction: column; background: #0d1117; border-radius: 12px; overflow: hidden; }
-        #adminChatBody { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .admin-msg { padding: 8px 12px; border-radius: 10px; max-width: 80%; font-size: 13px; }
-        .admin-msg.from-user { align-self: flex-start; background: #21262d; }
-        .admin-msg.from-admin { align-self: flex-end; background: var(--primary); color: #000; }
-
-        .btn-send { background: var(--primary); border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        input { width: 100%; padding: 12px; background: #1f1f24; border: 1px solid var(--border); color: white; border-radius: 8px; box-sizing: border-box; }
+        input { background: #1a1a1a; border: 1px solid var(--b); color: #fff; padding: 10px; border-radius: 8px; margin-top: 5px; }
+        .user-row { padding: 10px; border-bottom: 1px solid #222; cursor: pointer; font-size: 13px; }
+        .user-row:hover { background: #1a1a1a; }
+        .active-user { border-right: 4px solid var(--p); background: #1a1a1a; }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom: 20px;"><i class="fas fa-user-shield"></i> بەڕێوەبردنی زانا</h2>
-
-    <div class="grid-container">
-        
-        <div>
-            <div class="box">
-                <h3 id="chatTitle">💬 چاتی کڕیارەکان</h3>
-                <div class="grid-container" style="grid-template-columns: 250px 1fr; height: 450px;">
-                    <div id="userChatList" style="border-left: 1px solid var(--border); overflow-y: auto;">
-                        </div>
-                    <div class="chat-view">
-                        <div id="adminChatBody">تکایە کڕیارێک هەڵبژێرە بۆ دەستپێکردنی چات</div>
-                        <div style="padding: 10px; display: flex; gap: 5px; background: var(--card);">
-                            <input type="text" id="adminChatInput" placeholder="وەڵام بنووسە...">
-                            <button class="btn-send" onclick="adminSendMsg()"><i class="fas fa-paper-plane"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="box">
-                <h3>📥 داواکارییە نوێیەکان</h3>
-                <div id="ordersList"></div>
-            </div>
-        </div>
-
-        <div>
-            <div class="box">
-                <h3>👥 بەکارهێنەران</h3>
-                <div id="usersList" style="max-height: 500px; overflow-y: auto;"></div>
-            </div>
-            
-            <div class="box">
-                <h3>⚙️ ڕێکخستنی ئەپ</h3>
-                <button onclick="setLock(true)" style="background:red; color:white; width:100%; padding:10px; margin-bottom:5px; border-radius:8px; border:none;">Lock App</button>
-                <button onclick="setLock(false)" style="background:green; color:white; width:100%; padding:10px; border-radius:8px; border:none;">Unlock App</button>
-            </div>
-        </div>
-
+<div class="dashboard">
+    <div class="box">
+        <h3>👥 بەکارهێنەران</h3>
+        <div id="userList"></div>
     </div>
 
-    <script>
-        const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+    <div class="box">
+        <h3 id="chatWith">💬 چاتی ڕاستەوخۆ</h3>
+        <div class="chat-area" id="adminChatBody">کڕیارێک هەڵبژێرە...</div>
+        <div style="display:flex; gap:5px;">
+            <input type="text" id="adminMsgInp" style="flex:1" placeholder="وەڵام بنووسە...">
+            <button class="btn btn-ok" onclick="sendAdminMsg()">ناردن</button>
+        </div>
+        <hr style="width:100%; border:0; border-top:1px solid #333; margin:20px 0;">
+        <h3>📥 داواکارییەکان</h3>
+        <div id="orderList"></div>
+    </div>
 
-        let currentSelectedUser = null;
+    <div class="box">
+        <h3>⚙️ کۆنتڕۆڵ</h3>
+        <p>ئاگاداری Marquee:</p>
+        <input type="text" id="marqueeTxt">
+        <button class="btn btn-ok" onclick="setUpdate('alertMsg', {show:true, text:document.getElementById('marqueeTxt').value})">بڵاوکردنەوە</button>
+        <button class="btn btn-del" onclick="setUpdate('alertMsg', {show:false})">لابردن</button>
+        
+        <p>قوفڵکردنی ئەپ:</p>
+        <button class="btn btn-no" style="width:100%" onclick="setUpdate('appStatus', {locked:true})">🔴 Lock App</button>
+        <button class="btn btn-ok" style="width:100%" onclick="setUpdate('appStatus', {locked:false})">🟢 Unlock App</button>
+    </div>
+</div>
 
-        // --- 1. لیستی بەکارهێنەران بۆ چات ---
-        db.ref('chats').on('value', snap => {
-            let html = "";
-            snap.forEach(userChat => {
-                const uid = userChat.key;
-                const msgs = Object.values(userChat.val());
-                const lastMsg = msgs[msgs.length - 1];
-                html += `
-                <div class="chat-list-item ${currentSelectedUser === uid ? 'chat-active' : ''}" onclick="selectUserChat('${uid}', '${lastMsg.name}')">
-                    <div style="flex:1">
-                        <div style="font-size:13px; font-weight:bold;">${lastMsg.name}</div>
-                        <div style="font-size:11px; opacity:0.6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:180px;">${lastMsg.text}</div>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('userChatList').innerHTML = html;
+<script>
+    const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let selectedUID = null;
+
+    // بارکردنی بەکارهێنەران
+    db.ref('users').on('value', snap => {
+        let h = "";
+        snap.forEach(u => {
+            const d = u.val();
+            h += `<div class="user-row ${selectedUID==u.key?'active-user':''}" onclick="selUser('${u.key}','${d.name}')">
+                <b>${d.name || 'بێ ناو'}</b><br><small>${d.email}</small>
+                <br><button class="btn" style="font-size:10px; background:${d.isBlocked?'#2ecc71':'#e74c3c'}" onclick="toggleBlock('${u.key}',${d.isBlocked})">${d.isBlocked?'Unblock':'Block'}</button>
+            </div>`;
         });
+        document.getElementById('userList').innerHTML = h;
+    });
 
-        // --- 2. هەڵبژاردنی کڕیار بۆ چات ---
-        function selectUserChat(uid, name) {
-            currentSelectedUser = uid;
-            document.getElementById('chatTitle').innerText = "💬 چات لەگەڵ: " + name;
-            loadAdminMsgs(uid);
-        }
-
-        function loadAdminMsgs(uid) {
-            db.ref('chats/' + uid).on('value', snap => {
-                let html = "";
-                snap.forEach(c => {
-                    const m = c.val();
-                    const type = m.sender === "admin" ? 'from-admin' : 'from-user';
-                    html += `<div class="admin-msg ${type}">${m.text}</div>`;
-                });
-                const body = document.getElementById('adminChatBody');
-                body.innerHTML = html;
-                body.scrollTop = body.scrollHeight;
+    function selUser(id, name) {
+        selectedUID = id; document.getElementById('chatWith').innerText = "چات: " + name;
+        db.ref('chats/'+id).on('value', s => {
+            let h = ""; s.forEach(m => {
+                const md = m.val();
+                h += `<div class="m ${md.sender=='admin'?'out':'in'}">${md.text}</div>`;
             });
-        }
-
-        // --- 3. ناردنی نامە لەلایەن ئادمین ---
-        function adminSendMsg() {
-            const txt = document.getElementById('adminChatInput').value;
-            if(!txt || !currentSelectedUser) return;
-            db.ref('chats/' + currentSelectedUser).push({
-                sender: "admin",
-                name: "Admin",
-                text: txt,
-                time: Date.now()
-            });
-            document.getElementById('adminChatInput').value = '';
-        }
-
-        // --- 4. لیستی بەکارهێنەرانی گشتی (بۆ بلۆککردن) ---
-        db.ref('users').on('value', snap => {
-            let html = "";
-            snap.forEach(c => {
-                const u = c.val();
-                html += `
-                <div style="display:flex; align-items:center; justify-content:space-between; padding:10px; border-bottom:1px solid #222;">
-                    <div style="font-size:12px;">${u.name}<br><small style="color:#666">${u.email}</small></div>
-                    <button onclick="toggleBlock('${c.key}', ${u.isBlocked || false})" style="background:${u.isBlocked ? 'green' : 'red'}; color:white; border:none; padding:5px; border-radius:5px; font-size:10px;">
-                        ${u.isBlocked ? 'Unblock' : 'Block'}
-                    </button>
-                </div>`;
-            });
-            document.getElementById('usersList').innerHTML = html;
+            const b = document.getElementById('adminChatBody'); b.innerHTML = h; b.scrollTop = b.scrollHeight;
         });
+    }
 
-        function toggleBlock(uid, st) { db.ref('users/' + uid).update({ isBlocked: !st }); }
-        function setLock(st) { db.ref('appStatus').set({ locked: st, message: "ئەپەکە بە شێوەیەکی کاتی ڕاگیراوە" }); }
+    function sendAdminMsg() {
+        const t = document.getElementById('adminMsgInp').value;
+        if(!t || !selectedUID) return;
+        db.ref('chats/'+selectedUID).push({sender:'admin', text:t, time:Date.now()});
+        document.getElementById('adminMsgInp').value = "";
+    }
 
-        // --- 5. لیستی داواکارییەکان ---
-        db.ref('orders').on('value', snap => {
-            let html = "";
-            snap.forEach(c => {
-                const o = c.val();
-                html += `
-                <div class="box" style="background:#1a1a1e; border-color:#333;">
-                    <b>ID: ${c.key} - ${o.uName}</b><br>
-                    <small>${o.from} ➔ ${o.to} | بڕ: ${o.total}</small><br>
-                    <button onclick="updateOrder('${c.key}', 'وەرگیرا')" style="background:green; color:white; border:none; padding:5px 10px; border-radius:5px; margin-top:10px;">قبوڵکردن</button>
-                    <button onclick="updateOrder('${c.key}', 'ڕەتکرایەوە')" style="background:red; color:white; border:none; padding:5px 10px; border-radius:5px; margin-top:10px;">ڕەتکردنەوە</button>
-                </div>`;
-            });
-            document.getElementById('ordersList').innerHTML = html;
+    // داواکارییەکان
+    db.ref('orders').on('value', snap => {
+        let h = "";
+        snap.forEach(o => {
+            const d = o.val();
+            h += `<div style="background:#1a1a1a; padding:10px; border-radius:10px; margin-bottom:5px; border-right:4px solid ${d.status=='چاوەڕوانە'?'orange':'#2ecc71'}">
+                <small>${d.time}</small><br><b>${d.uName}</b>: ${d.total}<br>
+                <button class="btn btn-ok" onclick="db.ref('orders/${o.key}').update({status:'وەرگیرا'})">قبوڵ</button>
+                <button class="btn btn-no" onclick="db.ref('orders/${o.key}').update({status:'ڕەتکرایەوە'})">ڕەت</button>
+                <button class="btn btn-del" onclick="db.ref('orders/${o.key}').remove()">سڕینەوە</button>
+            </div>`;
         });
+        document.getElementById('orderList').innerHTML = h;
+    });
 
-        function updateOrder(id, s) { db.ref('orders/' + id).update({ status: s }); }
-
-    </script>
+    function setUpdate(path, val) { db.ref(path).set(val); alert("ئەنجامدرا"); }
+    function toggleBlock(uid, st) { db.ref('users/'+uid).update({isBlocked: !st}); }
+</script>
 </body>
 </html>
