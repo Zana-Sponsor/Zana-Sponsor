@@ -1,54 +1,33 @@
 <!DOCTYPE html>
 <html lang="ku" dir="rtl">
 <head>
-    <title>ADMIN PANEL</title>
+    <title>ZANA ADMIN</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         body { font-family: Tahoma; background: #0a0a0c; color: white; padding: 20px; direction: rtl; }
         .box { background: #16161a; padding: 20px; border-radius: 15px; border: 1px solid #2d2d35; margin-bottom: 20px; }
-        input { padding: 10px; background: #1f1f24; border: 1px solid #2d2d35; color: white; border-radius: 8px; margin: 5px; }
-        button { padding: 10px 20px; background: #00d2ff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        label { font-size: 13px; color: #aaa; display: inline-block; width: 120px; }
+        input, textarea { width: 90%; padding: 12px; background: #1f1f24; border: 1px solid #2d2d35; color: white; border-radius: 8px; margin-bottom: 10px; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin: 5px; }
+        .btn-blue { background: #00d2ff; color: #000; }
+        .btn-red { background: #ff4d4d; color: #fff; }
     </style>
 </head>
 <body>
-    <h2>بەڕێوەبردنی ZANA EXCHANGE</h2>
+    <h2>کۆنتڕۆڵ پانێڵی زانا</h2>
 
     <div class="box">
-        <h3>ئاگاداری جوڵاو</h3>
-        <input type="text" id="alertTxt" style="width: 70%;" placeholder="نامەکە بنووسە...">
-        <button onclick="saveAlert(true)">بڵاوکردنەوە</button>
-        <button onclick="saveAlert(false)" style="background: red;">لابردن</button>
+        <h3>ئاگاداری سەرەوە (Marquee)</h3>
+        <input type="text" id="alertTxt" placeholder="دەقی ئاگاداری...">
+        <button class="btn-blue" onclick="setAlert(true)">بڵاوکردنەوە</button>
+        <button class="btn-red" onclick="setAlert(false)">لابردن</button>
     </div>
 
     <div class="box">
-        <h3>ڕێکخستنی حمولەکان</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr;">
-            <div>
-                <h4>کۆڕەک (Korek)</h4>
-                <label>بۆ FastPay:</label> <input type="number" id="kf" step="0.01"><br>
-                <label>بۆ FIB:</label> <input type="number" id="ki" step="0.01"><br>
-                <label>بۆ QiCard:</label> <input type="number" id="kq" step="0.01">
-            </div>
-            <div>
-                <h4>ئاسیا (Asia)</h4>
-                <label>بۆ FastPay:</label> <input type="number" id="af" step="0.01"><br>
-                <label>بۆ FIB:</label> <input type="number" id="ai" step="0.01"><br>
-                <label>بۆ QiCard:</label> <input type="number" id="aq" step="0.01">
-            </div>
-            <div>
-                <h4>دۆلار (USDT)</h4>
-                <label>بۆ FastPay:</label> <input type="number" id="uf"><br>
-                <label>بۆ FIB:</label> <input type="number" id="ui"><br>
-                <label>بۆ QiCard:</label> <input type="number" id="uq">
-            </div>
-            <div>
-                <h4>حمولەی گشتی</h4>
-                <label>FastPay/FIB:</label> <input type="number" id="df" step="0.01">
-            </div>
-        </div>
-        <br><button onclick="saveRates()">نوێکردنەوەی هەموو نرخەکان</button>
+        <h3>ڕاگرتن و قوفڵکردنی ئەپ</h3>
+        <textarea id="lockMsg" placeholder="نامەیەک بنووسە بۆ کاتێک ئەپەکە قوفڵە..."></textarea><br>
+        <button class="btn-red" onclick="setLock(true)">🔴 ڕاگرتنی ئەپ (Lock)</button>
+        <button class="btn-blue" onclick="setLock(false)">🟢 کردنەوەی ئەپ (Unlock)</button>
     </div>
 
     <script>
@@ -56,26 +35,15 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        function saveAlert(st) {
+        function setAlert(st) {
             db.ref('alertMsg').set({ text: document.getElementById('alertTxt').value, show: st, timestamp: Date.now() });
+            alert("ئەنجامدرا!");
         }
 
-        function saveRates() {
-            db.ref('rates').set({
-                k_f: parseFloat(document.getElementById('kf').value), k_i: parseFloat(document.getElementById('ki').value), k_q: parseFloat(document.getElementById('kq').value),
-                a_f: parseFloat(document.getElementById('af').value), a_i: parseFloat(document.getElementById('ai').value), a_q: parseFloat(document.getElementById('aq').value),
-                u_f: parseFloat(document.getElementById('uf').value), u_i: parseFloat(document.getElementById('ui').value), u_q: parseFloat(document.getElementById('uq').value),
-                default_fee: parseFloat(document.getElementById('df').value)
-            }).then(() => alert("هەموو نرخەکان گۆڕدران ✅"));
+        function setLock(st) {
+            db.ref('appStatus').set({ locked: st, message: document.getElementById('lockMsg').value });
+            alert(st ? "ئەپەکە ڕاگیرا!" : "ئەپەکە کرایەوە!");
         }
-
-        db.ref('rates').once('value', s => {
-            const d = s.val(); if(!d) return;
-            document.getElementById('kf').value = d.k_f; document.getElementById('ki').value = d.k_i; document.getElementById('kq').value = d.k_q;
-            document.getElementById('af').value = d.a_f; document.getElementById('ai').value = d.a_i; document.getElementById('aq').value = d.a_q;
-            document.getElementById('uf').value = d.u_f; document.getElementById('ui').value = d.u_i; document.getElementById('uq').value = d.u_q;
-            document.getElementById('df').value = d.default_fee;
-        });
     </script>
 </body>
 </html>
