@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>ZANA EXCHANGE | Pro</title>
+    <title>ZANA EXCHANGE | پڕۆفیشناڵ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -11,82 +11,107 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap');
-        :root { --accent: #00d2ff; --bg: #0b0d11; --card-bg: #161a21; --text: #ffffff; --input-bg: #1f242d; --border: #2d343f; --danger: #ff4757; --success: #2ed573; }
+        
+        :root { 
+            --accent: #00d2ff; 
+            --bg: #0a0b10; 
+            --card-bg: #161b22; 
+            --text: #ffffff; 
+            --input-bg: #1f242d; 
+            --border: #2d343f; 
+            --danger: #ff4757; 
+            --success: #2ed573;
+            --warning: #ffa502;
+        }
         
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .app-wrapper { width: 100%; max-width: 400px; display: none; }
 
-        /* 💎 Modern Buttons */
+        /* ✨ Buttons Styling */
         .btn-global { 
-            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: white; width: 100%; padding: 18px; border: none; 
-            border-radius: 20px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; 
-            gap: 12px; font-size: 16px; transition: 0.3s; box-shadow: 0 8px 20px rgba(0, 210, 255, 0.2);
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); 
+            color: white; width: 100%; padding: 18px; border: none; border-radius: 20px; 
+            font-weight: 800; cursor: pointer; display: flex; align-items: center; 
+            justify-content: center; gap: 12px; font-size: 16px; transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.15);
         }
-        .btn-global:active { transform: scale(0.97); }
+        .btn-global:active { transform: scale(0.96); }
         .btn-disabled { background: #333 !important; color: #666 !important; box-shadow: none !important; cursor: not-allowed; }
 
-        /* 📝 Inputs & History Card */
+        /* 📱 Inputs */
         input, select { 
-            width: 100%; background: var(--input-bg); border: 2px solid var(--border); border-radius: 15px; 
-            padding: 15px; color: var(--text); font-family: 'Vazirmatn'; margin-bottom: 15px; box-sizing: border-box; 
-            text-align: center; font-size: 15px; outline: none; transition: 0.3s;
+            width: 100%; background: var(--input-bg); border: 2px solid var(--border); 
+            border-radius: 18px; padding: 16px; color: var(--text); font-family: 'Vazirmatn'; 
+            margin-bottom: 15px; box-sizing: border-box; text-align: center; font-size: 15px; outline: none;
         }
         input:focus { border-color: var(--accent); }
 
-        .premium-card { background: var(--card-bg); border-radius: 25px; padding: 22px; border: 1px solid rgba(255,255,255,0.05); }
+        .premium-card { background: var(--card-bg); border-radius: 30px; padding: 25px; border: 1px solid rgba(255,255,255,0.05); width: 100%; max-width: 400px; box-sizing: border-box; }
 
-        /* 📜 Detailed History Card */
+        /* 📜 Modern History Card */
         .order-card { 
-            background: #1c222b; border-radius: 20px; padding: 15px; margin-bottom: 15px; 
-            border: 1px solid var(--border); position: relative; overflow: hidden;
+            background: linear-gradient(145deg, #1c222b, #161b22); border-radius: 24px; padding: 20px; 
+            margin-bottom: 20px; border: 1px solid var(--border); position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        .order-card::before { content: ""; position: absolute; right: 0; top: 0; height: 100%; width: 5px; background: var(--accent); }
-        .history-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; border-top: 1px solid #2d343f; padding-top: 10px; }
-        .h-item { font-size: 12px; }
-        .h-label { color: #888; display: block; font-size: 10px; }
-        .h-val { font-weight: bold; color: #eee; }
+        .order-card::after {
+            content: ''; position: absolute; top: 0; right: 0; width: 6px; height: 100%;
+            background: var(--accent); border-radius: 0 24px 24px 0;
+        }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .history-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .h-item { display: flex; flex-direction: column; gap: 4px; }
+        .h-label { font-size: 11px; color: #718096; font-weight: 500; }
+        .h-val { font-size: 13px; font-weight: 800; color: #e2e8f0; }
+        
+        .status-badge { font-size: 11px; padding: 5px 12px; border-radius: 12px; font-weight: 800; background: rgba(255,165,2,0.1); color: var(--warning); border: 1px solid var(--warning); }
+        .status-success { background: rgba(46,213,115,0.1); color: var(--success); border: 1px solid var(--success); }
 
-        .status-badge { font-size: 11px; padding: 4px 12px; border-radius: 10px; font-weight: 800; border: 1px solid #ffc107; color: #ffc107; }
-        .status-success { border-color: var(--success); color: var(--success); }
+        .header-section { text-align: center; width: 100%; position: relative; margin-bottom: 25px; }
+        .user-img { width: 80px; height: 80px; border-radius: 25px; border: 3px solid var(--accent); padding: 3px; object-fit: cover; }
+        .logout { position: absolute; left: 0; top: 15px; color: var(--danger); background: rgba(255,71,87,0.15); width: 45px; height: 45px; border-radius: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        .header-section { text-align: center; width: 100%; position: relative; margin-bottom: 20px; }
-        .user-img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--accent); }
-        .logout { position: absolute; left: 0; top: 10px; color: var(--danger); background: rgba(255,71,87,0.1); padding: 10px; border-radius: 12px; cursor: pointer; }
+        marquee { background: rgba(255,71,87,0.05); padding: 8px; border-radius: 10px; color: var(--danger); font-weight: bold; margin-bottom: 15px; width: 100%; }
     </style>
 </head>
 <body>
 
-<div id="loginSection" style="height:100vh; display:flex; align-items:center; justify-content:center;">
-    <div style="text-align:center; background:var(--card-bg); padding:40px; border-radius:30px; border:1px solid var(--border);">
-        <i class="fas fa-wallet" style="font-size:50px; color:var(--accent); margin-bottom:20px;"></i>
-        <h2>ZANA EXCHANGE</h2>
+<div id="loginSection" style="height:100vh; display:flex; align-items:center; justify-content:center; width: 100%;">
+    <div style="text-align:center; padding:40px; background:var(--card-bg); border-radius:35px; border:1px solid var(--border); width: 85%; max-width: 350px;">
+        <i class="fas fa-shuffle" style="font-size:60px; color:var(--accent); margin-bottom:20px;"></i>
+        <h2 style="margin:0">ZANA EXCHANGE</h2>
+        <p style="opacity:0.5; font-size:13px; margin-bottom:30px;">ئاڵوگۆڕی دراو بە نرخێکی گونجاو</p>
         <button class="btn-global" onclick="signIn()"><i class="fab fa-google"></i> چوونەژوورەوە</button>
     </div>
 </div>
 
-<div class="app-wrapper" id="mainApp">
+<div class="app-wrapper" id="mainApp" style="width: 100%; max-width: 400px; display: none;">
+    <marquee id="newsBanner" style="display:none;"></marquee>
+
     <div class="header-section">
         <div class="logout" onclick="logout()"><i class="fas fa-power-off"></i></div>
         <img id="userImg" class="user-img" src="">
-        <h3 id="userName">...</h3>
+        <h3 id="userName" style="margin:10px 0;">...</h3>
     </div>
 
     <div class="premium-card">
-        <div style="background:var(--input-bg); padding:15px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:20px; border: 1px solid var(--border);">
-            <span><i class="fas fa-university" style="color:var(--accent)"></i> <small>بۆ:</small> <b id="myNum">---</b></span>
-            <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer; color:var(--accent);"></i>
+        <div style="background:var(--input-bg); padding:18px; border-radius:20px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border: 1px solid var(--border);">
+            <div>
+                <small style="display:block; font-size:10px; opacity:0.6;">ژمارەی وەرگرتن (ئێمە):</small>
+                <b id="myNum" style="color:var(--accent); font-size:16px;">---</b>
+            </div>
+            <i class="far fa-copy" onclick="copyNum()" style="background:var(--accent); color:#000; padding:10px; border-radius:12px; cursor:pointer;"></i>
         </div>
 
         <select id="from" onchange="updateWallet(); calc();">
             <option value="FastPay">💳 FastPay</option>
             <option value="FIB">🏦 FIB Bank</option>
             <option value="QiCard">💳 Qi Card</option>
-            <option value="Asiacell">🔴 Asiacell Balance</option>
-            <option value="Korek">🟡 Korek Balance</option>
+            <option value="Asiacell">🔴 Asiacell (١٠٠ بوو بە ٨٢)</option>
+            <option value="Korek">🟡 Korek (١٠٠ بوو بە ٨٠)</option>
             <option value="USDT">🪙 USDT (TRC20)</option>
         </select>
         
-        <input type="number" id="amt" placeholder="بڕی پارەی نێردراو" oninput="calc()">
+        <input type="number" id="amt" placeholder="بڕی ناردن لێرە بنووسە" oninput="calc()">
         
         <select id="receiveVia" onchange="calc();">
             <option value="FastPay">وەرگرتن لە FastPay</option>
@@ -94,18 +119,21 @@
             <option value="QiCard">وەرگرتن لە Qi Card</option>
         </select>
 
-        <div style="background: rgba(0, 210, 255, 0.05); padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 20px; border: 1px dashed var(--accent);">
-            <div id="totalDisplay" style="font-size:30px; font-weight:900; color: var(--accent);">0 IQD</div>
-            <small id="feeInfo" style="opacity: 0.6;"></small>
+        <div style="background: linear-gradient(145deg, #1f242d, #161b22); padding: 25px; border-radius: 25px; text-align: center; margin-bottom: 20px; border: 1px solid var(--border);">
+            <small style="opacity: 0.5;">کۆی گشتی وەرگرتن</small>
+            <div id="totalDisplay" style="font-size:32px; font-weight:900; color: var(--accent); margin: 5px 0;">0 IQD</div>
+            <div id="feeInfo" style="font-size: 11px; color: var(--success); font-weight: bold;"></div>
         </div>
 
-        <input type="tel" id="userPhone" placeholder="ژمارەی مۆبایلی وەرگر">
+        <input type="tel" id="userPhone" placeholder="ژمارەی واڵێتی خۆت بۆ وەرگرتن">
         <input type="file" id="fileInput" accept="image/*">
         
         <button class="btn-global" id="submitBtn" onclick="processOrder()">ناردنی داواکاری <i class="fas fa-paper-plane"></i></button>
     </div>
 
-    <h3 style="margin: 25px 0 15px; font-size: 18px; border-right: 4px solid var(--accent); padding-right: 10px;">مێژووی چالاکییەکان</h3>
+    <h3 style="margin: 35px 5px 20px; font-size: 19px; display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-clock-rotate-left" style="color:var(--accent)"></i> مێژووی کارەکان
+    </h3>
     <div id="historyList"></div>
 </div>
 
@@ -133,19 +161,17 @@
         let final = 0;
         
         if (from === "Korek") {
-            // 100,000 Korek -> 80,000 (0.8 factor)
             final = amt * 0.8;
-            document.getElementById('feeInfo').innerText = "نرخی گۆڕینەوە: ١٠٠ هەزار بۆ ٨٠ هەزار";
+            document.getElementById('feeInfo').innerText = "نرخی گۆڕینەوەی کۆڕەک (0.80)";
         } else if (from === "Asiacell") {
-            // 100,000 Asia -> 82,000 (0.82 factor)
             final = amt * 0.82;
-            document.getElementById('feeInfo').innerText = "نرخی گۆڕینەوە: ١٠٠ هەزار بۆ ٨٢ هەزار";
+            document.getElementById('feeInfo').innerText = "نرخی گۆڕینەوەی ئاسیا (0.82)";
         } else if (from === "USDT") {
-            final = amt * 1480; // نموونەی نرخی USDT
-            document.getElementById('feeInfo').innerText = "بەپێی نرخی ڕۆژی دۆلار";
+            final = amt * 1480;
+            document.getElementById('feeInfo').innerText = "نرخی هەر $1 = 1480 دینار";
         } else {
             final = amt;
-            document.getElementById('feeInfo').innerText = "بەبێ حەمولە (0%)";
+            document.getElementById('feeInfo').innerText = "بێ حەمولە (0%)";
         }
         
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " IQD";
@@ -159,21 +185,30 @@
                 let sClass = o.status === "وەرگیرا" ? "status-success" : "";
                 html = `
                 <div class="order-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:800; color:var(--accent);">#${c.key}</span>
+                    <div class="history-header">
+                        <span style="font-weight:800; color:var(--accent); font-size:14px;">ID: #${c.key}</span>
                         <span class="status-badge ${sClass}">${o.status}</span>
                     </div>
                     <div class="history-grid">
-                        <div class="h-item"><span class="h-label">ناردن لە</span><span class="h-val">${o.from}</span></div>
-                        <div class="h-item"><span class="h-label">وەرگرتن لە</span><span class="h-val">${o.to}</span></div>
-                        <div class="h-item"><span class="h-label">بۆ ژمارەی</span><span class="h-val">${o.userPhone || 'دیاری نەکراوە'}</span></div>
+                        <div class="h-item"><span class="h-label">ناردن لە</span><span class="h-val">${getIcon(o.from)} ${o.from}</span></div>
+                        <div class="h-item"><span class="h-label">وەرگرتن لە</span><span class="h-val">${getIcon(o.to)} ${o.to}</span></div>
+                        <div class="h-item"><span class="h-label">بۆ ژمارەی</span><span class="h-val">${o.userPhone}</span></div>
                         <div class="h-item"><span class="h-label">بڕی پارە</span><span class="h-val" style="color:var(--success)">${o.total}</span></div>
-                        <div class="h-item" style="grid-column: span 2;"><span class="h-label">کات و ڕێکەوت</span><span class="h-val">${o.time}</span></div>
+                        <div class="h-item" style="grid-column: span 2;"><span class="h-label">کات و ڕێکەوت</span><span class="h-val" style="font-size:11px; opacity:0.7;">${o.time}</span></div>
                     </div>
                 </div>` + html;
             });
-            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.3;'>هیچ چالاکییەک نییە</p>";
+            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.3;'>هیچ چالاکییەک لێرە نییە</p>";
         });
+    }
+
+    function getIcon(name) {
+        if(name.includes("FastPay")) return "💳";
+        if(name.includes("FIB")) return "🏦";
+        if(name.includes("Asiacell")) return "🔴";
+        if(name.includes("Korek")) return "🟡";
+        if(name.includes("USDT")) return "🪙";
+        return "💰";
     }
 
     const wallets = { "FastPay": "7510074008", "FIB": "7510074008", "QiCard": "2879264048", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
@@ -197,19 +232,18 @@
         };
 
         try {
-            // ناردن بۆ تێلێگرام
             const formData = new FormData();
-            formData.append("chat_id", "6259019006"); formData.append("photo", file);
-            formData.append("caption", `🚀 داواکاری نوێ #${orderId}\n👤 ناو: ${auth.currentUser.displayName}\n📥 ناردن: ${orderData.from}\n📤 وەرگرتن: ${orderData.to}\n💰 بڕی گشتی: ${orderData.total}\n📱 مۆبایلی کڕیار: ${phone}`);
+            formData.append("chat_id", "6259019006"); 
+            formData.append("photo", file);
+            formData.append("caption", `🚀 داواکاری #${orderId}\n👤 ${auth.currentUser.displayName}\n📥 ${orderData.from}\n📤 ${orderData.to}\n💰 ${orderData.total}\n📱 ${phone}`);
             
             await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: formData });
             await db.ref('orders/' + orderId).set(orderData);
-            
-            alert("داواکارییەکەت نێردرا ✅"); location.reload();
-        } catch(e) { alert("هەڵە ڕوویدا"); }
+            alert("داواکارییەکەت بە سەرکەوتوویی نێردرا ✅"); location.reload();
+        } catch(e) { alert("هەڵە لە ناردن"); }
     }
 
-    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا!"); }
+    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("ژمارەکە کۆپی کرا!"); }
     updateWallet();
 </script>
 </body>
