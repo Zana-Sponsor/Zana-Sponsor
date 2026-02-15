@@ -213,7 +213,7 @@
     function updateWallet() { document.getElementById('myNum').innerText = wallets[document.getElementById('from').value]; }
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
-        document.getElementById('totalDisplay').innerText = Math.floor(amt * 0.98).toLocaleString() + " IQD";
+        document.getElementById('totalDisplay').innerText = Math.floor(amt * 0.100).toLocaleString() + " IQD";
     }
 
     async function processOrder() {
