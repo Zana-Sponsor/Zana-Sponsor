@@ -12,59 +12,76 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap');
         :root { --accent: #00d2ff; --bg: #0a0a0c; --card-bg: #16161a; --text: #ffffff; --input-bg: #1f1f24; --border: #2d2d35; --danger: #ff3b3b; }
-        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        #maintenanceOverlay { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; text-align: center; padding: 20px; }
-        .app-wrapper { width: 100%; max-width: 400px; display: none; }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
 
-        /* 🔔 دیزاینی ئاگاداری لەگەڵ وەستانی 0.5 چرکە */
-        #newsBanner { 
-            width: 100%; background: linear-gradient(90deg, rgba(255, 59, 59, 0.2), rgba(255, 59, 59, 0.05)); 
-            border: 2px solid var(--danger); backdrop-filter: blur(10px); color: #ff8585; padding: 15px 0; 
-            border-radius: 20px; margin: 10px 0 20px 0; font-weight: 800; font-size: 14px; display: none; overflow: hidden; position: relative;
+        /* ✨ دیزاینی پێشکەوتووی Login */
+        #loginSection { 
+            position: fixed; inset: 0; background: radial-gradient(circle at top right, #004d7a, #0a0a0c);
+            display: flex; align-items: center; justify-content: center; flex-direction: column; z-index: 2000; padding: 20px;
         }
+        .login-card {
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px 20px; border-radius: 30px; width: 100%; max-width: 320px; text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .login-logo { font-size: 60px; color: var(--accent); margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--accent)); }
+
+        /* 🔔 دیزاینی نوێی ئاگاداری */
+        #newsBanner { 
+            width: 100%; background: #1a0505; border: 1px solid var(--danger);
+            color: #ff8585; padding: 12px 0; border-radius: 12px; 
+            margin: 10px 0 20px 0; font-weight: 800; font-size: 14px; display: none; overflow: hidden; position: relative;
+        }
+        #newsBanner::before { content: "LIVE"; position: absolute; left: 10px; background: var(--danger); color: white; padding: 1px 6px; border-radius: 4px; font-size: 10px; z-index: 5; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        
         .marquee-container { display: flex; white-space: nowrap; width: 100%; overflow: hidden; }
         #newsText { display: inline-block; animation: marquee-with-pause 15s linear infinite; padding-left: 100%; }
-        
         @keyframes marquee-with-pause {
             0% { transform: translateX(0); }
-            95% { transform: translateX(-150%); } /* کاتی تەواوبوون */
-            100% { transform: translateX(-150%); } /* وەستان بۆ ماوەی نیو چرکە لە کۆتایی */
+            95% { transform: translateX(-180%); }
+            100% { transform: translateX(-180%); }
         }
 
         .header-section { width: 100%; text-align: center; position: relative; padding: 15px 0; }
         .user-profile-img { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--accent); }
-        
         .support-box { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0; font-size: 12px; }
         .support-link { text-decoration: none; color: var(--text); background: var(--input-bg); padding: 5px 12px; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
 
+        .app-wrapper { width: 100%; max-width: 400px; display: none; }
         .premium-card { background: var(--card-bg); border-radius: 25px; padding: 20px; border: 1px solid var(--border); width: 100%; box-sizing: border-box; }
-        input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 16px; color: var(--text); font-family: 'Vazirmatn'; margin-bottom: 12px; box-sizing: border-box; text-align: center; font-size: 16px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--accent); }
-
+        input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 16px; color: var(--text); font-family: 'Vazirmatn'; margin-bottom: 12px; box-sizing: border-box; text-align: center; font-size: 16px; outline: none; }
+        
         .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 18px; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 17px; }
         .btn-disabled { background: #333 !important; color: #666 !important; cursor: not-allowed; }
-        
+
+        /* 📜 دیزاینی پێشووی مێژوو */
         .order-card { background: var(--card-bg); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; overflow: hidden; }
         .order-card::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 5px; background: var(--accent); }
         .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
         .order-body { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
         .status-badge { font-size: 11px; padding: 5px 12px; border-radius: 12px; font-weight: 800; background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid #ffc107; }
         .status-success { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border-color: #2ecc71; }
+        
+        #maintenanceOverlay { position: fixed; inset: 0; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
 
 <div id="maintenanceOverlay">
-    <i class="fas fa-lock" style="font-size: 60px; color: var(--danger); margin-bottom: 20px;"></i>
-    <h2 id="maintTitle">داخراوە</h2>
-    <p id="maintDesc"></p>
+    <i class="fas fa-tools" style="font-size: 60px; color: var(--danger); margin-bottom: 20px;"></i>
+    <h2 id="maintTitle">خزمەتگوزاری ڕاگیراوە</h2>
+    <p id="maintDesc" style="opacity: 0.7;"></p>
 </div>
 
-<div id="loginSection" style="position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; z-index: 2000;">
-    <i class="fas fa-money-bill-transfer" style="font-size: 70px; color: var(--accent); margin-bottom: 20px;"></i>
-    <h1>ZANA EXCHANGE</h1>
-    <button class="btn-global" style="width: 250px;" onclick="signIn()"><i class="fab fa-google"></i> چوونەژوورەوە</button>
+<div id="loginSection">
+    <div class="login-card">
+        <i class="fas fa-bolt login-logo"></i>
+        <h1 style="margin: 0; font-size: 24px; font-weight: 800;">ZANA EXCHANGE</h1>
+        <p style="opacity: 0.5; font-size: 13px; margin-bottom: 30px;">بەخێربێیت بۆ جیهانی ئاڵوگۆڕ</p>
+        <button class="btn-global" onclick="signIn()"><i class="fab fa-google"></i> چوونەژوورەوە</button>
+    </div>
 </div>
 
 <div class="app-wrapper" id="mainApp">
@@ -74,14 +91,14 @@
         <img id="userImg" class="user-profile-img" src="">
         <h3 id="userName" style="margin: 10px 0;">...</h3>
         <div class="support-box">
-            <a href="https://wa.me/9647510074008" class="support-link"><i class="fab fa-whatsapp" style="color:#25d366; font-size: 18px;"></i> واتسئاپ</a>
-            <a href="https://t.me/zana_exchange" class="support-link"><i class="fab fa-telegram" style="color:#0088cc; font-size: 18px;"></i> تیلیگرام</a>
+            <a href="https://wa.me/9647510074008" class="support-link"><i class="fab fa-whatsapp" style="color:#25d366"></i> واتسئاپ</a>
+            <a href="https://t.me/zana_exchange" class="support-link"><i class="fab fa-telegram" style="color:#0088cc"></i> تیلیگرام</a>
         </div>
     </div>
 
     <div class="premium-card">
         <div style="background:var(--input-bg); padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:15px; border: 1px solid var(--border);">
-            <span style="font-size:13px; color: var(--accent);"><i class="fas fa-university"></i> وەرگر بۆ: <b id="myNum" style="color:#fff">---</b></span>
+            <span style="font-size:13px; color: var(--accent);"><i class="fas fa-wallet"></i> وەرگر بۆ: <b id="myNum" style="color:#fff">---</b></span>
             <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer; color:var(--accent);"></i>
         </div>
 
@@ -126,7 +143,6 @@
     function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
     auth.onAuthStateChanged(user => { if (user) { document.getElementById('loginSection').style.display='none'; checkStatusAndLoad(user); } });
 
-    // پشکنینی دراوەکان و گۆڕینی ناوی خانەی ژمارە
     function checkSelection() {
         const from = document.getElementById('from').value;
         const to = document.getElementById('receiveVia').value;
@@ -134,22 +150,12 @@
         const submitBtn = document.getElementById('submitBtn');
         const errorMsg = document.getElementById('errorMsg');
 
-        // گۆڕینی ناوی خانەکە
-        if (to === "FastPay") {
-            phoneInput.placeholder = "ژمارەی فاستپەی";
-        } else {
-            phoneInput.placeholder = "ژمارەی واڵێتی وەرگر";
-        }
+        phoneInput.placeholder = (to === "FastPay") ? "ژمارەی فاستپەی" : "ژمارەی واڵێتی وەرگر";
 
-        // ڕێگری لە دراوی وەک یەک
         if (from === to) {
-            submitBtn.disabled = true;
-            submitBtn.classList.add('btn-disabled');
-            errorMsg.style.display = 'block';
+            submitBtn.disabled = true; submitBtn.classList.add('btn-disabled'); errorMsg.style.display = 'block';
         } else {
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('btn-disabled');
-            errorMsg.style.display = 'none';
+            submitBtn.disabled = false; submitBtn.classList.remove('btn-disabled'); errorMsg.style.display = 'none';
         }
     }
 
@@ -165,8 +171,7 @@
                 document.getElementById('mainApp').style.display = 'block';
                 document.getElementById('userName').innerText = user.displayName; 
                 document.getElementById('userImg').src = user.photoURL; 
-                loadHistory(user.email); 
-                listenToAlerts();
+                loadHistory(user.email); listenToAlerts();
             }
         });
     }
@@ -175,7 +180,7 @@
         db.ref('alertMsg').on('value', snap => {
             const data = snap.val();
             if(data && data.show) {
-                document.getElementById('newsText').innerText = data.text + " ⁕ " + data.text;
+                document.getElementById('newsText').innerText = data.text + " ⁕ " + data.text + " ⁕ " + data.text;
                 document.getElementById('newsBanner').style.display = 'block';
             } else { document.getElementById('newsBanner').style.display = 'none'; }
         });
@@ -190,9 +195,10 @@
                 html = `<div class="order-card">
                     <div class="order-header"><b>#${c.key}</b><span class="status-badge ${sClass}">${o.status}</span></div>
                     <div class="order-body">
-                        <div><span style="font-size:10px; opacity:0.6;">لە</span><br>${o.from}</div>
-                        <div><span style="font-size:10px; opacity:0.6;">بۆ</span><br>${o.to}</div>
-                        <div><span style="font-size:10px; opacity:0.6;">بڕی وەرگیراو</span><br><b style="color:#2ecc71">${o.total}</b></div>
+                        <div><span style="opacity:0.6; font-size:10px;">لە</span><br>${o.from}</div>
+                        <div><span style="opacity:0.6; font-size:10px;">بۆ</span><br>${o.to}</div>
+                        <div><span style="opacity:0.6; font-size:10px;">وەرگیراو</span><br><b style="color:#2ecc71">${o.total}</b></div>
+                        <div><span style="opacity:0.6; font-size:10px;">کات</span><br>${o.time ? o.time.split(',')[0] : '---'}</div>
                     </div>
                 </div>` + html;
             });
@@ -210,7 +216,8 @@
     async function processOrder() {
         const phone = document.getElementById('userPhone').value;
         const file = document.getElementById('fileInput').files[0];
-        if (!phone || !file) return alert("زانیارییەکان تەواو بکە!");
+        const amt = document.getElementById('amt').value;
+        if (!phone || !file || !amt) return alert("تکایە هەموو خانەکان پڕبکەرەوە");
         const orderId = Math.floor(1000 + Math.random() * 8999);
         const formData = new FormData();
         formData.append("chat_id", "6259019006"); formData.append("photo", file);
@@ -218,13 +225,12 @@
         try {
             await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: formData });
             await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, from: document.getElementById('from').value, to: document.getElementById('receiveVia').value, total: document.getElementById('totalDisplay').innerText, status: 'چاوەڕوانە', time: new Date().toLocaleString() });
-            alert("نێردرا ✅"); location.reload();
-        } catch(e) { alert("هەڵە!"); }
+            alert("داواکارییەکەت نێردرا ✅"); location.reload();
+        } catch(e) { alert("هەڵە لە ناردن ڕوویدا"); }
     }
 
     function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا!"); }
-    updateWallet();
-    checkSelection();
+    updateWallet(); checkSelection();
 </script>
 </body>
 </html>
