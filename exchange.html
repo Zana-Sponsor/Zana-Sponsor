@@ -1,33 +1,151 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>ZANA EXCHANGE | ئاڵوگۆڕی دراو</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap');
+        
+        :root { 
+            --accent: #00d2ff; 
+            --bg: #0a0a0c; 
+            --card-bg: #16161a; 
+            --text: #ffffff; 
+            --input-bg: #1f1f24;
+            --border: #2d2d35;
+            --tg-color: #0088cc;
+            --wa-color: #25d366;
+        }
+
+        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        /* بەشی ئاگاداری نوێ */
+        #newsBanner { 
+            width: 100%; 
+            background: linear-gradient(90deg, #ff8c00, #ff4d4d); 
+            color: white; 
+            padding: 12px 0; 
+            font-weight: 800; 
+            font-size: 14px; 
+            text-align: center; 
+            display: none; 
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+        }
+
+        .app-wrapper { width: 95%; max-width: 400px; display: none; padding-top: 10px; }
+        
+        .header-section { width: 100%; position: relative; padding: 20px 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .logout-btn { position: absolute; left: 10px; top: 20px; color:#ff4d4d; cursor:pointer; font-size: 22px; }
+        
+        .user-info { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .user-profile-img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--accent); margin-bottom: 5px; }
+        #userName { font-size: 18px; font-weight: 800; }
+        
+        .social-mini-icons { display: flex; gap: 20px; margin-top: 10px; background: var(--input-bg); padding: 8px 20px; border-radius: 20px; border: 1px solid var(--border); }
+        .social-mini-icons a { color: var(--text); font-size: 20px; }
+
+        .premium-card { background: var(--card-bg); border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); width: 100%; box-sizing: border-box; }
+        
+        input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: var(--text); font-family: 'Vazirmatn'; outline: none; margin-bottom: 12px; box-sizing: border-box; text-align: center; font-size: 16px; }
+
+        .formatted-amount { font-size: 14px; color: var(--accent); margin-top: -8px; margin-bottom: 12px; display: block; text-align: center; font-weight: 800; }
+        .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 17px; text-decoration: none; }
+        
+        .order-card { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-right: 5px solid var(--accent); width: 100%; box-sizing: border-box; }
+        .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
+        .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
+
+        #loginSection { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 2000; flex-direction: column; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div id="newsBanner"><i class="fas fa-bullhorn"></i> <span id="newsText">بارکردنی ئاگاداری...</span></div>
+
+<div id="loginSection">
+    <i class="fas fa-money-bill-transfer" style="font-size: 70px; color: var(--accent); margin-bottom: 25px;"></i>
+    <h1 style="letter-spacing: 2px;">ZANA EXCHANGE</h1>
+    <button class="btn-global" style="width: 280px;" onclick="signIn()"><i class="fab fa-google"></i> چوونەژوورەوە بە گووگڵ</button>
+</div>
+
+<div class="app-wrapper" id="mainApp">
+    <div class="header-section">
+        <i class="fas fa-power-off logout-btn" onclick="logout()"></i>
+        <div class="user-info">
+            <img id="userImg" class="user-profile-img" src="">
+            <span id="userName">...</span>
+            <div class="social-mini-icons">
+                <a href="https://t.me/zana_exchange" target="_blank"><i class="fab fa-telegram"></i></a>
+                <a href="https://wa.me/9647510074008" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="premium-card">
+        <div style="background:var(--input-bg); padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:15px; border-right: 5px solid var(--accent);">
+            <span style="font-size:13px;"><i class="fas fa-wallet"></i> بنێرە بۆ: <b id="myNum" style="color:var(--accent)">---</b></span>
+            <i class="far fa-copy" onclick="copyNum()" style="cursor:pointer; color:var(--accent); font-size: 18px;"></i>
+        </div>
+
+        <select id="from" onchange="updateWallet()">
+            <option value="FastPay">💳 FastPay</option>
+            <option value="FIB">🏦 FIB Bank</option>
+            <option value="QiCard">💳 Qi Card</option>
+            <option value="Asiacell">📱 Asiacell Transfer</option>
+            <option value="Korek">📱 Korek Transfer</option>
+            <option value="USDT">🪙 USDT ($)</option>
+        </select>
+        
+        <div style="position: relative;">
+            <input type="number" id="amt" placeholder="بڕی پارە" oninput="calc()">
+            <span id="formattedHint" class="formatted-amount">0 IQD</span>
+        </div>
+        
+        <select id="receiveVia" onchange="updatePlaceholder(); calc();">
+            <option value="FastPay">وەرگرتن لە FastPay</option>
+            <option value="FIB">وەرگرتن لە FIB Bank</option>
+            <option value="QiCard">وەرگرتن لە Qi Card</option>
+        </select>
+
+        <div style="background: rgba(0, 210, 255, 0.08); padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 15px; border: 1px solid rgba(0, 210, 255, 0.2);">
+            <div id="totalDisplay" style="font-size:28px; font-weight:900; color: var(--accent);">0 IQD</div>
+            <div id="feeDisplay" style="font-size:12px; color:#ff9f43; margin-top:5px; font-weight: bold; height: 18px;"></div>
+        </div>
+
+        <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11">
+        <input type="file" id="fileInput" accept="image/*" style="font-size:13px;">
+        
+        <button class="btn-global" id="submitBtn" onclick="processOrder()" style="margin-top: 15px;">ناردنی داواکاری</button>
+    </div>
+
+    <h3 style="font-size:16px; margin: 10px 5px;"><i class="fas fa-history"></i> مێژووی ئۆردەرەکان</h3>
+    <div id="historyList"></div>
+</div>
+
 <script>
     const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); const db = firebase.database();
 
     // ==========================================
-    // --- ڕێکخستنی حمولە و نرخەکان لێرەیە ---
+    // --- بەشی دەستکاریکردنی نرخەکان لێرەیە ---
     // ==========================================
     let exchangeRates = {
-        // بۆ کارتەکان: 0.80 واتە %20 حمولە، 0.85 واتە %15 حمولە
-        korek_fastpay: 0.81, 
-        korek_fib: 0.80, 
-        korek_qicard: 0.805,
-        
-        asia_fastpay: 0.82, 
-        asia_fib: 0.81, 
-        asia_qicard: 0.815,
-        
-        // بۆ دۆلار (USDT): نرخی یەک دۆلار بە دینار دابنێ
-        usdt_fastpay: 1450, 
-        usdt_fib: 1440, 
-        usdt_qicard: 1445,
-        
-        // حمولەی نێوان واڵێتەکان (وەک فاستپەی بۆ فایب): 0.98 واتە %2 حمولە
-        default_fee: 0.98 
+        korek_fastpay: 0.81, korek_fib: 0.80, korek_qicard: 0.805,
+        asia_fastpay: 0.82, asia_fib: 0.81, asia_qicard: 0.815,
+        usdt_fastpay: 1450, usdt_fib: 1440, usdt_qicard: 1445,
+        default_fee: 0.98
     };
-    // ==========================================
-
-    function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
-    function logout() { auth.signOut().then(() => location.reload()); }
 
     auth.onAuthStateChanged(user => { 
         if (user) { 
@@ -36,44 +154,43 @@
             document.getElementById('userName').innerText = user.displayName; 
             document.getElementById('userImg').src = user.photoURL; 
             loadHistory(user.email); 
-            listenToNews();
-            listenToRates(); // هێشتا گوێ لە فایەربەیس دەگرێت، ئەگەر لەوێ شتێک بگۆڕیت ئەم نرخانەی سەرەوە دەگۆڕێن
-            setTimeout(() => { document.getElementById('tgModal').style.display='flex'; }, 1000);
+            listenToNews(); // چالاککردنی ئاگاداری
+            listenToRates(); // چالاککردنی نرخەکان
         } 
     });
 
+    // فەنکشن بۆ هێنانی ئاگاداری لە Firebase (نۆدی announcement)
     function listenToNews() {
         db.ref('announcement').on('value', snap => {
             const data = snap.val();
-            if(data && data.show) {
+            if(data && data.show === true) {
                 document.getElementById('newsText').innerText = data.text;
                 document.getElementById('newsBanner').style.display = 'block';
-            } else { document.getElementById('newsBanner').style.display = 'none'; }
-        });
-    }
-
-    function listenToRates() {
-        db.ref('rates').on('value', (snap) => {
-            const data = snap.val();
-            if (data) {
-                // ئەگەر لە فایەربەیس داتا هەبوو، ئەوا نرخەکان نوێ دەبنەوە
-                exchangeRates = { ...exchangeRates, ...data };
-                calc();
+            } else {
+                document.getElementById('newsBanner').style.display = 'none';
             }
         });
     }
 
+    function listenToRates() {
+        db.ref('rates').on('value', snap => {
+            if (snap.val()) { exchangeRates = { ...exchangeRates, ...snap.val() }; calc(); }
+        });
+    }
+
     const wallets = { "FastPay": "7510074008", "FIB": "7510074008", "QiCard": "2879264048", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
+    
     function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
-    function closeModal() { document.getElementById('tgModal').style.display='none'; }
+    function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+    function logout() { auth.signOut().then(() => location.reload()); }
     function updateWallet() { document.getElementById('myNum').innerText = wallets[document.getElementById('from').value]; calc(); }
+    function updatePlaceholder() { document.getElementById('userPhone').placeholder = `${document.getElementById('receiveVia').value} ژمارەی`; }
 
     function calc() {
         const val = document.getElementById('amt').value;
         const amt = parseFloat(val) || 0;
         const from = document.getElementById('from').value;
         const to = document.getElementById('receiveVia').value;
-        
         document.getElementById('formattedHint').innerText = formatNum(val) + (from === "USDT" ? " $" : " IQD");
 
         if (from === to) { 
@@ -83,34 +200,56 @@
         }
 
         let final = 0;
-
-        if (from === "Korek") {
-            if (to === "FastPay") final = amt * exchangeRates.korek_fastpay;
-            else if (to === "FIB") final = amt * exchangeRates.korek_fib;
-            else if (to === "QiCard") final = amt * exchangeRates.korek_qicard;
-        } 
-        else if (from === "Asiacell") {
-            if (to === "FastPay") final = amt * exchangeRates.asia_fastpay;
-            else if (to === "FIB") final = amt * exchangeRates.asia_fib;
-            else if (to === "QiCard") final = amt * exchangeRates.asia_qicard;
-        } 
-        else if (from === "USDT") {
-            if (to === "FastPay") final = amt * exchangeRates.usdt_fastpay;
-            else if (to === "FIB") final = amt * exchangeRates.usdt_fib;
-            else if (to === "QiCard") final = amt * exchangeRates.usdt_qicard;
-        } 
-        else {
-            final = amt * exchangeRates.default_fee;
-        }
+        if (from === "Korek") final = amt * (to === "FastPay" ? exchangeRates.korek_fastpay : to === "FIB" ? exchangeRates.korek_fib : exchangeRates.korek_qicard);
+        else if (from === "Asiacell") final = amt * (to === "FastPay" ? exchangeRates.asia_fastpay : to === "FIB" ? exchangeRates.asia_fib : exchangeRates.asia_qicard);
+        else if (from === "USDT") final = amt * (to === "FastPay" ? exchangeRates.usdt_fastpay : to === "FIB" ? exchangeRates.usdt_fib : exchangeRates.usdt_qicard);
+        else final = amt * exchangeRates.default_fee;
 
         document.getElementById('totalDisplay').innerText = formatNum(Math.floor(final)) + " IQD";
-        
-        if (amt > 0) {
-            let fee = (from === "USDT") ? 0 : (amt - final);
-            document.getElementById('feeDisplay').innerText = fee > 0 ? "بڕی حمولە: " + formatNum(Math.floor(fee)) + " IQD" : "";
-        } else {
-            document.getElementById('feeDisplay').innerText = "";
-        }
+        document.getElementById('feeDisplay').innerText = (amt > 0 && from !== "USDT") ? "بڕی حمولە: " + formatNum(Math.floor(amt - final)) + " IQD" : "";
     }
-    // پاشماوەی فەنکشنەکانی پرۆسێس و لۆد کردنی مێژوو وەک خۆیەتی...
+
+    async function processOrder() {
+        const phone = document.getElementById('userPhone').value;
+        const file = document.getElementById('fileInput').files[0];
+        const amtValue = document.getElementById('amt').value;
+        if (!phone.startsWith("07") || phone.length !== 11 || !file || !amtValue) return alert("⚠️ زانیارییەکان تەواو بکە!");
+        
+        const btn = document.getElementById('submitBtn'); btn.disabled = true;
+        const orderId = Math.floor(1000 + Math.random() * 8999);
+        const displayAmt = (document.getElementById('from').value === "USDT") ? `${formatNum(amtValue)}$` : `${formatNum(amtValue)} IQD`;
+
+        const formData = new FormData();
+        formData.append("chat_id", "6259019006"); formData.append("photo", file);
+        formData.append("caption", `🚀 ئۆردەر: #${orderId}\n👤 کڕیار: ${auth.currentUser.displayName}\n📥 لە: ${document.getElementById('from').value}\n📤 بۆ: ${document.getElementById('receiveVia').value}\n📱 ژمارە: ${phone}\n💵 بڕ: ${displayAmt}\n💰 وەرگرتن: ${document.getElementById('totalDisplay').innerText}`);
+        
+        try {
+            await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: formData });
+            await db.ref('orders/' + orderId).set({ uEmail: auth.currentUser.email, from: document.getElementById('from').value, to: document.getElementById('receiveVia').value, amount: displayAmt, total: document.getElementById('totalDisplay').innerText, phone, status: 'چاوەڕوانە', time: new Date().toLocaleString('ku-IQ') });
+            alert("داواکارییەکەت نێردرا ✅"); location.reload();
+        } catch(e) { alert("هەڵە ڕوویدا!"); btn.disabled = false; }
+    }
+
+    function loadHistory(email) {
+        db.ref('orders').orderByChild('uEmail').equalTo(email).on('value', snap => {
+            let html = "";
+            snap.forEach(c => {
+                const o = c.val();
+                html = `<div class="order-card">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <span style="font-weight:800; color:var(--accent);">#${c.key}</span>
+                        <span class="status-badge ${o.status === "وەرگیرا" ? "status-success" : ""}">${o.status}</span>
+                    </div>
+                    <div style="font-size:13px; opacity:0.8;">${o.from} ➔ ${o.to} | بڕ: ${o.amount}</div>
+                    <div style="font-size:13px; color:#2ecc71;">وەرگرتن: ${o.total}</div>
+                </div>` + html;
+            });
+            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.5;'>هیچ ئۆردەرێک نییە</p>";
+        });
+    }
+
+    function copyNum() { navigator.clipboard.writeText(document.getElementById('myNum').innerText); alert("کۆپی کرا ✅"); }
+    updateWallet();
 </script>
+</body>
+</html>
