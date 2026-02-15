@@ -2,112 +2,263 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>ZANA ADMIN PRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZANA ADMIN | داشبۆردی بەڕێوەبردن</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
-        body { font-family: 'Vazirmatn', Tahoma; background: #0a0a0c; color: white; padding: 20px; direction: rtl; }
-        .box { background: #16161a; padding: 20px; border-radius: 15px; border: 1px solid #2d2d35; margin-bottom: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        input, textarea { width: 100%; padding: 12px; background: #1f1f24; border: 1px solid #2d2d35; color: white; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; }
-        button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-blue { background: #00d2ff; color: #000; }
-        .btn-red { background: #ff4d4d; color: #fff; }
-        .btn-green { background: #2ecc71; color: #fff; }
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap');
         
-        .card { background: #1f1f24; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-right: 4px solid #00d2ff; }
-        .user-card { border-right-color: #f1c40f; display: flex; justify-content: space-between; align-items: center; }
-        .badge { font-size: 11px; padding: 4px 8px; border-radius: 5px; margin-right: 5px; }
-        .bg-wait { background: #f1c40f; color: #000; }
+        :root {
+            --primary: #00d2ff;
+            --bg: #05070a;
+            --card: #11141d;
+            --border: #21262d;
+            --text: #e6edf3;
+            --success: #238636;
+            --danger: #da3633;
+            --warning: #d29922;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* 📊 Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-box i { font-size: 24px; color: var(--primary); margin-bottom: 10px; }
+        .stat-box h2 { margin: 5px 0; font-size: 28px; }
+        .stat-box p { margin: 0; opacity: 0.6; font-size: 13px; }
+
+        /* 🗂 Main Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-right: 4px solid var(--primary);
+            padding-right: 15px;
+        }
+
+        .box {
+            background: var(--card);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* 💳 Orders Card */
+        .order-item {
+            background: #161b22;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: 0.2s;
+        }
+
+        .order-item:hover { border-color: var(--primary); }
+        .order-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .order-body { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
+        
+        /* 👥 User List */
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .user-item img { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--primary); }
+
+        /* 🛠 Buttons */
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Vazirmatn';
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-action { padding: 8px 15px; font-size: 12px; margin: 2px; }
+        .btn-green { background: var(--success); color: white; }
+        .btn-red { background: var(--danger); color: white; }
+        .btn-blue { background: var(--primary); color: black; }
+
+        input, textarea {
+            width: 100%;
+            background: #0d1117;
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
-    <h2><i class="fas fa-user-shield"></i> کۆنتڕۆڵ پانێڵی زانا</h2>
 
-    <div class="grid">
+<div class="container">
+    <h1 style="display:flex; align-items:center; gap:15px;">
+        <i class="fas fa-shield-halved" style="color:var(--primary)"></i> 
+        داشبۆردی زانا
+    </h1>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <i class="fas fa-users"></i>
+            <h2 id="totalUsersCount">0</h2>
+            <p>گشت بەکارهێنەران</p>
+        </div>
+        <div class="stat-box">
+            <i class="fas fa-clock"></i>
+            <h2 id="pendingOrdersCount">0</h2>
+            <p>داواکاری چاوەڕوانە</p>
+        </div>
+        <div class="stat-box">
+            <i class="fas fa-check-double"></i>
+            <h2 id="successOrdersCount">0</h2>
+            <p>تەواوکراوەکان</p>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <div>
+            <div class="section-title"><i class="fas fa-exchange-alt"></i> دوایین داواکارییەکان</div>
+            <div id="adminOrders"></div>
+        </div>
+
         <div>
             <div class="box">
-                <h3>ئاگاداری سەرەوە</h3>
-                <input type="text" id="alertTxt" placeholder="دەقی ئاگاداری...">
-                <button class="btn-blue" onclick="setAlert(true)">بڵاوکردنەوە</button>
-                <button class="btn-red" onclick="setAlert(false)">لابردن</button>
+                <div class="section-title"><i class="fas fa-tools"></i> کۆنتڕۆڵی ئەپ</div>
+                <input type="text" id="alertTxt" placeholder="نامەی ئاگاداری Marquee">
+                <button class="btn-blue btn-action" onclick="setAlert(true)">بڵاوکردنەوە</button>
+                <button class="btn-red btn-action" onclick="setAlert(false)">لابردن</button>
+                <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
+                <textarea id="lockMsg" placeholder="نامەی قوفڵکردنی ئەپ"></textarea>
+                <button class="btn-red btn-action" onclick="setLock(true)">Lock App</button>
+                <button class="btn-green btn-action" onclick="setLock(false)">Unlock</button>
             </div>
+
             <div class="box">
-                <h3>ڕاگرتنی ئەپ</h3>
-                <textarea id="lockMsg" placeholder="نامەی قوفڵکردن..."></textarea>
-                <button class="btn-red" onclick="setLock(true)">🔴 Lock</button>
-                <button class="btn-blue" onclick="setLock(false)">🟢 Unlock</button>
+                <div class="section-title"><i class="fas fa-users"></i> دوایین بەکارهێنەران</div>
+                <div id="allUsersList"></div>
             </div>
         </div>
-
-        <div class="box">
-            <h3><i class="fas fa-users"></i> بەکارهێنەران</h3>
-            <div id="userList" style="max-height: 400px; overflow-y: auto;"></div>
-        </div>
     </div>
+</div>
 
-    <div class="box">
-        <h3><i class="fas fa-exchange-alt"></i> بەڕێوەبردنی داواکارییەکان</h3>
-        <div id="adminOrders"></div>
-    </div>
+<script>
+    const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    <script>
-        const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        // --- Alerts & Locks ---
-        function setAlert(st) { db.ref('alertMsg').set({ text: document.getElementById('alertTxt').value, show: st }); alert("ئەنجامدرا!"); }
-        function setLock(st) { db.ref('appStatus').set({ locked: st, message: document.getElementById('lockMsg').value }); alert("گۆڕدرا!"); }
-
-        // --- Manage Orders (Accept, Reject, Delete) ---
-        db.ref('orders').on('value', snap => {
-            let html = "";
-            snap.forEach(c => {
-                const o = c.val();
-                html += `
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between">
-                        <b>ID: ${c.key} | کڕیار: ${o.uName}</b>
-                        <span class="badge bg-wait">${o.status}</span>
-                    </div>
-                    <p style="font-size:13px; color:#aaa;">${o.from} ⬅️ ${o.to} | بڕ: ${o.total} | ژمارە: ${o.userPhone}</p>
-                    <button class="btn-green" onclick="updateOrder('${c.key}', 'وەرگیرا')">قبوڵ</button>
-                    <button class="btn-red" onclick="updateOrder('${c.key}', 'ڕەتکرایەوە')">ڕەتکردنەوە</button>
-                    <button style="background:#555; color:white;" onclick="deleteOrder('${c.key}')">سڕینەوە</button>
-                </div>`;
+    // 🔄 نوێکردنەوەی ئامارەکان
+    function updateStats() {
+        db.ref('users').on('value', s => document.getElementById('totalUsersCount').innerText = s.numChildren());
+        db.ref('orders').on('value', s => {
+            let pending = 0, done = 0;
+            s.forEach(c => {
+                if(c.val().status === "چاوەڕوانە") pending++;
+                if(c.val().status === "وەرگیرا") done++;
             });
-            document.getElementById('adminOrders').innerHTML = html || "هیچ داواکارییەک نییە";
+            document.getElementById('pendingOrdersCount').innerText = pending;
+            document.getElementById('successOrdersCount').innerText = done;
         });
+    }
 
-        function updateOrder(id, status) { db.ref('orders/' + id).update({ status: status }); }
-        function deleteOrder(id) { if(confirm("دڵنیای لە سڕینەوە؟")) db.ref('orders/' + id).remove(); }
-
-        // --- Monitor & Block Users ---
-        db.ref('users').on('value', snap => {
-            let html = "";
-            snap.forEach(c => {
-                const u = c.val();
-                const isBlocked = u.isBlocked || false;
-                html += `
-                <div class="card user-card">
-                    <div>
-                        <b>${u.name || 'بێ ناو'}</b><br>
-                        <small style="color:#888">${isBlocked ? '🚫 بلۆک کراوە' : '✅ چالاکە'}</small>
-                    </div>
-                    <button class="${isBlocked ? 'btn-blue' : 'btn-red'}" onclick="toggleBlock('${c.key}', ${isBlocked})">
-                        ${isBlocked ? 'لابردنی بلۆک' : 'بلۆککردن'}
-                    </button>
-                </div>`;
-            });
-            document.getElementById('userList').innerHTML = html;
+    // 💳 بەڕێوەبردنی داواکارییەکان
+    db.ref('orders').on('value', snap => {
+        let html = "";
+        snap.forEach(c => {
+            const o = c.val();
+            const statusColor = o.status === "چاوەڕوانە" ? "var(--warning)" : (o.status === "وەرگیرا" ? "var(--success)" : "var(--danger)");
+            html = `
+            <div class="order-item">
+                <div class="order-header">
+                    <b style="color:var(--primary)">ID: ${c.key}</b>
+                    <span style="color:${statusColor}; font-weight:bold;">${o.status}</span>
+                </div>
+                <div class="order-body">
+                    <div>👤 کڕیار: ${o.uName}</div>
+                    <div>💰 بڕ: ${o.total}</div>
+                    <div>📥 لە: ${o.from}</div>
+                    <div>📤 بۆ: ${o.to}</div>
+                    <div style="grid-column: span 2;">📱 ژمارە: ${o.userPhone}</div>
+                </div>
+                <div style="margin-top:15px; display:flex; gap:5px;">
+                    <button class="btn-green btn-action" onclick="updateOrder('${c.key}', 'وەرگیرا')">قبوڵ</button>
+                    <button class="btn-red btn-action" onclick="updateOrder('${c.key}', 'ڕەتکرایەوە')">ڕەتکردنەوە</button>
+                    <button class="btn-action" style="background:#333;color:white;" onclick="deleteOrder('${c.key}')">سڕینەوە</button>
+                </div>
+            </div>` + html;
         });
+        document.getElementById('adminOrders').innerHTML = html || "هیچ داواکارییەک نییە";
+    });
 
-        function toggleBlock(uid, currentStatus) {
-            db.ref('users/' + uid).update({ isBlocked: !currentStatus });
-        }
-    </script>
+    // 👥 لیستی بەکارهێنەران
+    db.ref('users').limitToLast(10).on('value', snap => {
+        let html = "";
+        snap.forEach(c => {
+            const u = c.val();
+            const isBlocked = u.isBlocked || false;
+            html = `
+            <div class="user-item">
+                <img src="${u.photo || 'https://via.placeholder.com/40'}">
+                <div style="flex:1">
+                    <div style="font-size:13px; font-weight:bold;">${u.name || 'بێ ناو'}</div>
+                    <div style="font-size:10px; opacity:0.6;">${u.email}</div>
+                </div>
+                <button class="btn-action ${isBlocked ? 'btn-green' : 'btn-red'}" onclick="toggleBlock('${c.key}', ${isBlocked})">
+                    ${isBlocked ? 'Unblock' : 'Block'}
+                </button>
+            </div>` + html;
+        });
+        document.getElementById('allUsersList').innerHTML = html;
+    });
+
+    // 🛠 فرمانەکان
+    function updateOrder(id, s) { db.ref('orders/' + id).update({ status: s }); }
+    function deleteOrder(id) { if(confirm("بۆ هەمیشە بسڕێتەوە؟")) db.ref('orders/' + id).remove(); }
+    function setAlert(st) { db.ref('alertMsg').set({ text: document.getElementById('alertTxt').value, show: st }); }
+    function setLock(st) { db.ref('appStatus').set({ locked: st, message: document.getElementById('lockMsg').value }); }
+    function toggleBlock(uid, st) { db.ref('users/' + uid).update({ isBlocked: !st }); }
+
+    updateStats();
+</script>
 </body>
 </html>
