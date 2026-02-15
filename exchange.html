@@ -13,56 +13,62 @@
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap');
         :root { --accent: #00d2ff; --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #ffffff; --danger: #ff4d4d; --success: #2ecc71; --warning: #f1c40f; }
         
-        body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .app-wrapper { width: 100%; max-width: 450px; display: none; padding-bottom: 100px; }
+        body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden; }
+        
+        /* 🌟 Modern Login Section */
+        #loginSection { background: radial-gradient(circle at top right, #1e293b, #0d1117); width: 100%; height: 100vh; display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; z-index: 9999; }
+        .login-card { background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(10px); padding: 40px 30px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; width: 85%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .login-logo { width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), #3a7bd5); border-radius: 22px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 35px; color: #000; box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3); }
+        .btn-google { background: #ffffff; color: #000; width: 100%; padding: 14px; border: none; border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; }
 
-        /* 🔝 Header & Profile */
+        /* 📱 Main App UI */
+        .app-wrapper { width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; display: none; padding-bottom: 100px; }
         .header-box { background: var(--card); padding: 15px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .user-info { display: flex; align-items: center; gap: 10px; }
         .user-avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent); }
-        .social-btns a { color: var(--text); font-size: 22px; margin-right: 10px; transition: 0.3s; }
-        .whatsapp:hover { color: #25d366; } .telegram:hover { color: #0088cc; }
-
-        /* 💸 Form Style */
-        .form-box { background: var(--card); padding: 20px; border-radius: 25px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .form-box { background: var(--card); padding: 20px; border-radius: 25px; border: 1px solid var(--border); margin-bottom: 20px; }
         input, select { width: 100%; background: #21262d; border: 1px solid var(--border); border-radius: 12px; padding: 14px; color: #fff; margin-bottom: 12px; box-sizing: border-box; outline: none; font-family: 'Vazirmatn'; }
         .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: white; width: 100%; padding: 16px; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-size: 16px; }
 
-        /* 📋 Modern History (The requested style) */
-        .history-card { background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
+        /* 📋 History Cards */
+        .history-card { background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); }
         .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         .detail-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .label { color: #8b949e; }
-        .value { font-weight: 800; color: #f0f6fc; }
 
         /* 💬 Chat Widget */
         .chat-widget { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
-        .chat-btn { width: 60px; height: 60px; border-radius: 50%; background: var(--accent); color: #000; display: flex; align-items: center; justify-content: center; font-size: 25px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,210,255,0.4); }
-        .chat-window { position: fixed; bottom: 90px; left: 20px; width: 300px; height: 400px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .chat-header { background: var(--accent); color: #000; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; }
+        .chat-btn { width: 60px; height: 60px; border-radius: 50%; background: var(--accent); color: #000; display: flex; align-items: center; justify-content: center; font-size: 25px; cursor: pointer; }
+        .chat-window { position: fixed; bottom: 90px; left: 20px; width: 300px; height: 400px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; display: none; flex-direction: column; overflow: hidden; }
         #chatBody { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #0d1117; }
-        .msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px; line-height: 1.4; }
-        .msg.sent { align-self: flex-end; background: var(--accent); color: #000; border-bottom-right-radius: 2px; }
-        .msg.received { align-self: flex-start; background: #21262d; color: #fff; border-bottom-left-radius: 2px; }
+        .msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px; }
+        .msg.sent { align-self: flex-end; background: var(--accent); color: #000; }
+        .msg.received { align-self: flex-start; background: #21262d; color: #fff; }
     </style>
 </head>
 <body>
 
-<div id="loginSection" style="height:100vh; display:flex; align-items:center;">
-    <button class="btn-global" onclick="signIn()">چوونەژوورەوە بە گووگڵ <i class="fab fa-google"></i></button>
+<div id="loginSection">
+    <div class="login-card">
+        <div class="login-logo"><i class="fas fa-exchange-alt"></i></div>
+        <h2>زانا ئێکسچەینج</h2>
+        <p>خێراترین سیستم بۆ گۆڕینەوەی باڵانس</p>
+        <button class="btn-google" onclick="signIn()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="20">
+            چوونەژوورەوە بە Google
+        </button>
+    </div>
 </div>
 
 <div class="app-wrapper" id="mainApp">
     <div class="header-box">
         <button onclick="logout()" style="background:none; border:none; color:var(--danger); font-size: 22px; cursor:pointer;"><i class="fas fa-sign-out-alt"></i></button>
-        <div class="social-btns">
-            <a href="https://wa.me/9647510074008" class="whatsapp"><i class="fab fa-whatsapp"></i></a>
-            <a href="https://t.me/ZANA_EXCHANGE" class="telegram"><i class="fab fa-telegram"></i></a>
+        <div style="display:flex; gap:12px;">
+            <a href="https://wa.me/9647510074008" style="color:#25d366; font-size: 22px;"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://t.me/ZANA_EXCHANGE" style="color:#0088cc; font-size: 22px;"><i class="fab fa-telegram"></i></a>
         </div>
-        <div class="user-info">
+        <div style="display:flex; align-items:center; gap:10px;">
             <div style="text-align:left">
-                <input type="text" id="editUserName" style="margin:0; width:100px; padding:5px; font-size:12px;" placeholder="ناو">
-                <button onclick="updateName()" style="background:var(--accent); border:none; padding:4px 8px; border-radius:5px; cursor:pointer;"><i class="fas fa-check"></i></button>
+                <input type="text" id="editUserName" style="margin:0; width:90px; padding:4px; font-size:11px;" placeholder="ناو">
+                <button onclick="updateName()" style="background:var(--accent); border:none; padding:4px; border-radius:5px; cursor:pointer;"><i class="fas fa-check"></i></button>
             </div>
             <img id="userImg" class="user-avatar" src="">
         </div>
@@ -76,7 +82,7 @@
             <option value="Asiacell">🔴 Asiacell (0.82)</option>
             <option value="Korek">🟡 Korek (0.80)</option>
         </select>
-        <p style="font-size:11px; text-align:center; margin-top:-5px; opacity:0.7;">ناردن بۆ ژمارەی ئێمە: <b id="myNum" style="color:var(--accent)">---</b></p>
+        <p style="font-size:11px; text-align:center; margin-bottom:10px;">ناردن بۆ ژمارەی ئێمە: <b id="myNum" style="color:var(--accent)">---</b></p>
         
         <input type="number" id="amt" placeholder="بڕی پارەی نێردراو" oninput="calc()">
         
@@ -87,7 +93,7 @@
         </select>
 
         <div style="background:#0d1117; padding:12px; border-radius:15px; text-align:center; margin-bottom:12px; border:1px solid var(--border);">
-            <div id="totalDisplay" style="font-size:22px; font-weight:900; color:var(--accent);">0 IQD</div>
+            <div id="totalDisplay" style="font-size:24px; font-weight:900; color:var(--accent);">0 IQD</div>
             <div id="feeDisplay" style="font-size:11px; color:var(--danger);">حەمولە: 0</div>
         </div>
 
@@ -96,17 +102,20 @@
         <button class="btn-global" onclick="processOrder()">ناردنی داواکاری <i class="fas fa-paper-plane"></i></button>
     </div>
 
-    <h3 style="margin-right:10px;"><i class="fas fa-history"></i> مێژووی وردی مامەڵەکان</h3>
+    <h3><i class="fas fa-history"></i> مێژووی مامەڵەکان</h3>
     <div id="historyList"></div>
 </div>
 
 <div class="chat-widget">
     <div class="chat-window" id="chatWin">
-        <div class="chat-header"><span>پشتیوانی زانا</span><i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer"></i></div>
+        <div style="background:var(--accent); color:#000; padding:15px; font-weight:bold; display:flex; justify-content:space-between;">
+            <span>پشتیوانی زانا</span>
+            <i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer"></i>
+        </div>
         <div id="chatBody"></div>
-        <div style="padding:10px; display:flex; gap:5px; background:var(--card); border-top:1px solid var(--border);">
-            <input type="text" id="chatInput" placeholder="نامە بنووسە..." style="margin:0; padding:10px;">
-            <button onclick="sendMsg()" style="background:var(--accent); border:none; padding:10px 15px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+        <div style="padding:10px; display:flex; gap:5px; background:var(--card);">
+            <input type="text" id="chatInput" placeholder="نامە..." style="margin:0;">
+            <button onclick="sendMsg()" style="background:var(--accent); border:none; padding:10px; border-radius:10px;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
     <div class="chat-btn" onclick="toggleChat()"><i class="fas fa-comments"></i></div>
@@ -117,26 +126,30 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); const db = firebase.database();
 
-    function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+    function signIn() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider);
+    }
     function logout() { auth.signOut().then(() => location.reload()); }
 
-    auth.onAuthStateChanged(async user => {
+    auth.onAuthStateChanged(async (user) => {
+        const loginSec = document.getElementById('loginSection');
+        const mainApp = document.getElementById('mainApp');
         if (user) {
             const snap = await db.ref('users/' + user.uid).get();
             if (snap.exists() && snap.val().isBlocked) {
-                alert("⚠️ ئەکاونتەکەت بلۆک کراوە!"); auth.signOut(); location.reload(); return;
+                alert("⚠️ ئەکاونتەکەت بلۆک کراوە!"); auth.signOut(); return;
             }
             db.ref('users/' + user.uid).update({ name: user.displayName, email: user.email, photo: user.photoURL, lastLogin: Date.now() });
-            document.getElementById('loginSection').style.display='none';
-            document.getElementById('mainApp').style.display='block';
+            loginSec.style.display = 'none'; mainApp.style.display = 'block';
             document.getElementById('userImg').src = user.photoURL;
             document.getElementById('editUserName').value = user.displayName;
-            loadHistory(user.email);
-            updateWallet();
+            loadHistory(user.email); updateWallet();
+        } else {
+            loginSec.style.display = 'flex'; mainApp.style.display = 'none';
         }
     });
 
-    // 💸 Calculation
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const from = document.getElementById('from').value;
@@ -145,7 +158,6 @@
         document.getElementById('feeDisplay').innerText = "حەمولە: " + Math.floor(amt - final).toLocaleString() + " IQD";
     }
 
-    // 💬 Chat
     function toggleChat() {
         const win = document.getElementById('chatWin');
         win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
@@ -160,6 +172,7 @@
             });
         }
     }
+
     function sendMsg() {
         const txt = document.getElementById('chatInput').value;
         if(!txt) return;
@@ -167,7 +180,6 @@
         document.getElementById('chatInput').value = '';
     }
 
-    // 🧾 History & Orders
     function loadHistory(email) {
         db.ref('orders').orderByChild('uEmail').equalTo(email).on('value', snap => {
             let html = "";
@@ -177,17 +189,16 @@
                 html = `
                 <div class="history-card">
                     <div class="status-header">
-                        <span style="font-size:12px; font-weight:bold; color:var(--accent);">ID: ${c.key}</span>
-                        <span style="color:${color}; font-size:13px; font-weight:800;"><i class="fas fa-circle" style="font-size:8px;"></i> ${o.status}</span>
+                        <span style="font-size:12px; color:var(--accent);">ID: ${c.key}</span>
+                        <span style="color:${color}; font-size:13px; font-weight:800;">${o.status}</span>
                     </div>
-                    <div class="detail-row"><span class="label">ناردن لە:</span><span class="value">${o.from}</span></div>
-                    <div class="detail-row"><span class="label">بڕی نێردراو:</span><span class="value">${o.sentAmt || o.amt || '---'}</span></div>
-                    <div class="detail-row"><span class="label">بڕی وەرگرتن:</span><span class="value" style="color:var(--success)">${o.total}</span></div>
-                    <div class="detail-row"><span class="label">بۆ واڵێتی:</span><span class="value">${o.userPhone}</span></div>
-                    <div class="detail-row"><span class="label">ڕێکەوت:</span><span class="value" style="font-size:10px;">${o.time}</span></div>
+                    <div class="detail-row"><span>ناردن:</span><b>${o.from}</b></div>
+                    <div class="detail-row"><span>وەرگرتن:</span><b style="color:var(--success)">${o.total}</b></div>
+                    <div class="detail-row"><span>بۆ:</span><b>${o.userPhone}</b></div>
+                    <div class="detail-row"><span>ڕێکەوت:</span><small>${o.time}</small></div>
                 </div>` + html;
             });
-            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.3;'>هیچ مامەڵەیەک نەکراوە</p>";
+            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.3;'>مامەڵە نییە</p>";
         });
     }
 
@@ -195,34 +206,28 @@
         const amt = document.getElementById('amt').value;
         const phone = document.getElementById('userPhone').value;
         const file = document.getElementById('fileInput').files[0];
-        if(!amt || !phone || !file) return alert("تکایە هەموو زانیارییەکان تەواو بکە");
+        if(!amt || !phone || !file) return alert("زانیارییەکان تەواو بکە");
 
         const orderId = "ZN-" + Math.floor(10000 + Math.random() * 90000);
         const data = {
-            uEmail: auth.currentUser.email,
-            uName: auth.currentUser.displayName,
-            from: document.getElementById('from').value,
-            to: document.getElementById('to').value,
-            sentAmt: amt + " IQD",
+            uEmail: auth.currentUser.email, uName: auth.currentUser.displayName,
+            from: document.getElementById('from').value, to: document.getElementById('to').value,
             total: document.getElementById('totalDisplay').innerText,
-            userPhone: phone,
-            status: 'چاوەڕوانە',
-            time: new Date().toLocaleString('ku-IQ')
+            userPhone: phone, status: 'چاوەڕوانە', time: new Date().toLocaleString('ku-IQ')
         };
         
         await db.ref('orders/' + orderId).set(data);
         
         const fd = new FormData(); fd.append("chat_id", "6259019006"); fd.append("photo", file);
-        fd.append("caption", `🚀 داواکاری نوێ: ${orderId}\n👤 ناو: ${data.uName}\n📥 ناردن: ${data.from}\n📤 وەرگرتن: ${data.to}\n💰 بڕی وەرگرتن: ${data.total}\n📱 ژمارە: ${phone}`);
+        fd.append("caption", `🚀 داواکاری نوێ: ${orderId}\n👤 ناو: ${data.uName}\n💰 بڕ: ${data.total}\n📱 ژمارە: ${phone}`);
         fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: fd });
         
-        alert("داواکارییەکەت نێردرا و لە ژێر چاودێریدایە ✅");
-        location.reload();
+        alert("داواکارییەکەت نێردرا ✅"); location.reload();
     }
 
     function updateWallet() {
-        const wallets = { "FastPay": "7510074008", "FIB": "7510074008", "QiCard": "2879264048", "Asiacell": "07758887488", "Korek": "07510074008" };
-        document.getElementById('myNum').innerText = wallets[document.getElementById('from').value] || "---";
+        const w = { "FastPay": "7510074008", "FIB": "7510074008", "QiCard": "2879264048", "Asiacell": "07758887488", "Korek": "07510074008" };
+        document.getElementById('myNum').innerText = w[document.getElementById('from').value] || "---";
     }
 
     function updateName() {
