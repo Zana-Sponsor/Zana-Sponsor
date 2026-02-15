@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>ZANA EXCHANGE | Ultimate</title>
+    <title>ZANA EXCHANGE | Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -16,47 +16,46 @@
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .app-wrapper { width: 100%; max-width: 450px; display: none; }
 
-        /* 👑 Admin Styles */
-        .admin-panel { background: #1a1a2e; border: 2px solid var(--accent); border-radius: 20px; padding: 15px; margin-top: 30px; display: none; }
-        .admin-order-card { background: #252545; padding: 10px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #444; }
-        .admin-btns { display: flex; gap: 5px; margin-top: 10px; }
-        .adm-btn { flex: 1; padding: 8px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-
-        /* 📋 Modern History */
-        .history-card { 
-            background: var(--card-bg); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border);
-            position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
+        /* 👤 Profile Section */
+        .profile-container { background: var(--card-bg); padding: 20px; border-radius: 25px; margin-bottom: 20px; border: 1px solid var(--border); text-align: center; }
+        .user-avatar { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--accent); margin-bottom: 10px; }
+        
+        /* 🧾 History Design */
+        .history-card { background: var(--card-bg); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; }
         .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .status-icon { animation: fa-spin 2s linear infinite; }
+        .fa-spin-slow { animation: fa-spin 2s linear infinite; }
         .detail-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .label { color: #8b949e; }
-        .value { font-weight: 800; color: #f0f6fc; }
-
-        /* 👤 Profile Cooldown */
-        .cooldown-msg { font-size: 10px; color: var(--warning); margin-top: 5px; display: none; }
-
+        
+        /* Buttons & Inputs */
         .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: white; width: 100%; padding: 16px; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; }
         input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; color: #fff; font-family: 'Vazirmatn'; margin-bottom: 10px; box-sizing: border-box; outline: none; }
     </style>
 </head>
 <body>
 
-<div id="loginSection" style="height:80vh; display:flex; align-items:center;">
+<div id="loginSection" style="height:100vh; display:flex; align-items:center;">
     <button class="btn-global" onclick="signIn()">چوونەژوورەوە بە گووگڵ <i class="fab fa-google"></i></button>
 </div>
 
 <div class="app-wrapper" id="mainApp">
-    <div style="background:var(--card-bg); padding:20px; border-radius:25px; margin-bottom:20px; text-align:center;">
-        <img id="userImg" style="width:60px; height:60px; border-radius:50%; border:2px solid var(--accent); margin-bottom:10px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: var(--card-bg); padding: 12px 20px; border-radius: 20px; border: 1px solid var(--border);">
+        <button onclick="logout()" style="background:none; border:none; color:var(--danger); font-size: 20px; cursor:pointer;"><i class="fas fa-sign-out-alt"></i></button>
+        <div style="display: flex; gap: 15px;">
+            <a href="https://wa.me/9647510074008" style="color:#25d366; font-size: 24px;"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://t.me/ZANA_EXCHANGE" style="color:#0088cc; font-size: 24px;"><i class="fab fa-telegram"></i></a>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <img id="userImg" class="user-avatar" src="">
         <div style="display:flex; gap:5px;">
             <input type="text" id="editUserName" style="margin:0; flex:1;" placeholder="ناوەکەت بنووسە">
             <button id="saveNameBtn" onclick="updateProfileName()" style="background:var(--accent); border:none; padding:10px; border-radius:12px; cursor:pointer;"><i class="fas fa-check"></i></button>
         </div>
-        <p id="nameCooldown" class="cooldown-msg">ناتوانی ناو بگۆڕیت تا ٣٠ ڕۆژی تر ⏳</p>
+        <p id="nameCooldown" style="font-size:10px; color:var(--warning); display:none; margin-top:5px;">گۆڕینی ناو قوفڵە ⏳</p>
     </div>
 
-    <div style="background: var(--card-bg); padding: 20px; border-radius: 25px;">
+    <div style="background: var(--card-bg); padding: 20px; border-radius: 25px; border: 1px solid var(--border);">
         <select id="from" onchange="updateWallet(); calc(); checkDuplicate();">
             <option value="FastPay">💳 FastPay</option>
             <option value="FIB">🏦 FIB Bank</option>
@@ -81,175 +80,108 @@
         <button class="btn-global" id="submitBtn" onclick="processOrder()">ناردنی داواکاری</button>
     </div>
 
-    <h3 style="margin:20px 0 10px;">مێژووی وردی مامەڵەکان</h3>
+    <h3 style="margin:25px 0 15px;">مێژووی مامەڵەکان</h3>
     <div id="historyList"></div>
-
-    <div id="adminArea" class="admin-panel">
-        <h3 style="color:var(--accent); margin-top:0;"><i class="fas fa-user-shield"></i> بەشی بەڕێوەبەر</h3>
-        <div id="adminOrders"></div>
-    </div>
 </div>
 
 <script>
     const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); const db = firebase.database();
-    
-    const adminEmails = ["your-email@gmail.com"]; // ئیمەیڵی خۆت لێرە دابنێ بۆ ئەوەی ببیتە ئەدمین
 
     function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
     function logout() { auth.signOut().then(() => location.reload()); }
-
-    auth.onAuthStateChanged(user => {
+    
+    auth.onAuthStateChanged(async user => {
         if (user) {
+            // 🛡️ Block Check
+            const snapBlock = await db.ref('users/' + user.uid + '/isBlocked').get();
+            if (snapBlock.val() === true) {
+                alert("ئەکاونتەکەت بلۆک کراوە! تکایە پەیوەندی بە پشتگیری بکە.");
+                auth.signOut(); location.reload(); return;
+            }
+
             document.getElementById('loginSection').style.display='none';
             document.getElementById('mainApp').style.display='block';
             document.getElementById('userImg').src = user.photoURL;
             document.getElementById('editUserName').value = user.displayName;
+            
             checkNameCooldown(user.uid);
             loadHistory(user.email);
-            if(adminEmails.includes(user.email)) {
-                document.getElementById('adminArea').style.display = 'block';
-                loadAdminOrders();
-            }
+            updateWallet();
         }
     });
 
-    // --- Name Change Logic (30 Days Cooldown) ---
+    // --- Core Functions ---
     async function checkNameCooldown(uid) {
         const snap = await db.ref('users/' + uid + '/lastNameChange').get();
         if(snap.exists()) {
-            const lastChange = snap.val();
-            const now = Date.now();
-            const daysLeft = 30 - Math.floor((now - lastChange) / (1000 * 60 * 60 * 24));
+            const daysLeft = 30 - Math.floor((Date.now() - snap.val()) / (1000*60*60*24));
             if(daysLeft > 0) {
                 document.getElementById('saveNameBtn').disabled = true;
-                document.getElementById('saveNameBtn').style.opacity = '0.3';
                 document.getElementById('nameCooldown').style.display = 'block';
-                document.getElementById('nameCooldown').innerText = `ناتوانی ناو بگۆڕیت تا ${daysLeft} ڕۆژی تر ⏳`;
+                document.getElementById('nameCooldown').innerText = `ناو ناگۆڕدرێت تا ${daysLeft} ڕۆژی تر`;
             }
         }
     }
 
     function updateProfileName() {
-        const user = auth.currentUser;
-        const newName = document.getElementById('editUserName').value;
-        if(!newName) return;
-        
-        db.ref('users/' + user.uid).set({
-            lastNameChange: Date.now(),
-            name: newName
-        }).then(() => {
-            user.updateProfile({ displayName: newName });
-            alert("ناو گۆڕدرا! تا ٣٠ ڕۆژ ناتوانیتەوە بیگۆڕیت.");
-            location.reload();
+        const name = document.getElementById('editUserName').value;
+        if(!name) return;
+        db.ref('users/' + auth.currentUser.uid).update({ lastNameChange: Date.now(), name: name });
+        auth.currentUser.updateProfile({ displayName: name }).then(() => {
+            alert("ناو گۆڕدرا ✅"); location.reload();
         });
     }
 
-    // --- Order Logic ---
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const from = document.getElementById('from').value;
-        let final = 0, fee = 0;
-        if (from === "Korek") { final = amt * 0.8; fee = amt - final; }
-        else if (from === "Asiacell") { final = amt * 0.82; fee = amt - final; }
-        else { final = amt; fee = 0; }
+        let final = (from === "Korek") ? amt * 0.8 : (from === "Asiacell" ? amt * 0.82 : amt);
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " IQD";
-        document.getElementById('feeDisplay').innerText = "حەمولە: " + Math.floor(fee).toLocaleString() + " IQD";
+        document.getElementById('feeDisplay').innerText = "حەمولە: " + Math.floor(amt - final).toLocaleString() + " IQD";
     }
 
     async function processOrder() {
         const phone = document.getElementById('userPhone').value;
         const file = document.getElementById('fileInput').files[0];
-        const amt = document.getElementById('amt').value;
-        if (!phone || !file || !amt) return alert("زانیارییەکان تەواو بکە");
-
+        if (!phone || !file) return alert("زانیارییەکان پڕبکەرەوە");
         const orderId = "ZN-" + Math.floor(10000 + Math.random() * 90000);
-        const time = new Date().toLocaleString('ku-IQ');
+        const data = { uEmail: auth.currentUser.email, uName: auth.currentUser.displayName, from: document.getElementById('from').value, to: document.getElementById('receiveVia').value, total: document.getElementById('totalDisplay').innerText, userPhone: phone, status: 'چاوەڕوانە', time: new Date().toLocaleString('ku-IQ') };
         
-        const orderData = {
-            id: orderId,
-            uEmail: auth.currentUser.email,
-            uName: auth.currentUser.displayName,
-            from: document.getElementById('from').value,
-            to: document.getElementById('receiveVia').value,
-            sentAmt: amt + " IQD",
-            receiveAmt: document.getElementById('totalDisplay').innerText,
-            fee: document.getElementById('feeDisplay').innerText,
-            userPhone: phone,
-            status: 'چاوەڕوانە',
-            time: time
-        };
-
-        // Telegram Send
-        const formData = new FormData();
-        formData.append("chat_id", "6259019006"); formData.append("photo", file);
-        formData.append("caption", `🔔 داواکاری نوێ: ${orderId}\n👤 ناو: ${orderData.uName}\n📧 ئیمەیڵ: ${orderData.uEmail}\n📥 ناردن: ${orderData.from} (${orderData.sentAmt})\n📤 وەرگرتن: ${orderData.to}\n💰 کۆی وەرگرتن: ${orderData.receiveAmt}\n📱 ژمارەی کڕیار: ${phone}\n⏰ کات: ${time}`);
-
-        await fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: formData });
-        await db.ref('orders/' + orderId).set(orderData);
-        alert("داواکاری نێردرا ✅");
-        location.reload();
+        await db.ref('orders/' + orderId).set(data);
+        // Telegram Send (Simplified)
+        const fd = new FormData(); fd.append("chat_id", "6259019006"); fd.append("photo", file);
+        fd.append("caption", `🚀 داواکاری: ${orderId}\n👤 ${data.uName}\n📥 ${data.from}\n📤 ${data.to}\n💰 ${data.total}\n📱 ${phone}`);
+        fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: fd });
+        
+        alert("نێردرا ✅"); location.reload();
     }
 
-    // --- History & Admin Logic ---
     function loadHistory(email) {
         db.ref('orders').orderByChild('uEmail').equalTo(email).on('value', snap => {
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                const icon = o.status === "چاوەڕوانە" ? "fa-spinner status-icon" : (o.status === "ڕەتکرایەوە" ? "fa-times-circle" : "fa-check-circle");
-                const color = o.status === "چاوەڕوانە" ? "var(--warning)" : (o.status === "ڕەتکرایەوە" ? "var(--danger)" : "var(--success)");
-                
+                const icon = o.status === "چاوەڕوانە" ? "fa-spinner fa-spin-slow" : "fa-check-circle";
                 html = `<div class="history-card">
-                    <div class="status-header">
-                        <span style="font-size:12px; font-weight:bold;">${o.id}</span>
-                        <span style="color:${color}; font-size:12px; font-weight:800;"><i class="fas ${icon}"></i> ${o.status}</span>
-                    </div>
-                    <div class="detail-row"><span class="label">ناردن لە:</span><span class="value">${o.from}</span></div>
-                    <div class="detail-row"><span class="label">بڕی نێردراو:</span><span class="value">${o.sentAmt}</span></div>
-                    <div class="detail-row"><span class="label">بڕی وەرگرتن:</span><span class="value" style="color:var(--success)">${o.receiveAmt}</span></div>
-                    <div class="detail-row"><span class="label">بۆ واڵێتی:</span><span class="value">${o.userPhone}</span></div>
-                    <div class="detail-row"><span class="label">ڕێکەوت:</span><span class="value">${o.time}</span></div>
+                    <div class="status-header"><b>#${c.key}</b><span style="font-size:12px;"><i class="fas ${icon}"></i> ${o.status}</span></div>
+                    <div class="detail-row"><span>ناردن:</span><b>${o.from}</b></div>
+                    <div class="detail-row"><span>وەرگرتن:</span><b>${o.total}</b></div>
+                    <div class="detail-row"><span>بۆ ژمارە:</span><b>${o.userPhone}</b></div>
                 </div>` + html;
             });
             document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.3;'>مامەڵە نییە</p>";
         });
     }
 
-    function loadAdminOrders() {
-        db.ref('orders').on('value', snap => {
-            let html = "";
-            snap.forEach(c => {
-                const o = c.val();
-                if(o.status === "چاوەڕوانە") {
-                    html += `<div class="admin-order-card">
-                        <b>${o.uName} (${o.id})</b><br>
-                        <small>${o.from} -> ${o.to}</small><br>
-                        <div class="admin-btns">
-                            <button class="adm-btn" style="background:var(--success)" onclick="updateStatus('${c.key}', 'وەرگیرا')">قبوڵکردن</button>
-                            <button class="adm-btn" style="background:var(--danger)" onclick="updateStatus('${c.key}', 'ڕەتکرایەوە')">ڕەتکردنەوە</button>
-                        </div>
-                    </div>`;
-                }
-            });
-            document.getElementById('adminOrders').innerHTML = html || "هیچ داواکارییەک نییە";
-        });
-    }
-
-    function updateStatus(id, status) {
-        db.ref('orders/' + id).update({ status: status });
-    }
-
     function updateWallet() {
         const wallets = { "FastPay": "7510074008", "FIB": "7510074008", "QiCard": "2879264048", "Asiacell": "07758887488", "Korek": "07510074008" };
         document.getElementById('myNum').innerText = wallets[document.getElementById('from').value] || "---";
     }
-
+    
     function checkDuplicate() {
-        const from = document.getElementById('from').value;
-        const to = document.getElementById('receiveVia').value;
-        document.getElementById('submitBtn').disabled = (from === to);
+        document.getElementById('submitBtn').disabled = (document.getElementById('from').value === document.getElementById('receiveVia').value);
     }
 </script>
 </body>
