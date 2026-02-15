@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>ZANA EXCHANGE | Pro</title>
+    <title>ZANA EXCHANGE | وەشانی جێگیر</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -11,64 +11,58 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap');
-        :root { --accent: #00d2ff; --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #ffffff; --danger: #ff4d4d; --success: #2ecc71; --warning: #f1c40f; }
+        :root { --accent: #00d2ff; --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #ffffff; --danger: #ff4d4d; --success: #2ecc71; }
         
-        body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; min-height: 100vh; }
         
-        /* 🌟 Modern Login Section */
-        #loginSection { background: radial-gradient(circle at top right, #1e293b, #0d1117); width: 100%; height: 100vh; display: flex; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; z-index: 9999; }
-        .login-card { background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(10px); padding: 40px 30px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; width: 85%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .login-logo { width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), #3a7bd5); border-radius: 22px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 35px; color: #000; box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3); }
-        .btn-google { background: #ffffff; color: #000; width: 100%; padding: 14px; border: none; border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; }
-
-        /* 📱 Main App UI */
-        .app-wrapper { width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; display: none; padding-bottom: 100px; }
+        /* 🌟 ستایلی لۆگین */
+        #loginSection { background: radial-gradient(circle at top right, #1e293b, #0d1117); width: 100%; height: 100vh; display: flex; justify-content: center; align-items: center; position: fixed; z-index: 10000; }
+        .login-card { background: rgba(22, 27, 34, 0.9); backdrop-filter: blur(10px); padding: 40px 30px; border-radius: 30px; border: 1px solid var(--border); text-align: center; width: 85%; max-width: 350px; }
+        .login-logo { width: 70px; height: 70px; background: var(--accent); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 30px; color: #000; }
+        
+        /* 📱 ناوەوەی ئەپ */
+        .app-wrapper { width: 100%; max-width: 450px; margin: 0 auto; padding: 15px; display: none; }
         .header-box { background: var(--card); padding: 15px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .user-avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--accent); }
-        .form-box { background: var(--card); padding: 20px; border-radius: 25px; border: 1px solid var(--border); margin-bottom: 20px; }
-        input, select { width: 100%; background: #21262d; border: 1px solid var(--border); border-radius: 12px; padding: 14px; color: #fff; margin-bottom: 12px; box-sizing: border-box; outline: none; font-family: 'Vazirmatn'; }
-        .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: white; width: 100%; padding: 16px; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-size: 16px; }
+        .form-box { background: var(--card); padding: 20px; border-radius: 25px; border: 1px solid var(--border); }
+        
+        input, select { width: 100%; background: #21262d; border: 1px solid var(--border); border-radius: 12px; padding: 14px; color: #fff; margin-bottom: 12px; font-family: 'Vazirmatn'; }
+        .btn-primary { background: var(--accent); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; }
 
-        /* 📋 History Cards */
-        .history-card { background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-        .detail-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        /* 📋 مێژووی مامەڵە */
+        .history-card { background: var(--card); border-radius: 18px; padding: 15px; margin-bottom: 10px; border: 1px solid var(--border); }
+        .status-badge { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: bold; }
 
-        /* 💬 Chat Widget */
-        .chat-widget { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
-        .chat-btn { width: 60px; height: 60px; border-radius: 50%; background: var(--accent); color: #000; display: flex; align-items: center; justify-content: center; font-size: 25px; cursor: pointer; }
-        .chat-window { position: fixed; bottom: 90px; left: 20px; width: 300px; height: 400px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; display: none; flex-direction: column; overflow: hidden; }
-        #chatBody { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #0d1117; }
-        .msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px; }
+        /* 💬 چاتی ڕاستەوخۆ */
+        .chat-widget { position: fixed; bottom: 20px; left: 20px; }
+        .chat-btn { width: 55px; height: 55px; border-radius: 50%; background: var(--accent); color: #000; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .chat-window { position: fixed; bottom: 85px; left: 20px; width: 280px; height: 380px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; display: none; flex-direction: column; overflow: hidden; }
+        #chatBody { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #0d1117; }
+        .msg { padding: 8px 12px; border-radius: 10px; font-size: 13px; max-width: 80%; }
         .msg.sent { align-self: flex-end; background: var(--accent); color: #000; }
-        .msg.received { align-self: flex-start; background: #21262d; color: #fff; }
+        .msg.received { align-self: flex-start; background: #30363d; color: #fff; }
     </style>
 </head>
 <body>
 
 <div id="loginSection">
     <div class="login-card">
-        <div class="login-logo"><i class="fas fa-exchange-alt"></i></div>
-        <h2>زانا ئێکسچەینج</h2>
-        <p>خێراترین سیستم بۆ گۆڕینەوەی باڵانس</p>
-        <button class="btn-google" onclick="signIn()">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="20">
-            چوونەژوورەوە بە Google
+        <div class="login-logo"><i class="fas fa-shield-alt"></i></div>
+        <h2 style="margin:0;">ZANA EXCHANGE</h2>
+        <p style="font-size:13px; opacity:0.7;">بۆ بەردەوامبوون تکایە بچۆ ژوورەوە</p>
+        <button class="btn-primary" onclick="signIn()" style="display:flex; align-items:center; justify-content:center; gap:10px;">
+            <i class="fab fa-google"></i> چوونەژوورەوە بە گووگڵ
         </button>
     </div>
 </div>
 
 <div class="app-wrapper" id="mainApp">
     <div class="header-box">
-        <button onclick="logout()" style="background:none; border:none; color:var(--danger); font-size: 22px; cursor:pointer;"><i class="fas fa-sign-out-alt"></i></button>
-        <div style="display:flex; gap:12px;">
-            <a href="https://wa.me/9647510074008" style="color:#25d366; font-size: 22px;"><i class="fab fa-whatsapp"></i></a>
-            <a href="https://t.me/ZANA_EXCHANGE" style="color:#0088cc; font-size: 22px;"><i class="fab fa-telegram"></i></a>
-        </div>
+        <button onclick="logout()" style="background:none; border:none; color:var(--danger); font-size: 20px;"><i class="fas fa-sign-out-alt"></i></button>
         <div style="display:flex; align-items:center; gap:10px;">
             <div style="text-align:left">
-                <input type="text" id="editUserName" style="margin:0; width:90px; padding:4px; font-size:11px;" placeholder="ناو">
-                <button onclick="updateName()" style="background:var(--accent); border:none; padding:4px; border-radius:5px; cursor:pointer;"><i class="fas fa-check"></i></button>
+                <input type="text" id="editUserName" style="margin:0; width:80px; padding:3px; font-size:10px;">
+                <button onclick="updateName()" style="background:var(--accent); border:none; padding:3px 7px; border-radius:4px;"><i class="fas fa-check"></i></button>
             </div>
             <img id="userImg" class="user-avatar" src="">
         </div>
@@ -82,39 +76,33 @@
             <option value="Asiacell">🔴 Asiacell (0.82)</option>
             <option value="Korek">🟡 Korek (0.80)</option>
         </select>
-        <p style="font-size:11px; text-align:center; margin-bottom:10px;">ناردن بۆ ژمارەی ئێمە: <b id="myNum" style="color:var(--accent)">---</b></p>
+        <p style="text-align:center; font-size:12px; margin-top:-5px;">ناردن بۆ: <b id="myNum" style="color:var(--accent)">---</b></p>
         
-        <input type="number" id="amt" placeholder="بڕی پارەی نێردراو" oninput="calc()">
+        <input type="number" id="amt" placeholder="بڕی نێردراو" oninput="calc()">
         
-        <select id="to">
-            <option value="FastPay">وەرگرتن: FastPay</option>
-            <option value="FIB">وەرگرتن: FIB</option>
-            <option value="QiCard">وەرگرتن: Qi Card</option>
-        </select>
-
-        <div style="background:#0d1117; padding:12px; border-radius:15px; text-align:center; margin-bottom:12px; border:1px solid var(--border);">
+        <div style="background:#0d1117; padding:15px; border-radius:15px; text-align:center; margin-bottom:12px; border:1px solid var(--border);">
             <div id="totalDisplay" style="font-size:24px; font-weight:900; color:var(--accent);">0 IQD</div>
-            <div id="feeDisplay" style="font-size:11px; color:var(--danger);">حەمولە: 0</div>
+            <div style="font-size:11px; opacity:0.5;">بڕی وەرگرتنی تۆ</div>
         </div>
 
         <input type="tel" id="userPhone" placeholder="ژمارەی واڵێتی خۆت">
         <input type="file" id="fileInput" accept="image/*">
-        <button class="btn-global" onclick="processOrder()">ناردنی داواکاری <i class="fas fa-paper-plane"></i></button>
+        <button class="btn-primary" onclick="processOrder()">ناردنی داواکاری</button>
     </div>
 
-    <h3><i class="fas fa-history"></i> مێژووی مامەڵەکان</h3>
+    <h4 style="margin: 20px 5px 10px;"><i class="fas fa-history"></i> مێژووی دوایین مامەڵەکان</h4>
     <div id="historyList"></div>
 </div>
 
 <div class="chat-widget">
     <div class="chat-window" id="chatWin">
-        <div style="background:var(--accent); color:#000; padding:15px; font-weight:bold; display:flex; justify-content:space-between;">
+        <div style="background:var(--accent); color:#000; padding:12px; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
             <span>پشتیوانی زانا</span>
             <i class="fas fa-times" onclick="toggleChat()" style="cursor:pointer"></i>
         </div>
         <div id="chatBody"></div>
         <div style="padding:10px; display:flex; gap:5px; background:var(--card);">
-            <input type="text" id="chatInput" placeholder="نامە..." style="margin:0;">
+            <input type="text" id="chatInput" placeholder="نامە..." style="margin:0; padding:10px;">
             <button onclick="sendMsg()" style="background:var(--accent); border:none; padding:10px; border-radius:10px;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
@@ -122,42 +110,70 @@
 </div>
 
 <script>
+    // ⚙️ ڕێکخستنی فایەربەیس
     const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); const db = firebase.database();
 
+    // 🔐 لۆجیکی چوونەژوورەوە
     function signIn() {
         const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider);
+        auth.signInWithRedirect(provider); // گۆڕدرا بۆ Redirect بۆ مۆبایل
     }
     function logout() { auth.signOut().then(() => location.reload()); }
 
     auth.onAuthStateChanged(async (user) => {
-        const loginSec = document.getElementById('loginSection');
-        const mainApp = document.getElementById('mainApp');
         if (user) {
             const snap = await db.ref('users/' + user.uid).get();
             if (snap.exists() && snap.val().isBlocked) {
                 alert("⚠️ ئەکاونتەکەت بلۆک کراوە!"); auth.signOut(); return;
             }
-            db.ref('users/' + user.uid).update({ name: user.displayName, email: user.email, photo: user.photoURL, lastLogin: Date.now() });
-            loginSec.style.display = 'none'; mainApp.style.display = 'block';
+            db.ref('users/' + user.uid).update({ name: user.displayName, email: user.email, photo: user.photoURL, lastSeen: Date.now() });
+            
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
             document.getElementById('userImg').src = user.photoURL;
             document.getElementById('editUserName').value = user.displayName;
-            loadHistory(user.email); updateWallet();
+            loadHistory(user.email);
+            updateWallet();
         } else {
-            loginSec.style.display = 'flex'; mainApp.style.display = 'none';
+            document.getElementById('loginSection').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
         }
     });
 
+    // 💰 لۆجیکی حیسابکردن
     function calc() {
         const amt = parseFloat(document.getElementById('amt').value) || 0;
         const from = document.getElementById('from').value;
         let final = (from === "Korek") ? amt * 0.8 : (from === "Asiacell" ? amt * 0.82 : amt);
         document.getElementById('totalDisplay').innerText = Math.floor(final).toLocaleString() + " IQD";
-        document.getElementById('feeDisplay').innerText = "حەمولە: " + Math.floor(amt - final).toLocaleString() + " IQD";
     }
 
+    // 🧾 مێژووی مامەڵەکان
+    function loadHistory(email) {
+        db.ref('orders').orderByChild('uEmail').equalTo(email).on('value', snap => {
+            let h = "";
+            snap.forEach(c => {
+                const o = c.val();
+                const color = o.status === "وەرگیرا" ? "var(--success)" : (o.status === "ڕەتکرایەوە" ? "var(--danger)" : "orange");
+                h = `
+                <div class="history-card">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <span style="font-size:11px; opacity:0.6;">ID: ${c.key}</span>
+                        <span class="status-badge" style="color:${color}; border:1px solid ${color}">${o.status}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:13px;">
+                        <span>${o.from} ➔ ${o.total}</span>
+                        <span style="opacity:0.7;">${o.time.split(',')[0]}</span>
+                    </div>
+                </div>` + h;
+            });
+            document.getElementById('historyList').innerHTML = h || "<p style='text-align:center; opacity:0.3;'>هیچ مامەڵەیەک نییە</p>";
+        });
+    }
+
+    // 💬 چات
     function toggleChat() {
         const win = document.getElementById('chatWin');
         win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
@@ -167,46 +183,23 @@
                     const m = c.val();
                     h += `<div class="msg ${m.sender === auth.currentUser.uid ? 'sent' : 'received'}">${m.text}</div>`;
                 });
-                const body = document.getElementById('chatBody');
-                body.innerHTML = h; body.scrollTop = body.scrollHeight;
+                const b = document.getElementById('chatBody'); b.innerHTML = h; b.scrollTop = b.scrollHeight;
             });
         }
     }
-
     function sendMsg() {
-        const txt = document.getElementById('chatInput').value;
-        if(!txt) return;
-        db.ref('chats/' + auth.currentUser.uid).push({ sender: auth.currentUser.uid, name: auth.currentUser.displayName, text: txt, time: Date.now() });
+        const t = document.getElementById('chatInput').value;
+        if(!t) return;
+        db.ref('chats/' + auth.currentUser.uid).push({ sender: auth.currentUser.uid, text: t, time: Date.now() });
         document.getElementById('chatInput').value = '';
     }
 
-    function loadHistory(email) {
-        db.ref('orders').orderByChild('uEmail').equalTo(email).on('value', snap => {
-            let html = "";
-            snap.forEach(c => {
-                const o = c.val();
-                const color = o.status === "چاوەڕوانە" ? "var(--warning)" : (o.status === "ڕەتکرایەوە" ? "var(--danger)" : "var(--success)");
-                html = `
-                <div class="history-card">
-                    <div class="status-header">
-                        <span style="font-size:12px; color:var(--accent);">ID: ${c.key}</span>
-                        <span style="color:${color}; font-size:13px; font-weight:800;">${o.status}</span>
-                    </div>
-                    <div class="detail-row"><span>ناردن:</span><b>${o.from}</b></div>
-                    <div class="detail-row"><span>وەرگرتن:</span><b style="color:var(--success)">${o.total}</b></div>
-                    <div class="detail-row"><span>بۆ:</span><b>${o.userPhone}</b></div>
-                    <div class="detail-row"><span>ڕێکەوت:</span><small>${o.time}</small></div>
-                </div>` + html;
-            });
-            document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.3;'>مامەڵە نییە</p>";
-        });
-    }
-
+    // 🚀 ناردنی داواکاری
     async function processOrder() {
         const amt = document.getElementById('amt').value;
         const phone = document.getElementById('userPhone').value;
         const file = document.getElementById('fileInput').files[0];
-        if(!amt || !phone || !file) return alert("زانیارییەکان تەواو بکە");
+        if(!amt || !phone || !file) return alert("تکایە هەموو خانەکان پڕبکەرەوە");
 
         const orderId = "ZN-" + Math.floor(10000 + Math.random() * 90000);
         const data = {
@@ -222,7 +215,8 @@
         fd.append("caption", `🚀 داواکاری نوێ: ${orderId}\n👤 ناو: ${data.uName}\n💰 بڕ: ${data.total}\n📱 ژمارە: ${phone}`);
         fetch(`https://api.telegram.org/bot8570457708:AAG_5hFu-octgBn1ruDJ3_OzEG7p4fWiNgo/sendPhoto`, { method: "POST", body: fd });
         
-        alert("داواکارییەکەت نێردرا ✅"); location.reload();
+        alert("داواکارییەکەت نێردرا ✅");
+        location.reload();
     }
 
     function updateWallet() {
@@ -235,7 +229,7 @@
         if(!n) return;
         auth.currentUser.updateProfile({ displayName: n }).then(() => {
             db.ref('users/' + auth.currentUser.uid).update({ name: n });
-            alert("ناو گۆڕدرا ✅");
+            alert("ناو نوێکرایەوە ✅");
         });
     }
 </script>
