@@ -1,34 +1,95 @@
 <!DOCTYPE html>
 <html lang="ku" dir="rtl">
 <head>
-    <title>Admin - ناردنی ئاگاداری</title>
+    <title>ZANA Admin Panel</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { font-family: Tahoma; background: #0a0a0c; color: white; text-align: center; padding: 50px; }
-        input, button { padding: 15px; margin: 10px; border-radius: 10px; border: none; width: 300px; }
-        button { background: #00d2ff; cursor: pointer; font-weight: bold; }
+        body { font-family: Tahoma; background: #0a0a0c; color: white; padding: 20px; direction: rtl; }
+        .section { background: #16161a; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #2d2d35; }
+        input { padding: 10px; margin: 5px; border-radius: 5px; border: 1px solid #2d2d35; background: #1f1f24; color: white; width: 100px; }
+        .full-width { width: 90%; }
+        button { padding: 10px 20px; background: #00d2ff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        label { display: inline-block; width: 150px; font-size: 13px; }
     </style>
 </head>
 <body>
-    <h2>ناردنی ئاگاداری بۆ بەکارهێنەران</h2>
-    <input type="text" id="msgText" placeholder="نامەکە لێرە بنووسە..."><br>
-    <button onclick="sendAlert(true)">بڵاوکردنەوە (Show)</button><br>
-    <button style="background: #ff4d4d;" onclick="sendAlert(false)">شاردنەوە (Hide)</button>
+    <h2>کۆنتڕۆڵ پانێڵی زانا</h2>
+
+    <div class="section">
+        <h3>ئاگاداری (Alert Message)</h3>
+        <input type="text" id="alertMsg" class="full-width" placeholder="دەقی ئاگاداری لێرە بنووسە..."><br><br>
+        <button onclick="updateAlert(true)">بڵاوکردنەوە و دەنگ</button>
+        <button style="background: #ff4d4d;" onclick="updateAlert(false)">شاردنەوە</button>
+    </div>
+
+    <div class="section">
+        <h3>دەستکاری حمولە (Rates)</h3>
+        <p style="color: #ff9f43; font-size: 12px;">تێبینی: بۆ %20 حمولە بنووسە 0.80 | بۆ دۆلار بنووسە 1450</p>
+        
+        <h4>کۆڕەک</h4>
+        <label>بۆ FastPay:</label> <input type="number" id="k_f" step="0.01"><br>
+        <label>بۆ FIB:</label> <input type="number" id="k_i" step="0.01"><br>
+        <label>بۆ QiCard:</label> <input type="number" id="k_q" step="0.01"><hr>
+
+        <h4>ئاسیاسێڵ</h4>
+        <label>بۆ FastPay:</label> <input type="number" id="a_f" step="0.01"><br>
+        <label>بۆ FIB:</label> <input type="number" id="a_i" step="0.01"><br>
+        <label>بۆ QiCard:</label> <input type="number" id="a_q" step="0.01"><hr>
+
+        <h4>دۆلار (USDT)</h4>
+        <label>بۆ FastPay:</label> <input type="number" id="u_f"><br>
+        <label>بۆ FIB:</label> <input type="number" id="u_i"><br>
+        <label>بۆ QiCard:</label> <input type="number" id="u_q"><hr>
+
+        <label>حمولەی گشتی واڵێت:</label> <input type="number" id="def" step="0.01"><br><br>
+        <button onclick="updateRates()">پاشەکەوتکردنی نرخەکان</button>
+    </div>
 
     <script>
         const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        function sendAlert(status) {
-            const text = document.getElementById('msgText').value;
+        function updateAlert(show) {
             db.ref('alertMsg').set({
-                text: text,
-                show: status,
-                timestamp: Date.now() // بۆ ئەوەی بزانین نامەکە نوێیە
-            }).then(() => alert("ئەنجامدرا!"));
+                text: document.getElementById('alertMsg').value,
+                show: show,
+                timestamp: Date.now()
+            }).then(() => alert("ئاگاداری نوێکراوە!"));
         }
+
+        function updateRates() {
+            db.ref('rates').set({
+                korek_fastpay: parseFloat(document.getElementById('k_f').value),
+                korek_fib: parseFloat(document.getElementById('k_i').value),
+                korek_qicard: parseFloat(document.getElementById('k_q').value),
+                asia_fastpay: parseFloat(document.getElementById('a_f').value),
+                asia_fib: parseFloat(document.getElementById('a_i').value),
+                asia_qicard: parseFloat(document.getElementById('a_q').value),
+                usdt_fastpay: parseFloat(document.getElementById('u_f').value),
+                usdt_fib: parseFloat(document.getElementById('u_i').value),
+                usdt_qicard: parseFloat(document.getElementById('u_q').value),
+                default_fee: parseFloat(document.getElementById('def').value)
+            }).then(() => alert("نرخەکان نوێکرانەوە!"));
+        }
+
+        // هێنانەوەی نرخەکان کاتێک لاپەڕەکە دەکرێتەوە
+        db.ref('rates').once('value', snap => {
+            const r = snap.val();
+            if(r) {
+                document.getElementById('k_f').value = r.korek_fastpay;
+                document.getElementById('k_i').value = r.korek_fib;
+                document.getElementById('k_q').value = r.korek_qicard;
+                document.getElementById('a_f').value = r.asia_fastpay;
+                document.getElementById('a_i').value = r.asia_fib;
+                document.getElementById('a_q').value = r.asia_qicard;
+                document.getElementById('u_f').value = r.usdt_fastpay;
+                document.getElementById('u_i').value = r.usdt_fib;
+                document.getElementById('u_q').value = r.usdt_qicard;
+                document.getElementById('def').value = r.default_fee;
+            }
+        });
     </script>
 </body>
 </html>
