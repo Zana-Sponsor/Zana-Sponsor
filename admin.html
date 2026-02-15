@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <title>Admin - ناردنی ئاگاداری</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        body { font-family: Tahoma; background: #0a0a0c; color: white; text-align: center; padding: 50px; }
+        input, button { padding: 15px; margin: 10px; border-radius: 10px; border: none; width: 300px; }
+        button { background: #00d2ff; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>ناردنی ئاگاداری بۆ بەکارهێنەران</h2>
+    <input type="text" id="msgText" placeholder="نامەکە لێرە بنووسە..."><br>
+    <button onclick="sendAlert(true)">بڵاوکردنەوە (Show)</button><br>
+    <button style="background: #ff4d4d;" onclick="sendAlert(false)">شاردنەوە (Hide)</button>
+
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function sendAlert(status) {
+            const text = document.getElementById('msgText').value;
+            db.ref('alertMsg').set({
+                text: text,
+                show: status,
+                timestamp: Date.now() // بۆ ئەوەی بزانین نامەکە نوێیە
+            }).then(() => alert("ئەنجامدرا!"));
+        }
+    </script>
+</body>
+</html>
