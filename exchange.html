@@ -24,26 +24,24 @@
             --wa-color: #25d366;
         }
 
-        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .app-wrapper { width: 100%; max-width: 400px; display: none; }
         
-        /* بەشی ئاگاداری نوێ */
+        /* ستایلی ئاگاداری فایەربەیس */
         #newsBanner { 
             width: 100%; 
-            background: linear-gradient(90deg, #ff8c00, #ff4d4d); 
-            color: white; 
-            padding: 12px 0; 
+            background: linear-gradient(90deg, #3a7bd5, #00d2ff); 
+            color: #000; 
+            padding: 12px; 
+            border-radius: 15px; 
+            margin: 10px 0 20px 0; 
             font-weight: 800; 
-            font-size: 14px; 
+            font-size: 13px; 
             text-align: center; 
             display: none; 
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2); 
         }
 
-        .app-wrapper { width: 95%; max-width: 400px; display: none; padding-top: 10px; }
-        
         .header-section { width: 100%; position: relative; padding: 20px 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
         .logout-btn { position: absolute; left: 10px; top: 20px; color:#ff4d4d; cursor:pointer; font-size: 22px; }
         
@@ -62,6 +60,8 @@
         .btn-global { background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: #000; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 17px; text-decoration: none; }
         
         .order-card { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); border-right: 5px solid var(--accent); width: 100%; box-sizing: border-box; }
+        .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--text); opacity: 0.8; }
+        .detail-item i { color: var(--accent); width: 18px; text-align: center; }
         .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: bold; border: 1px solid #ffc107; color: #ffc107; }
         .status-success { border-color: #2ecc71 !important; color: #2ecc71 !important; }
 
@@ -69,8 +69,6 @@
     </style>
 </head>
 <body>
-
-<div id="newsBanner"><i class="fas fa-bullhorn"></i> <span id="newsText">بارکردنی ئاگاداری...</span></div>
 
 <div id="loginSection">
     <i class="fas fa-money-bill-transfer" style="font-size: 70px; color: var(--accent); margin-bottom: 25px;"></i>
@@ -90,6 +88,8 @@
             </div>
         </div>
     </div>
+
+    <div id="newsBanner"><i class="fas fa-bullhorn"></i> <span id="newsText"></span></div>
 
     <div class="premium-card">
         <div style="background:var(--input-bg); padding:12px; border-radius:15px; display:flex; justify-content:space-between; margin-bottom:15px; border-right: 5px solid var(--accent);">
@@ -122,14 +122,14 @@
             <div id="feeDisplay" style="font-size:12px; color:#ff9f43; margin-top:5px; font-weight: bold; height: 18px;"></div>
         </div>
 
-        <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11">
-        <input type="file" id="fileInput" accept="image/*" style="font-size:13px;">
+        <input type="tel" id="userPhone" placeholder="07XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <input type="file" id="fileInput" accept="image/*" style="font-size:13px; margin-top: 5px;">
         
         <button class="btn-global" id="submitBtn" onclick="processOrder()" style="margin-top: 15px;">ناردنی داواکاری</button>
     </div>
 
-    <h3 style="font-size:16px; margin: 10px 5px;"><i class="fas fa-history"></i> مێژووی ئۆردەرەکان</h3>
-    <div id="historyList"></div>
+    <h3 style="font-size:16px; margin: 10px 5px; width:100%;"><i class="fas fa-history"></i> مێژووی ئۆردەرەکان</h3>
+    <div id="historyList" style="width: 100%;"></div>
 </div>
 
 <script>
@@ -137,15 +137,16 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); const db = firebase.database();
 
-    // ==========================================
-    // --- بەشی دەستکاریکردنی نرخەکان لێرەیە ---
-    // ==========================================
+    // نرخەکان لێرە دەستکاری بکە
     let exchangeRates = {
         korek_fastpay: 0.81, korek_fib: 0.80, korek_qicard: 0.805,
         asia_fastpay: 0.82, asia_fib: 0.81, asia_qicard: 0.815,
         usdt_fastpay: 1450, usdt_fib: 1440, usdt_qicard: 1445,
         default_fee: 0.98
     };
+
+    function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+    function logout() { auth.signOut().then(() => location.reload()); }
 
     auth.onAuthStateChanged(user => { 
         if (user) { 
@@ -154,21 +155,19 @@
             document.getElementById('userName').innerText = user.displayName; 
             document.getElementById('userImg').src = user.photoURL; 
             loadHistory(user.email); 
-            listenToNews(); // چالاککردنی ئاگاداری
-            listenToRates(); // چالاککردنی نرخەکان
+            listenToNews();
+            listenToRates();
         } 
     });
 
-    // فەنکشن بۆ هێنانی ئاگاداری لە Firebase (نۆدی announcement)
+    // گوێگرتن لە alertMsg لە فایەربەیس
     function listenToNews() {
-        db.ref('announcement').on('value', snap => {
+        db.ref('alertMsg').on('value', snap => {
             const data = snap.val();
             if(data && data.show === true) {
                 document.getElementById('newsText').innerText = data.text;
                 document.getElementById('newsBanner').style.display = 'block';
-            } else {
-                document.getElementById('newsBanner').style.display = 'none';
-            }
+            } else { document.getElementById('newsBanner').style.display = 'none'; }
         });
     }
 
@@ -179,10 +178,7 @@
     }
 
     const wallets = { "FastPay": "7510074008", "FIB": "7510074008", "QiCard": "2879264048", "Asiacell": "07758887488", "Korek": "07510074008", "USDT": "TTaNnxWNt2bjgSvpRY7NpvyCHUXDi6wjYc" };
-    
     function formatNum(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
-    function signIn() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
-    function logout() { auth.signOut().then(() => location.reload()); }
     function updateWallet() { document.getElementById('myNum').innerText = wallets[document.getElementById('from').value]; calc(); }
     function updatePlaceholder() { document.getElementById('userPhone').placeholder = `${document.getElementById('receiveVia').value} ژمارەی`; }
 
@@ -235,13 +231,18 @@
             let html = "";
             snap.forEach(c => {
                 const o = c.val();
-                html = `<div class="order-card">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                let sClass = o.status === "وەرگیرا" ? "status-success" : "";
+                html = `
+                <div class="order-card">
+                    <div class="order-header" style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:8px;">
                         <span style="font-weight:800; color:var(--accent);">#${c.key}</span>
-                        <span class="status-badge ${o.status === "وەرگیرا" ? "status-success" : ""}">${o.status}</span>
+                        <span class="status-badge ${sClass}">${o.status}</span>
                     </div>
-                    <div style="font-size:13px; opacity:0.8;">${o.from} ➔ ${o.to} | بڕ: ${o.amount}</div>
-                    <div style="font-size:13px; color:#2ecc71;">وەرگرتن: ${o.total}</div>
+                    <div class="detail-item"><i class="fas fa-exchange-alt"></i> ${o.from} ➔ ${o.to}</div>
+                    <div class="detail-item"><i class="fas fa-coins"></i> بڕ: <b>${o.amount}</b></div>
+                    <div class="detail-item"><i class="fas fa-check-double"></i> بڕی وەرگیراو: <b style="color:#2ecc71">${o.total}</b></div>
+                    <div class="detail-item"><i class="fas fa-phone-alt"></i> ژمارە: ${o.phone}</div>
+                    <div class="detail-item"><i class="far fa-clock"></i> ${o.time}</div>
                 </div>` + html;
             });
             document.getElementById('historyList').innerHTML = html || "<p style='text-align:center; opacity:0.5;'>هیچ ئۆردەرێک نییە</p>";
