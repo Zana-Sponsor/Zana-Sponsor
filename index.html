@@ -207,7 +207,7 @@ h1{
     </button>
 
     <button id="phone-btn" class="link-card phone">
-      <span>ژمارەی پەیوەندی</span>
+      <span>کۆڕەک</span>
       <i class="fas fa-phone-alt"></i>
     </button>
   </div>
@@ -240,6 +240,7 @@ h1{
     let currentVideo = decodeURIComponent(videoUrl);
     let message = "سڵاو! ئایا دەتوانم زانیاری زیاترم دەست بکەوێت دەربارەی ئەمە؟\n" + currentVideo;
     let phoneNumber = "+9647758887488";
+    let phoneNumber1 = "+9647510074008";
 
     document.getElementById('wa-btn').onclick = function() {
       trackTikTokConversion('WhatsApp');
@@ -258,7 +259,7 @@ h1{
     document.getElementById('phone-btn').onclick = function() {
       trackTikTokConversion('Phone');
       setTimeout(function() {
-        window.location.href = "tel:+" + phoneNumber;
+        window.location.href = "tel:+" + phoneNumber1;
       }, 500);
     };
   }
