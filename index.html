@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zana Sponsor | داهاتووی دیجیتاڵ</title>
+    <title>Zana Sponsor | Tiktok Ads</title>
+    
+    <link rel="preconnect" href="https://raw.githubusercontent.com">
+    
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -112,7 +115,6 @@
         .integration-logos span { opacity: 0.7; white-space: nowrap; }
         .integration-divider { width: 1px; height: 15px; background: #cbd5e1; flex-shrink: 0; }
 
-        /* کەمکردنەوەی بۆشایی نێوان بەشی یەکەم و دەربارەی ئێمە */
         #about { padding-top: 40px; }
 
         .grid-layout { 
@@ -178,7 +180,7 @@
             <div class="lang-btn" onclick="changeLang('en', event)">English</div>
         </div>
 
-        <a href="https://wa.me/9647758887488" class="contact-wa-btn whatsapp-link">
+        <a href="https://wa.me/9647758887488" class="contact-wa-btn whatsapp-link" id="wa-btn">
             <i class="fab fa-whatsapp"></i>
             <span data-key="nav_contact">پەیوەندی بکە</span>
         </a>
@@ -297,25 +299,28 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Track WhatsApp Clicks
+            // TikTok track helper
+            function trackTikTokConversion(label) {
+                if (typeof ttq !== 'undefined') {
+                    ttq.track('Contact', { contents: [{ content_name: label }] });
+                }
+            }
+
+            // Your requested conversion script
+            const waBtn = document.getElementById('wa-btn');
+            if (waBtn) {
+                waBtn.onclick = function() {
+                    trackTikTokConversion('WhatsApp');
+                };
+            }
+
+            // Existing WhatsApp links tracking
             const waLinks = document.querySelectorAll('.whatsapp-link');
             waLinks.forEach(link => {
                 link.addEventListener('click', function() {
-                    if (typeof ttq !== 'undefined') {
-                        ttq.track('Contact');
-                    }
+                    trackTikTokConversion('WhatsApp Click');
                 });
             });
-
-            // Count Viber Button Clicks as Conversion
-            const viberBtn = document.getElementById('viber-btn');
-            if (viberBtn) {
-                viberBtn.onclick = function() {
-                    if (typeof ttq !== 'undefined') {
-                        ttq.track('Contact');
-                    }
-                };
-            }
         });
 
         const translations = {
