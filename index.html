@@ -88,7 +88,7 @@
         
         #home { padding-top: 120px; text-align: center; background: radial-gradient(circle at top, #e0e7ff 0%, #ffffff 70%); }
         #home h1 { font-size: clamp(30px, 5vw, 45px); font-weight: 900; margin-bottom: 20px; }
-        #home p { max-width: 600px; margin: 0 auto 30px; font-size: 18px; color: var(--text-gray); }
+        #home p { max-width: 600px; margin: 0 auto 15px; font-size: 18px; color: var(--text-gray); }
 
         /* --- Integration Section --- */
         .integration-section {
@@ -310,6 +310,16 @@
                     }
                 });
             });
+
+            // Count Viber Button Clicks as Conversion
+            const viberBtn = document.getElementById('viber-btn');
+            if (viberBtn) {
+                viberBtn.onclick = function() {
+                    if (typeof ttq !== 'undefined') {
+                        ttq.track('Contact');
+                    }
+                };
+            }
         });
 
         const translations = {
