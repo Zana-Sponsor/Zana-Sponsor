@@ -1,294 +1,347 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ku">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zana Sponsor - Links</title>
-
-<script>
-!function (w, d, t) {
-  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
-var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
-;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-  
-  ttq.load('D5N6ETJC77UFLMP0AO10');
-  ttq.page();
-
-  window.trackTikTokConversion = function(platform) {
-    if (typeof ttq !== 'undefined') {
-      ttq.track('Contact', { 
-        "contents": [{ "content_name": platform }] 
-      });
-    }
-  };
-}(window, document, 'ttq');
-</script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-<style>
-@font-face {
-  font-family: 'Rudaw';
-  src: url('rudawbold.ttf') format('truetype');
-}
-
-:root{
-  --bg:#0f172a;
-  --card:rgba(30,41,59,.85);
-  --text:#f8fafc;
-}
-
-body{
-  font-family:'Rudaw','Vazirmatn',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-.container{
-  width:90%;
-  max-width:360px;
-  text-align:center;
-  padding: 20px 0;
-}
-
-.profile-container {
-  background:var(--card);
-  backdrop-filter:blur(14px);
-  padding:25px 20px;
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.1);
-  margin-bottom: 25px;
-}
-
-.profile-img{
-  width:90px;
-  height:90px;
-  border-radius:50%;
-  object-fit:cover;
-  margin-bottom:15px;
-  border: 2px solid rgba(255,255,255,0.2);
-}
-
-h1{
-  font-size:20px;
-  margin:0 0 10px;
-  font-weight:900;
-}
-
-.main-instruction {
-  font-size:14px;
-  color:#aabbd3;
-  line-height: 1.5;
-  margin-top: 10px;
-}
-
-.links-wrapper{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-}
-
-/* --- Improved Conic Gradient Animation --- */
-@property --angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-
-.link-card-wrapper {
-  position: relative;
-  padding: 3.5px; /* کەمێک ئەستوورتر بۆ دیارکەوتنی باشتر */
-  border-radius: 20px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.link-card-wrapper::before {
-  content: '';
-  position: absolute;
-  width: 180%;
-  height: 180%;
-  animation: spin 2.5s linear infinite;
-}
-
-/* ڕەنگی جیاواز بۆ هەر دوگمەیەک */
-.wa-wrap::before { background-image: conic-gradient(from var(--angle), transparent 70%, #25D366, #fff, #25D366); }
-.vi-wrap::before { background-image: conic-gradient(from var(--angle), transparent 70%, #7360f2, #fff, #7360f2); }
-.ph-wrap::before { background-image: conic-gradient(from var(--angle), transparent 70%, #0062AD, #fff, #0062AD); }
-
-@keyframes spin {
-  from { --angle: 0deg; }
-  to { --angle: 360deg; }
-}
-
-.link-card{
-  position:relative;
-  z-index: 1;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:18px 22px;
-  border-radius:16px;
-  text-decoration:none;
-  color:#fff;
-  font-size:18px;
-  font-weight:700;
-  transition:all 0.25s ease;
-  cursor: pointer;
-  border: none;
-  width: 100%;
-  font-family: inherit;
-}
-
-.link-card:active{ transform:scale(.96); }
-.link-card i{ font-size:26px; }
-
-/* ڕەنگی دوگمەکان */
-.whatsapp{ background: #075E54; background-image: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
-.viber{ background: #5941a9; background-image: linear-gradient(135deg, #7360f2 0%, #5941a9 100%); }
-.phone{ background: #00457A; background-image: linear-gradient(135deg, #0062AD 0%, #00457A 100%); }
-
-.wa-emoji {
-  margin-right: 15px;
-  display: inline-block;
-  font-size: 20px;
-  animation: point-text 0.6s infinite alternate;
-}
-
-@keyframes point-text {
-  from { transform: translateX(0); }
-  to { transform: translateX(8px); }
-}
-
-.footer{
-  margin-top:40px;
-  padding-top:15px;
-  border-top:1px solid rgba(255,255,255,.05);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
-}
-
-.footer p{ font-size:11px; color:#64748b; margin:0; }
-
-.sponsor-btn{
-  padding:10px 22px;
-  background:#2C67E7;
-  border-radius:50px;
-  color:#fff;
-  text-decoration:none;
-  font-weight:900;
-  font-size:13px;
-  transition: 0.3s;
-}
-
-.legal-links{
-  font-size:11px;
-  color:#475569;
-  display:flex; gap:10px;
-}
-.legal-links a{ color:inherit; text-decoration:none; }
-.sep{opacity:.3}
-</style>
-</head>
-
-<body>
-<div class="container">
-
-  <div class="profile-container">
-        <img src="" 
-             class="profile-img" 
-             alt="Logo"
-             onerror="this.src='https://ui-avatars.com/api/?name=Z+P&background=2C67E7&color=fff&size=128'">
-        
-        <h1>Zana Sponsor</h1>
-        <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</div>
-  </div>
-
-  <div class="links-wrapper">
-    <div class="link-card-wrapper wa-wrap">
-        <button id="wa-btn" class="link-card whatsapp">
-          <div style="display: flex; align-items: center;">
-            <span>واتسئاپ</span>
-            <span id="target-emoji" class="wa-emoji">👉</span>
-          </div>
-          <i class="fab fa-whatsapp"></i>
-        </button>
-    </div>
-
-    <div class="link-card-wrapper vi-wrap">
-        <button id="viber-btn" class="link-card viber">
-          <span>ڤایبەر</span>
-          <i class="fab fa-viber"></i>
-        </button>
-    </div>
-
-    <div class="link-card-wrapper ph-wrap">
-        <button id="phone-btn" class="link-card phone">
-          <span>کۆڕەک</span>
-          <i class="fas fa-phone-alt"></i>
-        </button>
-    </div>
-  </div>
-
-  <div class="footer">
-    <p>سپۆنسەر کراوە لەلایەن</p>
-    <a class="sponsor-btn" href="https://wa.me/9647758887488?text=سڵاو، سپۆنسەرم دەوێت" onclick="trackTikTokConversion('Sponsor')">Zana Sponsor - زانا سپۆنسەر</a>
-    <div class="legal-links">
-      <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">سیاسەتی پاراستنی نهێنی</a>
-      <span class="sep">|</span>
-      <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">مەرجەکان</a>
-    </div>
-  </div>
-
-</div>
-
-<script>
-  function setupLinks() {
-    setTimeout(function() {
-      const emoji = document.getElementById('target-emoji');
-      if (emoji) emoji.style.display = 'none';
-    }, 4000);
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSmB3MB6v/";
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zana Sponsor | داهاتووی دیجیتاڵ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    let currentVideo = decodeURIComponent(videoUrl);
-    let message = "سڵاو! ئایا دەتوانم زانیاری زیاترم دەست بکەوێت دەربارەی ئەمە؟\n" + currentVideo;
-    let phoneNumber = "+9647758887488";
-    let phoneNumber1 = "9647510074008";
+    <script>
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","trackWithQuery","click","updateCookie"],ttq.setAndGetCookie=function(t,e){var n=ttq.instance(e);return n.setAndGetCookie(t)},ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndGetCookie(ttq,e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=r;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
+    
+      ttq.load('D5N6ETJC77UFLMP0AO10');
+      ttq.page();
+    }(window, document, 'ttq');
+    </script>
+    <style>
+        :root {
+            --accent: #2563eb;
+            --accent-dark: #1d4ed8;
+            --bg: #ffffff;
+            --soft-bg: #f1f5f9;
+            --text-dark: #0f172a;
+            --text-gray: #475569;
+            --footer-bg: #0a0a0a;
+        }
 
-    document.getElementById('wa-btn').onclick = function() {
-      trackTikTokConversion('WhatsApp');
-      setTimeout(function() {
-        window.location.href = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
-      }, 300);
-    };
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; transition: 0.3s; }
 
-    document.getElementById('viber-btn').onclick = function() {
-      trackTikTokConversion('Viber');
-      setTimeout(function() {
-        window.location.href = "viber://chat?number=" + phoneNumber;
-      }, 300);
-    };
+        /* --- Navbar --- */
+        nav {
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .logo { font-size: 24px; font-weight: 900; color: var(--accent); text-decoration: none; }
+        .logo span { color: var(--accent); }
+        .menu-trigger { font-size: 24px; cursor: pointer; z-index: 2001; }
 
-    document.getElementById('phone-btn').onclick = function() {
-      trackTikTokConversion('Phone');
-      setTimeout(function() {
-        window.location.href = "tel:+" + phoneNumber1;
-      }, 300);
-    };
-  }
-  setupLinks();
-</script>
+        /* --- Menu Overlay --- */
+        .menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: #ffffff; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 20px;
+            transform: translateX(-100%); transition: 0.4s cubic-bezier(0.77,0,0.175,1);
+            z-index: 1500;
+        }
+        .menu-overlay.active { transform: translateX(0); }
+        .menu-overlay a { text-decoration: none; color: var(--text-dark); font-size: 22px; font-weight: 700; transition: 0.3s; }
 
+        .lang-wrapper {
+            background: #f1f5f9; padding: 5px; border-radius: 50px;
+            display: flex; gap: 5px; border: 1px solid #e2e8f0; margin: 10px 0;
+        }
+        .lang-btn {
+            padding: 8px 18px; border-radius: 50px; font-size: 13px;
+            color: var(--text-gray); cursor: pointer; transition: 0.3s; font-weight: 600;
+        }
+        .lang-btn.active { background: var(--accent); color: white; }
+
+        .contact-wa-btn {
+            background: var(--text-dark); color: white !important;
+            padding: 12px 30px; border-radius: 50px; font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
+            transition: 0.4s; position: relative; overflow: hidden;
+            font-size: 16px;
+        }
+        .contact-wa-btn:hover { transform: translateY(-3px); background: var(--accent); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3); }
+
+        section { padding: 80px 6%; }
+        .section-tag { color: var(--accent); font-weight: 700; display: block; margin-bottom: 10px; text-align: center; }
+        
+        #home { padding-top: 120px; text-align: center; background: radial-gradient(circle at top, #e0e7ff 0%, #ffffff 70%); }
+        #home h1 { font-size: clamp(30px, 5vw, 45px); font-weight: 900; margin-bottom: 20px; }
+        #home p { max-width: 600px; margin: 0 auto 30px; font-size: 18px; color: var(--text-gray); }
+
+        .grid-layout { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; margin-top: 40px; 
+        }
+
+        .card { background: var(--soft-bg); padding: 30px; border-radius: 25px; text-align: center; transition: 0.3s; border: 1px solid transparent; }
+        .card:hover { background: white; border-color: #e2e8f0; box-shadow: 0 15px 30px rgba(0,0,0,0.05); transform: translateY(-5px); }
+        .card i { font-size: 35px; color: var(--accent); margin-bottom: 15px; }
+
+        footer {
+            background: var(--footer-bg);
+            color: #ffffff;
+            padding: 60px 8% 20px;
+            text-align: right;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-col h3 { font-size: 20px; margin-bottom: 20px; color: #fff; }
+        .footer-col p { color: #94a3b8; line-height: 1.6; font-size: 15px; }
+        .footer-links-list { list-style: none; }
+        .footer-links-list li { margin-bottom: 12px; }
+        .footer-links-list a { color: #94a3b8; text-decoration: none; transition: 0.3s; font-size: 15px; }
+        .footer-links-list a:hover { color: var(--accent); padding-right: 5px; }
+        .social-icons { display: flex; gap: 15px; margin-top: 20px; }
+        .social-icons a { width: 40px; height: 40px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: 0.3s; }
+        .social-icons a:hover { background: var(--accent); transform: translateY(-3px); }
+        .footer-bottom { border-top: 1px solid #1e293b; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; color: #64748b; font-size: 14px; }
+
+        .wa-float { position: fixed; bottom: 30px; left: 30px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; z-index: 1000; }
+
+        .ltr { direction: ltr; }
+        .rtl { direction: rtl; }
+        .ltr footer, .ltr .footer-col { text-align: left; }
+
+        .rev-avatar {
+            width: 50px; height: 50px; background: var(--accent); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 20px; margin: 0 auto 15px; font-family: 'Arial', sans-serif;
+        }
+    </style>
+</head>
+<body class="rtl">
+
+    <nav>
+        <a href="#home" class="logo">Zana<span> Sponsor</span></a>
+        <div class="menu-trigger" id="toggleBtn"><i class="fas fa-bars"></i></div>
+    </nav>
+
+    <div class="menu-overlay" id="menuMenu">
+        <a href="#home" class="menu-link" data-key="nav_home">سەرەتا</a>
+        <a href="#about" class="menu-link" data-key="nav_about">دەربارەی ئێمە</a>
+        <a href="#services" class="menu-link" data-key="nav_services">خزمەتگوزارییەکان</a>
+        
+        <div class="lang-wrapper">
+            <div class="lang-btn active" onclick="changeLang('ku', event)">کوردی</div>
+            <div class="lang-btn" onclick="changeLang('ar', event)">عربي</div>
+            <div class="lang-btn" onclick="changeLang('en', event)">English</div>
+        </div>
+
+        <a href="https://wa.me/9647758887488" class="contact-wa-btn whatsapp-link">
+            <i class="fab fa-whatsapp"></i>
+            <span data-key="nav_contact">پەیوەندی بکە</span>
+        </a>
+    </div>
+
+    <section id="home">
+        <h1 data-key="hero_title">باشترین ئەنجام لە ڕێگەی سپۆنسەری تیکتۆک</h1>
+        <p data-key="hero_desc">ئێمە یارمەتی براندەکان دەدەین بۆ گەیشتن بە ملیۆنان بینەر بە پڕۆفیشناڵترین شێوە.</p>
+        <a href="https://wa.me/9647758887488" class="contact-wa-btn whatsapp-link" style="display:inline-flex" data-key="btn_start">دەستپێبکە</a>
+    </section>
+
+    <section id="about">
+        <span class="section-tag" data-key="nav_about">دەربارەی ئێمە</span>
+        <h2 style="text-align:center" data-key="about_title">Zana Sponsor چییە؟</h2>
+        <p style="text-align:center; max-width:800px; margin:20px auto; line-height:1.8" data-key="about_desc">
+            ئێمە تیمێکی پسپۆڕین لە بواری دیجیتاڵ مارکێتینگ، ئامانجمان بەرزکردنەوەی ئاستی براندەکانتانە لەڕێگەی نوێترین تەکنیکەکانی تیکتۆک و سۆشیاڵ میدیا.
+        </p>
+    </section>
+
+    <section id="services" style="background:#fafafa">
+        <span class="section-tag" data-key="nav_services">خزمەتگوزارییەکان</span>
+        <div class="grid-layout">
+            <div class="card">
+                <i class="fab fa-tiktok"></i>
+                <h3 data-key="ser1_t">سپۆنسەری تیکتۆک</h3>
+                <p data-key="ser1_d">گەیشتن بە ملیۆنان بینەری ڕاستەقینە.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-chart-line"></i>
+                <h3 data-key="ser2_t">بەڕێوەبردنی کەمپەین</h3>
+                <p data-key="ser2_d">دانانی پلانی گونجاو بۆ بودجەکەت.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-bullhorn"></i>
+                <h3 data-key="ser3_t">ڕاوێژکاری مارکێتینگ</h3>
+                <p data-key="ser3_d">پێشکەشکردنی باشترین بیرۆکە بۆ بازاڕکردن.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="feedback">
+        <span class="section-tag" data-key="test_tag">فیدباکەکان</span>
+        <div class="grid-layout">
+            <div class="card">
+                <div class="rev-avatar">A</div>
+                <p data-key="rev1">"کارکردن لەگەڵ زانا سپۆنسەر باشترین بڕیار بوو بۆ براندەکەمان."</p>
+                <h4 style="margin-top:15px; color:var(--accent)">- Ahmed Mohammed</h4>
+            </div>
+            <div class="card">
+                <div class="rev-avatar" style="background:#db2777;">S</div>
+                <p data-key="rev2">"خێرایی لە جێبەجێکردن و ئەنجامی زۆر باشیان هەیە."</p>
+                <h4 style="margin-top:15px; color:var(--accent)">- Sara Karwan</h4>
+            </div>
+            <div class="card">
+                <div class="rev-avatar" style="background:#059669;">M</div>
+                <p data-key="rev3">"پڕۆفیشناڵترین تیم بۆ سپۆنسەر، بینەری ڤیدیۆکانم بە شێوەیەکی خەیاڵی زیادی کرد."</p>
+                <h4 style="margin-top:15px; color:var(--accent)">- Mohammed Ali</h4>
+            </div>
+            <div class="card">
+                <div class="rev-avatar" style="background:#7c3aed;">H</div>
+                <p data-key="rev4">"باشترین مامەڵە و گونجاوترین نرخ، سوپاس بۆ ماندووبوونتان."</p>
+                <h4 style="margin-top:15px; color:var(--accent)">- Hama Store</h4>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <a href="#" class="logo" style="margin-bottom: 20px; display: block;">Zana<span> Sponsor</span></a>
+                <p data-key="footer_about">پلاتفۆرمی ژمارە #1 بۆ سپۆنسەری و مارکێتینگ لە عێراق و کوردستان. داهێنان، ئەنجام، و گەشەکردن.</p>
+                <div class="social-icons">
+                    <a href="https://wa.me/9647758887488" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/share/1EPacFiuVx/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/zana_adam_?igsh=M2d4dHJ2dmV6cnZ4" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@zana_adam_?_r=1&_t=ZS-93yUX0Srr7q" target="_blank"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h3 data-key="footer_links_title">لینکەکان</h3>
+                <ul class="footer-links-list">
+                    <li><a href="#home" data-key="nav_home">سەرەتا</a></li>
+                    <li><a href="#about" data-key="nav_about">دەربارەی ئێمە</a></li>
+                    <li><a href="#services" data-key="nav_services">خزمەتگوزارییەکان</a></li>
+                    <li><a href="#feedback" data-key="test_tag">فیدباکەکان</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3 data-key="footer_policy_title">یاساکان</h3>
+                <ul class="footer-links-list">
+                    <li><a href="https://www.tiktok.com/legal/terms-of-service" target="_blank" data-key="policy_t">یاسا و مەرجەکان</a></li>
+                    <li><a href="https://www.tiktok.com/legal/privacy-policy" target="_blank" data-key="privacy">پاراستنی زانیارییەکان</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Zana Sponsor. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/9647758887488" class="wa-float whatsapp-link" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+    <script>
+        // Track WhatsApp Clicks as Conversion
+        document.addEventListener('DOMContentLoaded', function() {
+            const waLinks = document.querySelectorAll('.whatsapp-link');
+            waLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (typeof ttq !== 'undefined') {
+                        ttq.track('Contact');
+                    }
+                });
+            });
+        });
+
+        const translations = {
+            ku: {
+                nav_home: "سەرەتا", nav_about: "دەربارەی ئێمە", nav_services: "خزمەتگوزارییەکان", nav_contact: "پەیوەندی بکە",
+                hero_title: "باشترین ئەنجام لە ڕێگەی سپۆنسەری تیکتۆک",
+                hero_desc: "ئێمە یارمەتی براندەکان دەدەین بۆ گەیشتن بە ملیۆنان بینەر بە پڕۆفیشناڵترین شێوە.",
+                btn_start: "دەستپێبکە", about_title: "Zana Sponsor چییە؟",
+                about_desc: "ئێمە تیمێکی پسپۆڕین لە بواری دیجیتاڵ مارکێتینگ، ئامانجمان بەرزکردنەوەی ئاستی براندەکانتانە.",
+                ser1_t: "سپۆنسەری تیکتۆک", ser1_d: "گەیشتن بە ملیۆنان بینەری ڕاستەقینە.",
+                ser2_t: "بەڕێوەبردنی کەمپەین", ser2_d: "دانانی پلانی گونجاو بۆ بودجەکەت.",
+                ser3_t: "ڕاوێژکاری مارکێتینگ", ser3_d: "پێشکەشکردنی باشترین بیرۆکە بۆ بازاڕکردن.",
+                test_tag: "فیدباکەکان", rev1: '"کارکردن لەگەڵ زانا سپۆنسەر باشترین بڕیار بوو."',
+                rev2: '"خێرایی لە جێبەجێکردن و ئەنجامی زۆر باش."',
+                rev3: '"پڕۆفیشناڵترین تیم بۆ سپۆنسەر، سوپاس بۆ کارە جوانتان."',
+                rev4: '"باشترین مامەڵە و گونجاوترین نرخ."',
+                footer_about: "پلاتفۆرمی ژمارە #1 بۆ سپۆنسەری و مارکێتینگ لە عێراق و کوردستان.",
+                footer_links_title: "لینکەکان", footer_policy_title: "یاساکان",
+                policy_t: "یاسا و مەرجەکان", privacy: "پاراستنی زانیارییەکان"
+            },
+            ar: {
+                nav_home: "الرئيسية", nav_about: "من نحن", nav_services: "خدماتنا", nav_contact: "اتصل بنا",
+                hero_title: "أفضل النتائج عبر تمويل تيك توك",
+                hero_desc: "نحن نساعد العلامات التجارية للوصول إلى الملايين باحترافية تامة.",
+                btn_start: "ابدأ الآن", about_title: "ما هو Zana Sponsor؟",
+                about_desc: "نحن فريق متخصص في التسويق الرقمي، نهدف لرفع مستوى علامتكم التجارية.",
+                ser1_t: "تمويل تيك توك", ser1_d: "الوصول إلى ملايين المشاهدين الحقيقيين.",
+                ser2_t: "إدارة الحملات", ser2_d: "وضع خطط مناسبة لميزانيتك.",
+                ser3_t: "استشارات تسويقية", ser3_d: "تقديم أفضل الأفكار للتسويق.",
+                test_tag: "آراء العملاء", rev1: '"العمل مع زانا سبونسر كان أفضل قرار لعلامتنا."',
+                rev2: '"سرعة في التنفيذ ونتائج رائعة."',
+                rev3: '"فريق محترف جداً، زادت مشاهداتي بشكل خيالي."',
+                rev4: '"أفضل تعامل وأفضل أسعار."',
+                footer_about: "المنصة رقم #1 للتسويق والتمويل في العراق وكردستان.",
+                footer_links_title: "الروابط", footer_policy_title: "السياسات",
+                policy_t: "الشروط والأحكام", privacy: "سياسة الخصوصية"
+            },
+            en: {
+                nav_home: "Home", nav_about: "About Us", nav_services: "Services", nav_contact: "Contact Us",
+                hero_title: "Best TikTok Sponsorship Results",
+                hero_desc: "We help brands reach millions of viewers professionally.",
+                btn_start: "Get Started", about_title: "What is Zana Sponsor?",
+                about_desc: "We are a team of experts in digital marketing, aiming to elevate your brand.",
+                ser1_t: "TikTok Ads", ser1_d: "Reach millions of real viewers.",
+                ser2_t: "Campaign Management", ser2_d: "Strategic budget planning.",
+                ser3_t: "Marketing Consulting", ser3_d: "Providing best ideas for marketing.",
+                test_tag: "Testimonials", rev1: '"Working with Zana Sponsor was the best decision."',
+                rev2: '"Fast execution and great results."',
+                rev3: '"Most professional team, my views increased magically."',
+                rev4: '"Best service and most affordable prices."',
+                footer_about: "The #1 Platform for Advertising and Sponsorship in Iraq.",
+                footer_links_title: "Quick Links", footer_policy_title: "Policies",
+                policy_t: "Terms & Conditions", privacy: "Privacy Policy"
+            }
+        };
+
+        function changeLang(lang, event) {
+            document.body.className = (lang === 'en') ? 'ltr' : 'rtl';
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[lang][key]) el.innerText = translations[lang][key];
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            if (event) event.target.classList.add('active');
+        }
+
+        const toggleBtn = document.getElementById('toggleBtn');
+        const menuMenu = document.getElementById('menuMenu');
+        toggleBtn.addEventListener('click', () => {
+            menuMenu.classList.toggle('active');
+            toggleBtn.innerHTML = menuMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', () => {
+                menuMenu.classList.remove('active');
+                toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+    </script>
 </body>
 </html>
