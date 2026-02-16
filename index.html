@@ -57,6 +57,13 @@
         .menu-overlay.active { transform: translateX(0); }
         .menu-overlay a { text-decoration: none; color: var(--text-dark); font-size: 22px; font-weight: 700; transition: 0.3s; }
 
+        /* Small Contact Button in Menu */
+        .menu-overlay .contact-wa-btn {
+            padding: 8px 20px;
+            font-size: 14px;
+            gap: 8px;
+        }
+
         .lang-wrapper {
             background: #f1f5f9; padding: 5px; border-radius: 50px;
             display: flex; gap: 5px; border: 1px solid #e2e8f0; margin: 10px 0;
@@ -82,6 +89,35 @@
         #home { padding-top: 120px; text-align: center; background: radial-gradient(circle at top, #e0e7ff 0%, #ffffff 70%); }
         #home h1 { font-size: clamp(30px, 5vw, 45px); font-weight: 900; margin-bottom: 20px; }
         #home p { max-width: 600px; margin: 0 auto 30px; font-size: 18px; color: var(--text-gray); }
+
+        /* --- Integration Section --- */
+        .integration-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .integration-title {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .integration-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: nowrap;
+            font-weight: 800;
+            font-size: clamp(12px, 3vw, 18px);
+            color: #475569;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .integration-logos span { opacity: 0.7; white-space: nowrap; }
+        .integration-divider { width: 1px; height: 15px; background: #cbd5e1; flex-shrink: 0; }
 
         .grid-layout { 
             display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -156,6 +192,17 @@
         <h1 data-key="hero_title">باشترین ئەنجام لە ڕێگەی سپۆنسەری تیکتۆک</h1>
         <p data-key="hero_desc">ئێمە یارمەتی براندەکان دەدەین بۆ گەیشتن بە ملیۆنان بینەر بە پڕۆفیشناڵترین شێوە.</p>
         <a href="https://wa.me/9647758887488" class="contact-wa-btn whatsapp-link" style="display:inline-flex" data-key="btn_start">دەستپێبکە</a>
+
+        <div class="integration-section">
+            <div class="integration-title">Seamless Integration With</div>
+            <div class="integration-logos">
+                <span>TikTok</span>
+                <div class="integration-divider"></div>
+                <span>First Iraqi Bank</span>
+                <div class="integration-divider"></div>
+                <span>FastPay</span>
+            </div>
+        </div>
     </section>
 
     <section id="about">
@@ -216,7 +263,7 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-col">
-                <a href="#" class="logo" style="margin-bottom: 20px; display: block;">Zana<span> Sponsor</span></a>
+                <a href="#" class="logo" style="margin-bottom: 20px; display: block;">Zana<span>Sponsor</span></a>
                 <p data-key="footer_about">پلاتفۆرمی ژمارە #1 بۆ سپۆنسەری و مارکێتینگ لە عێراق و کوردستان. داهێنان، ئەنجام، و گەشەکردن.</p>
                 <div class="social-icons">
                     <a href="https://wa.me/9647758887488" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i></a>
