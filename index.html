@@ -57,13 +57,6 @@
         .menu-overlay.active { transform: translateX(0); }
         .menu-overlay a { text-decoration: none; color: var(--text-dark); font-size: 22px; font-weight: 700; transition: 0.3s; }
 
-        /* Small Contact Button in Menu */
-        .menu-overlay .contact-wa-btn {
-            padding: 8px 20px;
-            font-size: 14px;
-            gap: 8px;
-        }
-
         .lang-wrapper {
             background: #f1f5f9; padding: 5px; border-radius: 50px;
             display: flex; gap: 5px; border: 1px solid #e2e8f0; margin: 10px 0;
@@ -86,13 +79,13 @@
         section { padding: 80px 6%; }
         .section-tag { color: var(--accent); font-weight: 700; display: block; margin-bottom: 10px; text-align: center; }
         
-        #home { padding-top: 120px; text-align: center; background: radial-gradient(circle at top, #e0e7ff 0%, #ffffff 70%); }
+        #home { padding-top: 120px; padding-bottom: 40px; text-align: center; background: radial-gradient(circle at top, #e0e7ff 0%, #ffffff 70%); }
         #home h1 { font-size: clamp(30px, 5vw, 45px); font-weight: 900; margin-bottom: 20px; }
         #home p { max-width: 600px; margin: 0 auto 15px; font-size: 18px; color: var(--text-gray); }
 
         /* --- Integration Section --- */
         .integration-section {
-            margin-top: 50px;
+            margin-top: 40px;
             padding-top: 30px;
             border-top: 1px solid #e2e8f0;
         }
@@ -118,6 +111,9 @@
         }
         .integration-logos span { opacity: 0.7; white-space: nowrap; }
         .integration-divider { width: 1px; height: 15px; background: #cbd5e1; flex-shrink: 0; }
+
+        /* کەمکردنەوەی بۆشایی نێوان بەشی یەکەم و دەربارەی ئێمە */
+        #about { padding-top: 40px; }
 
         .grid-layout { 
             display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -238,22 +234,22 @@
         <span class="section-tag" data-key="test_tag">فیدباکەکان</span>
         <div class="grid-layout">
             <div class="card">
-                <div class="rev-avatar">A</div>
+                <div class="rev-avatar">AM</div>
                 <p data-key="rev1">"کارکردن لەگەڵ زانا سپۆنسەر باشترین بڕیار بوو بۆ براندەکەمان."</p>
                 <h4 style="margin-top:15px; color:var(--accent)">- Ahmed Mohammed</h4>
             </div>
             <div class="card">
-                <div class="rev-avatar" style="background:#db2777;">S</div>
+                <div class="rev-avatar" style="background:#db2777;">SK</div>
                 <p data-key="rev2">"خێرایی لە جێبەجێکردن و ئەنجامی زۆر باشیان هەیە."</p>
                 <h4 style="margin-top:15px; color:var(--accent)">- Sara Karwan</h4>
             </div>
             <div class="card">
-                <div class="rev-avatar" style="background:#059669;">M</div>
+                <div class="rev-avatar" style="background:#059669;">MA</div>
                 <p data-key="rev3">"پڕۆفیشناڵترین تیم بۆ سپۆنسەر، بینەری ڤیدیۆکانم بە شێوەیەکی خەیاڵی زیادی کرد."</p>
                 <h4 style="margin-top:15px; color:var(--accent)">- Mohammed Ali</h4>
             </div>
             <div class="card">
-                <div class="rev-avatar" style="background:#7c3aed;">H</div>
+                <div class="rev-avatar" style="background:#7c3aed;">HS</div>
                 <p data-key="rev4">"باشترین مامەڵە و گونجاوترین نرخ، سوپاس بۆ ماندووبوونتان."</p>
                 <h4 style="margin-top:15px; color:var(--accent)">- Hama Store</h4>
             </div>
@@ -263,7 +259,7 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-col">
-                <a href="#" class="logo" style="margin-bottom: 20px; display: block;">Zana<span>Sponsor</span></a>
+                <a href="#" class="logo" style="margin-bottom: 20px; display: block;">Zana<span> Sponsor</span></a>
                 <p data-key="footer_about">پلاتفۆرمی ژمارە #1 بۆ سپۆنسەری و مارکێتینگ لە عێراق و کوردستان. داهێنان، ئەنجام، و گەشەکردن.</p>
                 <div class="social-icons">
                     <a href="https://wa.me/9647758887488" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i></a>
@@ -300,8 +296,8 @@
     <a href="https://wa.me/9647758887488" class="wa-float whatsapp-link" target="_blank"><i class="fab fa-whatsapp"></i></a>
 
     <script>
-        // Track WhatsApp Clicks as Conversion
         document.addEventListener('DOMContentLoaded', function() {
+            // Track WhatsApp Clicks
             const waLinks = document.querySelectorAll('.whatsapp-link');
             waLinks.forEach(link => {
                 link.addEventListener('click', function() {
