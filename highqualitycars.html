@@ -90,12 +90,47 @@ h1{
 .links-wrapper{
   display:flex;
   flex-direction:column;
-  gap:15px;
+  gap:20px;
+}
+
+/* --- Improved Conic Gradient Animation --- */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.link-card-wrapper {
+  position: relative;
+  padding: 3.5px; /* کەمێک ئەستوورتر بۆ دیارکەوتنی باشتر */
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.link-card-wrapper::before {
+  content: '';
+  position: absolute;
+  width: 180%;
+  height: 180%;
+  animation: spin 2.5s linear infinite;
+}
+
+/* ڕەنگی جیاواز بۆ هەر دوگمەیەک */
+.wa-wrap::before { background-image: conic-gradient(from var(--angle), transparent 70%, #25D366, #fff, #25D366); }
+.vi-wrap::before { background-image: conic-gradient(from var(--angle), transparent 70%, #7360f2, #fff, #7360f2); }
+.ph-wrap::before { background-image: conic-gradient(from var(--angle), transparent 70%, #0062AD, #fff, #0062AD); }
+
+@keyframes spin {
+  from { --angle: 0deg; }
+  to { --angle: 360deg; }
 }
 
 .link-card{
   position:relative;
-  overflow:hidden;
+  z-index: 1;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -105,49 +140,35 @@ h1{
   color:#fff;
   font-size:18px;
   font-weight:700;
-  box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 8px 22px rgba(0,0,0,.35);
-  transition:transform 0.25s ease;
+  transition:all 0.25s ease;
   cursor: pointer;
   border: none;
   width: 100%;
   font-family: inherit;
 }
 
-.link-card::after{
-  content:"";
-  position:absolute;
-  top:0; left:-120%; width:60%; height:100%;
-  background:linear-gradient(120deg, transparent, rgba(255,255,255,.25), transparent);
-  animation:shine 4s infinite;
-}
+.link-card:active{ transform:scale(.96); }
+.link-card i{ font-size:26px; }
 
-@keyframes shine{
-  0%{left:-120%} 20%{left:120%} 100%{left:120%}
-}
+/* ڕەنگی دوگمەکان */
+.whatsapp{ background: #075E54; background-image: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
+.viber{ background: #5941a9; background-image: linear-gradient(135deg, #7360f2 0%, #5941a9 100%); }
+.phone{ background: #00457A; background-image: linear-gradient(135deg, #0062AD 0%, #00457A 100%); }
 
-.link-card:active{ transform:scale(.97); }
-.link-card i{ font-size:28px; }
-
-.whatsapp{background:linear-gradient(135deg,#22B85E,#22BB61)}
-.viber{background:linear-gradient(135deg,#7360f2,#5941a9)}
-.phone{background:linear-gradient(135deg,#0062AD,#00457A)}
-
-/* ڕێکخستنی ئیمۆجی گەورەتر */
 .wa-emoji {
-  margin-right: 20px;
+  margin-right: 15px;
   display: inline-block;
-  font-size: 22px; /* قەبارەی گەورەتر */
-  vertical-align: middle;
+  font-size: 20px;
   animation: point-text 0.6s infinite alternate;
 }
 
 @keyframes point-text {
   from { transform: translateX(0); }
-  to { transform: translateX(10px); }
+  to { transform: translateX(8px); }
 }
 
 .footer{
-  margin-top:35px;
+  margin-top:40px;
   padding-top:15px;
   border-top:1px solid rgba(255,255,255,.05);
   display:flex;
@@ -193,23 +214,29 @@ h1{
   </div>
 
   <div class="links-wrapper">
-    <button id="wa-btn" class="link-card whatsapp">
-      <div style="display: flex; align-items: center;">
-        <span>واتسئاپ</span>
-        <span id="target-emoji" class="wa-emoji">👉</span>
-      </div>
-      <i class="fab fa-whatsapp"></i>
-    </button>
+    <div class="link-card-wrapper wa-wrap">
+        <button id="wa-btn" class="link-card whatsapp">
+          <div style="display: flex; align-items: center;">
+            <span>واتسئاپ</span>
+            <span id="target-emoji" class="wa-emoji">👉</span>
+          </div>
+          <i class="fab fa-whatsapp"></i>
+        </button>
+    </div>
 
-    <button id="viber-btn" class="link-card viber">
-      <span>ڤایبەر</span>
-      <i class="fab fa-viber"></i>
-    </button>
+    <div class="link-card-wrapper vi-wrap">
+        <button id="viber-btn" class="link-card viber">
+          <span>ڤایبەر</span>
+          <i class="fab fa-viber"></i>
+        </button>
+    </div>
 
-    <button id="phone-btn" class="link-card phone">
-      <span>کۆڕەک</span>
-      <i class="fas fa-phone-alt"></i>
-    </button>
+    <div class="link-card-wrapper ph-wrap">
+        <button id="phone-btn" class="link-card phone">
+          <span>کۆڕەک</span>
+          <i class="fas fa-phone-alt"></i>
+        </button>
+    </div>
   </div>
 
   <div class="footer">
@@ -226,12 +253,9 @@ h1{
 
 <script>
   function setupLinks() {
-    // لادانی ئیمۆجی دوای 4 چرکە
     setTimeout(function() {
       const emoji = document.getElementById('target-emoji');
-      if (emoji) {
-        emoji.style.display = 'none';
-      }
+      if (emoji) emoji.style.display = 'none';
     }, 4000);
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -245,24 +269,23 @@ h1{
       trackTikTokConversion('WhatsApp');
       setTimeout(function() {
         window.location.href = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
-      }, 500);
+      }, 300);
     };
 
     document.getElementById('viber-btn').onclick = function() {
       trackTikTokConversion('Viber');
       setTimeout(function() {
         window.location.href = "viber://chat?number=" + phoneNumber;
-      }, 500);
+      }, 300);
     };
 
     document.getElementById('phone-btn').onclick = function() {
       trackTikTokConversion('Phone');
       setTimeout(function() {
         window.location.href = "tel:+" + phoneNumber;
-      }, 500);
+      }, 300);
     };
   }
-
   setupLinks();
 </script>
 
