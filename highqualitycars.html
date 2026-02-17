@@ -93,7 +93,6 @@ h1{
   gap:20px;
 }
 
-/* --- Improved Conic Animation for WhatsApp --- */
 @property --angle {
   syntax: "<angle>";
   initial-value: 0deg;
@@ -102,7 +101,7 @@ h1{
 
 .wa-wrap {
   position: relative;
-  padding: 2.5px; /* باریکتر بۆ جوانی */
+  padding: 2.5px; 
   border-radius: 20px;
   overflow: hidden;
   display: flex;
@@ -117,7 +116,7 @@ h1{
   height: 200%;
   animation: spin 3s linear infinite;
   background-image: conic-gradient(from var(--angle), transparent 70%, #25D366, #fff, #25D366);
-  filter: blur(1px); /* Glow یەکی کەم */
+  filter: blur(1px);
 }
 
 @keyframes spin {
@@ -150,7 +149,7 @@ h1{
   margin-right: 10px;
   display: inline-block;
   transition: opacity 0.8s ease, transform 0.8s ease;
-  animation: bounce 0.10s infinite alternate;
+  animation: bounce 0.6s infinite alternate;
 }
 
 @keyframes bounce {
@@ -247,7 +246,7 @@ h1{
 
 <script>
   function setupLinks() {
-    // Emoji removal logic after 3 seconds
+    // ئەنیمەیشنی لابردنی ئیمۆجی دوای ٥٠٠٠ میللی چرکە (واتە ٥ چرکە)
     setTimeout(function() {
       const emoji = document.getElementById('target-emoji');
       if (emoji) {
@@ -255,7 +254,7 @@ h1{
         emoji.style.transform = 'translateX(20px)';
         setTimeout(() => { emoji.style.display = 'none'; }, 800);
       }
-    }, 3000);
+    }, 5000);
 
     const urlParams = new URLSearchParams(window.location.search);
     const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/";
