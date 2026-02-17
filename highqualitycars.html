@@ -93,16 +93,16 @@ h1{
   gap:20px;
 }
 
-/* --- Improved Conic Gradient Animation --- */
+/* --- Improved Conic Animation for WhatsApp --- */
 @property --angle {
   syntax: "<angle>";
   initial-value: 0deg;
   inherits: false;
 }
 
-.link-card-wrapper {
+.wa-wrap {
   position: relative;
-  padding: 3.5px; /* کەمێک ئەستوورتر بۆ دیارکەوتنی باشتر */
+  padding: 2.5px; /* باریکتر بۆ جوانی */
   border-radius: 20px;
   overflow: hidden;
   display: flex;
@@ -110,18 +110,15 @@ h1{
   align-items: center;
 }
 
-.link-card-wrapper::before {
+.wa-wrap::before {
   content: '';
   position: absolute;
-  width: 180%;
-  height: 180%;
-  animation: spin 2.5s linear infinite;
+  width: 200%;
+  height: 200%;
+  animation: spin 3s linear infinite;
+  background-image: conic-gradient(from var(--angle), transparent 70%, #25D366, #fff, #25D366);
+  filter: blur(1px); /* Glow یەکی کەم */
 }
-
-/* ڕەنگی جیاواز بۆ هەر دوگمەیەک */
-.wa-wrap::before { background-image: conic-gradient(from var(--angle), transparent 70%, #25D366, #fff, #25D366); }
-.vi-wrap::before { background-image: conic-gradient(from var(--angle), transparent 70%, #7360f2, #fff, #7360f2); }
-.ph-wrap::before { background-image: conic-gradient(from var(--angle), transparent 70%, #0062AD, #fff, #0062AD); }
 
 @keyframes spin {
   from { --angle: 0deg; }
@@ -130,12 +127,12 @@ h1{
 
 .link-card{
   position:relative;
-  z-index: 1;
+  z-index: 2;
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding:18px 22px;
-  border-radius:16px;
+  border-radius:17px;
   text-decoration:none;
   color:#fff;
   font-size:18px;
@@ -147,25 +144,26 @@ h1{
   font-family: inherit;
 }
 
+.no-border { padding: 0; }
+
+.wa-emoji {
+  margin-right: 10px;
+  display: inline-block;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  animation: bounce 0.10s infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateX(0); }
+  to { transform: translateX(6px); }
+}
+
 .link-card:active{ transform:scale(.96); }
 .link-card i{ font-size:26px; }
 
-/* ڕەنگی دوگمەکان */
 .whatsapp{ background: #075E54; background-image: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
 .viber{ background: #5941a9; background-image: linear-gradient(135deg, #7360f2 0%, #5941a9 100%); }
 .phone{ background: #00457A; background-image: linear-gradient(135deg, #0062AD 0%, #00457A 100%); }
-
-.wa-emoji {
-  margin-right: 15px;
-  display: inline-block;
-  font-size: 20px;
-  animation: point-text 0.6s infinite alternate;
-}
-
-@keyframes point-text {
-  from { transform: translateX(0); }
-  to { transform: translateX(8px); }
-}
 
 .footer{
   margin-top:40px;
@@ -204,17 +202,13 @@ h1{
 <div class="container">
 
   <div class="profile-container">
-        <img src="" 
-             class="profile-img" 
-             alt="Logo"
-             onerror="this.src='https://ui-avatars.com/api/?name=H+Q&background=2C67E7&color=fff&size=128'">
-        
+        <img src="" class="profile-img" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=H+Q&background=2C67E7&color=fff&size=128'">
         <h1>High Quality Cars</h1>
         <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</div>
   </div>
 
   <div class="links-wrapper">
-    <div class="link-card-wrapper wa-wrap">
+    <div class="wa-wrap">
         <button id="wa-btn" class="link-card whatsapp">
           <div style="display: flex; align-items: center;">
             <span>واتسئاپ</span>
@@ -224,14 +218,14 @@ h1{
         </button>
     </div>
 
-    <div class="link-card-wrapper vi-wrap">
+    <div class="no-border">
         <button id="viber-btn" class="link-card viber">
           <span>ڤایبەر</span>
           <i class="fab fa-viber"></i>
         </button>
     </div>
 
-    <div class="link-card-wrapper ph-wrap">
+    <div class="no-border">
         <button id="phone-btn" class="link-card phone">
           <span>کۆڕەک</span>
           <i class="fas fa-phone-alt"></i>
@@ -253,10 +247,15 @@ h1{
 
 <script>
   function setupLinks() {
+    // Emoji removal logic after 3 seconds
     setTimeout(function() {
       const emoji = document.getElementById('target-emoji');
-      if (emoji) emoji.style.display = 'none';
-    }, 4000);
+      if (emoji) {
+        emoji.style.opacity = '0';
+        emoji.style.transform = 'translateX(20px)';
+        setTimeout(() => { emoji.style.display = 'none'; }, 800);
+      }
+    }, 3000);
 
     const urlParams = new URLSearchParams(window.location.search);
     const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/";
