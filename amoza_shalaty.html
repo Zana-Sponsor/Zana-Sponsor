@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zana Sponsor - Links</title>
+
+<script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  
+  ttq.load('D5N6ETJC77UFLMP0AO10');
+  ttq.page();
+
+  window.trackTikTokConversion = function(platform) {
+    if (typeof ttq !== 'undefined') {
+      ttq.track('Contact', { 
+        "contents": [{ "content_name": platform }] 
+      });
+    }
+  };
+}(window, document, 'ttq');
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+/* پێناسەکردنی گۆشەی خولانەوە بۆ ئەوەی ئەنیمەیشنەکە کار بکات */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+:root{
+  --bg:#0f172a;
+  --card:rgba(30,41,59,.85);
+  --text:#f8fafc;
+}
+
+body{
+  font-family: 'Vazirmatn', sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.container{
+  width:95%;
+  max-width:360px;
+  text-align:center;
+  padding: 20px 0;
+}
+
+.profile-container {
+  background:var(--card);
+  backdrop-filter:blur(14px);
+  padding:25px 20px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.1);
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-img{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-bottom:15px;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+
+h1{
+  font-size:20px;
+  margin:0 0 10px;
+  font-weight:700;
+}
+
+.main-instruction {
+  font-size:14px;
+  color:#aabbd3;
+  line-height: 1.5;
+  margin-top: 10px;
+}
+
+.links-wrapper { display: flex; flex-direction: column; gap: 12px; }
+
+/* --- چاککردنی هێڵە جوڵاوەکە --- */
+.link-card-wrapper {
+  position: relative;
+  padding: 3px; /* ئاستی باریکی هێڵەکە */
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.link-card-wrapper::before {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 450%; /* درێژی لایتەکە */
+  background: conic-gradient(from var(--angle), transparent 70%, #00d4ff, #fff, #00d4ff);
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from { --angle: 0deg; }
+  to { --angle: 360deg; }
+}
+
+.link-card {
+    position: relative;
+    z-index: 1;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px; border-radius: 17px; text-decoration: none;
+    color: white; font-weight: 700; font-size: 18px; 
+    background: #1e293b; /* ڕەنگی ناوەوەی دوگمەکە */
+    background-image: linear-gradient(135deg, #208DC5, #166a94);
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.25s ease;
+}
+
+.link-card::after{
+  content:"";
+  position:absolute;
+  top:0; left:-120%; width:60%; height:100%;
+  background:linear-gradient(120deg, transparent, rgba(255,255,255,.2), transparent);
+  animation:shine 4s infinite;
+}
+
+@keyframes shine{
+  0%{left:-120%} 20%{left:120%} 100%{left:120%}
+}
+
+.link-card:active{ transform:scale(.97); }
+.link-card i{ font-size:28px; }
+
+.wa-emoji {
+  margin-right: 15px;
+  display: inline-block;
+  font-size: 20px;
+  animation: point-text 0.6s infinite alternate;
+  transition: opacity 0.5s ease;
+}
+
+@keyframes point-text {
+  from { transform: translateX(0); }
+  to { transform: translateX(10px); }
+}
+
+.footer{
+  margin-top:35px;
+  padding-top:15px;
+  border-top:1px solid rgba(255,255,255,.05);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+
+.footer p{ font-size:11px; color:#64748b; margin:0; }
+
+.sponsor-btn{
+  padding:10px 22px;
+  background:#2C67E7;
+  border-radius:50px;
+  color:#fff;
+  text-decoration:none;
+  font-weight:900;
+  font-size:13px;
+}
+
+.legal-links{
+  font-size:11px;
+  color:#475569;
+  display:flex; gap:12px;
+}
+.legal-links a{ color:inherit; text-decoration:none; }
+.sep{opacity:.3}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="profile-container">
+        <img src="https://image2url.com/r2/default/images/1771329664301-80fa8782-c662-4c13-8bc0-115a3452fd5e.jpg" 
+             class="profile-img" 
+             alt="Logo">
+        
+        <h1>Amoza U Shalaty</h1>
+        <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکەی خوارەوە بکە</div>
+  </div>
+
+  <div class="links-wrapper">
+    <div class="link-card-wrapper">
+        <a href="https://t.me/shalaty_amoza" onclick="trackTikTokConversion('Telegram')" class="link-card">
+          <div style="display: flex; align-items: center;">
+            <span>تیلیگرام</span>
+            <span id="target-emoji" class="wa-emoji">👉</span>
+          </div>
+          <i class="fab fa-telegram-plane"></i>
+        </a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>سپۆنسەر کراوە لەلایەن</p>
+    <a class="sponsor-btn" href="https://wa.me/9647758887488?text=سڵاو، سپۆنسەرم دەوێت" onclick="trackTikTokConversion('Sponsor')">Zana Agency - زانا ئاژانس</a>
+    <div class="legal-links">
+      <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">سیاسەتی پاراستنی نهێنی</a>
+      <span class="sep">|</span>
+      <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">مەرجەکان</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  window.onload = function() {
+    // ئیمۆجییەکە دوای ٥ چرکە ون دەبێت
+    setTimeout(function() {
+      const emoji = document.getElementById('target-emoji');
+      if (emoji) {
+        emoji.style.opacity = '0';
+        setTimeout(() => { emoji.style.display = 'none'; }, 500);
+      }
+    }, 5000);
+  };
+</script>
+
+</body>
+</html>
