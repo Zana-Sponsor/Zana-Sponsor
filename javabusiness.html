@@ -28,6 +28,13 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
+/* پێناسەکردنی گۆشەی خولانەوە بۆ ئەوەی ئەنیمەیشنەکە کار بکات */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
 :root{
   --bg:#0f172a;
   --card:rgba(30,41,59,.85);
@@ -88,29 +95,24 @@ h1{
 
 .links-wrapper { display: flex; flex-direction: column; gap: 12px; }
 
-/* --- Conic Gradient Animation Styles --- */
-@property --angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-
+/* --- چاککردنی هێڵە جوڵاوەکە --- */
 .link-card-wrapper {
   position: relative;
-  padding: 3.5px;
+  padding: 3px; /* ئاستی باریکی هێڵەکە */
   border-radius: 20px;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .link-card-wrapper::before {
   content: '';
   position: absolute;
-  width: 180%;
-  height: 180%;
-  background-image: conic-gradient(from var(--angle), transparent 70%, #208DC5, #fff, #208DC5);
+  width: 150%;
+  height: 450%; /* درێژی لایتەکە */
+  background: conic-gradient(from var(--angle), transparent 70%, #00d4ff, #fff, #00d4ff);
   animation: spin 3s linear infinite;
 }
 
@@ -123,21 +125,21 @@ h1{
     position: relative;
     z-index: 1;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 22px; border-radius: 16px; text-decoration: none;
+    padding: 18px 22px; border-radius: 17px; text-decoration: none;
     color: white; font-weight: 700; font-size: 18px; 
-    background: linear-gradient(135deg, #208DC5, #166a94);
+    background: #1e293b; /* ڕەنگی ناوەوەی دوگمەکە */
+    background-image: linear-gradient(135deg, #208DC5, #166a94);
     width: 100%;
     border: none;
     cursor: pointer;
     transition: transform 0.25s ease;
 }
 
-/* ئەنیمەیشنی بریسکە */
 .link-card::after{
   content:"";
   position:absolute;
   top:0; left:-120%; width:60%; height:100%;
-  background:linear-gradient(120deg, transparent, rgba(255,255,255,.25), transparent);
+  background:linear-gradient(120deg, transparent, rgba(255,255,255,.2), transparent);
   animation:shine 4s infinite;
 }
 
@@ -148,14 +150,12 @@ h1{
 .link-card:active{ transform:scale(.97); }
 .link-card i{ font-size:28px; }
 
-/* ڕێکخستنی ئیمۆجی */
 .wa-emoji {
-  margin-right: 20px;
+  margin-right: 15px;
   display: inline-block;
-  font-size: 22px;
-  vertical-align: middle;
+  font-size: 20px;
   animation: point-text 0.6s infinite alternate;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s ease;
 }
 
 @keyframes point-text {
@@ -233,13 +233,14 @@ h1{
 
 <script>
   window.onload = function() {
+    // ئیمۆجییەکە دوای ٥ چرکە ون دەبێت
     setTimeout(function() {
       const emoji = document.getElementById('target-emoji');
       if (emoji) {
-        emoji.style.visibility = 'hidden';
         emoji.style.opacity = '0';
+        setTimeout(() => { emoji.style.display = 'none'; }, 500);
       }
-    }, 4000);
+    }, 5000);
   };
 </script>
 
