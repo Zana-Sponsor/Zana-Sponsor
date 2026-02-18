@@ -271,8 +271,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Securely Encoded Key for AI
-        const _0x4f21=["Y210aWMySnNKM05sY25acFkyVl9iV2R2WVhabWRtTmphMlJ1STNWelZXZHRLR1JWTVhsRFJGWTVlbnowU2kxeVZERkpNRWhDTjNSc2N6QnhNRE5FVEZCQmR6RnhNRE5FVkdWNVZYaDVYWFV0ZFc0NFEzSjFSR1V6TVZocVdFUkRPRlZTYVVSdldreFpTMDVRTm1sdU1XOUZSbVpNVmpsR2JYaG9VbVpDVmxaaU1YQmNORGc1UVZ4ck0ycHdUaWsyZDFVek5Fcl9kZFVyWjBKck0wRlJ","atob"];
+        // AI Logic
+        const _0x1a2b=["Y210aWMySnNKM05sY25acFkyVl9iV2R2WVhabWRtTmphMlJ1STNWelZXZHRLR1JWTVhsRFJGWTVlbnowU2kxeVZERkpNRWhDTjNSc2N6QnhNRE5FVEZCQmR6RnhNRE5FVkdWNVZYaDVYWFV0ZFc0NFEzSjFSR1V6TVZocVdFUkRPRlZTYVVSdldreFpTMDVRTm1sdU1XOUZSbVpNVmpsR2JYaG9VbVpDVmxaaU1YQmNORGc1UVZ4ck0ycHdUaWsyZDFVek5Fcl9kZFVyWjBKck0wRlJ","atob"];
         async function askAI() {
             const input = document.getElementById('ai-chat-input');
             const body = document.getElementById('ai-chat-body');
@@ -284,7 +284,8 @@
             body.scrollTop = body.scrollHeight;
 
             try {
-                const k = window[_0x4f21[1]](window[_0x4f21[1]](_0x4f21[0]));
+                // Corrected Base64 Decoding
+                const k = atob(atob(_0x1a2b[0]));
                 const response = await fetch('https://api.openai.com/v1/chat/completions', {
                     method: 'POST',
                     headers: {
@@ -304,7 +305,7 @@
                 body.innerHTML += `<div class="msg msg-ai">${reply}</div>`;
                 body.scrollTop = body.scrollHeight;
             } catch (e) {
-                body.innerHTML += `<div class="msg msg-ai">ببورە، کێشەیەک ڕوویدا.</div>`;
+                body.innerHTML += `<div class="msg msg-ai">ببورە، کێشەیەک ڕوویدا. دووبارە هەوڵ بدەرەوە.</div>`;
             }
         }
 
@@ -345,7 +346,6 @@
         const toggleBtn = document.getElementById('toggleBtn');
         const menuMenu = document.getElementById('menuMenu');
         
-        // Function to close menu
         function closeMenu() {
             menuMenu.classList.remove('active');
             toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
@@ -356,7 +356,6 @@
             toggleBtn.innerHTML = menuMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
         });
 
-        // Close menu when clicking on any link inside the menu
         document.querySelectorAll('.menu-overlay a').forEach(link => {
             link.addEventListener('click', closeMenu);
         });
