@@ -10,6 +10,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
+        /* فۆنتی ڕووداو */
+        @font-face {
+            font-family: 'Rudaw';
+            src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+            font-display: swap;
+        }
+
         :root {
             --accent: #2563eb; 
             --accent-dark: #1d4ed8;
@@ -19,11 +28,11 @@
             --text-gray: #475569;
             --footer-bg: #0a0a0a;
             --tiktok-red: #fe2c55;
-            /* لینکی لۆگۆ لە گێتهەب وەک گۆڕدراو */
-            --logo-url: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/20260214_035019.jpg');
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; scroll-behavior: smooth; }
+        .rtl * { font-family: 'Rudaw', sans-serif !important; }
+
         body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; line-height: 1.7; }
 
         nav {
@@ -39,12 +48,11 @@
             border-bottom: 1px solid #f1f5f9;
         }
 
+        /* لۆگۆکە لێرە چاک کراوە */
         .logo-img {
-            height: 45px;
+            height: 50px; /* کەمێک گەورەتر کراوە بۆ ئەوەی جوان دیار بێت */
             width: auto;
-            max-width: 180px;
             display: block;
-            object-fit: contain;
         }
 
         .menu-trigger { font-size: 24px; cursor: pointer; color: var(--text-dark); }
@@ -98,12 +106,11 @@
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; padding-bottom: 60px; }
         .footer-col h3 { font-size: 20px; margin-bottom: 25px; font-weight: 800; }
         
-        /* ستایلی لۆگۆی سپی لە فووتەر */
         .footer-logo {
-            height: 50px;
+            height: 55px;
             width: auto;
             margin-bottom: 20px;
-            filter: brightness(0) invert(1); /* لۆگۆکە سپی دەکات */
+            filter: brightness(0) invert(1); /* سپیکردنی لۆگۆ لە فووتەر */
         }
 
         .email-info { display: flex; align-items: center; gap: 10px; color: #94a3b8; margin: 20px 0; font-family: 'Arial', sans-serif; }
@@ -134,7 +141,7 @@
         .rtl .wa-float { right: auto; left: 30px; }
 
         @media (max-width: 768px) {
-            .logo-img { height: 35px; }
+            .logo-img { height: 40px; }
         }
     </style>
 </head>
@@ -142,7 +149,7 @@
 
     <nav>
         <a href="#home">
-            <img src="https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/20260214_035019.jpg" class="logo-img" alt="PROXO">
+            <img src="https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/20260214_035019.png" class="logo-img" alt="PROXO">
         </a>
         <div class="menu-trigger" id="toggleBtn"><i class="fas fa-bars"></i></div>
     </nav>
@@ -241,7 +248,8 @@
     <a href="https://wa.me/9647758887488" class="wa-float"><i class="fab fa-whatsapp"></i></a>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script class="notranslate">
+    <script>
+        // باقی سکریپتەکان هەمان شتە...
         const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTM4MjA0NywiZXhwIjoyMDg2OTU4MDQ3fQ.Qxbg0FbFu6MIwT1R5Hbm6jP4JI4j_0RWMvQOc3deUnE';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
