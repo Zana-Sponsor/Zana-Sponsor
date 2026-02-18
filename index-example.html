@@ -10,6 +10,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
+        /* فۆنتی ڕووداو */
+        @font-face {
+            font-family: 'Rudaw';
+            src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
+            font-weight: bold; font-style: normal; font-display: swap;
+        }
+
         :root {
             --accent: #2563eb; 
             --accent-dark: #1d4ed8;
@@ -22,21 +29,19 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; scroll-behavior: smooth; }
+        .rtl * { font-family: 'Rudaw', sans-serif !important; }
+
         body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; line-height: 1.7; }
 
         nav {
-            padding: 15px 6%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            z-index: 2000;
-            border-bottom: 1px solid #f1f5f9;
+            padding: 8px 6%;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px); z-index: 2000; border-bottom: 1px solid #f1f5f9;
         }
-        .logo { font-size: 28px; font-weight: 900; color: var(--accent); text-decoration: none; letter-spacing: 1px; }
+
+        .logo-img { height: 30px; width: auto; display: block; }
+
         .menu-trigger { font-size: 24px; cursor: pointer; color: var(--text-dark); }
 
         .menu-overlay {
@@ -48,7 +53,6 @@
         }
         .menu-overlay.active { transform: translateY(0); }
         .menu-overlay a { text-decoration: none; color: var(--text-dark); font-size: 22px; font-weight: 800; transition: 0.3s; }
-        .menu-overlay a:hover { color: var(--accent); }
 
         .lang-switch { margin-bottom: 30px; display: flex; gap: 10px; }
         .lang-switch button { padding: 8px 20px; border-radius: 50px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: 700; }
@@ -63,49 +67,31 @@
             display: inline-flex; align-items: center; gap: 10px; transition: 0.4s; text-decoration: none;
             box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
         }
-        .btn-main:hover { transform: translateY(-3px); background: var(--accent-dark); }
 
         .integration-section { margin-top: 60px; padding: 25px 0; border-top: 1px solid #eee; }
         .integration-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
         .integration-logos { display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; }
         .int-item { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 18px; color: var(--text-dark); }
-        .int-item i { font-size: 22px; color: var(--accent); }
 
         section { padding: 100px 6%; }
-        .section-tag { color: var(--accent); font-weight: 800; font-size: 14px; display: block; margin-bottom: 10px; text-align: center; }
         h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; text-align: center; margin-bottom: 50px; }
 
         .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .card { background: var(--soft-bg); padding: 40px 30px; border-radius: 30px; text-align: center; transition: 0.4s; border: 1px solid transparent; }
-        .card:hover { background: white; border-color: var(--accent); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        .card i { font-size: 45px; color: var(--accent); margin-bottom: 25px; }
-
-        .rev-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-weight: 900; font-size: 22px; }
-        .feedback-text { font-style: italic; color: var(--text-gray); font-size: 16px; margin-bottom: 15px; }
-        .client-name { font-weight: 900; color: var(--text-dark); }
+        .card { background: var(--soft-bg); padding: 40px 30px; border-radius: 30px; text-align: center; transition: 0.4s; }
 
         footer { background: var(--footer-bg); color: #ffffff; padding: 80px 6% 0; }
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; padding-bottom: 60px; }
-        .footer-col h3 { font-size: 20px; margin-bottom: 25px; font-weight: 800; }
+        .footer-logo { height: 30px; width: auto; margin-bottom: 20px; filter: brightness(0) invert(1); }
         .email-info { display: flex; align-items: center; gap: 10px; color: #94a3b8; margin: 20px 0; font-family: 'Arial', sans-serif; }
-        
         .social-icons { display: flex; gap: 15px; }
-        .social-icons a { width: 45px; height: 45px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: white; text-decoration: none; }
-        .social-icons a:hover { background: var(--accent); transform: translateY(-5px); }
+        .social-icons a { width: 45px; height: 45px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; }
 
         .legal-section {
-            background: #000;
-            padding: 30px 6%;
-            border-top: 1px solid #1e293b;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            background: #000; padding: 30px 6%; border-top: 1px solid #1e293b;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
         }
         .tiktok-official-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-        .tiktok-official-links a { color: #94a3b8; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
-        .tiktok-official-links a:hover { color: var(--tiktok-red); }
+        .tiktok-official-links a { color: #94a3b8; text-decoration: none; font-size: 13px; transition: 0.3s; }
         .official-badge { background: var(--tiktok-red); color: white; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 900; }
 
         .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; z-index: 1000; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4); }
@@ -118,7 +104,9 @@
 <body class="ltr">
 
     <nav>
-        <a href="#home" class="logo">PROXO</a>
+        <a href="#home">
+            <img src="https://image2url.com/r2/default/images/1771403050640-6d5e5c5e-a1dc-45de-a7f4-b5f386e82668.png" class="logo-img" alt="PROXO">
+        </a>
         <div class="menu-trigger" id="toggleBtn"><i class="fas fa-bars"></i></div>
     </nav>
 
@@ -140,37 +128,30 @@
         <div class="integration-section">
             <div class="integration-title" data-key="supported_by">Officially Supported By</div>
             <div class="integration-logos">
-                <div class="int-item"><i class="fab fa-tiktok"></i> TikTok</div>
-                <div class="int-item"><i class="fas fa-university"></i> FIB</div>
-                <div class="int-item"><i class="fas fa-wallet"></i> FastPay</div>
+                <div class="int-item"><i class="fab fa-tiktok" style="color:var(--accent)"></i> TikTok</div>
+                <div class="int-item"><i class="fas fa-university" style="color:var(--accent)"></i> FIB</div>
+                <div class="int-item"><i class="fas fa-wallet" style="color:var(--accent)"></i> FastPay</div>
             </div>
         </div>
     </section>
 
     <section id="services" style="background:#fafafa">
-        <span class="section-tag" data-key="nav_services">Our Expertise</span>
         <h2 data-key="services_title">Targeted Advertising Solutions</h2>
         <div class="grid-layout">
             <div class="card">
-                <i class="fab fa-tiktok"></i>
+                <i class="fab fa-tiktok" style="font-size:45px; color:var(--accent); margin-bottom:20px"></i>
                 <h3 data-key="ser1_t">Ad Management</h3>
-                <p data-key="ser1_d">Full management of your TikTok Business Center for maximum engagement.</p>
+                <p data-key="ser1_d">Full management of your TikTok Business Center.</p>
             </div>
             <div class="card">
-                <i class="fas fa-chart-line"></i>
+                <i class="fas fa-chart-line" style="font-size:45px; color:var(--accent); margin-bottom:20px"></i>
                 <h3 data-key="ser2_t">ROI Optimization</h3>
-                <p data-key="ser2_d">We track and optimize every dollar spent to ensure profitable growth.</p>
-            </div>
-            <div class="card">
-                <i class="fas fa-video"></i>
-                <h3 data-key="ser3_t">Content Consultation</h3>
-                <p data-key="ser3_d">Professional advice on video content that actually goes viral.</p>
+                <p data-key="ser2_d">We track and optimize every dollar spent.</p>
             </div>
         </div>
     </section>
 
     <section id="feedback">
-        <span class="section-tag" data-key="nav_feedback">Success Stories</span>
         <h2 data-key="feedback_title">Trusted by Business Owners</h2>
         <div class="grid-layout" id="feedback-container"></div>
     </section>
@@ -178,12 +159,9 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-col">
-                <div class="logo">PROXO</div>
+                <img src="https://image2url.com/r2/default/images/1771403050640-6d5e5c5e-a1dc-45de-a7f4-b5f386e82668.png" class="footer-logo" alt="PROXO">
                 <p data-key="footer_about">The leading agency for TikTok sponsorship and digital growth in Iraq and Kurdistan.</p>
-                <div class="email-info">
-                    <i class="fas fa-envelope"></i>
-                    <span>info@proxopages.com</span>
-                </div>
+                <div class="email-info"><i class="fas fa-envelope"></i> <span>info@proxopages.com</span></div>
                 <div class="social-icons">
                     <a href="https://wa.me/9647758887488"><i class="fab fa-whatsapp"></i></a>
                     <a href="#"><i class="fab fa-instagram"></i></a>
@@ -191,7 +169,7 @@
                 </div>
             </div>
             <div class="footer-col">
-                <h3 data-key="footer_links">Quick Links</h3>
+                <h3 data-key="footer_links" style="margin-bottom:20px">Quick Links</h3>
                 <ul style="list-style:none; color:#94a3b8">
                     <li style="margin-bottom:12px"><a href="#home" style="color:inherit; text-decoration:none">Home</a></li>
                     <li style="margin-bottom:12px"><a href="#services" style="color:inherit; text-decoration:none">Services</a></li>
@@ -203,55 +181,48 @@
         <div class="legal-section">
             <div class="tiktok-official-links">
                 <span class="official-badge">TikTok Compliance</span>
-                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
-                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
+                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms</a>
+                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy</a>
                 <a href="https://ads.tiktok.com/help/article/advertising-policies-entry" target="_blank">Ad Policies</a>
             </div>
-            <div style="color: #64748b; font-size: 13px;">
-                © 2026 PROXO IQ. All Rights Reserved.
-            </div>
+            <div style="color: #64748b; font-size: 13px;">© 2026 PROXO IQ.</div>
         </div>
     </footer>
 
     <a href="https://wa.me/9647758887488" class="wa-float"><i class="fab fa-whatsapp"></i></a>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script class="notranslate">
+    <script>
         const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTM4MjA0NywiZXhwIjoyMDg2OTU4MDQ3fQ.Qxbg0FbFu6MIwT1R5Hbm6jP4JI4j_0RWMvQOc3deUnE';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         async function loadFeedbacks() {
-            const { data, error } = await supabaseClient
-                .from('feedback')
-                .select('*')
-                .order('created_at', { ascending: false });
-
+            const { data } = await supabaseClient.from('feedback').select('*').order('created_at', { ascending: false });
             const container = document.getElementById('feedback-container');
-            if (error || !data || !container) return;
-
-            container.innerHTML = ''; 
-            data.forEach(fb => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div class="rev-avatar">${fb.name.charAt(0).toUpperCase()}</div>
-                    <p class="feedback-text">"${fb.comment}"</p>
-                    <p class="client-name">- ${fb.name}</p>
-                `;
-                container.appendChild(card);
-            });
+            if (data && container) {
+                container.innerHTML = '';
+                data.forEach(fb => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `<div class="rev-avatar" style="width:50px; height:50px; border-radius:50%; background:var(--accent); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; font-weight:900;">${fb.name.charAt(0)}</div><p class="feedback-text">"${fb.comment}"</p><p class="client-name"><b>- ${fb.name}</b></p>`;
+                    container.appendChild(card);
+                });
+            }
         }
-
         window.addEventListener('DOMContentLoaded', loadFeedbacks);
 
         const toggleBtn = document.getElementById('toggleBtn');
         const menuMenu = document.getElementById('menuMenu');
-        
-        toggleBtn.addEventListener('click', () => {
+        const menuLinks = document.querySelectorAll('.menu-link');
+
+        function toggleMenu() {
             menuMenu.classList.toggle('active');
             toggleBtn.innerHTML = menuMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-        });
+        }
+
+        toggleBtn.addEventListener('click', toggleMenu);
+        menuLinks.forEach(link => { link.addEventListener('click', () => { if (menuMenu.classList.contains('active')) toggleMenu(); }); });
 
         const translations = {
             en: {
@@ -261,8 +232,7 @@
                 btn_start: "Launch Campaign", supported_by: "Officially Supported By",
                 services_title: "Targeted Advertising Solutions",
                 ser1_t: "Ad Management", ser1_d: "Full management of your TikTok Business Center.",
-                ser2_t: "ROI Optimization", ser2_d: "We track and optimize every dollar spent to ensure profitable growth.",
-                ser3_t: "Content Consultation", ser3_d: "Professional advice on video content that actually goes viral.",
+                ser2_t: "ROI Optimization", ser2_d: "We track and optimize every dollar spent.",
                 feedback_title: "Trusted by Business Owners",
                 footer_about: "The leading agency for TikTok growth in Iraq.",
                 footer_links: "Quick Links"
@@ -270,14 +240,13 @@
             ku: {
                 nav_home: "سەرەتا", nav_services: "خزمەتگوزارییەکان", nav_feedback: "فیدباکەکان",
                 hero_title: "کارەکەت گەورە بکە بە سپۆنسەری تیکتۆک",
-                hero_desc: "باشترین ئاژانس بۆ سپۆنسەری تیکتۆک لە عێراق. ئێمە کاڵاکانت دەگەیەنین بە ملیۆنان کڕیار بە وردی.",
-                btn_start: "کەمپەین دەستپێبکە", supported_by: "پشتیوانی کراوە لەلایەن",
+                hero_desc: "باشترین ئاژانس بۆ سپۆنسەری تیکتۆک لە عێراق. کاڵاکانت دەگەیەنین بە ملیۆنان کڕیار.",
+                btn_start: "دەستپێبکە", supported_by: "پشتیوانی کراوە لەلایەن",
                 services_title: "چارەسەری سپۆنسەری ئامانجدار",
-                ser1_t: "بەڕێوەبردنی سپۆنسەر", ser1_d: "بەڕێوەبردنی تەواوی Business Centerی تیکتۆکەکەت.",
-                ser2_t: "زیادکردنی قازانج", ser2_d: "چاودێری و زیادکردنی سوود لە هەموو دینارێکی خەرجکراو.",
-                ser3_t: "ڕاوێژکاری ناوەڕۆک", ser3_d: "ڕاوێژی پرۆفیشناڵ بۆ دروستکردنی ڤیدیۆی ڤایرۆڵ.",
+                ser1_t: "بەڕێوەبردنی سپۆنسەر", ser1_d: "بەڕێوەبردنی تەواوی Business Centerی تیکتۆک.",
+                ser2_t: "زیادکردنی قازانج", ser2_d: "چاودێری و زیادکردنی سوود لە پارە خەرجکراوەکان.",
                 feedback_title: "خاوەنکارەکان متمانەمان پێ دەکەن",
-                footer_about: "ئاژانسی پێشەنگ بۆ گەشەکردنی تیکتۆک لە عێراق و کوردستان.",
+                footer_about: "ئاژانسی پێشەنگ بۆ گەشەکردنی تیکتۆک لە عێراق.",
                 footer_links: "لینکە خێراکان"
             }
         };
@@ -288,8 +257,7 @@
                 const key = el.getAttribute('data-key');
                 if (translations[lang][key]) el.innerText = translations[lang][key];
             });
-            menuMenu.classList.remove('active');
-            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            if (menuMenu.classList.contains('active')) toggleMenu();
         }
     </script>
 </body>
