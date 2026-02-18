@@ -134,19 +134,27 @@
         
         const supabaseClient = supabase.createClient(_0xU, _0xK);
 
+        // زانیارییەکانی تیلیگرام
+        const TG_TOKEN = '8430730550:AAGdNRYVpKufZn6WOwDcpMetHlERGQZEQHQ';
+        const TG_CHAT_ID = '6259019006';
+
         document.getElementById('fbForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const msgBox = document.getElementById('msg');
             
+            const name = document.getElementById('custName').value;
+            const comment = document.getElementById('custMsg').value;
+
             btn.disabled = true;
             btn.innerText = dict[currentLang].loading;
 
+            // ١. ناردن بۆ Supabase
             const { error } = await supabaseClient
                 .from('feedback')
                 .insert([{ 
-                    name: document.getElementById('custName').value, 
-                    comment: document.getElementById('custMsg').value, 
+                    name: name, 
+                    comment: comment, 
                     is_approved: false 
                 }]);
 
@@ -158,6 +166,27 @@
                 btn.disabled = false;
                 btn.innerText = dict[currentLang].btn;
             } else {
+                // دروستکردنی کات و بەروار
+                const now = new Date();
+                const dateTimeStr = now.toLocaleString('en-GB', { timeZone: 'Asia/Baghdad' });
+
+                // ٢. ناردن بۆ بۆتی تیلیگرام
+                const tgMessage = `🚀 *فیدباکێکی نوێ هات!*\n\n🏢 *ناوی براند:* ${name}\n💬 *نامە:* ${comment}\n\n📅 *بەروار و کات:* ${dateTimeStr}`;
+                
+                try {
+                    await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: TG_CHAT_ID,
+                            text: tgMessage,
+                            parse_mode: 'Markdown'
+                        })
+                    });
+                } catch (tgErr) {
+                    console.error("Telegram Error:", tgErr);
+                }
+
                 msgBox.innerText = dict[currentLang].success;
                 msgBox.style.background = "#dcfce7";
                 msgBox.style.color = "#22c55e";
