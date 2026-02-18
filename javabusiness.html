@@ -29,8 +29,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
   --card:rgba(30,41,59,.85);
   --text:#f8fafc;
   --proxo-blue: #3b82f6;
-  /* ڕەنگی نوێی تیلیگرام */
-  --tg-color: #24A1DE; 
+  --tg-color: #24A1DE;
 }
 
 body{
@@ -46,31 +45,31 @@ body{
 }
 
 .container{
-  width:92%;
-  max-width:400px;
+  width:90%;
+  max-width:350px; /* گەڕایەوە بۆ قەبارە وردەکەی نموونەکەت */
   text-align:center;
 }
 
 .profile-container {
   background:var(--card);
   backdrop-filter:blur(10px);
-  padding:35px 25px;
-  border-radius:25px;
+  padding:25px 20px;
+  border-radius:22px;
   border:1px solid rgba(255,255,255,.1);
-  margin-bottom: 40px; 
+  margin-bottom: 35px; 
 }
 
 .profile-img{
-  width:100px;
-  height:100px;
+  width:85px; /* هەمان قەبارەی نموونەکەت */
+  height:85px;
   border-radius:50%;
   object-fit:cover;
-  margin-bottom:15px;
-  border: 3px solid rgba(255,255,255,0.2);
+  margin-bottom:12px;
+  border: 2px solid rgba(255,255,255,0.2);
 }
 
-h1{ font-size:22px; margin:0 0 10px; font-weight:700; }
-.main-instruction { font-size:15px; color:#aabbd3; }
+h1{ font-size:18px; margin:0 0 8px; font-weight:700; } /* هەمان قەبارەی فۆنتی نموونەکەت */
+.main-instruction { font-size:13px; color:#aabbd3; }
 
 .links-wrapper { width: 100%; }
 
@@ -79,23 +78,21 @@ h1{ font-size:22px; margin:0 0 10px; font-weight:700; }
     display: flex; 
     align-items: center; 
     justify-content: space-between;
-    padding: 20px 25px; 
-    border-radius: 18px; 
+    padding: 16px 20px; /* هەمان بەرزی دوگمەی نموونەکەت */
+    border-radius: 15px; 
     text-decoration: none;
     color: white; 
     font-weight: 700; 
-    font-size: 19px; 
-    /* لێرەدا ڕەنگەکە گۆڕدراوە */
+    font-size: 17px; 
     background: var(--tg-color);
     width: 100%;
     box-sizing: border-box;
     border: none;
     cursor: pointer;
     overflow: hidden;
-    transition: transform 0.2s ease, background 0.3s ease;
+    transition: transform 0.2s ease;
 }
 
-/* دروستکردنی بریقەیەکی جوانتر لەسەر ڕەنگە نوێیەکە */
 .link-card::after {
   content: '';
   position: absolute;
@@ -103,7 +100,7 @@ h1{ font-size:22px; margin:0 0 10px; font-weight:700; }
   left: -150%;
   width: 65%;
   height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.35), transparent);
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
   transform: skewX(-25deg);
   animation: shineAnimation 4s infinite linear;
 }
@@ -114,14 +111,10 @@ h1{ font-size:22px; margin:0 0 10px; font-weight:700; }
   100% { left: 150%; }
 }
 
-.link-card:active { 
-    transform: scale(0.97);
-    background: #1e87bb; /* تۆخ بوون لەکاتی داگرتن */
-}
+.link-card:active { transform: scale(0.97); }
 
 .wa-emoji {
-  margin-right: 12px;
-  font-size: 20px;
+  margin-right: 10px;
   display: inline-block;
   animation: bounce 0.6s infinite alternate;
 }
@@ -131,19 +124,19 @@ h1{ font-size:22px; margin:0 0 10px; font-weight:700; }
   to { transform: translateX(6px); }
 }
 
-.link-card i { font-size: 28px; }
+.link-card i { font-size: 24px; }
 
 .footer-divider {
   height: 1px;
   width: 100%;
   background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
-  margin: 40px 0 20px 0;
+  margin: 35px 0 15px 0;
 }
 
-.footer { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.sponsored-by { font-size: 11px; color: #64748b; }
-.proxo-brand { text-decoration: none; color: var(--proxo-blue); font-weight: 900; font-size: 20px; }
-.legal-links { font-size: 10px; color: #475569; display: flex; gap: 10px; margin-top: 5px; }
+.footer { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.sponsored-by { font-size: 10px; color: #64748b; }
+.proxo-brand { text-decoration: none; color: var(--proxo-blue); font-weight: 900; font-size: 18px; }
+.legal-links { font-size: 9px; color: #475569; display: flex; gap: 8px; margin-top: 5px; }
 .legal-links a { color: inherit; text-decoration: none; }
 .sep { opacity: 0.3; }
 </style>
@@ -184,6 +177,7 @@ h1{ font-size:22px; margin:0 0 10px; font-weight:700; }
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
+    // ئیمۆجییەکە دوای ٣ چرکە ون دەبێت وەک داوات کردبوو
     setTimeout(function() {
       const emoji = document.getElementById('target-emoji');
       if (emoji) {
@@ -192,7 +186,7 @@ h1{ font-size:22px; margin:0 0 10px; font-weight:700; }
         emoji.style.transform = 'translateX(20px)';
         setTimeout(() => { emoji.style.display = 'none'; }, 800);
       }
-    }, 5000);
+    }, 3000);
 
     document.getElementById('tg-btn').onclick = function() {
       if (typeof ttq !== 'undefined') {
