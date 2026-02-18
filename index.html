@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
-<html dir="ltr" lang="en">
+<html dir="ltr" lang="en" class="notranslate" translate="no">
 <head>
     <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROXO</title>
     
@@ -11,7 +11,7 @@
     
     <style>
         :root {
-            --accent: #2563eb; /* PROXO Blue */
+            --accent: #2563eb; 
             --accent-dark: #1d4ed8;
             --bg: #ffffff;
             --soft-bg: #f8fafc;
@@ -24,7 +24,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; scroll-behavior: smooth; }
         body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; line-height: 1.7; }
 
-        /* --- Navbar --- */
         nav {
             padding: 15px 6%;
             display: flex;
@@ -40,7 +39,6 @@
         .logo { font-size: 28px; font-weight: 900; color: var(--accent); text-decoration: none; letter-spacing: 1px; }
         .menu-trigger { font-size: 24px; cursor: pointer; color: var(--text-dark); }
 
-        /* --- Menu Overlay --- */
         .menu-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             background: rgba(255, 255, 255, 0.98); display: flex; flex-direction: column;
@@ -55,7 +53,6 @@
         .lang-switch { margin-bottom: 30px; display: flex; gap: 10px; }
         .lang-switch button { padding: 8px 20px; border-radius: 50px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: 700; }
 
-        /* --- Hero Section --- */
         #home { padding: 120px 6% 60px; text-align: center; background: radial-gradient(circle at top right, #eff6ff 0%, #ffffff 70%); }
         #home h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 900; margin-bottom: 20px; color: var(--text-dark); }
         #home p { max-width: 650px; margin: 0 auto 30px; font-size: 18px; color: var(--text-gray); }
@@ -68,27 +65,12 @@
         }
         .btn-main:hover { transform: translateY(-3px); background: var(--accent-dark); }
 
-        /* --- Integration (Strict Alignment) --- */
         .integration-section { margin-top: 60px; padding: 25px 0; border-top: 1px solid #eee; }
         .integration-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
-        .integration-logos { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 40px; 
-            flex-wrap: wrap; 
-        }
-        .int-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            font-weight: 900; 
-            font-size: 18px; 
-            color: var(--text-dark); 
-        }
+        .integration-logos { display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; }
+        .int-item { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 18px; color: var(--text-dark); }
         .int-item i { font-size: 22px; color: var(--accent); }
 
-        /* --- Sections Style --- */
         section { padding: 100px 6%; }
         .section-tag { color: var(--accent); font-weight: 800; font-size: 14px; display: block; margin-bottom: 10px; text-align: center; }
         h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; text-align: center; margin-bottom: 50px; }
@@ -98,12 +80,10 @@
         .card:hover { background: white; border-color: var(--accent); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
         .card i { font-size: 45px; color: var(--accent); margin-bottom: 25px; }
 
-        /* --- Feedback --- */
         .rev-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-weight: 900; font-size: 22px; }
         .feedback-text { font-style: italic; color: var(--text-gray); font-size: 16px; margin-bottom: 15px; }
         .client-name { font-weight: 900; color: var(--text-dark); }
 
-        /* --- Footer & Legal --- */
         footer { background: var(--footer-bg); color: #ffffff; padding: 80px 6% 0; }
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; padding-bottom: 60px; }
         .footer-col h3 { font-size: 20px; margin-bottom: 25px; font-weight: 800; }
@@ -192,8 +172,7 @@
     <section id="feedback">
         <span class="section-tag" data-key="nav_feedback">Success Stories</span>
         <h2 data-key="feedback_title">Trusted by Business Owners</h2>
-        <div class="grid-layout" id="feedback-container">
-            </div>
+        <div class="grid-layout" id="feedback-container"></div>
     </section>
 
     <footer>
@@ -237,8 +216,7 @@
     <a href="https://wa.me/9647758887488" class="wa-float"><i class="fab fa-whatsapp"></i></a>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Supabase Configuration
+    <script class="notranslate">
         const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
         const SB_KEY = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
@@ -265,10 +243,8 @@
             });
         }
 
-        // Initialize loading
         window.addEventListener('DOMContentLoaded', loadFeedbacks);
 
-        // Navbar Logic
         const toggleBtn = document.getElementById('toggleBtn');
         const menuMenu = document.getElementById('menuMenu');
         
@@ -285,8 +261,36 @@
                 btn_start: "Launch Campaign", supported_by: "Officially Supported By",
                 services_title: "Targeted Advertising Solutions",
                 ser1_t: "Ad Management", ser1_d: "Full management of your TikTok Business Center.",
+                ser2_t: "ROI Optimization", ser2_d: "We track and optimize every dollar spent to ensure profitable growth.",
+                ser3_t: "Content Consultation", ser3_d: "Professional advice on video content that actually goes viral.",
                 feedback_title: "Trusted by Business Owners",
                 footer_about: "The leading agency for TikTok growth in Iraq.",
                 footer_links: "Quick Links"
             },
             ku: {
+                nav_home: "سەرەتا", nav_services: "خزمەتگوزارییەکان", nav_feedback: "فیدباکەکان",
+                hero_title: "کارەکەت گەورە بکە بە سپۆنسەری تیکتۆک",
+                hero_desc: "باشترین ئاژانس بۆ سپۆنسەری تیکتۆک لە عێراق. ئێمە کاڵاکانت دەگەیەنین بە ملیۆنان کڕیار بە وردی.",
+                btn_start: "کەمپەین دەستپێبکە", supported_by: "پشتیوانی کراوە لەلایەن",
+                services_title: "چارەسەری سپۆنسەری ئامانجدار",
+                ser1_t: "بەڕێوەبردنی سپۆنسەر", ser1_d: "بەڕێوەبردنی تەواوی Business Centerی تیکتۆکەکەت.",
+                ser2_t: "زیادکردنی قازانج", ser2_d: "چاودێری و زیادکردنی سوود لە هەموو دینارێکی خەرجکراو.",
+                ser3_t: "ڕاوێژکاری ناوەڕۆک", ser3_d: "ڕاوێژی پرۆفیشناڵ بۆ دروستکردنی ڤیدیۆی ڤایرۆڵ.",
+                feedback_title: "خاوەنکارەکان متمانەمان پێ دەکەن",
+                footer_about: "ئاژانسی پێشەنگ بۆ گەشەکردنی تیکتۆک لە عێراق و کوردستان.",
+                footer_links: "لینکە خێراکان"
+            }
+        };
+
+        function changeLang(lang) {
+            document.body.className = (lang === 'ku') ? 'rtl' : 'ltr';
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[lang][key]) el.innerText = translations[lang][key];
+            });
+            menuMenu.classList.remove('active');
+            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        }
+    </script>
+</body>
+</html>
