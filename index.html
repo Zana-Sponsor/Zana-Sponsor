@@ -246,7 +246,6 @@
             const { data, error } = await supabaseClient
                 .from('feedback')
                 .select('*')
-                .eq('is_approved', true)
                 .order('created_at', { ascending: false });
 
             const container = document.getElementById('feedback-container');
