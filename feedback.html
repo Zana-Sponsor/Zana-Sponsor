@@ -23,11 +23,11 @@
         }
 
         .form-container { 
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 40px; 
             border-radius: 24px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
             width: 90%; 
             max-width: 420px; 
             text-align: center;
@@ -41,7 +41,6 @@
             margin-bottom: 10px; 
             text-decoration: none; 
             display: block;
-            letter-spacing: 1px;
         }
 
         h2 { color: #1e293b; font-weight: 700; margin-bottom: 25px; font-size: 22px; }
@@ -54,7 +53,6 @@
             font-weight: 700; 
             font-size: 14px; 
             color: #64748b; 
-            padding-right: 5px;
         }
 
         input, textarea { 
@@ -66,9 +64,9 @@
             font-family: 'Vazirmatn'; 
             text-align: right; 
             font-size: 15px; 
-            transition: all 0.3s ease;
             box-sizing: border-box;
             background: white;
+            transition: 0.3s;
         }
 
         input:focus, textarea:focus { 
@@ -85,18 +83,14 @@
             border-radius: 12px; 
             font-weight: 900; 
             cursor: pointer; 
-            transition: all 0.3s transform; 
+            transition: 0.3s; 
             font-size: 16px;
-            margin-top: 10px;
         }
 
         .btn-send:hover { 
             background: var(--primary-hover); 
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
         }
-
-        .btn-send:active { transform: translateY(0); }
 
         #msg { 
             margin-top: 20px; 
@@ -105,12 +99,6 @@
             font-weight: 700; 
             display: none; 
             font-size: 14px; 
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .back-link {
@@ -119,16 +107,14 @@
             color: #94a3b8;
             text-decoration: none;
             font-size: 14px;
-            transition: color 0.3s;
         }
-        .back-link:hover { color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="form-container">
     <a href="index.html" class="logo">PROXO</a>
-    <h2 data-key="form_title">بەشداری ئەزموونت بکە</h2>
+    <h2>بەشداری ئەزموونت بکە</h2>
     
     <form id="fbForm">
         <div class="input-group">
@@ -138,7 +124,7 @@
 
         <div class="input-group">
             <label>پەیام</label>
-            <textarea id="custMsg" rows="4" placeholder="ڕای خۆت دەرببڕە دەربارەی خزمەتگوزارییەکانمان..." required></textarea>
+            <textarea id="custMsg" rows="4" placeholder="ڕای خۆت بنووسە..." required></textarea>
         </div>
 
         <button type="submit" class="btn-send" id="submitBtn">ناردنی فیدباک</button>
@@ -151,46 +137,42 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+    // تکایە دەستکاری ئەم بەشە مەکە چونکە کلیلەکە لێرەدایە
     const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co';
     const SB_KEY = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
-    const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+    
+    const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
-    document.getElementById('fbForm').addEventListener('submit', async (e) => {
+    document.getElementById('fbForm').onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
         const msgBox = document.getElementById('msg');
         
         btn.disabled = true;
-        btn.style.opacity = "0.7";
         btn.innerText = 'تکایە چاوەڕوانبە...';
 
-        const nameValue = document.getElementById('custName').value;
-        const commentValue = document.getElementById('custMsg').value;
+        const n = document.getElementById('custName').value;
+        const c = document.getElementById('custMsg').value;
 
-        const { error } = await supabaseClient
+        const { error } = await _supabase
             .from('feedback')
-            .insert([{ 
-                name: nameValue, 
-                comment: commentValue, 
-                is_approved: false 
-            }]);
+            .insert([{ name: n, comment: c, is_approved: false }]);
 
         msgBox.style.display = "block";
         if (error) {
-            msgBox.innerText = "داوای لێبوردن، هەڵەیەک ڕوویدا: " + error.message;
+            msgBox.innerText = "هەڵە: " + error.message;
             msgBox.style.background = "#fee2e2";
             msgBox.style.color = "#ef4444";
         } else {
-            msgBox.innerText = "سوپاس! فیدباکەکەت بە سەرکەوتوویی گەیشت.";
+            msgBox.innerText = "سوپاس! فیدباکەکەت گەیشت.";
             msgBox.style.background = "#dcfce7";
             msgBox.style.color = "#22c55e";
             document.getElementById('fbForm').reset();
         }
         
         btn.disabled = false;
-        btn.style.opacity = "1";
         btn.innerText = 'ناردنی فیدباک';
-    });
+    };
 </script>
 </body>
 </html>
