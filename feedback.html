@@ -6,28 +6,147 @@
     <title>PROXO - فیدباک بنێرە</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .form-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
-        .logo { color: #2563eb; font-weight: 900; font-size: 30px; margin-bottom: 20px; text-decoration: none; display: block; }
-        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; outline: none; font-family: 'Vazirmatn'; text-align: right; font-size: 16px; }
-        .btn-send { background: #2563eb; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 16px; }
-        .btn-send:hover { background: #1d4ed8; }
-        #msg { margin-top: 15px; font-weight: bold; display: none; font-size: 14px; }
-        label { display: block; text-align: right; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #475569; }
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        body { 
+            font-family: 'Vazirmatn', sans-serif; 
+            background: var(--bg-gradient); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+        }
+
+        .form-container { 
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 40px; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
+            width: 90%; 
+            max-width: 420px; 
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .logo { 
+            color: var(--primary); 
+            font-weight: 900; 
+            font-size: 32px; 
+            margin-bottom: 10px; 
+            text-decoration: none; 
+            display: block;
+            letter-spacing: 1px;
+        }
+
+        h2 { color: #1e293b; font-weight: 700; margin-bottom: 25px; font-size: 22px; }
+
+        .input-group { text-align: right; margin-bottom: 20px; }
+        
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 700; 
+            font-size: 14px; 
+            color: #64748b; 
+            padding-right: 5px;
+        }
+
+        input, textarea { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 12px; 
+            outline: none; 
+            font-family: 'Vazirmatn'; 
+            text-align: right; 
+            font-size: 15px; 
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background: white;
+        }
+
+        input:focus, textarea:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); 
+        }
+
+        .btn-send { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 16px; 
+            width: 100%; 
+            border-radius: 12px; 
+            font-weight: 900; 
+            cursor: pointer; 
+            transition: all 0.3s transform; 
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .btn-send:hover { 
+            background: var(--primary-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-send:active { transform: translateY(0); }
+
+        #msg { 
+            margin-top: 20px; 
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700; 
+            display: none; 
+            font-size: 14px; 
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="form-container">
     <a href="index.html" class="logo">PROXO</a>
-    <h2>ڕای خۆت بنووسە</h2>
+    <h2 data-key="form_title">بەشداری ئەزموونت بکە</h2>
+    
     <form id="fbForm">
-        <input type="text" id="custName" placeholder="ناوەکەت" required>
-        <textarea id="custMsg" rows="4" placeholder="پەیامەکەت بنووسە..." required></textarea>
+        <div class="input-group">
+            <label>ناو</label>
+            <input type="text" id="custName" placeholder="ناوی تەواوت بنووسە" required>
+        </div>
+
+        <div class="input-group">
+            <label>پەیام</label>
+            <textarea id="custMsg" rows="4" placeholder="ڕای خۆت دەرببڕە دەربارەی خزمەتگوزارییەکانمان..." required></textarea>
+        </div>
+
         <button type="submit" class="btn-send" id="submitBtn">ناردنی فیدباک</button>
     </form>
-    <p id="msg"></p>
-    <a href="index.html" style="display:block; margin-top:20px; color:#64748b; text-decoration:none;">گەڕانەوە بۆ سەرەتا</a>
+    
+    <div id="msg"></div>
+    
+    <a href="index.html" class="back-link">← گەڕانەوە بۆ لاپەڕەی سەرەکی</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -39,11 +158,11 @@
     document.getElementById('fbForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
-        const msgText = document.getElementById('msg');
+        const msgBox = document.getElementById('msg');
         
         btn.disabled = true;
-        btn.innerText = 'چاوەڕوانبە...';
-        msgText.style.display = "none";
+        btn.style.opacity = "0.7";
+        btn.innerText = 'تکایە چاوەڕوانبە...';
 
         const nameValue = document.getElementById('custName').value;
         const commentValue = document.getElementById('custMsg').value;
@@ -56,18 +175,20 @@
                 is_approved: false 
             }]);
 
+        msgBox.style.display = "block";
         if (error) {
-            console.error(error);
-            msgText.innerText = "هەڵە: " + error.message;
-            msgText.style.color = "red";
+            msgBox.innerText = "داوای لێبوردن، هەڵەیەک ڕوویدا: " + error.message;
+            msgBox.style.background = "#fee2e2";
+            msgBox.style.color = "#ef4444";
         } else {
-            msgText.innerText = "سوپاس! فیدباکەکەت ناردرا.";
-            msgText.style.color = "green";
+            msgBox.innerText = "سوپاس! فیدباکەکەت بە سەرکەوتوویی گەیشت.";
+            msgBox.style.background = "#dcfce7";
+            msgBox.style.color = "#22c55e";
             document.getElementById('fbForm').reset();
         }
         
-        msgText.style.display = "block";
         btn.disabled = false;
+        btn.style.opacity = "1";
         btn.innerText = 'ناردنی فیدباک';
     });
 </script>
