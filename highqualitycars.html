@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zana Agency - Links</title>
+<title>Proxo - Links</title>
 
 <script>
 !function (w, d, t) {
@@ -36,6 +36,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
   --bg:#0f172a;
   --card:rgba(30,41,59,.85);
   --text:#f8fafc;
+  --proxo-blue: #3b82f6;
 }
 
 body{
@@ -90,65 +91,64 @@ h1{
 .links-wrapper{
   display:flex;
   flex-direction:column;
-  gap:20px;
+  gap:16px;
 }
 
-@property --angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-
-.wa-wrap {
+.link-card {
   position: relative;
-  padding: 2.5px; 
-  border-radius: 20px;
-  overflow: hidden;
   display: flex;
-  justify-content: center;
   align-items: center;
-}
-
-.wa-wrap::before {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  animation: spin 3s linear infinite;
-  background-image: conic-gradient(from var(--angle), transparent 70%, #25D366, #fff, #25D366);
-  filter: blur(1px);
-}
-
-@keyframes spin {
-  from { --angle: 0deg; }
-  to { --angle: 360deg; }
-}
-
-.link-card{
-  position:relative;
-  z-index: 2;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:18px 22px;
-  border-radius:17px;
-  text-decoration:none;
-  color:#fff;
-  font-size:18px;
-  font-weight:700;
-  transition:all 0.25s ease;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-radius: 17px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  transition: all 0.3s ease;
   cursor: pointer;
   border: none;
   width: 100%;
   font-family: inherit;
+  overflow: hidden; 
 }
 
-.no-border { padding: 0; }
+.link-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transform: skewX(-25deg);
+  animation: sequentialShine 6s infinite linear;
+}
+
+#wa-btn::after { animation-delay: 0s; }
+#viber-btn::after { animation-delay: 2s; }
+#phone-btn::after { animation-delay: 4s; }
+
+@keyframes sequentialShine {
+  0% { left: -150%; }
+  25% { left: 150%; } 
+  100% { left: 150%; } 
+}
+
+.link-card:active { transform: scale(0.97); }
+
+.whatsapp { background-image: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
+.viber { background-image: linear-gradient(135deg, #7360f2 0%, #5941a9 100%); }
+.phone { background-image: linear-gradient(135deg, #0062AD 0%, #00457A 100%); }
 
 .wa-emoji {
   margin-right: 10px;
   display: inline-block;
-  transition: opacity 0.8s ease, transform 0.8s ease;
   animation: bounce 0.6s infinite alternate;
 }
 
@@ -157,43 +157,62 @@ h1{
   to { transform: translateX(6px); }
 }
 
-.link-card:active{ transform:scale(.96); }
-.link-card i{ font-size:26px; }
+.link-card i { font-size: 26px; }
 
-.whatsapp{ background: #075E54; background-image: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
-.viber{ background: #5941a9; background-image: linear-gradient(135deg, #7360f2 0%, #5941a9 100%); }
-.phone{ background: #00457A; background-image: linear-gradient(135deg, #0062AD 0%, #00457A 100%); }
-
-.footer{
-  margin-top:40px;
-  padding-top:15px;
-  border-top:1px solid rgba(255,255,255,.05);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
+.footer-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+  margin: 40px 0 20px 0;
 }
 
-.footer p{ font-size:11px; color:#64748b; margin:0; }
-
-.sponsor-btn{
-  padding:10px 22px;
-  background:#2C67E7;
-  border-radius:50px;
-  color:#fff;
-  text-decoration:none;
-  font-weight:700;
-  font-size:13px;
-  transition: 0.3s;
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
-.legal-links{
-  font-size:11px;
-  color:#475569;
-  display:flex; gap:10px;
+.sponsored-by {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 400;
+  opacity: 0.8;
 }
-.legal-links a{ color:inherit; text-decoration:none; }
-.sep{opacity:.3}
+
+.proxo-brand {
+  text-decoration: none;
+  color: var(--proxo-blue);
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  transition: 0.3s ease;
+}
+
+.proxo-brand:hover {
+  filter: brightness(1.2);
+}
+
+.legal-links {
+  font-size: 9px;
+  color: #475569;
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+.legal-links a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.legal-links a:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.sep { opacity: 0.3; }
 </style>
 </head>
 
@@ -201,44 +220,40 @@ h1{
 <div class="container">
 
   <div class="profile-container">
-        <img src="" class="profile-img" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=H+Q&background=2C67E7&color=fff&size=128'">
-        <h1>High Quality Cars</h1>
-        <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</div>
+    <img src="" class="profile-img" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=H+Q&background=2C67E7&color=fff&size=128'">
+    <h1>High Quality Cars</h1>
+    <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</div>
   </div>
 
   <div class="links-wrapper">
-    <div class="wa-wrap">
-        <button id="wa-btn" class="link-card whatsapp">
-          <div style="display: flex; align-items: center;">
-            <span>واتسئاپ</span>
-            <span id="target-emoji" class="wa-emoji">👉</span>
-          </div>
-          <i class="fab fa-whatsapp"></i>
-        </button>
-    </div>
+    <button id="wa-btn" class="link-card whatsapp">
+      <div style="display: flex; align-items: center;">
+        <span>واتسئاپ</span>
+        <span id="target-emoji" class="wa-emoji">👉</span>
+      </div>
+      <i class="fab fa-whatsapp"></i>
+    </button>
 
-    <div class="no-border">
-        <button id="viber-btn" class="link-card viber">
-          <span>ڤایبەر</span>
-          <i class="fab fa-viber"></i>
-        </button>
-    </div>
+    <button id="viber-btn" class="link-card viber">
+      <span>ڤایبەر</span>
+      <i class="fab fa-viber"></i>
+    </button>
 
-    <div class="no-border">
-        <button id="phone-btn" class="link-card phone">
-          <span>کۆڕەک</span>
-          <i class="fas fa-phone-alt"></i>
-        </button>
-    </div>
+    <button id="phone-btn" class="link-card phone">
+      <span>کۆڕەک</span>
+      <i class="fas fa-phone-alt"></i>
+    </button>
   </div>
 
+  <div class="footer-divider"></div>
+
   <div class="footer">
-    <p>سپۆنسەر کراوە لەلایەن</p>
-    <a class="sponsor-btn" href="https://wa.me/9647758887488?text=سڵاو، سپۆنسەرم دەوێت" onclick="trackTikTokConversion('Sponsor')">Zana Agency</a>
+    <span class="sponsored-by">سپۆنسەر کراوە لەلایەن</span>
+    <a class="proxo-brand" href="https://www.zanaagency.com/#en" target="_blank">Proxo</a>
     <div class="legal-links">
-      <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">سیاسەتی پاراستنی نهێنی</a>
+      <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
       <span class="sep">|</span>
-      <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">مەرجەکان</a>
+      <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
     </div>
   </div>
 
@@ -246,42 +261,33 @@ h1{
 
 <script>
   function setupLinks() {
-    // ئەنیمەیشنی لابردنی ئیمۆجی دوای ٥٠٠٠ میللی چرکە (واتە ٥ چرکە)
     setTimeout(function() {
       const emoji = document.getElementById('target-emoji');
       if (emoji) {
         emoji.style.opacity = '0';
+        emoji.style.transition = '0.8s';
         emoji.style.transform = 'translateX(20px)';
         setTimeout(() => { emoji.style.display = 'none'; }, 800);
       }
     }, 5000);
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/";
-    
-    let currentVideo = decodeURIComponent(videoUrl);
-    let message = "سڵاو! ئایا دەتوانم زانیاری زیاترم دەست بکەوێت دەربارەی ئەمە؟\n" + currentVideo;
-    let phoneNumber = "+9647502238449";
+    const phoneNumber = "+9647502238449";
+    const videoUrl = new URLSearchParams(window.location.search).get('v') || "https://vt.tiktok.com/ZSmedYSB8/";
+    const message = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + decodeURIComponent(videoUrl);
 
     document.getElementById('wa-btn').onclick = function() {
       trackTikTokConversion('WhatsApp');
-      setTimeout(function() {
-        window.location.href = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
-      }, 300);
+      window.location.href = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
     };
 
     document.getElementById('viber-btn').onclick = function() {
       trackTikTokConversion('Viber');
-      setTimeout(function() {
-        window.location.href = "viber://chat?number=" + phoneNumber;
-      }, 300);
+      window.location.href = "viber://chat?number=" + phoneNumber;
     };
 
     document.getElementById('phone-btn').onclick = function() {
       trackTikTokConversion('Phone');
-      setTimeout(function() {
-        window.location.href = "tel:+" + phoneNumber;
-      }, 300);
+      window.location.href = "tel:+" + phoneNumber;
     };
   }
   setupLinks();
