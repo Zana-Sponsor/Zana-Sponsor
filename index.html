@@ -114,11 +114,43 @@
         .tiktok-official-links a { color: #94a3b8; text-decoration: none; font-size: 13px; transition: 0.3s; }
         .official-badge { background: var(--tiktok-red); color: white; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 900; }
 
-        .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; z-index: 1000; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4); }
+        /* ستایلی نوێی دوگمەی واتسئاپ */
+        .wa-float { 
+            position: fixed; 
+            bottom: 30px; 
+            right: 30px; 
+            background: #25d366; 
+            color: white; 
+            padding: 12px 22px;
+            border-radius: 50px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            z-index: 1000; 
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4); 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .wa-float i { font-size: 28px; }
+        .wa-float:hover { 
+            transform: scale(1.1) translateY(-5px);
+            background: #20ba5a;
+            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.5);
+        }
+        .wa-float span { display: inline-block; }
 
         .rtl { direction: rtl; text-align: right; }
         .ltr { direction: ltr; text-align: left; }
         .rtl .wa-float { right: auto; left: 30px; }
+        
+        /* شاردنەوەی دەقی دوگمەکە لە مۆبایلی بچووک ئەگەر پێویست بوو */
+        @media (max-width: 480px) {
+            .wa-float { padding: 15px; border-radius: 50%; width: 60px; height: 60px; }
+            .wa-float span { display: none; }
+        }
     </style>
 </head>
 <body class="ltr">
@@ -215,7 +247,10 @@
         </div>
     </footer>
 
-    <a href="https://wa.me/9647758887488" class="wa-float"><i class="fab fa-whatsapp"></i></a>
+    <a href="https://wa.me/9647758887488" class="wa-float">
+        <i class="fab fa-whatsapp"></i>
+        <span data-key="wa_text">Contact Us</span>
+    </a>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -280,7 +315,8 @@
                 feedback_title: "Trusted by Business Owners",
                 footer_about: "The leading agency for TikTok growth in Iraq.",
                 footer_links: "Quick Links",
-                write_feedback: "Write a Feedback"
+                write_feedback: "Write a Feedback",
+                wa_text: "Contact Us"
             },
             ku: {
                 nav_home: "سەرەتا", nav_services: "خزمەتگوزارییەکان", nav_feedback: "فیدباکەکان",
@@ -293,7 +329,8 @@
                 feedback_title: "خاوەنکارەکان متمانەمان پێ دەکەن",
                 footer_about: "ئاژانسی پێشەنگ بۆ گەشەکردنی تیکتۆک لە عێراق.",
                 footer_links: "لینکە خێراکان",
-                write_feedback: "فیدباک بنووسە"
+                write_feedback: "فیدباک بنووسە",
+                wa_text: "پەیوەندیمان پێوە بکە"
             }
         };
 
