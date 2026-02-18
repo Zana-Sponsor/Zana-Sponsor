@@ -244,7 +244,7 @@
 
         async function loadFeedbacks() {
             const { data, error } = await supabaseClient
-                .from('feedbacks')
+                .from('feedback')
                 .select('*')
                 .eq('is_approved', true)
                 .order('created_at', { ascending: false });
