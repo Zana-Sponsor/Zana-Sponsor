@@ -93,7 +93,7 @@
             btn: "ناردنی فیدباک", 
             back: "← گەڕانەوە بۆ سەرەتا", 
             loading: "چاوەڕوانبە...", 
-            success: "سوپاس! فیدباکەکەت بە سەرکەوتوویی ناردرا. لاپەڕە نوێ دەبێتەوە...", 
+            success: "سوپاس بۆ فیدباکەکەت! بە سەرکەوتوویی ناردرا.", 
             error: "هەڵەیەک ڕوویدا لە ناردن" 
         },
         ar: { 
@@ -105,7 +105,7 @@
             btn: "إرسال الرأي", 
             back: "← العودة للرئيسية", 
             loading: "يرجى الانتظار...", 
-            success: "شكراً لك! تم إرسال رأيك بنجاح. سيتم تحديث الصفحة...", 
+            success: "شكراً لرأيك! تم الإرسال بنجاح.", 
             error: "حدث خطأ أثناء الإرسال" 
         }
     };
@@ -134,7 +134,6 @@
         
         const supabaseClient = supabase.createClient(_0xU, _0xK);
 
-        // زانیارییەکانی تیلیگرام
         const TG_TOKEN = '8430730550:AAGdNRYVpKufZn6WOwDcpMetHlERGQZEQHQ';
         const TG_CHAT_ID = '6259019006';
 
@@ -149,7 +148,6 @@
             btn.disabled = true;
             btn.innerText = dict[currentLang].loading;
 
-            // ١. ناردن بۆ Supabase
             const { error } = await supabaseClient
                 .from('feedback')
                 .insert([{ 
@@ -159,6 +157,7 @@
                 }]);
 
             msgBox.style.display = "block";
+
             if (error) {
                 msgBox.innerText = dict[currentLang].error + ": " + error.message;
                 msgBox.style.background = "#fee2e2";
@@ -166,11 +165,9 @@
                 btn.disabled = false;
                 btn.innerText = dict[currentLang].btn;
             } else {
-                // دروستکردنی کات و بەروار
                 const now = new Date();
                 const dateTimeStr = now.toLocaleString('en-GB', { timeZone: 'Asia/Baghdad' });
 
-                // ٢. ناردن بۆ بۆتی تیلیگرام
                 const tgMessage = `🚀 *فیدباکێکی نوێ هات!*\n\n🏢 *ناوی براند:* ${name}\n💬 *نامە:* ${comment}\n\n📅 *بەروار و کات:* ${dateTimeStr}`;
                 
                 try {
@@ -193,7 +190,7 @@
                 
                 setTimeout(() => {
                     location.reload();
-                }, 2000);
+                }, 2500);
             }
         };
     })();
