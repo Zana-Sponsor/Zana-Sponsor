@@ -5,10 +5,31 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROXO - Feedback</title>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+
     <style>
-        :root { --primary: #2563eb; --primary-hover: #1d4ed8; }
-        body { font-family: 'Vazirmatn', sans-serif; background: #f1f5f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        /* لێرە لینکی فۆنتەکەت لە گێتهەب دابنێ */
+        @font-face {
+            font-family: 'CustomFont';
+            /* لێرە لینکی Raw ی گێتهەب دابنێ */
+            src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root { 
+            --primary: #2563eb; 
+            --primary-hover: #1d4ed8; 
+            /* لێرە ناوی فۆنتەکە جێگیر بکە، ئەگەر فۆنتەکە کاری نەکرد Vazirmatn وەک جێگرەوە بەکاردێت */
+            --main-font: 'CustomFont', 'Vazirmatn', sans-serif;
+        }
+
+        /* فۆنتی Vazirmatn وەک جێگرەوە ئەگەر هی گێتهەبەکە بارنەبوو */
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
+
+        * { font-family: var(--main-font); }
+        
+        body { background: #f1f5f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .form-container { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 90%; max-width: 450px; text-align: center; position: relative; }
         .logo { color: var(--primary); font-weight: 900; font-size: 32px; text-decoration: none; display: block; margin-bottom: 10px; letter-spacing: 1px; }
         
@@ -20,10 +41,10 @@
 
         .input-group { text-align: right; margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 14px; color: #475569; }
-        input, textarea { width: 100%; padding: 15px; border: 2px solid #f1f5f9; border-radius: 12px; outline: none; font-family: 'Vazirmatn'; text-align: right; box-sizing: border-box; background: #f8fafc; transition: 0.3s; }
+        input, textarea { width: 100%; padding: 15px; border: 2px solid #f1f5f9; border-radius: 12px; outline: none; text-align: right; box-sizing: border-box; background: #f8fafc; transition: 0.3s; font-family: var(--main-font); }
         input:focus, textarea:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
         
-        .btn-send { background: var(--primary); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 10px; }
+        .btn-send { background: var(--primary); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 10px; font-family: var(--main-font); }
         .btn-send:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 15px rgba(37, 99, 235, 0.2); }
         .btn-send:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
 
@@ -141,7 +162,6 @@
                 msgBox.style.background = "#dcfce7";
                 msgBox.style.color = "#22c55e";
                 
-                // ئۆتۆماتیکی ڕێفرێش دوای ٢ چرکە
                 setTimeout(() => {
                     location.reload();
                 }, 2000);
