@@ -45,7 +45,7 @@
         const comment = document.getElementById('custMsg').value;
 
         const { error } = await supabaseClient
-            .from('feedbacks')
+            .from('feedback')
             .insert([{ name, comment, is_approved: false }]);
 
         if (error) {
