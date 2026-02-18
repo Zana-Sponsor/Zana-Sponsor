@@ -9,7 +9,7 @@
         body { font-family: 'Vazirmatn', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .form-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
         .logo { color: #2563eb; font-weight: 900; font-size: 30px; margin-bottom: 20px; text-decoration: none; display: block; }
-        input, textarea, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; outline: none; font-family: 'Vazirmatn'; text-align: right; font-size: 16px; }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; outline: none; font-family: 'Vazirmatn'; text-align: right; font-size: 16px; }
         .btn-send { background: #2563eb; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 16px; }
         .btn-send:hover { background: #1d4ed8; }
         #msg { margin-top: 15px; font-weight: bold; display: none; font-size: 14px; }
@@ -23,16 +23,6 @@
     <h2>ڕای خۆت بنووسە</h2>
     <form id="fbForm">
         <input type="text" id="custName" placeholder="ناوەکەت" required>
-        
-        <label>هەڵسەنگاندن:</label>
-        <select id="custRating">
-            <option value="5">⭐⭐⭐⭐⭐ (٥/٥)</option>
-            <option value="4">⭐⭐⭐⭐ (٤/٥)</option>
-            <option value="3">⭐⭐⭐ (٣/٥)</option>
-            <option value="2">⭐⭐ (٢/٥)</option>
-            <option value="1">⭐ (١/٥)</option>
-        </select>
-
         <textarea id="custMsg" rows="4" placeholder="پەیامەکەت بنووسە..." required></textarea>
         <button type="submit" class="btn-send" id="submitBtn">ناردنی فیدباک</button>
     </form>
@@ -42,7 +32,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // بەکارهێنانی Anon Key بۆ ڕێگریکردن لە هەڵەی Invalid API Key
     const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co';
     const SB_KEY = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
@@ -58,14 +47,12 @@
 
         const nameValue = document.getElementById('custName').value;
         const commentValue = document.getElementById('custMsg').value;
-        const ratingValue = document.getElementById('custRating').value;
 
         const { error } = await supabaseClient
             .from('feedback')
             .insert([{ 
                 name: nameValue, 
                 comment: commentValue, 
-                rating: parseInt(ratingValue),
                 is_approved: false 
             }]);
 
