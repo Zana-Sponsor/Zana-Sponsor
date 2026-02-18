@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROXO - فیدباک بنێرە</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .form-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center; }
+        .logo { color: #2563eb; font-weight: 900; font-size: 30px; margin-bottom: 20px; text-decoration: none; display: block; }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; outline: none; font-family: 'Vazirmatn'; }
+        .btn-send { background: #2563eb; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-send:hover { background: #1d4ed8; }
+        #msg { margin-top: 15px; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <a href="index.html" class="logo">PROXO</a>
+    <h2>ڕای خۆت بنووسە</h2>
+    <p>فیدباکەکەت یارمەتیمان دەدات باشتربین</p>
+    <form id="fbForm">
+        <input type="text" id="custName" placeholder="ناوەکەت" required>
+        <textarea id="custMsg" rows="4" placeholder="پەیامەکەت بنووسە..." required></textarea>
+        <button type="submit" class="btn-send" id="submitBtn">ناردنی فیدباک</button>
+    </form>
+    <p id="msg"></p>
+    <a href="index.html" style="display:block; margin-top:20px; color:#64748b; text-decoration:none; font-size:14px;">گەڕانەوە بۆ وێبسایت</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    const supabaseClient = supabase.createClient('https://rtbsblgaewmfiynhwgkv.supabase.co', 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU');
+
+    document.getElementById('fbForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const msgText = document.getElementById('msg');
+        btn.disabled = true;
+        btn.innerText = 'چاوەڕوانبە...';
+
+        const name = document.getElementById('custName').value;
+        const comment = document.getElementById('custMsg').value;
+
+        const { error } = await supabaseClient
+            .from('feedbacks')
+            .insert([{ name, comment, is_approved: false }]);
+
+        if (error) {
+            msgText.innerText = "هەڵەیەک ڕوویدا، تکایە دووبارە هەوڵبدەوە.";
+            msgText.style.color = "red";
+        } else {
+            msgText.innerText = "سوپاس! فیدباکەکەت ناردرا.";
+            msgText.style.color = "green";
+            document.getElementById('fbForm').reset();
+        }
+        msgText.style.display = "block";
+        btn.disabled = false;
+        btn.innerText = 'ناردنی فیدباک';
+    });
+</script>
+
+</body>
+</html>
