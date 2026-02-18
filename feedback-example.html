@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku" class="notranslate" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROXO - Feedback</title>
+
+    <style>
+        /* لێرە لینکی فۆنتەکەت لە گێتهەب دابنێ */
+        @font-face {
+            font-family: 'CustomFont';
+            /* لێرە لینکی Raw ی گێتهەب دابنێ */
+            src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root { 
+            --primary: #2563eb; 
+            --primary-hover: #1d4ed8; 
+            /* لێرە ناوی فۆنتەکە جێگیر بکە، ئەگەر فۆنتەکە کاری نەکرد Vazirmatn وەک جێگرەوە بەکاردێت */
+            --main-font: 'CustomFont', 'Vazirmatn', sans-serif;
+        }
+
+        /* فۆنتی Vazirmatn وەک جێگرەوە ئەگەر هی گێتهەبەکە بارنەبوو */
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
+
+        * { font-family: var(--main-font); }
+        
+        body { background: #f1f5f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .form-container { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 90%; max-width: 450px; text-align: center; position: relative; }
+        .logo { color: var(--primary); font-weight: 900; font-size: 32px; text-decoration: none; display: block; margin-bottom: 10px; letter-spacing: 1px; }
+        
+        .lang-switch { margin-bottom: 50px; display: flex; justify-content: center; gap: 10px; }
+        .lang-btn { background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 18px; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.3s; color: #64748b; }
+        .lang-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        h2 { font-size: 16px; color: #0f172a; margin-bottom: 50px; line-height: 1.4; }
+
+        .input-group { text-align: right; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 14px; color: #475569; }
+        input, textarea { width: 100%; padding: 15px; border: 2px solid #f1f5f9; border-radius: 12px; outline: none; text-align: right; box-sizing: border-box; background: #f8fafc; transition: 0.3s; font-family: var(--main-font); }
+        input:focus, textarea:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        
+        .btn-send { background: var(--primary); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 10px; font-family: var(--main-font); }
+        .btn-send:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 15px rgba(37, 99, 235, 0.2); }
+        .btn-send:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+
+        #msg { margin-top: 20px; padding: 15px; border-radius: 12px; display: none; font-weight: bold; font-size: 14px; }
+        .back-link { display: inline-block; margin-top: 25px; color: #94a3b8; text-decoration: none; font-size: 14px; transition: 0.3s; }
+        .back-link:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <a href="index.html" class="logo">PROXO</a>
+    
+    <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLang('ku')">کوردی</button>
+        <button class="lang-btn" onclick="setLang('ar')">العربية</button>
+    </div>
+
+    <h2 id="title">ئەزموونی خۆت لەگەڵ پرۆکسۆ چۆن بوو؟</h2>
+    
+    <form id="fbForm">
+        <div class="input-group">
+            <label id="labelName">ناوی بازرگانی</label>
+            <input type="text" id="custName" placeholder="ناوی بازرگانی یان براندەکەت بنووسە..." required>
+        </div>
+        <div class="input-group">
+            <label id="labelMsg">فیدباک</label>
+            <textarea id="custMsg" rows="4" placeholder="فیدباکەکەت لێرە بنووسە..." required></textarea>
+        </div>
+        <button type="submit" class="btn-send" id="submitBtn">ناردنی فیدباک</button>
+    </form>
+    
+    <div id="msg"></div>
+    <a href="index.html" class="back-link" id="backLink">← گەڕانەوە بۆ سەرەتا</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script class="notranslate">
+    const dict = {
+        ku: { 
+            title: "ئەزموونی خۆت لەگەڵ پرۆکسۆ چۆن بوو؟", 
+            name: "ناوی بازرگانی", 
+            namePlc: "ناوی بازرگانی یان براندەکەت بنووسە...", 
+            msg: "فیدباک", 
+            msgPlc: "فیدباکەکەت لێرە بنووسە...", 
+            btn: "ناردنی فیدباک", 
+            back: "← گەڕانەوە بۆ سەرەتا", 
+            loading: "چاوەڕوانبە...", 
+            success: "سوپاس! فیدباکەکەت بە سەرکەوتوویی ناردرا. لاپەڕە نوێ دەبێتەوە...", 
+            error: "هەڵەیەک ڕوویدا لە ناردن" 
+        },
+        ar: { 
+            title: "كيف كانت تجربتك مع بروكسو؟", 
+            name: "الاسم التجاري", 
+            namePlc: "اكتب اسم نشاطك التجاري أو علامتك التجارية...", 
+            msg: "رأيك", 
+            msgPlc: "اكتب رأيك هنا...", 
+            btn: "إرسال الرأي", 
+            back: "← العودة للرئيسية", 
+            loading: "يرجى الانتظار...", 
+            success: "شكراً لك! تم إرسال رأيك بنجاح. سيتم تحديث الصفحة...", 
+            error: "حدث خطأ أثناء الإرسال" 
+        }
+    };
+
+    let currentLang = 'ku';
+
+    function setLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(b => {
+            b.classList.remove('active');
+            if(b.innerText === (lang === 'ku' ? 'کوردی' : 'العربية')) b.classList.add('active');
+        });
+        
+        document.getElementById('title').innerText = dict[lang].title;
+        document.getElementById('labelName').innerText = dict[lang].name;
+        document.getElementById('custName').placeholder = dict[lang].namePlc;
+        document.getElementById('labelMsg').innerText = dict[lang].msg;
+        document.getElementById('custMsg').placeholder = dict[lang].msgPlc;
+        document.getElementById('submitBtn').innerText = dict[lang].btn;
+        document.getElementById('backLink').innerText = dict[lang].back;
+    }
+
+    (function() {
+        const _0xU = 'https://rtbsblgaewmfiynhwgkv.supabase.co';
+        const _0xK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
+        
+        const supabaseClient = supabase.createClient(_0xU, _0xK);
+
+        document.getElementById('fbForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const msgBox = document.getElementById('msg');
+            
+            btn.disabled = true;
+            btn.innerText = dict[currentLang].loading;
+
+            const { error } = await supabaseClient
+                .from('feedback')
+                .insert([{ 
+                    name: document.getElementById('custName').value, 
+                    comment: document.getElementById('custMsg').value, 
+                    is_approved: false 
+                }]);
+
+            msgBox.style.display = "block";
+            if (error) {
+                msgBox.innerText = dict[currentLang].error + ": " + error.message;
+                msgBox.style.background = "#fee2e2";
+                msgBox.style.color = "#ef4444";
+                btn.disabled = false;
+                btn.innerText = dict[currentLang].btn;
+            } else {
+                msgBox.innerText = dict[currentLang].success;
+                msgBox.style.background = "#dcfce7";
+                msgBox.style.color = "#22c55e";
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            }
+        };
+    })();
+</script>
+</body>
+</html>
