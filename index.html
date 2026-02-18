@@ -29,7 +29,10 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; scroll-behavior: smooth; }
+        
+        /* چاککردنی کێشەی ئایکۆنەکان لە کاتی بەکارهێنانی فۆنتی ڕووداو */
         .rtl * { font-family: 'Rudaw', sans-serif !important; }
+        .rtl .fas, .rtl .fab, .rtl .fa, .rtl [class^="fa-"] { font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important; font-weight: 900 !important; }
 
         body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; line-height: 1.7; }
 
@@ -154,6 +157,12 @@
     <section id="feedback">
         <h2 data-key="feedback_title">Trusted by Business Owners</h2>
         <div class="grid-layout" id="feedback-container"></div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="https://www.proxopages.com/feedback" class="btn-main" style="background: transparent; color: var(--text-dark) !important; border: 2px solid var(--accent); box-shadow: none;" data-key="write_feedback">
+                <i class="fas fa-pen-nib"></i> Write a Feedback
+            </a>
+        </div>
     </section>
 
     <footer>
@@ -198,7 +207,6 @@
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         async function loadFeedbacks() {
-            // تەنها ئەو فیدباکانە دەهێنێت کە approved یەکسانە بە true
             const { data } = await supabaseClient
                 .from('feedback')
                 .select('*')
@@ -241,7 +249,8 @@
                 ser2_t: "ROI Optimization", ser2_d: "We track and optimize every dollar spent.",
                 feedback_title: "Trusted by Business Owners",
                 footer_about: "The leading agency for TikTok growth in Iraq.",
-                footer_links: "Quick Links"
+                footer_links: "Quick Links",
+                write_feedback: "Write a Feedback"
             },
             ku: {
                 nav_home: "سەرەتا", nav_services: "خزمەتگوزارییەکان", nav_feedback: "فیدباکەکان",
@@ -253,7 +262,8 @@
                 ser2_t: "زیادکردنی قازانج", ser2_d: "چاودێری و زیادکردنی سوود لە پارە خەرجکراوەکان.",
                 feedback_title: "خاوەنکارەکان متمانەمان پێ دەکەن",
                 footer_about: "ئاژانسی پێشەنگ بۆ گەشەکردنی تیکتۆک لە عێراق.",
-                footer_links: "لینکە خێراکان"
+                footer_links: "لینکە خێراکان",
+                write_feedback: "فیدباک بنووسە"
             }
         };
 
