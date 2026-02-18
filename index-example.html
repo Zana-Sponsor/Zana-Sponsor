@@ -185,7 +185,7 @@
                 <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy</a>
                 <a href="https://ads.tiktok.com/help/article/advertising-policies-entry" target="_blank">Ad Policies</a>
             </div>
-            <div style="color: #64748b; font-size: 13px;">© 2026 PROXO IQ.</div>
+            <div style="color: #64748b; font-size: 13px;">© 2026 PROXO KRD.</div>
         </div>
     </footer>
 
@@ -198,7 +198,13 @@
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         async function loadFeedbacks() {
-            const { data } = await supabaseClient.from('feedback').select('*').order('created_at', { ascending: false });
+            // تەنها ئەو فیدباکانە دەهێنێت کە approved یەکسانە بە true
+            const { data } = await supabaseClient
+                .from('feedback')
+                .select('*')
+                .eq('is_approved', true) 
+                .order('created_at', { ascending: false });
+
             const container = document.getElementById('feedback-container');
             if (data && container) {
                 container.innerHTML = '';
