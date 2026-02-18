@@ -198,7 +198,13 @@
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         async function loadFeedbacks() {
-            const { data } = await supabaseClient.from('feedback').select('*').order('created_at', { ascending: false });
+            // تەنها ئەو فیدباکانە دەهێنێت کە approved یەکسانە بە true
+            const { data } = await supabaseClient
+                .from('feedback')
+                .select('*')
+                .eq('approved', true) 
+                .order('created_at', { ascending: false });
+
             const container = document.getElementById('feedback-container');
             if (data && container) {
                 container.innerHTML = '';
