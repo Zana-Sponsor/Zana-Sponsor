@@ -10,19 +10,18 @@
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
 var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
 ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-  
   ttq.load('D5N6ETJC77UFLMP0AO10');
   ttq.page();
 }(window, document, 'ttq');
 </script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
 @font-face {
   font-family: 'Rudaw';
   src: url('rudawbold.ttf') format('truetype');
-  font-display: swap; /* ڕێگری لە سپی بوونی دەق دەکات تا فۆنتەکە بار دەبێت */
+  font-display: swap;
 }
 
 :root{
@@ -33,67 +32,63 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 }
 
 body{
-  font-family:'Rudaw','Vazirmatn',sans-serif;
+  font-family: 'Rudaw', sans-serif;
   background:var(--bg);
   color:var(--text);
   margin:0;
   min-height:100vh;
   display:flex;
   justify-content:center;
-  align-items:center;
+  align-items:center; 
   overflow-x: hidden;
 }
 
 .container{
   width:90%;
-  max-width:360px;
+  max-width:350px;
   text-align:center;
-  padding: 20px 0;
 }
 
 .profile-container {
   background:var(--card);
   backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
   padding:25px 20px;
   border-radius:22px;
   border:1px solid rgba(255,255,255,.1);
-  margin-bottom: 25px;
+  margin-bottom: 35px; 
 }
 
 .profile-img{
-  width:90px;
-  height:90px;
+  width:85px;
+  height:85px;
   border-radius:50%;
   object-fit:cover;
-  margin-bottom:15px;
+  margin-bottom:12px;
   border: 2px solid rgba(255,255,255,0.2);
 }
 
-h1{ font-size:20px; margin:0 0 10px; font-weight:900; }
+h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
+.main-instruction { font-size:13px; color:#aabbd3; }
 
-.main-instruction { font-size:14px; color:#aabbd3; margin-top: 10px; }
-
-.links-wrapper{ display:flex; flex-direction:column; gap:16px; }
+.links-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
 
 .link-card {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 22px;
-  border-radius: 17px;
+  padding: 16px 20px;
+  border-radius: 15px;
   text-decoration: none;
   color: #fff;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   transition: transform 0.2s ease;
   cursor: pointer;
   border: none;
   width: 100%;
-  font-family: inherit;
+  box-sizing: border-box;
   overflow: hidden;
-  will-change: transform;
 }
 
 .link-card::after {
@@ -103,10 +98,9 @@ h1{ font-size:20px; margin:0 0 10px; font-weight:900; }
   left: -150%;
   width: 60%;
   height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25), transparent);
   transform: skewX(-25deg);
   animation: sequentialShine 6s infinite linear;
-  will-change: left;
 }
 
 #wa-btn::after { animation-delay: 0s; }
@@ -119,7 +113,7 @@ h1{ font-size:20px; margin:0 0 10px; font-weight:900; }
   100% { left: 150%; } 
 }
 
-.link-card:active { transform: scale(0.96); }
+.link-card:active { transform: scale(0.97); }
 
 .whatsapp { background: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
 .viber { background: linear-gradient(135deg, #7360f2 0%, #5941a9 100%); }
@@ -136,20 +130,19 @@ h1{ font-size:20px; margin:0 0 10px; font-weight:900; }
   to { transform: translateX(6px); }
 }
 
-.link-card i { font-size: 26px; }
+.link-card i { font-size: 24px; }
 
 .footer-divider {
   height: 1px;
   width: 100%;
   background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
-  margin: 40px 0 20px 0;
+  margin: 30px 0 15px 0;
 }
 
 .footer { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.sponsored-by { font-size: 10px; color: #64748b; opacity: 0.8; }
-.proxo-brand { text-decoration: none; color: var(--proxo-blue); font-weight: 900; font-size: 22px; transition: opacity 0.2s; }
-.proxo-brand:hover { opacity: 0.8; }
-.legal-links { font-size: 9px; color: #475569; display: flex; gap: 8px; margin-top: 8px; }
+.sponsored-by { font-size: 10px; color: #64748b; }
+.proxo-brand { text-decoration: none; color: var(--proxo-blue); font-weight: 900; font-size: 18px; }
+.legal-links { font-size: 9px; color: #475569; display: flex; gap: 8px; margin-top: 5px; }
 .legal-links a { color: inherit; text-decoration: none; }
 .sep { opacity: 0.3; }
 </style>
@@ -158,7 +151,7 @@ h1{ font-size:20px; margin:0 0 10px; font-weight:900; }
 <body>
 <div class="container">
   <div class="profile-container">
-    <img src="logo.png" class="profile-img" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=H+Q&background=2C67E7&color=fff&size=128'">
+    <img src="https://ui-avatars.com/api/?name=H+Q&background=2C67E7&color=fff&size=128&bold=true" class="profile-img" alt="Logo">
     <h1>High Quality Cars</h1>
     <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکە</div>
   </div>
@@ -187,7 +180,7 @@ h1{ font-size:20px; margin:0 0 10px; font-weight:900; }
 
   <div class="footer">
     <span class="sponsored-by">سپۆنسەر کراوە لەلایەن</span>
-    <a class="proxo-brand" href="https://www.zanaagency.com/#en" target="_blank">Proxo</a>
+    <a class="proxo-brand" href="https://wa.me/9647758887488" target="_blank">Proxo</a>
     <div class="legal-links">
       <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
       <span class="sep">|</span>
@@ -198,7 +191,6 @@ h1{ font-size:20px; margin:0 0 10px; font-weight:900; }
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    // Emoji auto-hide
     setTimeout(function() {
       const emoji = document.getElementById('target-emoji');
       if (emoji) {
@@ -214,7 +206,6 @@ h1{ font-size:20px; margin:0 0 10px; font-weight:900; }
     const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/";
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + decodeURIComponent(videoUrl));
 
-    // Fast Click Handlers
     document.getElementById('wa-btn').onclick = function() {
       if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] });
       window.location.href = `https://wa.me/${phoneNumber}?text=${message}`;
