@@ -18,9 +18,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
+/* فۆنتی ڕووداو */
 @font-face {
   font-family: 'Rudaw';
-  src: url('rudawbold.ttf') format('truetype');
+  src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
   font-display: swap;
 }
 
@@ -32,7 +33,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 }
 
 body{
-  font-family: 'Rudaw', sans-serif;
+  font-family: 'Rudaw', Arial, sans-serif;
   background:var(--bg);
   color:var(--text);
   margin:0;
@@ -67,8 +68,8 @@ body{
   border: 2px solid rgba(255,255,255,0.2);
 }
 
-h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
-.main-instruction { font-size:13px; color:#aabbd3; }
+h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-serif; }
+.main-instruction { font-size:13px; color:#aabbd3; font-family: 'Rudaw', sans-serif; }
 
 .links-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
 
@@ -89,6 +90,7 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
+  font-family: 'Rudaw', sans-serif;
 }
 
 .link-card::after {
@@ -139,9 +141,15 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
   margin: 30px 0 15px 0;
 }
 
-.footer { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.sponsored-by { font-size: 10px; color: #64748b; }
-.proxo-brand { text-decoration: none; color: var(--proxo-blue); font-weight: 900; font-size: 18px; }
+.footer { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.sponsored-by { font-size: 10px; color: #64748b; font-family: 'Rudaw', sans-serif; }
+
+.proxo-logo-blue {
+  height: 18px; /* بچووک کرایەوە بۆ قەبارەیەکی ناسک */
+  width: auto;
+  display: block;
+}
+
 .legal-links { font-size: 9px; color: #475569; display: flex; gap: 8px; margin-top: 5px; }
 .legal-links a { color: inherit; text-decoration: none; }
 .sep { opacity: 0.3; }
@@ -180,7 +188,9 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
 
   <div class="footer">
     <span class="sponsored-by">سپۆنسەر کراوە لەلایەن</span>
-    <a class="proxo-brand" href="https://wa.me/9647758887488" target="_blank">Proxo</a>
+    <a href="https://www.proxopages.com" target="_blank">
+      <img src="https://image2url.com/r2/default/images/1771403050640-6d5e5c5e-a1dc-45de-a7f4-b5f386e82668.png" class="proxo-logo-blue" alt="Proxo">
+    </a>
     <div class="legal-links">
       <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
       <span class="sep">|</span>
