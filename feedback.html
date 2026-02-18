@@ -1,91 +1,87 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ku">
+<html dir="rtl" lang="ku" class="notranslate" translate="no">
 <head>
     <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROXO - فیدباک بنێرە</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        }
-        body { font-family: 'Vazirmatn', sans-serif; background: var(--bg-gradient); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .form-container { background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 90%; max-width: 420px; text-align: center; }
-        .logo { color: var(--primary); font-weight: 900; font-size: 32px; margin-bottom: 10px; text-decoration: none; display: block; }
-        h2 { color: #1e293b; font-weight: 700; margin-bottom: 25px; }
+        :root { --primary: #2563eb; --primary-hover: #1d4ed8; }
+        body { font-family: 'Vazirmatn', sans-serif; background: #f1f5f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .form-container { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
+        .logo { color: var(--primary); font-weight: 900; font-size: 32px; text-decoration: none; display: block; margin-bottom: 20px; }
         .input-group { text-align: right; margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 14px; color: #64748b; }
-        input, textarea { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; outline: none; font-family: 'Vazirmatn'; text-align: right; font-size: 15px; box-sizing: border-box; transition: 0.3s; }
-        input:focus, textarea:focus { border-color: var(--primary); }
-        .btn-send { background: var(--primary); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 16px; }
-        .btn-send:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2); }
-        #msg { margin-top: 20px; padding: 12px; border-radius: 10px; font-weight: 700; display: none; font-size: 14px; }
+        input, textarea { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; outline: none; font-family: 'Vazirmatn'; text-align: right; box-sizing: border-box; }
+        input:focus { border-color: var(--primary); }
+        .btn-send { background: var(--primary); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-send:hover { background: var(--primary-hover); }
+        #msg { margin-top: 20px; padding: 12px; border-radius: 10px; display: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="form-container">
     <a href="index.html" class="logo">PROXO</a>
-    <h2>بەشداری ئەزموونت بکە</h2>
+    <h2 style="margin-bottom:25px;">ڕای خۆت بنووسە</h2>
     
     <form id="fbForm">
         <div class="input-group">
             <label>ناو</label>
-            <input type="text" id="custName" placeholder="ناوی تەواوت بنووسە" required>
+            <input type="text" id="custName" placeholder="ناوی تەواو" required>
         </div>
         <div class="input-group">
             <label>پەیام</label>
-            <textarea id="custMsg" rows="4" placeholder="ڕای خۆت بنووسە..." required></textarea>
+            <textarea id="custMsg" rows="4" placeholder="فیدباکەکەت لێرە بنووسە..." required></textarea>
         </div>
-        <button type="submit" class="btn-send" id="submitBtn">ناردنی فیدباک</button>
+        <button type="submit" class="btn-send" id="submitBtn">ناردن</button>
     </form>
     
     <div id="msg"></div>
-    <a href="index.html" style="display:inline-block; margin-top:20px; color:#94a3b8; text-decoration:none; font-size:14px;">← گەڕانەوە</a>
+    <a href="index.html" style="display:inline-block; margin-top:20px; color:#94a3b8; text-decoration:none;">گەڕانەوە</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    // تێبینی: تکایە هیچ وەرگێڕانێکی ئۆتۆماتیکی (Translate) بۆ ئەم لاپەڕەیە بەکارمەهێنە
-    const CONFIG = {
-        U: 'https://rtbsblgaewmfiynhwgkv.supabase.co',
-        K: 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU'
-    };
-
-    const _supabase = supabase.createClient(CONFIG.U, CONFIG.K);
-
-    document.getElementById('fbForm').onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const msgBox = document.getElementById('msg');
+<script class="notranslate">
+    // بەکارهێنانی فەنکشنێک بۆ پاراستنی کلیلەکە لە وەرگێڕان
+    (function() {
+        const _0xU = 'https://rtbsblgaewmfiynhwgkv.supabase.co';
+        const _0xK = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
         
-        btn.disabled = true;
-        btn.innerText = 'تکایە چاوەڕوانبە...';
+        const supabaseClient = supabase.createClient(_0xU, _0xK);
 
-        const n = document.getElementById('custName').value;
-        const c = document.getElementById('custMsg').value;
+        document.getElementById('fbForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const msgBox = document.getElementById('msg');
+            
+            btn.disabled = true;
+            btn.innerText = 'چاوەڕوانبە...';
 
-        const { error } = await _supabase
-            .from('feedback')
-            .insert([{ name: n, comment: c, is_approved: false }]);
+            const { error } = await supabaseClient
+                .from('feedback')
+                .insert([{ 
+                    name: document.getElementById('custName').value, 
+                    comment: document.getElementById('custMsg').value, 
+                    is_approved: false 
+                }]);
 
-        msgBox.style.display = "block";
-        if (error) {
-            msgBox.innerText = "هەڵە: " + error.message;
-            msgBox.style.background = "#fee2e2";
-            msgBox.style.color = "#ef4444";
-        } else {
-            msgBox.innerText = "سوپاس! فیدباکەکەت گەیشت.";
-            msgBox.style.background = "#dcfce7";
-            msgBox.style.color = "#22c55e";
-            document.getElementById('fbForm').reset();
-        }
-        
-        btn.disabled = false;
-        btn.innerText = 'ناردنی فیدباک';
-    };
+            msgBox.style.display = "block";
+            if (error) {
+                msgBox.innerText = "هەڵە: " + error.message;
+                msgBox.style.background = "#fee2e2";
+                msgBox.style.color = "#ef4444";
+            } else {
+                msgBox.innerText = "سوپاس! ناردرا.";
+                msgBox.style.background = "#dcfce7";
+                msgBox.style.color = "#22c55e";
+                document.getElementById('fbForm').reset();
+            }
+            btn.disabled = false;
+            btn.innerText = 'ناردن';
+        };
+    })();
 </script>
 </body>
 </html>
