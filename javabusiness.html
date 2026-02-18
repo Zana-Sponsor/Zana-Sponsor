@@ -46,39 +46,44 @@ body{
 
 .container{
   width:90%;
-  max-width:350px; /* گەڕایەوە بۆ قەبارە وردەکەی نموونەکەت */
+  max-width:350px;
   text-align:center;
+  /* زیادکردنی بۆشایی بۆ ئەوەی پەڕەکە پڕ دەرچێت */
+  padding: 40px 0; 
 }
 
 .profile-container {
   background:var(--card);
   backdrop-filter:blur(10px);
-  padding:25px 20px;
+  padding:35px 20px; /* زیادکردنی بەرزی ناو کارتەکە */
   border-radius:22px;
   border:1px solid rgba(255,255,255,.1);
-  margin-bottom: 35px; 
+  margin-bottom: 50px; /* بۆشایی زیاتر لە نێوان لۆگۆ و دوگمەکە */
 }
 
 .profile-img{
-  width:85px; /* هەمان قەبارەی نموونەکەت */
+  width:85px;
   height:85px;
   border-radius:50%;
   object-fit:cover;
-  margin-bottom:12px;
+  margin-bottom:15px;
   border: 2px solid rgba(255,255,255,0.2);
 }
 
-h1{ font-size:18px; margin:0 0 8px; font-weight:700; } /* هەمان قەبارەی فۆنتی نموونەکەت */
+h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
 .main-instruction { font-size:13px; color:#aabbd3; }
 
-.links-wrapper { width: 100%; }
+.links-wrapper { 
+  width: 100%; 
+  margin-bottom: 20px;
+}
 
 .link-card {
     position: relative;
     display: flex; 
     align-items: center; 
     justify-content: space-between;
-    padding: 16px 20px; /* هەمان بەرزی دوگمەی نموونەکەت */
+    padding: 16px 20px; 
     border-radius: 15px; 
     text-decoration: none;
     color: white; 
@@ -130,7 +135,7 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; } /* هەمان قەبار�
   height: 1px;
   width: 100%;
   background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
-  margin: 35px 0 15px 0;
+  margin: 60px 0 20px 0; /* بۆشایی زۆر زیاتر بۆ هێڵەکە */
 }
 
 .footer { display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -177,7 +182,6 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; } /* هەمان قەبار�
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    // ئیمۆجییەکە دوای ٣ چرکە ون دەبێت وەک داوات کردبوو
     setTimeout(function() {
       const emoji = document.getElementById('target-emoji');
       if (emoji) {
