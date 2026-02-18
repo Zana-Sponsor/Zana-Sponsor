@@ -191,38 +191,8 @@
     <section id="feedback">
         <span class="section-tag" data-key="nav_feedback">Success Stories</span>
         <h2 data-key="feedback_title">Trusted by Business Owners</h2>
-        <div class="grid-layout">
-            <div class="card">
-                <div class="rev-avatar">AM</div>
-                <p class="feedback-text">"Proxo is hands down the best agency for TikTok ads in Kurdistan. Sales skyrocketed!"</p>
-                <p class="client-name">- Ahmed Mohammed</p>
+        <div class="grid-layout" id="feedback-container">
             </div>
-            <div class="card">
-                <div class="rev-avatar" style="background:#db2777;">SK</div>
-                <p class="feedback-text">"Their payment integration with FIB made everything seamless for my business."</p>
-                <p class="client-name">- Sara Karwan</p>
-            </div>
-            <div class="card">
-                <div class="rev-avatar" style="background:#059669;">MA</div>
-                <p class="feedback-text">"Professional reporting and daily updates. My brand reached 1M views in 2 weeks."</p>
-                <p class="client-name">- Mohammed Ali</p>
-            </div>
-            <div class="card">
-                <div class="rev-avatar" style="background:#7c3aed;">HS</div>
-                <p class="feedback-text">"Fast execution and brilliant targeting. Highly recommend their services."</p>
-                <p class="client-name">- Hama Store</p>
-            </div>
-            <div class="card">
-                <div class="rev-avatar" style="background:#ea580c;">RE</div>
-                <p class="feedback-text">"Great results and support. They know how to handle high-budget campaigns."</p>
-                <p class="client-name">- Rawaz Electronics</p>
-            </div>
-            <div class="card">
-                <div class="rev-avatar" style="background:#2563eb;">LA</div>
-                <p class="feedback-text">"Excellent targeting! We received hundreds of orders through their sponsorship."</p>
-                <p class="client-name">- Lana Fashion</p>
-            </div>
-        </div>
     </section>
 
     <footer>
@@ -265,7 +235,40 @@
 
     <a href="https://wa.me/9647758887488" class="wa-float"><i class="fab fa-whatsapp"></i></a>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Supabase Configuration
+        const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
+        const SB_KEY = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+
+        async function loadFeedbacks() {
+            const { data, error } = await supabaseClient
+                .from('feedbacks')
+                .select('*')
+                .eq('is_approved', true)
+                .order('created_at', { ascending: false });
+
+            const container = document.getElementById('feedback-container');
+            if (error || !data || !container) return;
+
+            container.innerHTML = ''; 
+            data.forEach(fb => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="rev-avatar">${fb.name.charAt(0).toUpperCase()}</div>
+                    <p class="feedback-text">"${fb.comment}"</p>
+                    <p class="client-name">- ${fb.name}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Initialize loading
+        window.addEventListener('DOMContentLoaded', loadFeedbacks);
+
+        // Navbar Logic
         const toggleBtn = document.getElementById('toggleBtn');
         const menuMenu = document.getElementById('menuMenu');
         
