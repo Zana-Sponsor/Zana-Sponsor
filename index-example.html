@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROXO</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --accent: #2563eb; /* PROXO Blue */
+            --accent-dark: #1d4ed8;
+            --bg: #ffffff;
+            --soft-bg: #f8fafc;
+            --text-dark: #0f172a;
+            --text-gray: #475569;
+            --footer-bg: #0a0a0a;
+            --tiktok-red: #fe2c55;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; line-height: 1.7; }
+
+        /* --- Navbar --- */
+        nav {
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .logo { font-size: 28px; font-weight: 900; color: var(--accent); text-decoration: none; letter-spacing: 1px; }
+        .menu-trigger { font-size: 24px; cursor: pointer; color: var(--text-dark); }
+
+        /* --- Menu Overlay --- */
+        .menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: rgba(255, 255, 255, 0.98); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 20px;
+            transform: translateY(-100%); transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+            z-index: 1500;
+        }
+        .menu-overlay.active { transform: translateY(0); }
+        .menu-overlay a { text-decoration: none; color: var(--text-dark); font-size: 22px; font-weight: 800; transition: 0.3s; }
+        .menu-overlay a:hover { color: var(--accent); }
+
+        .lang-switch { margin-bottom: 30px; display: flex; gap: 10px; }
+        .lang-switch button { padding: 8px 20px; border-radius: 50px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: 700; }
+
+        /* --- Hero Section --- */
+        #home { padding: 120px 6% 60px; text-align: center; background: radial-gradient(circle at top right, #eff6ff 0%, #ffffff 70%); }
+        #home h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 900; margin-bottom: 20px; color: var(--text-dark); }
+        #home p { max-width: 650px; margin: 0 auto 30px; font-size: 18px; color: var(--text-gray); }
+
+        .btn-main {
+            background: var(--accent); color: white !important;
+            padding: 16px 40px; border-radius: 50px; font-weight: 700;
+            display: inline-flex; align-items: center; gap: 10px; transition: 0.4s; text-decoration: none;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+        .btn-main:hover { transform: translateY(-3px); background: var(--accent-dark); }
+
+        /* --- Integration (Strict Alignment) --- */
+        .integration-section { margin-top: 60px; padding: 25px 0; border-top: 1px solid #eee; }
+        .integration-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
+        .integration-logos { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 40px; 
+            flex-wrap: wrap; 
+        }
+        .int-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-weight: 900; 
+            font-size: 18px; 
+            color: var(--text-dark); 
+        }
+        .int-item i { font-size: 22px; color: var(--accent); }
+
+        /* --- Sections Style --- */
+        section { padding: 100px 6%; }
+        .section-tag { color: var(--accent); font-weight: 800; font-size: 14px; display: block; margin-bottom: 10px; text-align: center; }
+        h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; text-align: center; margin-bottom: 50px; }
+
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card { background: var(--soft-bg); padding: 40px 30px; border-radius: 30px; text-align: center; transition: 0.4s; border: 1px solid transparent; }
+        .card:hover { background: white; border-color: var(--accent); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .card i { font-size: 45px; color: var(--accent); margin-bottom: 25px; }
+
+        /* --- Feedback --- */
+        .rev-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-weight: 900; font-size: 22px; }
+        .feedback-text { font-style: italic; color: var(--text-gray); font-size: 16px; margin-bottom: 15px; }
+        .client-name { font-weight: 900; color: var(--text-dark); }
+
+        /* --- Footer & Legal --- */
+        footer { background: var(--footer-bg); color: #ffffff; padding: 80px 6% 0; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; padding-bottom: 60px; }
+        .footer-col h3 { font-size: 20px; margin-bottom: 25px; font-weight: 800; }
+        .email-info { display: flex; align-items: center; gap: 10px; color: #94a3b8; margin: 20px 0; font-family: 'Arial', sans-serif; }
+        
+        .social-icons { display: flex; gap: 15px; }
+        .social-icons a { width: 45px; height: 45px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: white; text-decoration: none; }
+        .social-icons a:hover { background: var(--accent); transform: translateY(-5px); }
+
+        .legal-section {
+            background: #000;
+            padding: 30px 6%;
+            border-top: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .tiktok-official-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .tiktok-official-links a { color: #94a3b8; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
+        .tiktok-official-links a:hover { color: var(--tiktok-red); }
+        .official-badge { background: var(--tiktok-red); color: white; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 900; }
+
+        .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; z-index: 1000; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4); }
+
+        .rtl { direction: rtl; text-align: right; }
+        .ltr { direction: ltr; text-align: left; }
+        .rtl .wa-float { right: auto; left: 30px; }
+    </style>
+</head>
+<body class="ltr">
+
+    <nav>
+        <a href="#home" class="logo">PROXO</a>
+        <div class="menu-trigger" id="toggleBtn"><i class="fas fa-bars"></i></div>
+    </nav>
+
+    <div class="menu-overlay" id="menuMenu">
+        <div class="lang-switch">
+            <button onclick="changeLang('en')">English</button>
+            <button onclick="changeLang('ku')">کوردی</button>
+        </div>
+        <a href="#home" class="menu-link" data-key="nav_home">Home</a>
+        <a href="#services" class="menu-link" data-key="nav_services">Services</a>
+        <a href="#feedback" class="menu-link" data-key="nav_feedback">Testimonials</a>
+    </div>
+
+    <section id="home">
+        <h1 data-key="hero_title">Scale Your Brand with TikTok Ads</h1>
+        <p data-key="hero_desc">The ultimate agency for TikTok sponsorship in Iraq. We connect your products to millions of potential customers with precision.</p>
+        <a href="https://wa.me/9647758887488" class="btn-main" data-key="btn_start">Launch Campaign</a>
+
+        <div class="integration-section">
+            <div class="integration-title" data-key="supported_by">Officially Supported By</div>
+            <div class="integration-logos">
+                <div class="int-item"><i class="fab fa-tiktok"></i> TikTok</div>
+                <div class="int-item"><i class="fas fa-university"></i> FIB</div>
+                <div class="int-item"><i class="fas fa-wallet"></i> FastPay</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" style="background:#fafafa">
+        <span class="section-tag" data-key="nav_services">Our Expertise</span>
+        <h2 data-key="services_title">Targeted Advertising Solutions</h2>
+        <div class="grid-layout">
+            <div class="card">
+                <i class="fab fa-tiktok"></i>
+                <h3 data-key="ser1_t">Ad Management</h3>
+                <p data-key="ser1_d">Full management of your TikTok Business Center for maximum engagement.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-chart-line"></i>
+                <h3 data-key="ser2_t">ROI Optimization</h3>
+                <p data-key="ser2_d">We track and optimize every dollar spent to ensure profitable growth.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-video"></i>
+                <h3 data-key="ser3_t">Content Consultation</h3>
+                <p data-key="ser3_d">Professional advice on video content that actually goes viral.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="feedback">
+        <span class="section-tag" data-key="nav_feedback">Success Stories</span>
+        <h2 data-key="feedback_title">Trusted by Business Owners</h2>
+        <div class="grid-layout">
+            <div class="card">
+                <div class="rev-avatar">AM</div>
+                <p class="feedback-text">"Proxo is hands down the best agency for TikTok ads in Kurdistan. Sales skyrocketed!"</p>
+                <p class="client-name">- Ahmed Mohammed</p>
+            </div>
+            <div class="card">
+                <div class="rev-avatar" style="background:#db2777;">SK</div>
+                <p class="feedback-text">"Their payment integration with FIB made everything seamless for my business."</p>
+                <p class="client-name">- Sara Karwan</p>
+            </div>
+            <div class="card">
+                <div class="rev-avatar" style="background:#059669;">MA</div>
+                <p class="feedback-text">"Professional reporting and daily updates. My brand reached 1M views in 2 weeks."</p>
+                <p class="client-name">- Mohammed Ali</p>
+            </div>
+            <div class="card">
+                <div class="rev-avatar" style="background:#7c3aed;">HS</div>
+                <p class="feedback-text">"Fast execution and brilliant targeting. Highly recommend their services."</p>
+                <p class="client-name">- Hama Store</p>
+            </div>
+            <div class="card">
+                <div class="rev-avatar" style="background:#ea580c;">RE</div>
+                <p class="feedback-text">"Great results and support. They know how to handle high-budget campaigns."</p>
+                <p class="client-name">- Rawaz Electronics</p>
+            </div>
+            <div class="card">
+                <div class="rev-avatar" style="background:#2563eb;">LA</div>
+                <p class="feedback-text">"Excellent targeting! We received hundreds of orders through their sponsorship."</p>
+                <p class="client-name">- Lana Fashion</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">PROXO</div>
+                <p data-key="footer_about">The leading agency for TikTok sponsorship and digital growth in Iraq and Kurdistan.</p>
+                <div class="email-info">
+                    <i class="fas fa-envelope"></i>
+                    <span>info@proxopages.com</span>
+                </div>
+                <div class="social-icons">
+                    <a href="https://wa.me/9647758887488"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3 data-key="footer_links">Quick Links</h3>
+                <ul style="list-style:none; color:#94a3b8">
+                    <li style="margin-bottom:12px"><a href="#home" style="color:inherit; text-decoration:none">Home</a></li>
+                    <li style="margin-bottom:12px"><a href="#services" style="color:inherit; text-decoration:none">Services</a></li>
+                    <li style="margin-bottom:12px"><a href="#feedback" style="color:inherit; text-decoration:none">Testimonials</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="legal-section">
+            <div class="tiktok-official-links">
+                <span class="official-badge">TikTok Compliance</span>
+                <a href="https://www.tiktok.com/legal/terms-of-service" target="_blank">Terms of Service</a>
+                <a href="https://www.tiktok.com/legal/privacy-policy" target="_blank">Privacy Policy</a>
+                <a href="https://ads.tiktok.com/help/article/advertising-policies-entry" target="_blank">Ad Policies</a>
+            </div>
+            <div style="color: #64748b; font-size: 13px;">
+                © 2026 PROXO IQ. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/9647758887488" class="wa-float"><i class="fab fa-whatsapp"></i></a>
+
+    <script>
+        const toggleBtn = document.getElementById('toggleBtn');
+        const menuMenu = document.getElementById('menuMenu');
+        
+        toggleBtn.addEventListener('click', () => {
+            menuMenu.classList.toggle('active');
+            toggleBtn.innerHTML = menuMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        const translations = {
+            en: {
+                nav_home: "Home", nav_services: "Services", nav_feedback: "Testimonials",
+                hero_title: "Scale Your Brand with TikTok Ads",
+                hero_desc: "The ultimate agency for TikTok sponsorship in Iraq. We connect your products to millions of potential customers.",
+                btn_start: "Launch Campaign", supported_by: "Officially Supported By",
+                services_title: "Targeted Advertising Solutions",
+                ser1_t: "Ad Management", ser1_d: "Full management of your TikTok Business Center.",
+                feedback_title: "Trusted by Business Owners",
+                footer_about: "The leading agency for TikTok growth in Iraq.",
+                footer_links: "Quick Links"
+            },
+            ku: {
+                nav_home: "سەرەتا", nav_services: "خزمەتگوزارییەکان", nav_feedback: "فیدباکەکان",
+                hero_title: "کارەکەت گەورە بکە بە سپۆنسەری تیکتۆک",
+                hero_desc: "باشترین ئاژانس بۆ سپۆنسەری تیکتۆک لە عێراق. ئێمە کاڵاکانت دەگەیەنین بە ملیۆنان کڕیار.",
+                btn_start: "کەمپەین دەستپێبکە", supported_by: "پشتیوانی کراوە لەلایەن",
+                services_title: "چارەسەری سپۆنسەری ئامانجدار",
+                ser1_t: "بەڕێوەبردنی سپۆنسەر", ser1_d: "بەڕێوەبردنی تەواوی 'Business Center'ی تیکتۆکەکەت.",
+                feedback_title: "خاوەنکارەکان متمانەمان پێ دەکەن",
+                footer_about: "ئاژانسی پێشەنگ بۆ گەشەکردنی تیکتۆک لە عێراق.",
+                footer_links: "لینکە خێراکان"
+            }
+        };
+
+        function changeLang(lang) {
+            document.body.className = (lang === 'ku') ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[lang][key]) el.innerText = translations[lang][key];
+            });
+            menuMenu.classList.remove('active');
+            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        }
+
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', () => {
+                menuMenu.classList.remove('active');
+                toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+    </script>
+</body>
+</html>
