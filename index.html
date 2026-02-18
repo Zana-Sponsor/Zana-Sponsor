@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROXO</title>
+    
+    <title>Proxo</title>
+    <meta name="description" content="Proxo is the premier digital agency for TikTok sponsorship and growth in Iraq. We help brands reach millions of customers through professional ad management.">
+    <meta name="keywords" content="TikTok Ads Iraq, Proxo, TikTok Sponsorship, Digital Marketing Kurdistan, TikTok Business Center">
     
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -15,6 +18,11 @@
             font-family: 'Rudaw';
             src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
             font-weight: bold; font-style: normal; font-display: swap;
+        }
+
+        /* بەکارهێنانی فۆنتی ڕووداو بۆ هەر دەقێکی کوردی لە هەر شوێنێک بێت */
+        :lang(ku), [data-key^="ku"], .kur-font {
+            font-family: 'Rudaw', sans-serif !important;
         }
 
         :root {
@@ -206,6 +214,11 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTM4MjA0NywiZXhwIjoyMDg2OTU4MDQ3fQ.Qxbg0FbFu6MIwT1R5Hbm6jP4JI4j_0RWMvQOc3deUnE';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
+        function isKurdish(text) {
+            const kurdishPattern = /[\u0600-\u06FF]/;
+            return kurdishPattern.test(text);
+        }
+
         async function loadFeedbacks() {
             const { data } = await supabaseClient
                 .from('feedback')
@@ -219,7 +232,15 @@
                 data.forEach(fb => {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.innerHTML = `<div class="rev-avatar" style="width:50px; height:50px; border-radius:50%; background:var(--accent); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; font-weight:900;">${fb.name.charAt(0)}</div><p class="feedback-text">"${fb.comment}"</p><p class="client-name"><b>- ${fb.name}</b></p>`;
+                    
+                    const nameStyle = isKurdish(fb.name) ? 'font-family:Rudaw !important;' : '';
+                    const commentStyle = isKurdish(fb.comment) ? 'font-family:Rudaw !important;' : '';
+
+                    card.innerHTML = `
+                        <div class="rev-avatar" style="width:50px; height:50px; border-radius:50%; background:var(--accent); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; font-weight:900;">${fb.name.charAt(0)}</div>
+                        <p class="feedback-text" style="${commentStyle}">"${fb.comment}"</p>
+                        <p class="client-name" style="${nameStyle}"><b>- ${fb.name}</b></p>
+                    `;
                     container.appendChild(card);
                 });
             }
