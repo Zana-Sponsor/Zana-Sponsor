@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* فۆنتی ڕووداو */
         @font-face {
             font-family: 'Rudaw';
             src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
@@ -48,11 +47,11 @@
             border-bottom: 1px solid #f1f5f9;
         }
 
-        /* لۆگۆکە لێرە چاک کراوە */
         .logo-img {
-            height: 50px; /* کەمێک گەورەتر کراوە بۆ ئەوەی جوان دیار بێت */
+            height: 48px;
             width: auto;
             display: block;
+            object-fit: contain;
         }
 
         .menu-trigger { font-size: 24px; cursor: pointer; color: var(--text-dark); }
@@ -107,10 +106,10 @@
         .footer-col h3 { font-size: 20px; margin-bottom: 25px; font-weight: 800; }
         
         .footer-logo {
-            height: 55px;
+            height: 50px;
             width: auto;
             margin-bottom: 20px;
-            filter: brightness(0) invert(1); /* سپیکردنی لۆگۆ لە فووتەر */
+            filter: brightness(0) invert(1);
         }
 
         .email-info { display: flex; align-items: center; gap: 10px; color: #94a3b8; margin: 20px 0; font-family: 'Arial', sans-serif; }
@@ -141,7 +140,7 @@
         .rtl .wa-float { right: auto; left: 30px; }
 
         @media (max-width: 768px) {
-            .logo-img { height: 40px; }
+            .logo-img { height: 38px; }
         }
     </style>
 </head>
@@ -149,7 +148,7 @@
 
     <nav>
         <a href="#home">
-            <img src="https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/20260214_035019.png" class="logo-img" alt="PROXO">
+            <img src="https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/20260214_035019.png" class="logo-img" alt="PROXO">
         </a>
         <div class="menu-trigger" id="toggleBtn"><i class="fas fa-bars"></i></div>
     </nav>
@@ -210,7 +209,7 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-col">
-                <img src="https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/20260214_035019.png" class="footer-logo" alt="PROXO">
+                <img src="https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/20260214_035019.png" class="footer-logo" alt="PROXO">
                 <p data-key="footer_about">The leading agency for TikTok sponsorship and digital growth in Iraq and Kurdistan.</p>
                 <div class="email-info">
                     <i class="fas fa-envelope"></i>
@@ -249,7 +248,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // باقی سکریپتەکان هەمان شتە...
         const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTM4MjA0NywiZXhwIjoyMDg2OTU4MDQ3fQ.Qxbg0FbFu6MIwT1R5Hbm6jP4JI4j_0RWMvQOc3deUnE';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
