@@ -447,25 +447,3 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-
 </script>
 </body>
 </html>";
-    const urlParams = new URLSearchParams(window.location.search);
-    const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/";
-    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + decodeURIComponent(videoUrl));
-
-    document.getElementById('wa-btn').onclick = function() {
-      if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] });
-      window.location.href = `https://wa.me/${phoneNumber}?text=${message}`;
-    };
-
-    document.getElementById('viber-btn').onclick = function() {
-      if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] });
-      window.location.href = `viber://chat?number=${phoneNumber}`;
-    };
-
-    document.getElementById('phone-btn').onclick = function() {
-      if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone' }] });
-      window.location.href = `tel:${phoneNumber}`;
-    };
-  });
-</script>
-</body>
-</html>
