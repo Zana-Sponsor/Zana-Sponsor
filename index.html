@@ -15,13 +15,8 @@
       ttq.page();
     }(window, document, 'ttq');
 
-    // لێرە کۆدەکە نوێکراوەتەوە بۆ هەژمارکردنی Conversion بەپێی داواکارییەکەت
     function trackWA() {
-        if(window.ttq) {
-            ttq.track('Contact', { 
-                contents: [{ content_name: 'WhatsApp' }] 
-            });
-        }
+        if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] });
     }
     </script>
     <meta name="description" content="Proxo is the leading digital agency in Iraq for TikTok ads, sponsorship, and business growth. We help brands reach millions of customers in Kurdistan and Iraq.">
