@@ -15,7 +15,6 @@
       ttq.page();
     }(window, document, 'ttq');
 
-    // لێرە کۆدەکە نوێکراوەتەوە بۆ هەژمارکردنی Conversion بەپێی داواکارییەکەت
     function trackWA() {
         if(window.ttq) {
             ttq.track('Contact', { 
@@ -55,14 +54,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* فۆنتی ڕووداو */
         @font-face {
             font-family: 'Rudaw';
             src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
             font-weight: bold; font-style: normal; font-display: swap;
         }
 
-        /* بەکارهێنانی فۆنتی ڕووداو بۆ هەر دەقێکی کوردی لە هەر شوێنێک بێت */
         :lang(ku), [data-key^="ku"], .kur-font {
             font-family: 'Rudaw', sans-serif !important;
         }
@@ -80,7 +77,6 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; scroll-behavior: smooth; }
         
-        /* چاککردنی کێشەی ئایکۆنەکان لە کاتی بەکارهێنانی فۆنتی ڕووداو */
         .rtl * { font-family: 'Rudaw', sans-serif !important; }
         .rtl .fas, .rtl .fab, .rtl .fa, .rtl [class^="fa-"] { font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important; font-weight: 900 !important; }
 
@@ -94,7 +90,6 @@
         }
 
         .logo-img { height: 30px; width: auto; display: block; }
-
         .menu-trigger { font-size: 24px; cursor: pointer; color: var(--text-dark); }
 
         .menu-overlay {
@@ -209,9 +204,8 @@
         <a href="https://wa.me/9647758887488?text=سڵاو، ئایا دەتوانن زانیاری زیاترم پێبدەن دەربارەی سپۆنسەری تیک تۆک؟" onclick="trackWA()" class="btn-main" data-key="btn_start">Launch Campaign</a>
 
         <div class="integration-section">
-            <div class="integration-title" data-key="supported_by">Officially Supported By</div>
+            <div class="integration-title" data-key="supported_by">Supported Local Payment Methods</div>
             <div class="integration-logos">
-                <div class="int-item"><i class="fab fa-tiktok" style="color:var(--accent)"></i> TikTok Business</div>
                 <div class="int-item"><i class="fas fa-university" style="color:var(--accent)"></i> FIB Bank</div>
                 <div class="int-item"><i class="fas fa-wallet" style="color:var(--accent)"></i> FastPay Iraq</div>
             </div>
@@ -340,7 +334,7 @@
                 nav_home: "Home", nav_services: "Services", nav_feedback: "Testimonials",
                 hero_title: "Scale Your Brand with TikTok Ads",
                 hero_desc: "The ultimate agency for TikTok sponsorship in Iraq. We connect your products to millions of potential customers.",
-                btn_start: "Launch Campaign", supported_by: "Officially Supported By",
+                btn_start: "Launch Campaign", supported_by: "Supported Local Payment Methods",
                 services_title: "Grow Your Business through TikTok Ads",
                 ser1_t: "TikTok Business Growth", ser1_d: "Proven strategies to scale your sales and presence.",
                 ser2_t: "Precision Targeting", ser2_d: "Reach the right customers who are ready to buy.",
@@ -354,7 +348,7 @@
                 nav_home: "سەرەتا", nav_services: "خزمەتگوزارییەکان", nav_feedback: "فیدباکەکان",
                 hero_title: "کارەکەت گەورە بکە بە سپۆنسەری تیکتۆک",
                 hero_desc: "باشترین ئاژانس بۆ سپۆنسەری تیکتۆک لە عێراق. کاڵاکانت دەگەیەنین بە ملیۆنان کڕیار.",
-                btn_start: "دەستپێبکە", supported_by: "پشتیوانی کراوە لەلایەن",
+                btn_start: "دەستپێبکە", supported_by: "ڕێگاکانی پارەدانی ناوخۆیی",
                 services_title: "گەشەپێدانی بازرگانییەکەت لە ڕێگەی ڕیکلامی تیک تۆکەوە",
                 ser1_t: "گەشەی بازرگانی بە تیکتۆک", ser1_d: "پلانی سەرکەوتوو بۆ زیادکردنی فرۆش و ناوبانگی کارەکەت.",
                 ser2_t: "ئامانجکردنی ورد", ser2_d: "گەیشتن بەو کڕیارانەی بەدوای بەرهەمەکانتدا دەگەڕێن.",
