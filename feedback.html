@@ -7,24 +7,18 @@
     <title>PROXO - Feedback</title>
 
     <style>
-        /* لێرە لینکی فۆنتەکەت لە گێتهەب دابنێ */
         @font-face {
             font-family: 'CustomFont';
-            /* لێرە لینکی Raw ی گێتهەب دابنێ */
             src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
+            font-weight: normal; font-style: normal; font-display: swap;
         }
 
         :root { 
             --primary: #2563eb; 
             --primary-hover: #1d4ed8; 
-            /* لێرە ناوی فۆنتەکە جێگیر بکە، ئەگەر فۆنتەکە کاری نەکرد Vazirmatn وەک جێگرەوە بەکاردێت */
             --main-font: 'CustomFont', 'Vazirmatn', sans-serif;
         }
 
-        /* فۆنتی Vazirmatn وەک جێگرەوە ئەگەر هی گێتهەبەکە بارنەبوو */
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
 
         * { font-family: var(--main-font); }
@@ -59,8 +53,9 @@
     <a href="index.html" class="logo">PROXO</a>
     
     <div class="lang-switch">
-        <button class="lang-btn active" onclick="setLang('ku')">کوردی</button>
-        <button class="lang-btn" onclick="setLang('ar')">العربية</button>
+        <button class="lang-btn" id="btn-ku" onclick="setLang('ku')">کوردی</button>
+        <button class="lang-btn" id="btn-en" onclick="setLang('en')">English</button>
+        <button class="lang-btn" id="btn-ar" onclick="setLang('ar')">العربية</button>
     </div>
 
     <h2 id="title">ئەزموونی خۆت لەگەڵ پرۆکسۆ چۆن بوو؟</h2>
@@ -68,11 +63,11 @@
     <form id="fbForm">
         <div class="input-group">
             <label id="labelName">ناوی بازرگانی</label>
-            <input type="text" id="custName" placeholder="ناوی بازرگانی یان براندەکەت بنووسە..." required>
+            <input type="text" id="custName" placeholder="..." required>
         </div>
         <div class="input-group">
             <label id="labelMsg">فیدباک</label>
-            <textarea id="custMsg" rows="4" placeholder="فیدباکەکەت لێرە بنووسە..." required></textarea>
+            <textarea id="custMsg" rows="4" placeholder="..." required></textarea>
         </div>
         <button type="submit" class="btn-send" id="submitBtn">ناردنی فیدباک</button>
     </form>
@@ -94,19 +89,31 @@
             back: "← گەڕانەوە بۆ سەرەتا", 
             loading: "چاوەڕوانبە...", 
             success: "سوپاس بۆ فیدباکەکەت! بە سەرکەوتوویی ناردرا.", 
-            error: "هەڵەیەک ڕوویدا لە ناردن" 
+            error: "هەڵەیەک ڕوویدا" 
+        },
+        en: { 
+            title: "How was your experience with PROXO?", 
+            name: "Business Name", 
+            namePlc: "Enter your brand or business name...", 
+            msg: "Feedback", 
+            msgPlc: "Write your feedback here...", 
+            btn: "Submit Feedback", 
+            back: "← Back to Home", 
+            loading: "Please wait...", 
+            success: "Thank you! Feedback sent successfully.", 
+            error: "An error occurred" 
         },
         ar: { 
             title: "كيف كانت تجربتك مع بروكسو؟", 
             name: "الاسم التجاري", 
-            namePlc: "اكتب اسم نشاطك التجاري أو علامتك التجارية...", 
+            namePlc: "اكتب اسم نشاطك التجاري...", 
             msg: "رأيك", 
             msgPlc: "اكتب رأيك هنا...", 
             btn: "إرسال الرأي", 
             back: "← العودة للرئيسية", 
             loading: "يرجى الانتظار...", 
             success: "شكراً لرأيك! تم الإرسال بنجاح.", 
-            error: "حدث خطأ أثناء الإرسال" 
+            error: "حدث خطأ" 
         }
     };
 
@@ -114,11 +121,14 @@
 
     function setLang(lang) {
         currentLang = lang;
-        document.querySelectorAll('.lang-btn').forEach(b => {
-            b.classList.remove('active');
-            if(b.innerText === (lang === 'ku' ? 'کوردی' : 'العربية')) b.classList.add('active');
-        });
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-${lang}`).classList.add('active');
         
+        // ڕێکخستنی ئاراستەی لاپەڕە (RTL/LTR)
+        document.body.style.direction = (lang === 'en') ? 'ltr' : 'rtl';
+        document.querySelectorAll('.input-group').forEach(el => el.style.textAlignment = (lang === 'en') ? 'left' : 'right');
+        document.querySelectorAll('input, textarea').forEach(el => el.style.textAlign = (lang === 'en') ? 'left' : 'right');
+
         document.getElementById('title').innerText = dict[lang].title;
         document.getElementById('labelName').innerText = dict[lang].name;
         document.getElementById('custName').placeholder = dict[lang].namePlc;
@@ -127,6 +137,13 @@
         document.getElementById('submitBtn').innerText = dict[lang].btn;
         document.getElementById('backLink').innerText = dict[lang].back;
     }
+
+    // ناسینەوەی زمان لە URL
+    window.onload = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const lang = urlParams.get('lang') || 'ku';
+        setLang(lang);
+    };
 
     (function() {
         const _0xU = 'https://rtbsblgaewmfiynhwgkv.supabase.co';
@@ -148,18 +165,20 @@
             btn.disabled = true;
             btn.innerText = dict[currentLang].loading;
 
+            // ناردنی زمان (lang) بۆ داتابەیس
             const { error } = await supabaseClient
                 .from('feedback')
                 .insert([{ 
                     name: name, 
                     comment: comment, 
+                    lang: currentLang,
                     is_approved: false 
                 }]);
 
             msgBox.style.display = "block";
 
             if (error) {
-                msgBox.innerText = dict[currentLang].error + ": " + error.message;
+                msgBox.innerText = dict[currentLang].error;
                 msgBox.style.background = "#fee2e2";
                 msgBox.style.color = "#ef4444";
                 btn.disabled = false;
@@ -167,30 +186,21 @@
             } else {
                 const now = new Date();
                 const dateTimeStr = now.toLocaleString('en-GB', { timeZone: 'Asia/Baghdad' });
-
-                const tgMessage = `🚀 *فیدباکێکی نوێ هات!*\n\n🏢 *ناوی براند:* ${name}\n💬 *نامە:* ${comment}\n\n📅 *بەروار و کات:* ${dateTimeStr}`;
+                const tgMessage = `🚀 *New Feedback!*\n\n🏢 *Brand:* ${name}\n💬 *Message:* ${comment}\n🌐 *Lang:* ${currentLang}\n\n📅 *Time:* ${dateTimeStr}`;
                 
                 try {
                     await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: TG_CHAT_ID,
-                            text: tgMessage,
-                            parse_mode: 'Markdown'
-                        })
+                        body: JSON.stringify({ chat_id: TG_CHAT_ID, text: tgMessage, parse_mode: 'Markdown' })
                     });
-                } catch (tgErr) {
-                    console.error("Telegram Error:", tgErr);
-                }
+                } catch (tgErr) {}
 
                 msgBox.innerText = dict[currentLang].success;
                 msgBox.style.background = "#dcfce7";
                 msgBox.style.color = "#22c55e";
                 
-                setTimeout(() => {
-                    location.reload();
-                }, 2500);
+                setTimeout(() => { location.href = 'index.html'; }, 2000);
             }
         };
     })();
