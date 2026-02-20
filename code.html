@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Exact Design</title>
+    <title>Proxo Builder - Expanded Buttons</title>
     <style>
         @font-face {
             font-family: 'Rudaw';
@@ -40,7 +40,10 @@
         <label>یوزەری تیلیگرام (بێ @)</label>
         <input type="text" id="tgUser" placeholder="java_business" oninput="generate()">
 
-        <label>لینکی ڤیدیۆی تیکتۆک (بۆ ناو مەسەج)</label>
+        <label>یوزەری ئینستاگرام</label>
+        <input type="text" id="igUser" placeholder="proxo_page" oninput="generate()">
+
+        <label>لینکی ڤیدیۆی تیکتۆک</label>
         <input type="text" id="videoLink" placeholder="https://vt.tiktok.com/..." oninput="generate()">
 
         <div class="toggle-box">
@@ -48,7 +51,9 @@
             <label class="toggle-item"><input type="checkbox" id="cWa" checked onchange="generate()"> واتسئاپ</label>
             <label class="toggle-item"><input type="checkbox" id="cVi" checked onchange="generate()"> ڤایبەر</label>
             <label class="toggle-item"><input type="checkbox" id="cTg" checked onchange="generate()"> تیلیگرام</label>
-            <label class="toggle-item"><input type="checkbox" id="cPh" checked onchange="generate()"> کۆڕەک (تەلەفۆن)</label>
+            <label class="toggle-item"><input type="checkbox" id="cIg" checked onchange="generate()"> ئینستاگرام</label>
+            <label class="toggle-item"><input type="checkbox" id="cPh" checked onchange="generate()"> کۆڕەک</label>
+            <label class="toggle-item"><input type="checkbox" id="cAs" onchange="generate()"> ئاسیاسێڵ</label>
         </div>
     </div>
 
@@ -65,6 +70,7 @@ function generate() {
     const logoUrl = document.getElementById('logoUrl').value.trim();
     const phone = document.getElementById('phone').value || "+9647502238449";
     const tg = document.getElementById('tgUser').value || "java_business";
+    const ig = document.getElementById('igUser').value || "";
     const video = document.getElementById('videoLink').value || "https://vt.tiktok.com/ZSmedYSB8/";
 
     let finalLogo = logoUrl !== "" ? logoUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=2C67E7&color=fff&size=128&bold=true`;
@@ -99,15 +105,23 @@ function generate() {
 
     if(document.getElementById('cTg').checked) {
         btnHtml += `    <button id="tg-btn" class="link-card telegram">
-      <div style="display: flex; align-items: center;">
-        <span>تیلیگرام</span>
-        ${(!document.getElementById('cWa').checked && !document.getElementById('cVi').checked) ? '<span id="target-emoji" class="wa-emoji">👉</span>' : ''}
-      </div>
+      <span>تیلیگرام</span>
       <i class="fab fa-telegram-plane"></i>
     </button>\n`;
         btnJs += `    document.getElementById('tg-btn').onclick = function() {
       if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Telegram' }] });
       setTimeout(function() { window.location.href = "https://t.me/${tg}"; }, 150);
+    };\n`;
+    }
+
+    if(document.getElementById('cIg').checked) {
+        btnHtml += `    <button id="ig-btn" class="link-card instagram">
+      <span>ئینستاگرام</span>
+      <i class="fab fa-instagram"></i>
+    </button>\n`;
+        btnJs += `    document.getElementById('ig-btn').onclick = function() {
+      if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] });
+      setTimeout(function() { window.location.href = "https://instagram.com/${ig}"; }, 150);
     };\n`;
     }
 
@@ -117,7 +131,18 @@ function generate() {
       <i class="fas fa-phone-alt"></i>
     </button>\n`;
         btnJs += `    document.getElementById('phone-btn').onclick = function() {
-      if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone' }] });
+      if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] });
+      setTimeout(function() { window.location.href = "tel:${phone}"; }, 150);
+    };\n`;
+    }
+
+    if(document.getElementById('cAs').checked) {
+        btnHtml += `    <button id="asia-btn" class="link-card asiacell">
+      <span>ئاسیاسێڵ</span>
+      <i class="fas fa-phone-alt"></i>
+    </button>\n`;
+        btnJs += `    document.getElementById('asia-btn').onclick = function() {
+      if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asia' }] });
       setTimeout(function() { window.location.href = "tel:${phone}"; }, 150);
     };\n`;
     }
@@ -128,7 +153,6 @@ function generate() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Proxo - Links</title>
-
 <script>
 !function (w, d, t) {
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
@@ -138,16 +162,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
   ttq.page();
 }(window, document, 'ttq');
 <\/script>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <style>
-@font-face {
-  font-family: 'Rudaw';
-  src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
-  font-display: swap;
-}
-:root{ --bg:#0f172a; --card:rgba(30,41,59,.85); --text:#f8fafc; --proxo-blue: #3b82f6; --tg-color: #24A1DE;}
+@font-face { font-family: 'Rudaw'; src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype'); font-display: swap; }
+:root{ --bg:#0f172a; --card:rgba(30,41,59,.85); --text:#f8fafc; --tg-color: #24A1DE; }
 body{ font-family: 'Rudaw', Arial, sans-serif; background:var(--bg); color:var(--text); margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center; overflow-x: hidden; }
 .container{ width:90%; max-width:350px; text-align:center; }
 .profile-container { background:var(--card); backdrop-filter:blur(10px); padding:25px 20px; border-radius:22px; border:1px solid rgba(255,255,255,.1); margin-bottom: 35px; }
@@ -157,13 +175,15 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-
 .links-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
 .link-card { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-radius: 15px; text-decoration: none; color: #fff; font-size: 17px; font-weight: 700; transition: transform 0.2s ease; cursor: pointer; border: none; width: 100%; box-sizing: border-box; overflow: hidden; font-family: 'Rudaw', sans-serif; }
 .link-card::after { content: ''; position: absolute; top: 0; left: -150%; width: 60%; height: 100%; background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25), transparent); transform: skewX(-25deg); animation: sequentialShine 6s infinite linear; }
-#wa-btn::after { animation-delay: 0s; } #viber-btn::after { animation-delay: 2s; } #tg-btn::after { animation-delay: 3s; } #phone-btn::after { animation-delay: 4s; }
+#wa-btn::after { animation-delay: 0s; } #viber-btn::after { animation-delay: 1s; } #tg-btn::after { animation-delay: 2s; } #ig-btn::after { animation-delay: 3s; } #phone-btn::after { animation-delay: 4s; } #asia-btn::after { animation-delay: 5s; }
 @keyframes sequentialShine { 0% { left: -150%; } 25% { left: 150%; } 100% { left: 150%; } }
 .link-card:active { transform: scale(0.97); }
 .whatsapp { background: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
 .viber { background: linear-gradient(135deg, #7360f2 0%, #5941a9 100%); }
 .telegram { background: var(--tg-color); }
+.instagram { background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%); }
 .phone { background: linear-gradient(135deg, #0062AD 0%, #00457A 100%); }
+.asiacell { background: linear-gradient(135deg, #ff0000 0%, #a30000 100%); }
 .wa-emoji { margin-right: 10px; display: inline-block; animation: bounce 0.6s infinite alternate; }
 @keyframes bounce { from { transform: translateX(0); } to { transform: translateX(6px); } }
 .link-card i { font-size: 24px; }
