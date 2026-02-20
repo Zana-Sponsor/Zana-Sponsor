@@ -14,6 +14,17 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
   ttq.load('D6BIIA3C77U1CE9DCUMG');
   ttq.page();
 }(window, document, 'ttq');
+
+function trackTikTokConversion(url) {
+  if (window.ttq) {
+    ttq.track('Contact', { 
+      contents: [{ content_name: 'Conversion_Click' }],
+      value: 0.0,
+      currency: 'USD'
+    });
+  }
+  setTimeout(function() { window.location.href = url; }, 500);
+}
 </script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -114,30 +125,16 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
     const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/";
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + decodeURIComponent(videoUrl));
 
-    function trackAndRedirect(eventName, targetUrl) {
-      if(window.ttq) {
-        ttq.track(eventName, {
-          contents: [{ content_name: eventName + '_Link' }],
-          value: 0.0,
-          currency: 'USD'
-        });
-      }
-      // Delay redirection to ensure pixel is sent
-      setTimeout(function() {
-        window.location.href = targetUrl;
-      }, 500);
-    }
-
     document.getElementById('wa-btn').onclick = function() {
-      trackAndRedirect('Contact', `https://wa.me/${phoneNumber}?text=${message}`);
+      trackTikTokConversion(`https://wa.me/${phoneNumber}?text=${message}`);
     };
 
     document.getElementById('viber-btn').onclick = function() {
-      trackAndRedirect('Contact', `viber://chat?number=${phoneNumber}`);
+      trackTikTokConversion(`viber://chat?number=${phoneNumber}`);
     };
 
     document.getElementById('phone-btn').onclick = function() {
-      trackAndRedirect('Contact', `tel:${phoneNumber}`);
+      trackTikTokConversion(`tel:${phoneNumber}`);
     };
   });
 </script>
