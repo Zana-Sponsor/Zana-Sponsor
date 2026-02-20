@@ -19,11 +19,10 @@ function trackTikTokConversion(url) {
   if (window.ttq) {
     ttq.track('Contact', { 
       contents: [{ content_name: 'Button_Click' }],
-      value: 0.0,
+      value: 0.1, 
       currency: 'USD'
     });
   }
-  // دڵنیابوونەوە لە ناردنی داتاکە پێش ڕۆشتن بۆ لینکی دووەم
   setTimeout(function() { window.location.href = url; }, 500);
 }
 </script>
