@@ -26,7 +26,7 @@
             --text-gray: #475569;
             --footer-bg: #0a0a0a;
             --tiktok-red: #fe2c55;
-            --star-gold: #ffb400; /* ڕەنگی زەردی ستاندارتی گۆگڵ پلەی */
+            --star-gold: #ffb400;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; scroll-behavior: smooth; }
@@ -215,7 +215,11 @@
             const container = document.getElementById('feedback-container');
             if (data && container) {
                 container.innerHTML = '';
-                const filtered = data.filter(fb => fb.lang === lang || (!fb.lang && lang === 'en'));
+                // لێرەدا فلتەرەکە چاککراوە بۆ ئەوەی ئەگەر فیدباکەکە بێ زمانیش بێت پیشانی بدات
+                const filtered = data.filter(fb => {
+                    if (!fb.lang || fb.lang === '') return true; // ئەگەر زمانی بۆ دیاری نەکرابوو پیشانی بدە
+                    return fb.lang === lang;
+                });
                 
                 filtered.forEach(fb => {
                     const card = document.createElement('div');
