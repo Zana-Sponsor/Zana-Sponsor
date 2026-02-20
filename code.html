@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Expanded Buttons</title>
+    <title>Proxo Builder - Fixed Conversion</title>
     <style>
         @font-face {
             font-family: 'Rudaw';
@@ -32,8 +32,8 @@
         <label>دوو پیتی لۆگۆ</label>
         <input type="text" id="initials" placeholder="H+Q" maxlength="3" oninput="generate()">
 
-        <label>لینکی وێنەی لۆگۆ (هەڵبژاردەیە)</label>
-        <input type="text" id="logoUrl" placeholder="https://.../logo.png" oninput="generate()">
+        <label>لینکی وێنەی لۆگۆ</label>
+        <input type="text" id="logoUrl" placeholder="https://..." oninput="generate()">
         
         <label>لینکی ڤیدیۆی تیکتۆک</label>
         <input type="text" id="videoLink" placeholder="https://vt.tiktok.com/..." oninput="generate()">
@@ -42,22 +42,22 @@
             <label style="display:block; margin-bottom:8px; color:#3b82f6;">دوگمەکان هەڵبژێرە:</label>
             
             <label class="toggle-item"><input type="checkbox" id="cWa" checked onchange="toggleExtra('cWa', 'wa-extra'); generate()"> واتسئاپ</label>
-            <div id="wa-extra" class="hidden-input" style="display:block;"><input type="text" id="waVal" placeholder="ژمارەی واتسئاپ" oninput="generate()"></div>
+            <div id="wa-extra" class="hidden-input" style="display:block;"><input type="text" id="waVal" placeholder="ژمارە" oninput="generate()"></div>
 
             <label class="toggle-item"><input type="checkbox" id="cVi" checked onchange="toggleExtra('cVi', 'vi-extra'); generate()"> ڤایبەر</label>
-            <div id="vi-extra" class="hidden-input" style="display:block;"><input type="text" id="viVal" placeholder="ژمارەی ڤایبەر" oninput="generate()"></div>
+            <div id="vi-extra" class="hidden-input" style="display:block;"><input type="text" id="viVal" placeholder="ژمارە" oninput="generate()"></div>
 
             <label class="toggle-item"><input type="checkbox" id="cTg" checked onchange="toggleExtra('cTg', 'tg-extra'); generate()"> تیلیگرام</label>
-            <div id="tg-extra" class="hidden-input" style="display:block;"><input type="text" id="tgVal" placeholder="یوزەری تیلیگرام" oninput="generate()"></div>
+            <div id="tg-extra" class="hidden-input" style="display:block;"><input type="text" id="tgVal" placeholder="یوزەر" oninput="generate()"></div>
 
             <label class="toggle-item"><input type="checkbox" id="cIg" checked onchange="toggleExtra('cIg', 'ig-extra'); generate()"> ئینستاگرام</label>
             <div id="ig-extra" class="hidden-input" style="display:block;"><input type="text" id="igVal" placeholder="لینکی ئینستاگرام" oninput="generate()"></div>
 
             <label class="toggle-item"><input type="checkbox" id="cPh" checked onchange="toggleExtra('cPh', 'ph-extra'); generate()"> کۆڕەک</label>
-            <div id="ph-extra" class="hidden-input" style="display:block;"><input type="text" id="phVal" placeholder="ژمارەی کۆڕەک" oninput="generate()"></div>
+            <div id="ph-extra" class="hidden-input" style="display:block;"><input type="text" id="phVal" placeholder="ژمارە" oninput="generate()"></div>
 
             <label class="toggle-item"><input type="checkbox" id="cAs" onchange="toggleExtra('cAs', 'as-extra'); generate()"> ئاسیاسێڵ</label>
-            <div id="as-extra" class="hidden-input"><input type="text" id="asVal" placeholder="ژمارەی ئاسیاسێڵ" oninput="generate()"></div>
+            <div id="as-extra" class="hidden-input"><input type="text" id="asVal" placeholder="ژمارە" oninput="generate()"></div>
         </div>
     </div>
 
@@ -133,7 +133,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 
 function trackTikTokConversion(url) {
   if (window.ttq) {
-    ttq.track('Contact', { contents: [{ content_name: 'Link_Click' }] });
+    ttq.track('Contact', { 
+        contents: [{ content_name: 'Contact_Method_Click' }],
+        value: 0.0,
+        currency: 'USD'
+    });
   }
   setTimeout(function() { window.location.href = url; }, 500);
 }
@@ -189,7 +193,7 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-
       <span class="sep">|</span>
       <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a>
     </div>
-    <div class="disclaimer">This site is not part of the TikTok website or TikTok Inc. Additionally, this site is NOT endorsed by TikTok in any way. TikTok is a trademark of TikTok, Inc.</div>
+    <div class="disclaimer">This site is not part of the TikTok website or TikTok Inc.</div>
   </div>
 </div>
 <script>
