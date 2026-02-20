@@ -18,11 +18,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 function trackTikTokConversion(url) {
   if (window.ttq) {
     ttq.track('Contact', { 
-      contents: [{ content_name: 'Conversion_Click' }],
+      contents: [{ content_name: 'Button_Click' }],
       value: 0.0,
       currency: 'USD'
     });
   }
+  // دڵنیابوونەوە لە ناردنی داتاکە پێش ڕۆشتن بۆ لینکی دووەم
   setTimeout(function() { window.location.href = url; }, 500);
 }
 </script>
