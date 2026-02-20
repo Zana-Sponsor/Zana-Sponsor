@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Fixed Style</title>
+    <title>Proxo Builder - Logo 80px</title>
     <style>
         @font-face {
             font-family: 'Rudaw';
@@ -30,6 +30,9 @@
         
         <label>دوو پیتی لۆگۆ</label>
         <input type="text" id="initials" placeholder="PX" maxlength="3" oninput="generate()">
+
+        <label>لینکی وێنەی لۆگۆ (هەڵبژاردەیە)</label>
+        <input type="text" id="logoUrl" placeholder="https://.../logo.png" oninput="generate()">
         
         <label>ژمارەی مۆبایل</label>
         <input type="text" id="phone" placeholder="+9647512345678" oninput="generate()">
@@ -59,9 +62,19 @@
 function generate() {
     const brand = document.getElementById('brand').value || "High Quality Cars";
     const initials = document.getElementById('initials').value || "H+Q";
+    const logoUrl = document.getElementById('logoUrl').value.trim();
     const phone = document.getElementById('phone').value || "+9647502238449";
     const tg = document.getElementById('tgUser').value || "java_business";
     const video = document.getElementById('videoLink').value || "";
+
+    let finalLogo, logoSize;
+    if(logoUrl !== "") {
+        finalLogo = logoUrl;
+        logoSize = "80px"; // کرا بە 80 وەک داوات کردبوو
+    } else {
+        finalLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=2C67E7&color=fff&size=128&bold=true`;
+        logoSize = "85px"; // لۆگۆی پیتەکان هەر 85ـە
+    }
 
     let btnHtml = '';
     let btnJs = '';
@@ -134,7 +147,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 body{ font-family: 'Rudaw', Arial, sans-serif; background:var(--bg); color:var(--text); margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center; overflow-x: hidden; }
 .container{ width:90%; max-width:350px; text-align:center; }
 .profile-container { background:var(--card); backdrop-filter:blur(10px); padding:25px 20px; border-radius:22px; border:1px solid rgba(255,255,255,.1); margin-bottom: 35px; }
-.profile-img{ width:85px; height:85px; border-radius:50%; object-fit:cover; margin-bottom:12px; border: 2px solid rgba(255,255,255,0.2); }
+.profile-img{ width:${logoSize}; height:${logoSize}; border-radius:50%; object-fit:cover; margin-bottom:12px; border: 2px solid rgba(255,255,255,0.2); }
 h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-serif; }
 .main-instruction { font-size:13px; color:#aabbd3; font-family: 'Rudaw', sans-serif; }
 .links-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
@@ -163,7 +176,7 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-
 <body>
 <div class="container">
   <div class="profile-container">
-    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=2C67E7&color=fff&size=128&bold=true" class="profile-img" alt="Logo">
+    <img src="${finalLogo}" class="profile-img" alt="Logo">
     <h1>${brand}</h1>
     <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکەن</div>
   </div>
