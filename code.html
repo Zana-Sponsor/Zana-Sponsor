@@ -94,27 +94,27 @@ function generate() {
 
     if(document.getElementById('cWa').checked) {
         btnHtml += `    <button id="wa-btn" class="link-card whatsapp"><div><span>واتسئاپ</span><span id="target-emoji" class="wa-emoji">👉</span></div><i class="fab fa-whatsapp"></i></button>\n`;
-        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); setTimeout(function() { window.location.href = "https://wa.me/${wa}?text=" + message; }, 150); };\n`;
+        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); setTimeout(function() { window.location.href = "https://wa.me/${wa}?text=" + message; }, 500); };\n`;
     }
     if(document.getElementById('cVi').checked) {
         btnHtml += `    <button id="viber-btn" class="link-card viber"><span>ڤایبەر</span><i class="fab fa-viber"></i></button>\n`;
-        btnJs += `    document.getElementById('viber-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); setTimeout(function() { window.location.href = "viber://chat?number=${vi}"; }, 150); };\n`;
+        btnJs += `    document.getElementById('viber-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); setTimeout(function() { window.location.href = "viber://chat?number=${vi}"; }, 500); };\n`;
     }
     if(document.getElementById('cTg').checked) {
         btnHtml += `    <button id="tg-btn" class="link-card telegram"><span>تیلیگرام</span><i class="fab fa-telegram-plane"></i></button>\n`;
-        btnJs += `    document.getElementById('tg-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Telegram' }] }); setTimeout(function() { window.location.href = "https://t.me/${tg}"; }, 150); };\n`;
+        btnJs += `    document.getElementById('tg-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Telegram' }] }); setTimeout(function() { window.location.href = "https://t.me/${tg}"; }, 500); };\n`;
     }
     if(document.getElementById('cIg').checked) {
         btnHtml += `    <button id="ig-btn" class="link-card instagram"><span>ئینستاگرام</span><i class="fab fa-instagram"></i></button>\n`;
-        btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "${ig}".includes("instagram.com") ? "${ig}" : "https://instagram.com/${ig}"; setTimeout(function() { window.location.href = url; }, 150); };\n`;
+        btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "${ig}".includes("instagram.com") ? "${ig}" : "https://instagram.com/${ig}"; setTimeout(function() { window.location.href = url; }, 500); };\n`;
     }
     if(document.getElementById('cPh').checked) {
         btnHtml += `    <button id="phone-btn" class="link-card phone"><span>کۆڕەک</span><i class="fas fa-phone-alt"></i></button>\n`;
-        btnJs += `    document.getElementById('phone-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); setTimeout(function() { window.location.href = "tel:${ph}"; }, 150); };\n`;
+        btnJs += `    document.getElementById('phone-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); setTimeout(function() { window.location.href = "tel:${ph}"; }, 500); };\n`;
     }
     if(document.getElementById('cAs').checked) {
         btnHtml += `    <button id="asia-btn" class="link-card asiacell"><span>ئاسیاسێڵ</span><i class="fas fa-phone-alt"></i></button>\n`;
-        btnJs += `    document.getElementById('asia-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asia' }] }); setTimeout(function() { window.location.href = "tel:${as}"; }, 150); };\n`;
+        btnJs += `    document.getElementById('asia-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asia' }] }); setTimeout(function() { window.location.href = "tel:${as}"; }, 500); };\n`;
     }
 
     const template = `<!DOCTYPE html>
