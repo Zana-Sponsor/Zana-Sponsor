@@ -42,7 +42,7 @@
             <label style="display:block; margin-bottom:8px; color:#3b82f6;">دوگمەکان هەڵبژێرە:</label>
             
             <label class="toggle-item"><input type="checkbox" id="cWa" checked onchange="toggleExtra('cWa', 'wa-extra'); generate()"> واتسئاپ</label>
-            <div id="wa-extra" class="hidden-input" style="display:block;"><input type="text" id="waVal" placeholder="ژمارە" oninput="generate()"></div>
+            <div id="wa-extra" class="hidden-input" style="display:block;"><input type="text" id="waVal" placeholder="ژمارە وەک: 9647500000000" oninput="generate()"></div>
 
             <label class="toggle-item"><input type="checkbox" id="cVi" checked onchange="toggleExtra('cVi', 'vi-extra'); generate()"> ڤایبەر</label>
             <div id="vi-extra" class="hidden-input" style="display:block;"><input type="text" id="viVal" placeholder="ژمارە" oninput="generate()"></div>
@@ -78,14 +78,14 @@ function generate() {
     const brand = document.getElementById('brand').value || "High Quality Cars";
     const initials = document.getElementById('initials').value || "H+Q";
     const logoUrl = document.getElementById('logoUrl').value.trim();
-    const video = document.getElementById('videoLink').value || "";
+    const video = document.getElementById('videoLink').value || "https://vt.tiktok.com/ZSmedYSB8/";
 
-    const wa = document.getElementById('waVal').value || "+9647502238449";
-    const vi = document.getElementById('viVal').value || "+9647502238449";
+    const wa = document.getElementById('waVal').value.replace('+', '') || "9647502238449";
+    const vi = document.getElementById('viVal').value || "9647502238449";
     const tg = document.getElementById('tgVal').value || "java_business";
     const ig = document.getElementById('igVal').value || "";
-    const ph = document.getElementById('phVal').value || "+9647502238449";
-    const as = document.getElementById('asVal').value || "+9647502238449";
+    const ph = document.getElementById('phVal').value || "9647502238449";
+    const as = document.getElementById('asVal').value || "9647502238449";
 
     let finalLogo = logoUrl !== "" ? logoUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=2C67E7&color=fff&size=128&bold=true`;
 
@@ -94,7 +94,7 @@ function generate() {
 
     if(document.getElementById('cWa').checked) {
         btnHtml += `    <button id="wa-btn" class="link-card whatsapp"><div><span>واتسئاپ</span><span id="target-emoji" class="wa-emoji">👉</span></div><i class="fab fa-whatsapp"></i></button>\n`;
-        btnJs += `    document.getElementById('wa-btn').onclick = function() { trackTikTokConversion("https://wa.me/${wa}?text=" + message, "WhatsApp"); };\n`;
+        btnJs += `    document.getElementById('wa-btn').onclick = function() { trackTikTokConversion("https://api.whatsapp.com/send?phone=${wa}&text=" + message, "WhatsApp"); };\n`;
     }
     if(document.getElementById('cVi').checked) {
         btnHtml += `    <button id="viber-btn" class="link-card viber"><span>ڤایبەر</span><i class="fab fa-viber"></i></button>\n`;
