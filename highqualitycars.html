@@ -126,7 +126,7 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + decodeURIComponent(videoUrl));
 
     document.getElementById('wa-btn').onclick = function() {
-      trackTikTokConversion(`https://api.whatsapp.com/${phoneNumber}?text=${message}`, 'WhatsApp');
+      trackTikTokConversion(`https://wa.me/${phoneNumber}?text=${message}`, 'WhatsApp');
     };
 
     document.getElementById('viber-btn').onclick = function() {
