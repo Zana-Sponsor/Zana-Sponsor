@@ -120,13 +120,13 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
       }
     }, 5000);
 
-    const phoneNumber = "+9647502238449";
+    const phoneNumber = "9647502238449";
     const urlParams = new URLSearchParams(window.location.search);
     const videoUrl = urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/";
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + decodeURIComponent(videoUrl));
 
     document.getElementById('wa-btn').onclick = function() {
-      trackTikTokConversion(`https://wa.me/${phoneNumber}?text=${message}`, 'WhatsApp');
+      trackTikTokConversion(`https://api.whatsapp.com/send?phone=${phoneNumber}&text=${message}`, 'WhatsApp');
     };
 
     document.getElementById('viber-btn').onclick = function() {
@@ -134,7 +134,7 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
     };
 
     document.getElementById('phone-btn').onclick = function() {
-      trackTikTokConversion(`tel:${phoneNumber}`, 'Phone');
+      trackTikTokConversion(`tel:+${phoneNumber}`, 'Phone');
     };
   });
 </script>
