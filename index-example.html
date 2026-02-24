@@ -6,6 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROXO</title>
     
+    <script>
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+    var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+      ttq.load('D6BIIA3C77U1CE9DCUMG'); 
+      ttq.page();
+    }(window, document, 'ttq');
+
+    // چاککراو بۆ ئەوەی تەنها Contact بنێرێت بەبێ نرخ
+    function trackAndRedirect(url, eventName = 'Contact') {
+      if (window.ttq) {
+        ttq.track(eventName, {
+          contents: [{ content_name: 'WhatsApp' }]
+        });
+      }
+      setTimeout(function() {
+        window.open(url, '_blank');
+      }, 400);
+    }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -67,7 +89,7 @@
             background: var(--accent); color: white !important;
             padding: 16px 40px; border-radius: 50px; font-weight: 700;
             display: inline-flex; align-items: center; gap: 10px; transition: 0.4s; text-decoration: none;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); cursor: pointer; border: none;
         }
 
         .integration-section { margin-top: 60px; padding: 25px 0; border-top: 1px solid #eee; }
@@ -88,7 +110,7 @@
         .footer-logo { height: 24px; width: auto; margin-bottom: 20px; filter: brightness(0) invert(1); }
         .email-info { display: flex; align-items: center; gap: 10px; color: #94a3b8; margin: 20px 0; font-family: 'Arial', sans-serif; }
         .social-icons { display: flex; gap: 15px; }
-        .social-icons a { width: 45px; height: 45px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; }
+        .social-icons a { width: 45px; height: 45px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; cursor: pointer; }
 
         .legal-section {
             background: #000; padding: 30px 6%; border-top: 1px solid #1e293b;
@@ -98,7 +120,7 @@
         .proxo-legal-links a { color: #94a3b8; text-decoration: none; font-size: 13px; transition: 0.3s; }
         .proxo-legal-links a:hover { color: white; }
 
-        .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; z-index: 1000; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4); }
+        .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; z-index: 1000; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4); cursor: pointer; border: none; }
 
         .rtl { direction: rtl; text-align: right; }
         .ltr { direction: ltr; text-align: left; }
@@ -127,7 +149,8 @@
     <section id="home">
         <h1 data-key="hero_title">Scale Your Brand with TikTok Ads</h1>
         <p data-key="hero_desc">The ultimate agency for TikTok sponsorship in Iraq. We connect your products to millions of potential customers with precision.</p>
-        <a href="https://wa.me/9647758887488" class="btn-main" data-key="btn_start">Launch Campaign</a>
+        
+        <button onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی؟')" class="btn-main" data-key="btn_start">Launch Campaign</button>
 
         <div class="integration-section">
             <div class="integration-title" data-key="supported_by">Officially Supported By</div>
@@ -173,9 +196,9 @@
                 <p data-key="footer_about">The leading agency for TikTok sponsorship and digital growth in Iraq and Kurdistan.</p>
                 <div class="email-info"><i class="fas fa-envelope"></i> <span>info@proxopages.com</span></div>
                 <div class="social-icons">
-                    <a href="https://wa.me/9647758887488"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                    <a onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی؟')"><i class="fab fa-whatsapp"></i></a>
+                    <a onclick="trackAndRedirect('https://instagram.com/proxo.krd')"><i class="fab fa-instagram"></i></a>
+                    <a onclick="trackAndRedirect('https://tiktok.com/@proxo.krd')"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
             <div class="footer-col">
@@ -197,7 +220,7 @@
         </div>
     </footer>
 
-    <a href="https://wa.me/9647758887488" class="wa-float"><i class="fab fa-whatsapp"></i></a>
+    <button onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی؟')" class="wa-float"><i class="fab fa-whatsapp"></i></button>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -215,9 +238,8 @@
             const container = document.getElementById('feedback-container');
             if (data && container) {
                 container.innerHTML = '';
-                // لێرەدا فلتەرەکە چاککراوە بۆ ئەوەی ئەگەر فیدباکەکە بێ زمانیش بێت پیشانی بدات
                 const filtered = data.filter(fb => {
-                    if (!fb.lang || fb.lang === '') return true; // ئەگەر زمانی بۆ دیاری نەکرابوو پیشانی بدە
+                    if (!fb.lang || fb.lang === '') return true;
                     return fb.lang === lang;
                 });
                 
