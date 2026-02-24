@@ -15,9 +15,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 function trackTikTokConversion(url, platform) {
   if (window.ttq) {
     ttq.track('Contact', { 
-        contents: [{ content_name: platform }],
-        value: 0.1,
-        currency: 'USD'
+        contents: [{ content_name: platform }]
     });
   }
   window.location.href = url;
