@@ -20,7 +20,7 @@
     function trackAndRedirect(url, eventName = 'Contact') {
       if (window.ttq) {
         ttq.track(eventName, {
-          contents: [{ content_name: 'Contact_Method_Click' }]
+          contents: [{ content_name: 'WhatsApp' }]
         });
       }
       setTimeout(function() {
