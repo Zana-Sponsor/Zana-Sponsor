@@ -17,18 +17,14 @@
     }(window, document, 'ttq');
 
     // چاککراو بۆ ئەوەی تەنها Contact بنێرێت
-    function trackAndRedirect(url, eventName = 'Contact') {
-      if (window.ttq) {
-        ttq.track(eventName, {
-          contents: [{ content_name: 'Contact_Method_Click' }],
-          value: 0.0,
-          currency: 'USD'
-        });
-      }
-      setTimeout(function() {
-        window.open(url, '_blank');
-      }, 400);
-    }
+    function trackTikTokConversion(url, platform) {
+  if (window.ttq) {
+    ttq.track('Contact', { 
+        contents: [{ content_name: platform }]
+    });
+  }
+  window.location.href = url;
+}
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
