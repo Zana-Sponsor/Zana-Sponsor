@@ -27,10 +27,10 @@
         <h3 style="margin:0 0 10px 0; color:#3b82f6; text-align:center;">Proxo Generator</h3>
         
         <label>ناوی بازرگانی</label>
-        <input type="text" id="brand" placeholder="High Quality Cars" oninput="generate()">
+        <input type="text" id="brand" placeholder="Proxo Team" oninput="generate()">
         
         <label>دوو پیتی لۆگۆ</label>
-        <input type="text" id="initials" placeholder="H+Q" maxlength="3" oninput="generate()">
+        <input type="text" id="initials" placeholder="P+T" maxlength="3" oninput="generate()">
 
         <label>لینکی وێنەی لۆگۆ</label>
         <input type="text" id="logoUrl" placeholder="https://..." oninput="generate()">
@@ -87,6 +87,8 @@ function generate() {
     const ph = document.getElementById('phVal').value || "9647502238449";
     const as = document.getElementById('asVal').value || "9647502238449";
 
+    // دیاریکردنی قەبارە بەپێی جۆری لۆگۆ
+    let logoSize = logoUrl !== "" ? "80px" : "85px";
     let finalLogo = logoUrl !== "" ? logoUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=2C67E7&color=fff&size=128&bold=true`;
 
     let btnHtml = '';
@@ -138,7 +140,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 body{ font-family: 'Rudaw', Arial, sans-serif; background:var(--bg); color:var(--text); margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center; overflow-x: hidden; }
 .container{ width:90%; max-width:350px; text-align:center; }
 .profile-container { background:var(--card); backdrop-filter:blur(10px); padding:25px 20px; border-radius:22px; border:1px solid rgba(255,255,255,.1); margin-bottom: 35px; }
-.profile-img{ width:85px; height:85px; border-radius:50%; object-fit:cover; margin-bottom:12px; border: 2px solid rgba(255,255,255,0.2); }
+.profile-img{ width:${logoSize}; height:${logoSize}; border-radius:50%; object-fit:cover; margin-bottom:12px; border: 2px solid rgba(255,255,255,0.2); }
 h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-serif; }
 .main-instruction { font-size:13px; color:#aabbd3; font-family: 'Rudaw', sans-serif; }
 .links-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
