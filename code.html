@@ -1,127 +1,6 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ku">
 <head>
-    <meta charset="UTF-8">
-    <title>Proxo Builder - Fixed Footer & Conversion</title>
-    <style>
-        @font-face {
-            font-family: 'Rudaw';
-            src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf');
-        }
-        body { font-family: 'Rudaw', sans-serif; background: #0b1120; color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .setup-container { background: #1e293b; padding: 25px; border-radius: 15px; border: 1px solid #3b82f6; width: 100%; max-width: 1000px; display: grid; grid-template-columns: 320px 1fr; gap: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .inputs { display: flex; flex-direction: column; gap: 10px; }
-        input[type="text"] { background: #0f172a; border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; font-family: 'Rudaw'; outline: none; width: 100%; box-sizing: border-box; }
-        label { font-size: 12px; color: #94a3b8; margin-bottom: -5px; }
-        .toggle-box { background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; margin-top: 5px; }
-        .toggle-item { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-top: 8px; cursor: pointer; color: #e2e8f0; }
-        textarea { background: #000; color: #10b981; padding: 15px; border-radius: 10px; border: 1px solid #10b981; font-family: monospace; height: 550px; resize: none; font-size: 11px; width: 100%; box-sizing: border-box; }
-        .copy-btn { background: #3b82f6; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-family: 'Rudaw'; margin-top: 10px; font-size: 16px; }
-        .hidden-input { display: none; margin-top: 5px; margin-bottom: 10px; padding-right: 15px; }
-    </style>
-</head>
-<body>
-
-<div class="setup-container">
-    <div class="inputs">
-        <h3 style="margin:0 0 10px 0; color:#3b82f6; text-align:center;">Proxo Generator</h3>
-        
-        <label>ناوی بازرگانی</label>
-        <input type="text" id="brand" placeholder="Proxo Team" oninput="generate()">
-        
-        <label>دوو پیتی لۆگۆ</label>
-        <input type="text" id="initials" placeholder="P+T" maxlength="3" oninput="generate()">
-
-        <label>لینکی وێنەی لۆگۆ</label>
-        <input type="text" id="logoUrl" placeholder="https://..." oninput="generate()">
-        
-        <label>لینکی ڤیدیۆی تیکتۆک</label>
-        <input type="text" id="videoLink" placeholder="https://vt.tiktok.com/..." oninput="generate()">
-
-        <div class="toggle-box">
-            <label style="display:block; margin-bottom:8px; color:#3b82f6;">دوگمەکان هەڵبژێرە:</label>
-            
-            <label class="toggle-item"><input type="checkbox" id="cWa" checked onchange="toggleExtra('cWa', 'wa-extra'); generate()"> واتسئاپ</label>
-            <div id="wa-extra" class="hidden-input" style="display:block;"><input type="text" id="waVal" placeholder="9647500000000" oninput="generate()"></div>
-
-            <label class="toggle-item"><input type="checkbox" id="cVi" checked onchange="toggleExtra('cVi', 'vi-extra'); generate()"> ڤایبەر</label>
-            <div id="vi-extra" class="hidden-input" style="display:block;"><input type="text" id="viVal" placeholder="ژمارە" oninput="generate()"></div>
-
-            <label class="toggle-item"><input type="checkbox" id="cTg" checked onchange="toggleExtra('cTg', 'tg-extra'); generate()"> تیلیگرام</label>
-            <div id="tg-extra" class="hidden-input" style="display:block;"><input type="text" id="tgVal" placeholder="یوزەر" oninput="generate()"></div>
-
-            <label class="toggle-item"><input type="checkbox" id="cIg" checked onchange="toggleExtra('cIg', 'ig-extra'); generate()"> ئینستاگرام</label>
-            <div id="ig-extra" class="hidden-input" style="display:block;"><input type="text" id="igVal" placeholder="یوزەر یان لینک" oninput="generate()"></div>
-
-            <label class="toggle-item"><input type="checkbox" id="cPh" checked onchange="toggleExtra('cPh', 'ph-extra'); generate()"> کۆڕەک</label>
-            <div id="ph-extra" class="hidden-input" style="display:block;"><input type="text" id="phVal" placeholder="ژمارە" oninput="generate()"></div>
-
-            <label class="toggle-item"><input type="checkbox" id="cAs" onchange="toggleExtra('cAs', 'as-extra'); generate()"> ئاسیاسێڵ</label>
-            <div id="as-extra" class="hidden-input"><input type="text" id="asVal" placeholder="ژمارە" oninput="generate()"></div>
-        </div>
-    </div>
-
-    <div style="display: flex; flex-direction: column;">
-        <textarea id="output" readonly></textarea>
-        <button class="copy-btn" onclick="copy()">کۆپی کردنی کۆدەکە 📋</button>
-    </div>
-</div>
-
-<script>
-function toggleExtra(checkId, extraId) {
-    const cb = document.getElementById(checkId);
-    const extra = document.getElementById(extraId);
-    extra.style.display = cb.checked ? "block" : "none";
-}
-
-function generate() {
-    const brand = document.getElementById('brand').value || "High Quality Cars";
-    const initials = document.getElementById('initials').value || "H+Q";
-    const logoUrl = document.getElementById('logoUrl').value.trim();
-    const video = document.getElementById('videoLink').value || "https://vt.tiktok.com/ZSmedYSB8/";
-
-    const wa = document.getElementById('waVal').value.replace('+', '') || "9647502238449";
-    const vi = document.getElementById('viVal').value || "9647502238449";
-    const tg = document.getElementById('tgVal').value || "java_business";
-    const ig = document.getElementById('igVal').value || "";
-    const ph = document.getElementById('phVal').value || "9647502238449";
-    const as = document.getElementById('asVal').value || "9647502238449";
-
-    // دیاریکردنی قەبارە بەپێی جۆری لۆگۆ
-    let logoSize = logoUrl !== "" ? "80px" : "85px";
-    let finalLogo = logoUrl !== "" ? logoUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=2C67E7&color=fff&size=128&bold=true`;
-
-    let btnHtml = '';
-    let btnJs = '';
-
-    if(document.getElementById('cWa').checked) {
-        btnHtml += `    <button id="wa-btn" class="link-card whatsapp"><div style="display:flex; align-items:center;"><span>واتسئاپ</span><span id="target-emoji" class="wa-emoji">👉</span></div><i class="fab fa-whatsapp"></i></button>\n`;
-        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/${wa}?text=" + message; };\n`;
-    }
-    if(document.getElementById('cVi').checked) {
-        btnHtml += `    <button id="viber-btn" class="link-card viber"><span>ڤایبەر</span><i class="fab fa-viber"></i></button>\n`;
-        btnJs += `    document.getElementById('viber-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=${vi}"; };\n`;
-    }
-    if(document.getElementById('cTg').checked) {
-        btnHtml += `    <button id="tg-btn" class="link-card telegram"><span>تیلیگرام</span><i class="fab fa-telegram-plane"></i></button>\n`;
-        btnJs += `    document.getElementById('tg-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Telegram' }] }); window.location.href = "https://t.me/${tg}"; };\n`;
-    }
-    if(document.getElementById('cIg').checked) {
-        btnHtml += `    <button id="ig-btn" class="link-card instagram"><span>ئینستاگرام</span><i class="fab fa-instagram"></i></button>\n`;
-        btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "${ig}".includes("instagram.com") ? "${ig}" : "https://instagram.com/${ig}"; window.location.href = url; };\n`;
-    }
-    if(document.getElementById('cPh').checked) {
-        btnHtml += `    <button id="phone-btn" class="link-card phone"><span>کۆڕەک</span><i class="fas fa-phone-alt"></i></button>\n`;
-        btnJs += `    document.getElementById('phone-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:${ph}"; };\n`;
-    }
-    if(document.getElementById('cAs').checked) {
-        btnHtml += `    <button id="asia-btn" class="link-card asiacell"><span>ئاسیاسێڵ</span><i class="fas fa-phone-alt"></i></button>\n`;
-        btnJs += `    document.getElementById('asia-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); window.location.href = "tel:${as}"; };\n`;
-    }
-
-    const template = `<!DOCTYPE html>
-<html dir="rtl" lang="ku">
-<head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Proxo - Links</title>
 <script>
@@ -132,7 +11,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
   ttq.load('D6BIIA3C77U1CE9DCUMG');
   ttq.page();
 }(window, document, 'ttq');
-<\/script>
+</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
 <style>
 @font-face { font-family: 'Rudaw'; src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype'); font-display: swap; }
@@ -140,7 +19,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 body{ font-family: 'Rudaw', Arial, sans-serif; background:var(--bg); color:var(--text); margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center; overflow-x: hidden; }
 .container{ width:90%; max-width:350px; text-align:center; }
 .profile-container { background:var(--card); backdrop-filter:blur(10px); padding:25px 20px; border-radius:22px; border:1px solid rgba(255,255,255,.1); margin-bottom: 35px; }
-.profile-img{ width:${logoSize}; height:${logoSize}; border-radius:50%; object-fit:cover; margin-bottom:12px; border: 2px solid rgba(255,255,255,0.2); }
+.profile-img{ width:85px; height:85px; border-radius:50%; object-fit:cover; margin-bottom:12px; border: 2px solid rgba(255,255,255,0.2); }
 h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-serif; }
 .main-instruction { font-size:13px; color:#aabbd3; font-family: 'Rudaw', sans-serif; }
 .links-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
@@ -151,7 +30,7 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-
 .whatsapp { background: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
 .viber { background: linear-gradient(135deg, #7360f2 0%, #5941a9 100%); }
 .telegram { background: var(--tg-color); }
-.instagram { background: linear-gradient(90deg, #EF6C40 20%, #E03D6A 40% #6D44BE 40%); }
+.instagram { background: linear-gradient(90deg, #EF6C40 10%, #6D44BE 100%); }
 .phone { background: linear-gradient(135deg, #0062AD 0%, #00457A 100%); }
 .asiacell { background: linear-gradient(135deg, #ff0000 0%, #a30000 100%); }
 .wa-emoji { margin-right: 10px; display: inline-block; animation: bounce 0.4s infinite alternate; }
@@ -170,12 +49,17 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-
 <body>
 <div class="container">
   <div class="profile-container">
-    <img src="${finalLogo}" class="profile-img" alt="Logo">
-    <h1>${brand}</h1>
+    <img src="https://ui-avatars.com/api/?name=H%2BQ&background=2C67E7&color=fff&size=128&bold=true" class="profile-img" alt="Logo">
+    <h1>High Quality Cars</h1>
     <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکەن</div>
   </div>
   <div class="links-wrapper">
-${btnHtml}  </div>
+    <button id="wa-btn" class="link-card whatsapp"><div style="display:flex; align-items:center;"><span>واتسئاپ</span><span id="target-emoji" class="wa-emoji">👉</span></div><i class="fab fa-whatsapp"></i></button>
+    <button id="viber-btn" class="link-card viber"><span>ڤایبەر</span><i class="fab fa-viber"></i></button>
+    <button id="tg-btn" class="link-card telegram"><span>تیلیگرام</span><i class="fab fa-telegram-plane"></i></button>
+    <button id="ig-btn" class="link-card instagram"><span>ئینستاگرام</span><i class="fab fa-instagram"></i></button>
+    <button id="phone-btn" class="link-card phone"><span>کۆڕەک</span><i class="fas fa-phone-alt"></i></button>
+  </div>
   <div class="footer-divider"></div>
   <div class="footer">
     <span class="sponsored-by">سپۆنسەر کراوە لەلایەن</span>
@@ -198,22 +82,14 @@ ${btnHtml}  </div>
         setTimeout(() => { emoji.style.display = 'none'; }, 800);
       }
     }, 4000);
-    const videoParam = new URLSearchParams(window.location.search).get('v') || "${video}";
-    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + videoParam);
-${btnJs}  });
-<\/script>
-</body>
-</html>`;
-    document.getElementById('output').value = template;
-}
-
-function copy() {
-    const text = document.getElementById('output');
-    text.select();
-    document.execCommand('copy');
-    alert("کۆدەکە بە تەواوی کۆپی کرا! ✅");
-}
-generate();
+    const videoParam = new URLSearchParams(window.location.search).get('v') || "https://vt.tiktok.com/ZSmedYSB8/";
+    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + videoParam);
+    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/9647502238449?text=" + message; };
+    document.getElementById('viber-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=9647502238449"; };
+    document.getElementById('tg-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Telegram' }] }); window.location.href = "https://t.me/java_business"; };
+    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "".includes("instagram.com") ? "" : "https://instagram.com/"; window.location.href = url; };
+    document.getElementById('phone-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:9647502238449"; };
+  });
 </script>
 </body>
 </html>
