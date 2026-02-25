@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Fixed Conversion</title>
+    <title>Proxo Builder - Fixed Footer & Conversion</title>
     <style>
         @font-face {
             font-family: 'Rudaw';
@@ -42,7 +42,7 @@
             <label style="display:block; margin-bottom:8px; color:#3b82f6;">دوگمەکان هەڵبژێرە:</label>
             
             <label class="toggle-item"><input type="checkbox" id="cWa" checked onchange="toggleExtra('cWa', 'wa-extra'); generate()"> واتسئاپ</label>
-            <div id="wa-extra" class="hidden-input" style="display:block;"><input type="text" id="waVal" placeholder="ژمارە وەک: 9647500000000" oninput="generate()"></div>
+            <div id="wa-extra" class="hidden-input" style="display:block;"><input type="text" id="waVal" placeholder="9647500000000" oninput="generate()"></div>
 
             <label class="toggle-item"><input type="checkbox" id="cVi" checked onchange="toggleExtra('cVi', 'vi-extra'); generate()"> ڤایبەر</label>
             <div id="vi-extra" class="hidden-input" style="display:block;"><input type="text" id="viVal" placeholder="ژمارە" oninput="generate()"></div>
@@ -51,7 +51,7 @@
             <div id="tg-extra" class="hidden-input" style="display:block;"><input type="text" id="tgVal" placeholder="یوزەر" oninput="generate()"></div>
 
             <label class="toggle-item"><input type="checkbox" id="cIg" checked onchange="toggleExtra('cIg', 'ig-extra'); generate()"> ئینستاگرام</label>
-            <div id="ig-extra" class="hidden-input" style="display:block;"><input type="text" id="igVal" placeholder="لینکی ئینستاگرام" oninput="generate()"></div>
+            <div id="ig-extra" class="hidden-input" style="display:block;"><input type="text" id="igVal" placeholder="یوزەر یان لینک" oninput="generate()"></div>
 
             <label class="toggle-item"><input type="checkbox" id="cPh" checked onchange="toggleExtra('cPh', 'ph-extra'); generate()"> کۆڕەک</label>
             <div id="ph-extra" class="hidden-input" style="display:block;"><input type="text" id="phVal" placeholder="ژمارە" oninput="generate()"></div>
@@ -94,27 +94,27 @@ function generate() {
 
     if(document.getElementById('cWa').checked) {
         btnHtml += `    <button id="wa-btn" class="link-card whatsapp"><div style="display:flex; align-items:center;"><span>واتسئاپ</span><span id="target-emoji" class="wa-emoji">👉</span></div><i class="fab fa-whatsapp"></i></button>\n`;
-        btnJs += `    document.getElementById('wa-btn').onclick = function() { trackTikTokConversion("https://api.whatsapp.com/send?phone=${wa}&text=" + message, "WhatsApp"); };\n`;
+        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/${wa}?text=" + message; };\n`;
     }
     if(document.getElementById('cVi').checked) {
         btnHtml += `    <button id="viber-btn" class="link-card viber"><span>ڤایبەر</span><i class="fab fa-viber"></i></button>\n`;
-        btnJs += `    document.getElementById('viber-btn').onclick = function() { trackTikTokConversion("viber://chat?number=${vi}", "Viber"); };\n`;
+        btnJs += `    document.getElementById('viber-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=${vi}"; };\n`;
     }
     if(document.getElementById('cTg').checked) {
         btnHtml += `    <button id="tg-btn" class="link-card telegram"><span>تیلیگرام</span><i class="fab fa-telegram-plane"></i></button>\n`;
-        btnJs += `    document.getElementById('tg-btn').onclick = function() { trackTikTokConversion("https://t.me/${tg}", "Telegram"); };\n`;
+        btnJs += `    document.getElementById('tg-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Telegram' }] }); window.location.href = "https://t.me/${tg}"; };\n`;
     }
     if(document.getElementById('cIg').checked) {
         btnHtml += `    <button id="ig-btn" class="link-card instagram"><span>ئینستاگرام</span><i class="fab fa-instagram"></i></button>\n`;
-        btnJs += `    document.getElementById('ig-btn').onclick = function() { let url = "${ig}".includes("instagram.com") ? "${ig}" : "https://instagram.com/${ig}"; trackTikTokConversion(url, "Instagram"); };\n`;
+        btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "${ig}".includes("instagram.com") ? "${ig}" : "https://instagram.com/${ig}"; window.location.href = url; };\n`;
     }
     if(document.getElementById('cPh').checked) {
         btnHtml += `    <button id="phone-btn" class="link-card phone"><span>کۆڕەک</span><i class="fas fa-phone-alt"></i></button>\n`;
-        btnJs += `    document.getElementById('phone-btn').onclick = function() { trackTikTokConversion("tel:${ph}", "Phone_Korek"); };\n`;
+        btnJs += `    document.getElementById('phone-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:${ph}"; };\n`;
     }
     if(document.getElementById('cAs').checked) {
         btnHtml += `    <button id="asia-btn" class="link-card asiacell"><span>ئاسیاسێڵ</span><i class="fas fa-phone-alt"></i></button>\n`;
-        btnJs += `    document.getElementById('asia-btn').onclick = function() { trackTikTokConversion("tel:${as}", "Phone_Asiacell"); };\n`;
+        btnJs += `    document.getElementById('asia-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); window.location.href = "tel:${as}"; };\n`;
     }
 
     const template = `<!DOCTYPE html>
@@ -130,44 +130,38 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
   ttq.load('D6BIIA3C77U1CE9DCUMG');
   ttq.page();
 }(window, document, 'ttq');
-
-function trackTikTokConversion(url, platform) {
-  if (window.ttq) {
-    ttq.track('Contact', { contents: [{ content_name: platform }] });
-  }
-  setTimeout(function() { window.location.href = url; }, 300);
-}
 <\/script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
 <style>
 @font-face { font-family: 'Rudaw'; src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype'); font-display: swap; }
-:root{ --bg:#0f172a; --card:rgba(30,41,59,.85); --text:#f8fafc; --tg-color: #24A1DE; }
+:root{ --bg:#0f172a; --card:rgba(30,41,59,.85); --text:#f8fafc; --proxo-blue: #3b82f6; --tg-color: #24A1DE; }
 body{ font-family: 'Rudaw', Arial, sans-serif; background:var(--bg); color:var(--text); margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center; overflow-x: hidden; }
 .container{ width:90%; max-width:350px; text-align:center; }
 .profile-container { background:var(--card); backdrop-filter:blur(10px); padding:25px 20px; border-radius:22px; border:1px solid rgba(255,255,255,.1); margin-bottom: 35px; }
 .profile-img{ width:85px; height:85px; border-radius:50%; object-fit:cover; margin-bottom:12px; border: 2px solid rgba(255,255,255,0.2); }
-h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
-.main-instruction { font-size:13px; color:#aabbd3; }
+h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-serif; }
+.main-instruction { font-size:13px; color:#aabbd3; font-family: 'Rudaw', sans-serif; }
 .links-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
-.link-card { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-radius: 50px; text-decoration: none; color: #fff; font-size: 17px; font-weight: 700; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: none; width: 100%; box-sizing: border-box; overflow: hidden; font-family: 'Rudaw', sans-serif; }
+.link-card { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-radius: 15px; text-decoration: none; color: #fff; font-size: 17px; font-weight: 700; transition: transform 0.2s ease; cursor: pointer; border: none; width: 100%; box-sizing: border-box; overflow: hidden; font-family: 'Rudaw', sans-serif; }
 .link-card::after { content: ''; position: absolute; top: 0; left: -150%; width: 60%; height: 100%; background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25), transparent); transform: skewX(-25deg); animation: sequentialShine 6s infinite linear; }
 @keyframes sequentialShine { 0% { left: -150%; } 25% { left: 150%; } 100% { left: 150%; } }
-.link-card:active { transform: scale(0.92); filter: brightness(1.1); }
+.link-card:active { transform: scale(0.97); }
 .whatsapp { background: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
 .viber { background: linear-gradient(135deg, #7360f2 0%, #5941a9 100%); }
 .telegram { background: var(--tg-color); }
 .instagram { background: linear-gradient(90deg, #FB8835 0%, #B71AA9 100%); }
 .phone { background: linear-gradient(135deg, #0062AD 0%, #00457A 100%); }
 .asiacell { background: linear-gradient(135deg, #ff0000 0%, #a30000 100%); }
-.wa-emoji { margin-right: 10px; display: inline-block; animation: bounce 0.6s infinite alternate; pointer-events: none; }
+.wa-emoji { margin-right: 10px; display: inline-block; animation: bounce 0.6s infinite alternate; }
 @keyframes bounce { from { transform: translateX(0); } to { transform: translateX(6px); } }
 .link-card i { font-size: 24px; }
 .footer-divider { height: 1px; width: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent); margin: 30px 0 15px 0; }
-.footer { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.sponsored-by { font-size: 10px; color: #64748b; }
-.proxo-logo-blue { height: 16px; width: auto; }
-.legal-links { font-size: 9px; color: #475569; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.footer { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.sponsored-by { font-size: 10px; color: #64748b; font-family: 'Rudaw', sans-serif; }
+.proxo-logo-blue { height: 16px; width: auto; display: block; }
+.legal-links { font-size: 9px; color: #475569; display: flex; gap: 8px; margin-top: 3px; }
 .legal-links a { color: inherit; text-decoration: none; }
+.sep { opacity: 0.3; }
 .disclaimer { font-size: 8px; color: #475569; margin-top: 15px; line-height: 1.4; max-width: 280px; }
 </style>
 </head>
@@ -183,12 +177,14 @@ ${btnHtml}  </div>
   <div class="footer-divider"></div>
   <div class="footer">
     <span class="sponsored-by">سپۆنسەر کراوە لەلایەن</span>
-    <a href="https://www.tiktok.com/@proxo_iq?_r=1&_t=ZS-94Cj6xtDoVM" target="_blank"><img src="https://image2url.com/r2/default/images/1771403050640-6d5e5c5e-a1dc-45de-a7f4-b5f386e82668.png" class="proxo-logo-blue" alt="Proxo"></a>
+    <a href="https://www.proxopages.com" target="_blank">
+      <img src="https://image2url.com/r2/default/images/1771403050640-6d5e5c5e-a1dc-45de-a7f4-b5f386e82668.png" class="proxo-logo-blue" alt="Proxo">
+    </a>
     <div class="legal-links">
-      <a href="https://proxopages.com/terms" target="_blank">Terms & Conditions</a><span>|</span>
-      <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a><span>|</span>
-      <a href="https://www.proxopages.com" target="_blank"></a>
-    </div>
+      <a href="https://proxopages.com/terms" target="_blank">Terms & Conditions</a>
+      <span class="sep">|</span>
+      <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a>
+  </div>
 </div>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
@@ -200,7 +196,8 @@ ${btnHtml}  </div>
         setTimeout(() => { emoji.style.display = 'none'; }, 800);
       }
     }, 5000);
-    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "${video}");
+    const videoParam = new URLSearchParams(window.location.search).get('v') || "${video}";
+    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + videoParam);
 ${btnJs}  });
 <\/script>
 </body>
