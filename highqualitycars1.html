@@ -12,11 +12,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
 
 <style>
-/* دیزاین و فۆنت وەک خۆی ماوەتەوە */
 @font-face { 
     font-family: 'Rudaw'; 
     src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype'); 
-    font-display: swap; /* بۆ ئەوەی نووسینەکە یەکسەر دەربکەوێت */
+    font-display: swap;
 }
 :root{ --bg:#0f172a; --card:rgba(30,41,59,.85); --text:#f8fafc; --proxo-blue: #3b82f6; --tg-color: #24A1DE; }
 body{ font-family: 'Rudaw', Arial, sans-serif; background:var(--bg); color:var(--text); margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center; overflow-x: hidden; }
@@ -26,13 +25,28 @@ body{ font-family: 'Rudaw', Arial, sans-serif; background:var(--bg); color:var(-
 h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-serif; }
 .main-instruction { font-size:13px; color:#aabbd3; font-family: 'Rudaw', sans-serif; }
 .links-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
-.link-card { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-radius: 15px; text-decoration: none; color: #fff; font-size: 17px; font-weight: 700; transition: transform 0.2s ease; cursor: pointer; border: none; width: 100%; box-sizing: border-box; overflow: hidden; font-family: 'Rudaw', sans-serif; }
-.link-card::after { content: ''; position: absolute; top: 0; left: -150%; width: 60%; height: 100%; background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25), transparent); transform: skewX(-25deg); animation: sequentialShine 6s infinite linear; }
+
+/* لێرە will-change زیاد کراوە بۆ ئەوەی بریقەکە لاگ نەکات */
+.link-card { 
+    position: relative; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-radius: 15px; text-decoration: none; color: #fff; font-size: 17px; font-weight: 700; transition: transform 0.2s ease; cursor: pointer; border: none; width: 100%; box-sizing: border-box; overflow: hidden; font-family: 'Rudaw', sans-serif;
+    will-change: transform;
+}
+
+.link-card::after { 
+    content: ''; position: absolute; top: 0; left: -150%; width: 60%; height: 100%; background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25), transparent); transform: skewX(-25deg); animation: sequentialShine 6s infinite linear;
+    will-change: left; /* باشترکردنی بریقەکە */
+}
+
 @keyframes sequentialShine { 0% { left: -150%; } 25% { left: 150%; } 100% { left: 150%; } }
 .link-card:active { transform: scale(0.97); }
 .whatsapp { background: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
 .phone { background: linear-gradient(135deg, #0062AD 0%, #00457A 100%); }
-.wa-emoji { margin-right: 10px; display: inline-block; animation: bounce 0.4s infinite alternate; }
+
+.wa-emoji { 
+    margin-right: 10px; display: inline-block; animation: bounce 0.4s infinite alternate; 
+    will-change: transform; /* ڕێگری لە لاگ کردنی ئیمۆجی */
+}
+
 @keyframes bounce { from { transform: translateX(0); } to { transform: translateX(6px); } }
 .link-card i { font-size: 24px; }
 .footer-divider { height: 1px; width: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent); margin: 30px 0 15px 0; }
@@ -70,7 +84,6 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-
 </div>
 
 <script>
-  // TikTok Pixel گواسترایەوە بۆ ئێرە بۆ ئەوەی ڕێگری لە باربوونی دیزاین نەکات
   !function (w, d, t) {
     w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
     var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script")
@@ -88,10 +101,20 @@ h1{ font-size:18px; margin:0 0 8px; font-weight:700; font-family: 'Rudaw', sans-
         setTimeout(() => { emoji.style.display = 'none'; }, 800);
       }
     }, 4000);
+
     const videoParam = new URLSearchParams(window.location.search).get('v') || "https://vt.tiktok.com/ZSmunC7fX/";
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + videoParam);
-    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/9647502238449?text=" + message; };
-    document.getElementById('phone-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:07502238449"; };
+
+    // لێرە کەمێک دواخستن (Delay) دانراوە بۆ ئەوەی بریقەکە نەوەستێت
+    document.getElementById('wa-btn').onclick = function() { 
+        if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); 
+        setTimeout(() => { window.location.href = "https://wa.me/9647502238449?text=" + message; }, 100);
+    };
+
+    document.getElementById('phone-btn').onclick = function() { 
+        if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); 
+        setTimeout(() => { window.location.href = "tel:07502238449"; }, 100);
+    };
   });
 </script>
 </body>
