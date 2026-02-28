@@ -5,6 +5,7 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROXO</title>
+    <link rel="icon" type="image/jpeg" href="https://image2url.com/r2/default/images/1772248056478-a5a04d98-be5f-4ee9-8f08-09db2be8fd1a.jpg">
     
     <script>
     !function (w, d, t) {
@@ -106,7 +107,7 @@
     <section id="home">
         <h1 data-key="hero_title">Scale Your Brand with TikTok Ads</h1>
         <p data-key="hero_desc">The ultimate agency for TikTok sponsorship in Iraq. We connect your products to millions of potential customers with precision.</p>
-        <button onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو، دەتوانی زانیاری زیاترم پێبدەی؟')" class="btn-main" data-key="btn_start">Launch Campaign</button>
+        <button onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو')" class="btn-main" data-key="btn_start">Launch Campaign</button>
 
         <div class="integration-section">
             <div class="integration-title" data-key="supported_by">Officially Supported By</div>
@@ -151,7 +152,7 @@
                 <p data-key="footer_about">The leading agency for TikTok sponsorship and digital growth in Iraq and Kurdistan.</p>
                 <div class="email-info"><i class="fas fa-envelope"></i> <span>info@proxopages.com</span></div>
                 <div class="social-icons">
-                    <a onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو، دەتوانی زانیاری زیاترم پێبدەی!')"><i class="fab fa-whatsapp"></i></a>
+                    <a onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو')"><i class="fab fa-whatsapp"></i></a>
                     <a onclick="trackAndRedirect('https://instagram.com/proxo.krd')"><i class="fab fa-instagram"></i></a>
                     <a onclick="trackAndRedirect('https://tiktok.com/@proxo.krd')"><i class="fab fa-tiktok"></i></a>
                 </div>
@@ -181,13 +182,20 @@
         const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTM4MjA0NywiZXhwIjoyMDg2OTU4MDQ3fQ.Qxbg0FbFu6MIwT1R5Hbm6jP4JI4j_0RWMvQOc3deUnE';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+        
+        let allFeedbacks = [];
 
         async function loadFeedbacks(lang = 'en') {
-            const { data } = await supabaseClient.from('feedback').select('*').eq('is_approved', true).order('created_at', { ascending: false });
             const container = document.getElementById('feedback-container');
-            if (data && container) {
+            
+            if (allFeedbacks.length === 0) {
+                const { data } = await supabaseClient.from('feedback').select('*').eq('is_approved', true).order('created_at', { ascending: false });
+                if (data) allFeedbacks = data;
+            }
+
+            if (container) {
                 container.innerHTML = '';
-                const filtered = data.filter(fb => !fb.lang || fb.lang === '' || fb.lang === lang);
+                const filtered = allFeedbacks.filter(fb => !fb.lang || fb.lang === '' || fb.lang === lang);
                 filtered.forEach(fb => {
                     const card = document.createElement('div');
                     card.className = 'card';
