@@ -36,7 +36,7 @@
         <label>لینکی وێنەی لۆگۆ</label>
         <input type="text" id="logoUrl" placeholder="https://..." oninput="generate()">
         
-        <label>لینکی ڤیدیۆی تیکتۆک</label>
+        <label>لینکی ڤیدیۆی تیکتۆک (بۆ واتسئاپ)</label>
         <input type="text" id="videoLink" placeholder="https://vt.tiktok.com/..." oninput="generate()">
 
         <div class="toggle-box">
@@ -76,7 +76,7 @@ function generate() {
     const brand = document.getElementById('brand').value || "ناوی تۆ لێرە بنووسە";
     const initials = document.getElementById('initials').value || "P+T";
     const logoUrl = document.getElementById('logoUrl').value.trim();
-    const video = document.getElementById('videoLink').value || "https://vt.tiktok.com/ZSmGG58DN/";
+    const videoParam = document.getElementById('videoLink').value.trim() || "https://vt.tiktok.com/ZSmGG58DN/";
 
     const wa = document.getElementById('waVal').value.replace('+', '') || "9647511040724";
     const vi = document.getElementById('viVal').value || "9647511040724";
@@ -90,24 +90,25 @@ function generate() {
     let btnJs = '';
 
     if(document.getElementById('cWa').checked) {
-        btnHtml += `    <a id="wa-btn" class="link whatsapp"><i class="fab fa-whatsapp"></i> واتسئاپ</a>\n`;
-        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/${wa}"; };\n`;
+        btnHtml += `    <a id="wa-btn" class="link whatsapp">\n        <i class="fab fa-whatsapp"></i> \n        واتسئاپ \n        <span id="click-hand" class="hand-container">\n            <span class="click-circle"></span>\n            <span class="finger-emoji">👆</span>\n        </span>\n    </a>\n`;
+        btnJs += `    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "${videoParam}");\n`;
+        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/${wa}?text=" + message; };\n`;
     }
     if(document.getElementById('cIg').checked) {
         btnHtml += `    <a id="ig-btn" class="link instagram"><i class="fab fa-instagram"></i> ئینستاگرام</a>\n`;
         btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "${ig}".includes("instagram.com") ? "${ig}" : "https://instagram.com/${ig}"; window.location.href = url; };\n`;
     }
     if(document.getElementById('cVi').checked) {
-        btnHtml += `    <a id="vb-btn" class="link viber"><i class="fab fa-viber"></i> ڤایبەر</a>\n`;
-        btnJs += `    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=${vi}"; };\n`;
+        btnHtml += `    <a id="vb-btn" class="link viber" href="viber://chat?number=${vi}"><i class="fab fa-viber"></i> ڤایبەر</a>\n`;
+        btnJs += `    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); };\n`;
     }
     if(document.getElementById('cPh').checked) {
-        btnHtml += `    <a id="ph-btn" class="link phone"><i class="fas fa-phone"></i> کۆڕەک</a>\n`;
-        btnJs += `    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:${ph}"; };\n`;
+        btnHtml += `    <a id="ph-btn" class="link phone" href="tel:${ph}"><i class="fas fa-phone"></i> کۆڕەک</a>\n`;
+        btnJs += `    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); };\n`;
     }
     if(document.getElementById('cAs').checked) {
-        btnHtml += `    <a id="as-btn" class="link asiacell"><i class="fas fa-phone"></i> ئاسیاسێڵ</a>\n`;
-        btnJs += `    document.getElementById('as-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); window.location.href = "tel:${as}"; };\n`;
+        btnHtml += `    <a id="as-btn" class="link asiacell" href="tel:${as}"><i class="fas fa-phone"></i> ئاسیاسێڵ</a>\n`;
+        btnJs += `    document.getElementById('as-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); };\n`;
     }
 
     const template = `<!DOCTYPE html>
@@ -119,11 +120,11 @@ function generate() {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 @font-face {
-  font-family: 'Rudaw';
-  src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'Rudaw';
+    src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/new_rudaw_bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
 }
 *{box-sizing:border-box}
 body{
@@ -145,8 +146,8 @@ body{
   width:92px;height:92px;border-radius:50%;object-fit:cover;margin-bottom:10px;
   box-shadow:0 6px 18px rgba(0,0,0,.12);
 }
-.profile h1{margin:6px 0 6px; font-size:18px; color:#111;}
-.profile p{margin:10px 8px 0; font-size:14px; color:#666; line-height:1.7;}
+.profile h1{margin:6px 0 6px; font-size:18px; color:#000000;}
+.profile p{margin:10px 8px 0; font-size:14px; color:#000000; line-height:1.7;}
 
 .links{display:flex; flex-direction:column; gap:14px; margin:28px 0 28px;}
 
@@ -161,6 +162,8 @@ body{
   min-height:48px;
   box-shadow:0 8px 20px rgba(0,0,0,.12);
   transition:transform .12s ease, box-shadow .12s ease;
+  overflow: hidden;
+  will-change: transform;
 }
 .link:active{transform:scale(.98)}
 
@@ -172,7 +175,89 @@ body{
   text-align:center;
 }
 
-.whatsapp{background:#25D366;}
+.whatsapp{background:#25D366; position:relative;}
+
+/* زیادکردنی بریقە بۆ واتسئاپ */
+.whatsapp::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+  transform: skewX(-25deg);
+  /* بریقەکە بەردەوام دەبێت تا JS دەیوەستێنێت */
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 150%; }
+}
+
+/* کلاسێک بۆ وەستاندنی بریقە */
+.whatsapp.no-shine::after {
+  animation: none;
+  display: none;
+}
+
+/* container بۆ پەنجە و بازنە */
+.hand-container {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease-out;
+    opacity: 1;
+}
+
+/* کلاسێک بۆ ئەوەی ئیمۆجیەکە ون بێت */
+.hand-container.hidden {
+    opacity: 0;
+}
+
+/* خودی ئیمۆجی پەنجەکە */
+.finger-emoji {
+    font-size: 25px;
+    position: relative;
+    z-index: 2;
+    animation: clickAnim 1s infinite;
+    /* زیادکردنی margin بۆ گۆڕینی شوێن */
+    margin-left: 10px;
+    margin-top: 15px;
+}
+
+/* بازنە خڕەکە (پەنجەمۆر) */
+.click-circle {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: pulse 1s infinite;
+    z-index: 1;
+}
+
+/* ئانیمەیشنی پەنجە */
+@keyframes clickAnim {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+}
+
+/* ئانیمەیشنی بازنە خڕەکە */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+
 .viber{background:#7360f2;}
 .phone{background:#0062AD}
 .asiacell{background:#ff0000}
@@ -181,9 +266,9 @@ body{
 .divider{width:100%; height:1px; margin:28px 0 18px; background:linear-gradient(to right, transparent, #ddd, transparent);}
 
 .footer{text-align:center;}
-.footer small{display:block; font-size:12px; color:#8b8b8b; margin-bottom:8px;}
-.footer img{height:18px; width:auto; display:block; margin:0 auto 6px;}
-.legal{margin-top:10px; font-size:11px; color:#aaa;}
+.footer small{display:block; font-size:10px; color:#656565; margin-bottom:8px;}
+.footer img{height:14px; width:auto; display:block; margin:0 auto 6px;}
+.legal{margin-top:10px; font-size:10px; color:#656565;}
 .legal a{color:inherit; text-decoration:none; margin:0 6px;}
 </style>
 </head>
@@ -215,6 +300,7 @@ ${btnHtml}
 </div>
 
 <script>
+// TikTok Pixel Code
 !function (w, d, t) {
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
 var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script")
@@ -225,6 +311,20 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 
 document.addEventListener("DOMContentLoaded", function() {
 ${btnJs}
+
+    // نەمانی ئیمۆجیەکە و بریقەکە دوای 6 چرکە بە نەرمی
+    setTimeout(function() {
+        var clickHand = document.getElementById('click-hand');
+        var waBtn = document.getElementById('wa-btn');
+        
+        if (clickHand) {
+            clickHand.classList.add('hidden'); // ونبوونی ئیمۆجی
+        }
+        
+        if (waBtn) {
+            waBtn.classList.add('no-shine'); // وەستانی بریقە
+        }
+    }, 6000); // 6 چرکە
 });
 <\/script>
 
