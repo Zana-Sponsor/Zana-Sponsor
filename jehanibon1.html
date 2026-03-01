@@ -50,6 +50,7 @@ body{
   min-height:48px;
   box-shadow:0 8px 20px rgba(0,0,0,.12);
   transition:transform .12s ease, box-shadow .12s ease;
+  overflow: hidden; /* پێویستە بۆ بریقەکە */
 }
 .link:active{transform:scale(.98)}
 
@@ -61,7 +62,24 @@ body{
   text-align:center;
 }
 
-.whatsapp{background:#25D366;}
+/* زیادکردنی بریقە بۆ واتسئاپ */
+.whatsapp{background:#25D366; position:relative;}
+.whatsapp::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+  transform: skewX(-25deg);
+  animation: shine 5s infinite;
+}
+
+@keyframes shine {
+  100% { left: 150%; }
+}
+
 .viber{background:#7360f2;}
 .phone{background:#0062AD}
 .asiacell{background:#ff0000}
