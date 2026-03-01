@@ -41,8 +41,8 @@ body{
 
 .link{
   position:relative;
-  display:flex; align-items:center; justify-content:center;  /* ناوەکان ناوەڕاست */
-  padding:14px 18px 14px 48px;   /* بۆ شوێن دانانی ئایکۆن لە چەپ */
+  display:flex; align-items:center; justify-content:center;
+  padding:14px 18px 14px 48px;
   border-radius:999px;
   font-size:16px;
   font-weight:700;
@@ -55,7 +55,7 @@ body{
 
 .link i{
   position:absolute;
-  left:18px;                    /* ئایکۆن لە دەستە چەپ */
+  left:18px;
   font-size:20px;
   width:26px;
   text-align:center;
@@ -63,7 +63,8 @@ body{
 
 .whatsapp{background:#25D366;}
 .viber{background:#7360f2;}
-.messenger{background:#0b7cff;}
+.phone{background:#0062AD}
+.asiacell{background:#ff0000}
 .instagram{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af,#515bd4);}
 
 .divider{width:100%; height:1px; margin:28px 0 18px; background:linear-gradient(to right, transparent, #ddd, transparent);}
@@ -79,20 +80,16 @@ body{
 
 <div class="container">
   <div class="profile">
-    <img src="https://image2url.com/r2/default/images/1772343734168-42d3506e-9e2d-46e6-ab7d-264e132739cb.png" alt="Logo">
+    <img src="https://image2url.com/r2/default/images/1772346506551-4eefe94a-6ecc-4e19-a453-8fdf08ef73d1.png" alt="Logo">
     <h1>جیهانی بۆن</h1>
     <p>بۆ زانیاری زیاتر، پەیوەندی بکە لەڕێگەی دوگمەکانەوە.</p>
   </div>
 
   <div class="links">
-    <a id="wa-btn" class="link whatsapp">
-      <i class="fab fa-whatsapp"></i>
-      واتسئاپ
-    </a>
-    <a class="link viber" href="viber://chat?number=9647511040724">
-      <i class="fab fa-viber"></i>
-      ڤایبەر
-    </a>
+    <a id="wa-btn" class="link whatsapp"><i class="fab fa-whatsapp"></i> واتسئاپ</a>
+    <a id="vb-btn" class="link viber"><i class="fab fa-viber"></i> ڤایبەر</a>
+    <a id="ph-btn" class="link phone"><i class="fas fa-phone"></i> کۆڕەک</a>
+
   </div>
 
   <div class="divider"></div>
@@ -119,20 +116,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 }(window, document, 'ttq');
 
 document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-      const emoji = document.getElementById('target-emoji');
-      if (emoji) {
-        emoji.style.transition = 'opacity 0.8s, transform 0.8s';
-        emoji.style.opacity = '0'; emoji.style.transform = 'translateX(20px)';
-        setTimeout(() => { emoji.style.display = 'none'; }, 800);
-      }
-    }, 5000);
-    const videoParam = new URLSearchParams(window.location.search).get('v') || "https://vt.tiktok.com/ZSmtS99rF/";
-    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + videoParam);
-    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); setTimeout(() => { window.location.href = "https://wa.me/9647758887488?text=" + message; }, 100); };
-    document.getElementById('phone-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); setTimeout(() => { window.location.href = "tel:07510074008"; }, 100); };
-    document.getElementById('asia-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); setTimeout(() => { window.location.href = "tel:07758887488"; }, 100); };
-  });
+    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/9647511040724"; };
+    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=9647511040724"; };
+    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:9647511040724"; };
+
+});
 </script>
+
 </body>
 </html>
