@@ -6,7 +6,7 @@
     <style>
         @font-face {
             font-family: 'Rudaw';
-            src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/new_rudaw_bold.woff2');
+            src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf');
             font-display: swap;
         }
         body { font-family: 'Rudaw', sans-serif; background: #0b1120; color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; }
@@ -84,8 +84,9 @@ function generate() {
     const ph = document.getElementById('phVal').value || "07511040724";
     const as = document.getElementById('asVal').value || "07700000000";
 
-    let logoSize = "88px";
-    let finalLogo = logoUrl !== "" ? logoUrl : "https://image2url.com/r2/default/images/1772341251543-7af0365b-156d-4da9-8d00-99c497f16b70.png";
+    let logoSize = "85px"; // قەبارەی داواکراو
+    // ئەگەر لینکی وێنە نەبوو، لۆگۆی دوو پیتی بەکاردێنێت
+    let finalLogo = logoUrl !== "" ? logoUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=0062AD&color=fff&size=200&bold=true`;
 
     let btnHtml = '';
     let btnJs = '';
@@ -132,12 +133,12 @@ body{
   background:#f3f4f6; display:flex; align-items:center; justify-content:center;
 }
 .container{width:100%; max-width:380px; padding:28px 16px 24px; text-align:center;}
-.profile{background:transparent; padding:0 8px 6px; margin-bottom:14px;}
+.profile{background:transparent; padding:20px 8px 10px; margin-bottom:10px;}
 .profile img{width:${logoSize};height:${logoSize};border-radius:50%;object-fit:cover;margin-bottom:6px;}
 .profile h1{margin:6px 0; font-size:18px; color:#111;}
 .profile p{margin:0; font-size:13px; color:#555; line-height:1.6;}
 
-.links{display:flex; flex-direction:column; gap:14px; margin-top:10px;}
+.links{display:flex; flex-direction:column; gap:14px; margin-top:20px;}
 .link{
   display:flex; align-items:center; justify-content:center; gap:10px;
   padding:16px; border-radius:16px; font-size:17px; font-weight:bold;
@@ -159,12 +160,12 @@ body{
 .asiacell{background:#ff0000}
 .instagram{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af,#515bd4)}
 
-.divider{width:100%; height:1px; margin:26px 0 14px; background:linear-gradient(to right, transparent, #ddd, transparent);}
+.divider{width:100%; height:1px; margin:30px 0 20px; background:linear-gradient(to right, transparent, #ddd, transparent);}
 
 .footer{text-align:center;}
 .footer small{display:block; font-size:11px; color:#8b8b8b; margin-bottom:6px;}
 .footer img{height:15px; width:auto; display:block; margin:0 auto 4px;}
-.legal{margin-top:6px; font-size:10px; color:#aaa;}
+.legal{margin-top:10px; font-size:10px; color:#aaa;}
 .legal a{color:inherit; text-decoration:none; margin:0 6px;}
 </style>
 </head>
