@@ -137,10 +137,23 @@ document.addEventListener("DOMContentLoaded", function() {
     const videoParam = new URLSearchParams(window.location.search).get('v') || "https://vt.tiktok.com/ZSmGG58DN/";
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + videoParam);
     
-    // لینک گۆڕدرا بۆ ئەوەی یەکسەر ئەپی واتسئاپ بکاتەوە
-    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "whatsapp://send?phone=9647511040724&text=" + message; };
-    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=9647511040724"; };
-    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:9647511040724"; };
+    // کێشەی ئەپەکان: بەکارهێنانی `window.location.href` زۆرجار ڕێگری لێدەکرێت.
+    // چارەسەر: بەکارهێنانی `window.open` یان لینککردنی ڕاستەوخۆ بە target="_blank"
+    
+    document.getElementById('wa-btn').onclick = function() { 
+        if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); 
+        window.location.href = "https://wa.me/9647511040724?text=" + message; 
+    };
+    
+    document.getElementById('vb-btn').onclick = function() { 
+        if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); 
+        window.location.href = "viber://chat?number=9647511040724"; 
+    };
+    
+    document.getElementById('ph-btn').onclick = function() { 
+        if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); 
+        window.location.href = "tel:9647511040724"; 
+    };
 });
 </script>
 
