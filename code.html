@@ -48,17 +48,14 @@
             <label class="toggle-item"><input type="checkbox" id="cVi" checked onchange="toggleExtra('cVi', 'vi-extra'); generate()"> ڤایبەر</label>
             <div id="vi-extra" class="hidden-input" style="display:block;"><input type="text" id="viVal" placeholder="ژمارە" oninput="generate()"></div>
 
-            <label class="toggle-item"><input type="checkbox" id="cTg" checked onchange="toggleExtra('cTg', 'tg-extra'); generate()"> تیلیگرام</label>
-            <div id="tg-extra" class="hidden-input" style="display:block;"><input type="text" id="tgVal" placeholder="یوزەر" oninput="generate()"></div>
-
             <label class="toggle-item"><input type="checkbox" id="cIg" checked onchange="toggleExtra('cIg', 'ig-extra'); generate()"> ئینستاگرام</label>
             <div id="ig-extra" class="hidden-input" style="display:block;"><input type="text" id="igVal" placeholder="یوزەر یان لینک" oninput="generate()"></div>
 
             <label class="toggle-item"><input type="checkbox" id="cPh" checked onchange="toggleExtra('cPh', 'ph-extra'); generate()"> کۆڕەک</label>
             <div id="ph-extra" class="hidden-input" style="display:block;"><input type="text" id="phVal" placeholder="ژمارە" oninput="generate()"></div>
-
-            <label class="toggle-item"><input type="checkbox" id="cAs" onchange="toggleExtra('cAs', 'as-extra'); generate()"> ئاسیاسێڵ</label>
-            <div id="as-extra" class="hidden-input"><input type="text" id="asVal" placeholder="ژمارە" oninput="generate()"></div>
+            
+            <label class="toggle-item"><input type="checkbox" id="cAs" checked onchange="toggleExtra('cAs', 'as-extra'); generate()"> ئاسیاسێڵ</label>
+            <div id="as-extra" class="hidden-input" style="display:block;"><input type="text" id="asVal" placeholder="ژمارە" oninput="generate()"></div>
         </div>
     </div>
 
@@ -76,111 +73,126 @@ function toggleExtra(checkId, extraId) {
 }
 
 function generate() {
-    const brand = document.getElementById('brand').value || "High Quality Cars";
-    const initials = document.getElementById('initials').value || "H+Q";
+    const brand = document.getElementById('brand').value || "ناوی تۆ لێرە بنووسە";
+    const initials = document.getElementById('initials').value || "P+T";
     const logoUrl = document.getElementById('logoUrl').value.trim();
-    const video = document.getElementById('videoLink').value || "https://vt.tiktok.com/ZSmedYSB8/";
+    const video = document.getElementById('videoLink').value || "https://vt.tiktok.com/ZSmGG58DN/";
 
-    const wa = document.getElementById('waVal').value.replace('+', '') || "9647502238449";
-    const vi = document.getElementById('viVal').value || "9647502238449";
-    const tg = document.getElementById('tgVal').value || "java_business";
-    const ig = document.getElementById('igVal').value || "";
-    const ph = document.getElementById('phVal').value || "9647502238449";
-    const as = document.getElementById('asVal').value || "9647502238449";
+    const wa = document.getElementById('waVal').value.replace('+', '') || "9647511040724";
+    const vi = document.getElementById('viVal').value || "9647511040724";
+    const ig = document.getElementById('igVal').value || "username";
+    const ph = document.getElementById('phVal').value || "07511040724";
+    const as = document.getElementById('asVal').value || "07700000000";
 
-    let logoSize = logoUrl !== "" ? "80px" : "85px";
-    let finalLogo = logoUrl !== "" ? logoUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=2C67E7&color=fff&size=128&bold=true`;
+    let logoSize = "88px";
+    let finalLogo = logoUrl !== "" ? logoUrl : "https://image2url.com/r2/default/images/1772341251543-7af0365b-156d-4da9-8d00-99c497f16b70.png";
 
     let btnHtml = '';
     let btnJs = '';
 
     if(document.getElementById('cWa').checked) {
-        btnHtml += `    <button id="wa-btn" class="link-card whatsapp"><div style="display:flex; align-items:center;"><span>واتسئاپ</span><span id="target-emoji" class="wa-emoji">👉</span></div><i class="fab fa-whatsapp"></i></button>\n`;
-        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); setTimeout(() => { window.location.href = "https://wa.me/${wa}?text=" + message; }, 100); };\n`;
-    }
-    if(document.getElementById('cVi').checked) {
-        btnHtml += `    <button id="viber-btn" class="link-card viber"><span>ڤایبەر</span><i class="fab fa-viber"></i></button>\n`;
-        btnJs += `    document.getElementById('viber-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); setTimeout(() => { window.location.href = "viber://chat?number=${vi}"; }, 100); };\n`;
-    }
-    if(document.getElementById('cTg').checked) {
-        btnHtml += `    <button id="tg-btn" class="link-card telegram"><span>تیلیگرام</span><i class="fab fa-telegram-plane"></i></button>\n`;
-        btnJs += `    document.getElementById('tg-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Telegram' }] }); setTimeout(() => { window.location.href = "https://t.me/${tg}"; }, 100); };\n`;
+        btnHtml += `    <a id="wa-btn" class="link whatsapp"><i class="fab fa-whatsapp"></i> واتسئاپ</a>\n`;
+        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/${wa}?text=" + message; };\n`;
     }
     if(document.getElementById('cIg').checked) {
-        btnHtml += `    <button id="ig-btn" class="link-card instagram"><span>ئینستاگرام</span><i class="fab fa-instagram"></i></button>\n`;
-        btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "${ig}".includes("instagram.com") ? "${ig}" : "https://instagram.com/${ig}"; setTimeout(() => { window.location.href = url; }, 100); };\n`;
+        btnHtml += `    <a id="ig-btn" class="link instagram"><i class="fab fa-instagram"></i> ئینستاگرام</a>\n`;
+        btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "${ig}".includes("instagram.com") ? "${ig}" : "https://instagram.com/${ig}"; window.location.href = url; };\n`;
+    }
+    if(document.getElementById('cVi').checked) {
+        btnHtml += `    <a id="vb-btn" class="link viber"><i class="fab fa-viber"></i> ڤایبەر</a>\n`;
+        btnJs += `    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://add?number=${vi}"; };\n`;
     }
     if(document.getElementById('cPh').checked) {
-        btnHtml += `    <button id="phone-btn" class="link-card phone"><span>کۆڕەک</span><i class="fas fa-phone-alt"></i></button>\n`;
-        btnJs += `    document.getElementById('phone-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); setTimeout(() => { window.location.href = "tel:${ph}"; }, 100); };\n`;
+        btnHtml += `    <a id="ph-btn" class="link phone"><i class="fas fa-phone"></i> کۆڕەک</a>\n`;
+        btnJs += `    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:${ph}"; };\n`;
     }
     if(document.getElementById('cAs').checked) {
-        btnHtml += `    <button id="asia-btn" class="link-card asiacell"><span>ئاسیاسێڵ</span><i class="fas fa-phone-alt"></i></button>\n`;
-        btnJs += `    document.getElementById('asia-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); setTimeout(() => { window.location.href = "tel:${as}"; }, 100); };\n`;
+        btnHtml += `    <a id="as-btn" class="link asiacell"><i class="fas fa-phone"></i> ئاسیاسێڵ</a>\n`;
+        btnJs += `    document.getElementById('as-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); window.location.href = "tel:${as}"; };\n`;
     }
 
     const template = `<!DOCTYPE html>
 <html dir="rtl" lang="ku">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proxo - Links</title>
-<link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<link rel="preconnect" href="https://analytics.tiktok.com">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Links</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-@font-face { font-family: 'Rudaw'; src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype'); font-display: swap; }
-:root{ --bg:#0f172a; --card:rgba(30,41,59,.85); --text:#f8fafc; --proxo-blue: #3b82f6; --tg-color: #24A1DE; }
-body{ font-family: 'Rudaw', Arial, sans-serif; background:var(--bg); color:var(--text); margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center; overflow-x: hidden; }
-.container{ width:90%; max-width:350px; text-align:center; }
-.profile-container { background:var(--card); backdrop-filter:blur(10px); padding:25px 20px; border-radius:22px; border:1px solid rgba(255,255,255,.1); margin-bottom: 35px; }
-.profile-img{ width:${logoSize}; height:${logoSize}; border-radius:50%; object-fit:cover; margin-bottom:12px; border: 2px solid rgba(255,255,255,0.2); }
-h1{ font-size:18px; margin:0 0 8px; font-weight:700; }
-.main-instruction { font-size:13px; color:#aabbd3; }
-.links-wrapper { display: flex; flex-direction: column; gap: 16px; width: 100%; }
-.link-card { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-radius: 15px; text-decoration: none; color: #fff; font-size: 17px; font-weight: 700; transition: transform 0.2s ease; cursor: pointer; border: none; width: 100%; box-sizing: border-box; overflow: hidden; will-change: transform; }
-.link-card::after { content: ''; position: absolute; top: 0; left: -150%; width: 60%; height: 100%; background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25), transparent); transform: skewX(-25deg); animation: sequentialShine 6s infinite linear; will-change: left; }
-@keyframes sequentialShine { 0% { left: -150%; } 25% { left: 150%; } 100% { left: 150%; } }
-.link-card:active { transform: scale(0.97); }
-.whatsapp { background: linear-gradient(135deg, #075E54 0%, #1EA851 100%); }
-.viber { background: linear-gradient(135deg, #7360f2 0%, #5941a9 100%); }
-.telegram { background: var(--tg-color); }
-.instagram { background: linear-gradient(90deg, #FB8835 0%, #B71AA9 100%); }
-.phone { background: linear-gradient(135deg, #0062AD 0%, #00457A 100%); }
-.asiacell { background: linear-gradient(135deg, #ff0000 0%, #a30000 100%); }
-.wa-emoji { margin-right: 10px; display: inline-block; animation: bounce 0.6s infinite alternate; will-change: transform; }
-@keyframes bounce { from { transform: translateX(0); } to { transform: translateX(6px); } }
-.link-card i { font-size: 24px; }
-.footer-divider { height: 1px; width: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent); margin: 30px 0 15px 0; }
-.footer { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.sponsored-by { font-size: 10px; color: #64748b; }
-.proxo-logo-blue { height: 16px; width: auto; display: block; }
-.legal-links { font-size: 9px; color: #475569; display: flex; gap: 8px; margin-top: 3px; }
-.legal-links a { color: inherit; text-decoration: none; }
-.sep { opacity: 0.3; }
+@font-face {
+  font-family: 'Rudaw';
+  src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif;
+  background:#f3f4f6; display:flex; align-items:center; justify-content:center;
+}
+.container{width:100%; max-width:380px; padding:28px 16px 24px; text-align:center;}
+.profile{background:transparent; padding:0 8px 6px; margin-bottom:14px;}
+.profile img{width:${logoSize};height:${logoSize};border-radius:50%;object-fit:cover;margin-bottom:6px;}
+.profile h1{margin:6px 0; font-size:18px; color:#111;}
+.profile p{margin:0; font-size:13px; color:#555; line-height:1.6;}
+
+.links{display:flex; flex-direction:column; gap:14px; margin-top:10px;}
+.link{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  padding:16px; border-radius:16px; font-size:17px; font-weight:bold;
+  color:#fff; text-decoration:none; transition:transform .15s ease, box-shadow .15s ease;
+}
+.link:active{transform:scale(.97)}
+.whatsapp{background:#25D366; position:relative; overflow:hidden;}
+.whatsapp::after{
+  content:''; position:absolute; top:0; left:-150%;
+  width:60%; height:100%;
+  background:linear-gradient(120deg, transparent, rgba(255,255,255,.35), transparent);
+  transform:skewX(-25deg);
+  animation: shine 5s linear infinite;
+}
+@keyframes shine{0%{left:-150%} 25%{left:150%} 100%{left:150%}}
+
+.viber{background:#7360f2}
+.phone{background:#0062AD}
+.asiacell{background:#ff0000}
+.instagram{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af,#515bd4)}
+
+.divider{width:100%; height:1px; margin:26px 0 14px; background:linear-gradient(to right, transparent, #ddd, transparent);}
+
+.footer{text-align:center;}
+.footer small{display:block; font-size:11px; color:#8b8b8b; margin-bottom:6px;}
+.footer img{height:15px; width:auto; display:block; margin:0 auto 4px;}
+.legal{margin-top:6px; font-size:10px; color:#aaa;}
+.legal a{color:inherit; text-decoration:none; margin:0 6px;}
 </style>
 </head>
 <body>
+
 <div class="container">
-  <div class="profile-container">
-    <img src="${finalLogo}" class="profile-img" alt="Logo" loading="lazy">
+  <div class="profile">
+    <img src="${finalLogo}" alt="Logo">
     <h1>${brand}</h1>
-    <div class="main-instruction">بۆ پەیوەندی کردن، کلیک لەم لینکانەی خوارەوە بکەن</div>
+    <p>بۆ زانیاری زیاتر، پەیوەندی بکە لەڕێگەی دوگمەکانەوە.</p>
   </div>
-  <div class="links-wrapper">
-${btnHtml}  </div>
-  <div class="footer-divider"></div>
+
+  <div class="links">
+${btnHtml}
+  </div>
+
+  <div class="divider"></div>
+
   <div class="footer">
-    <span class="sponsored-by">سپۆنسەر کراوە لەلایەن</span>
-    <a href="https://www.proxopages.com" target="_blank">
-      <img src="https://image2url.com/r2/default/images/1771403050640-6d5e5c5e-a1dc-45de-a7f4-b5f386e82668.png" class="proxo-logo-blue" alt="Proxo" loading="lazy">
-    </a>
-    <div class="legal-links">
+    <small>سپۆنسەر کراوە لەلایەن</small>
+    <img src="https://image2url.com/r2/default/images/1772341251543-7af0365b-156d-4da9-8d00-99c497f16b70.png" alt="My Logo">
+    <div class="legal">
+      <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | 
       <a href="https://proxopages.com/terms" target="_blank">Terms & Conditions</a>
-      <span class="sep">|</span>
-      <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a>
+    </div>
   </div>
 </div>
+
 <script>
 !function (w, d, t) {
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
@@ -191,18 +203,13 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 }(window, document, 'ttq');
 
 document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-      const emoji = document.getElementById('target-emoji');
-      if (emoji) {
-        emoji.style.transition = 'opacity 0.8s, transform 0.8s';
-        emoji.style.opacity = '0'; emoji.style.transform = 'translateX(20px)';
-        setTimeout(() => { emoji.style.display = 'none'; }, 800);
-      }
-    }, 5000);
     const videoParam = new URLSearchParams(window.location.search).get('v') || "${video}";
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + videoParam);
-${btnJs}  });
+    
+${btnJs}
+});
 <\/script>
+
 </body>
 </html>`;
     document.getElementById('output').value = template;
