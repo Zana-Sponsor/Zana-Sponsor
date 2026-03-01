@@ -132,12 +132,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
   ttq.load('D6BIIA3C77U1CE9DCUMG');
   ttq.page();
 }(window, document, 'ttq');
+
+document.addEventListener("DOMContentLoaded", function() {
     const videoParam = new URLSearchParams(window.location.search).get('v') || "https://vt.tiktok.com/ZSmGG58DN/";
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + videoParam);
-    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/9647758887488?text=" + message; }, 100); };
-    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=9647511040724";}, 100); };
-    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:9647511040724"; }, 100); };
-
+    
+    // لینک گۆڕدرا بۆ ئەوەی یەکسەر ئەپی واتسئاپ بکاتەوە
+    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "whatsapp://send?phone=9647511040724&text=" + message; };
+    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=9647511040724"; };
+    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:9647511040724"; };
 });
 </script>
 
