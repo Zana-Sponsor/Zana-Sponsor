@@ -144,9 +144,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 5000);
     const videoParam = new URLSearchParams(window.location.search).get('v') || "https://vt.tiktok.com/ZSmGG58DN/";
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + videoParam);
-    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/9647511040724"; };
-    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=9647511040724"; };
-    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:9647511040724"; };
+    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/9647758887488?text=" + message; }, 100); };
+    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=9647511040724";}, 100); };
+    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:9647511040724"; }, 100); };
 
 });
 </script>
