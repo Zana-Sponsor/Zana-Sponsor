@@ -105,8 +105,8 @@ body{
 
   <div class="links">
     <a id="wa-btn" class="link whatsapp"><i class="fab fa-whatsapp"></i> واتسئاپ</a>
-    <a id="vb-btn" class="link viber"><i class="fab fa-viber"></i> ڤایبەر</a>
-    <a id="ph-btn" class="link phone"><i class="fas fa-phone"></i> کۆڕەک</a>
+    <a class="link viber" href="viber://chat?number=9647511040724"><i class="fab fa-viber"></i> ڤایبەر</a>
+    <a class="link phone" href="tel:9647511040724"><i class="fas fa-phone"></i> کۆڕەک</a>
 
   </div>
 
@@ -143,16 +143,6 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('wa-btn').onclick = function() { 
         if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); 
         window.location.href = "https://wa.me/9647511040724?text=" + message; 
-    };
-    
-    document.getElementById('vb-btn').onclick = function() { 
-        if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); 
-        window.location.href = "viber://chat?number=9647511040724"; 
-    };
-    
-    document.getElementById('ph-btn').onclick = function() { 
-        if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); 
-        window.location.href = "tel:9647511040724"; 
     };
 });
 </script>
