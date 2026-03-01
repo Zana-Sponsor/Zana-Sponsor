@@ -84,8 +84,6 @@ function generate() {
     const ph = document.getElementById('phVal').value || "07511040724";
     const as = document.getElementById('asVal').value || "07700000000";
 
-    let logoSize = "85px"; // قەبارەی داواکراو
-    // ئەگەر لینکی وێنە نەبوو، لۆگۆی دوو پیتی بەکاردێنێت
     let finalLogo = logoUrl !== "" ? logoUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=0062AD&color=fff&size=200&bold=true`;
 
     let btnHtml = '';
@@ -93,7 +91,7 @@ function generate() {
 
     if(document.getElementById('cWa').checked) {
         btnHtml += `    <a id="wa-btn" class="link whatsapp"><i class="fab fa-whatsapp"></i> واتسئاپ</a>\n`;
-        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/${wa}?text=" + message; };\n`;
+        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/${wa}"; };\n`;
     }
     if(document.getElementById('cIg').checked) {
         btnHtml += `    <a id="ig-btn" class="link instagram"><i class="fab fa-instagram"></i> ئینستاگرام</a>\n`;
@@ -101,7 +99,7 @@ function generate() {
     }
     if(document.getElementById('cVi').checked) {
         btnHtml += `    <a id="vb-btn" class="link viber"><i class="fab fa-viber"></i> ڤایبەر</a>\n`;
-        btnJs += `    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://add?number=${vi}"; };\n`;
+        btnJs += `    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=${vi}"; };\n`;
     }
     if(document.getElementById('cPh').checked) {
         btnHtml += `    <a id="ph-btn" class="link phone"><i class="fas fa-phone"></i> کۆڕەک</a>\n`;
@@ -117,7 +115,7 @@ function generate() {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Links</title>
+<title>${brand}</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 @font-face {
@@ -130,42 +128,62 @@ function generate() {
 *{box-sizing:border-box}
 body{
   margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif;
-  background:#f3f4f6; display:flex; align-items:center; justify-content:center;
+  background:#ffffff;
+  display:flex; align-items:center; justify-content:center;
 }
-.container{width:100%; max-width:380px; padding:28px 16px 24px; text-align:center;}
-.profile{background:transparent; padding:20px 8px 10px; margin-bottom:10px;}
-.profile img{width:${logoSize};height:${logoSize};border-radius:50%;object-fit:cover;margin-bottom:6px;}
-.profile h1{margin:6px 0; font-size:18px; color:#111;}
-.profile p{margin:0; font-size:13px; color:#555; line-height:1.6;}
 
-.links{display:flex; flex-direction:column; gap:14px; margin-top:20px;}
+.container{
+  width:100%;
+  max-width:380px;
+  padding:36px 16px 40px;
+  text-align:center;
+  background:#fff;
+}
+
+.profile{padding:18px 8px 10px; margin-bottom:24px;}
+.profile img{
+  width:92px;height:92px;border-radius:50%;object-fit:cover;margin-bottom:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+.profile h1{margin:6px 0 6px; font-size:18px; color:#111;}
+.profile p{margin:10px 8px 0; font-size:14px; color:#666; line-height:1.7;}
+
+.links{display:flex; flex-direction:column; gap:14px; margin:28px 0 28px;}
+
 .link{
-  display:flex; align-items:center; justify-content:center; gap:10px;
-  padding:16px; border-radius:16px; font-size:17px; font-weight:bold;
-  color:#fff; text-decoration:none; transition:transform .15s ease, box-shadow .15s ease;
+  position:relative;
+  display:flex; align-items:center; justify-content:center;
+  padding:14px 18px 14px 48px;
+  border-radius:999px;
+  font-size:16px;
+  font-weight:700;
+  color:#fff; text-decoration:none;
+  min-height:48px;
+  box-shadow:0 8px 20px rgba(0,0,0,.12);
+  transition:transform .12s ease, box-shadow .12s ease;
 }
-.link:active{transform:scale(.97)}
-.whatsapp{background:#25D366; position:relative; overflow:hidden;}
-.whatsapp::after{
-  content:''; position:absolute; top:0; left:-150%;
-  width:60%; height:100%;
-  background:linear-gradient(120deg, transparent, rgba(255,255,255,.35), transparent);
-  transform:skewX(-25deg);
-  animation: shine 5s linear infinite;
-}
-@keyframes shine{0%{left:-150%} 25%{left:150%} 100%{left:150%}}
+.link:active{transform:scale(.98)}
 
-.viber{background:#7360f2}
+.link i{
+  position:absolute;
+  left:18px;
+  font-size:20px;
+  width:26px;
+  text-align:center;
+}
+
+.whatsapp{background:#25D366;}
+.viber{background:#7360f2;}
 .phone{background:#0062AD}
 .asiacell{background:#ff0000}
-.instagram{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af,#515bd4)}
+.instagram{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af,#515bd4);}
 
-.divider{width:100%; height:1px; margin:30px 0 20px; background:linear-gradient(to right, transparent, #ddd, transparent);}
+.divider{width:100%; height:1px; margin:28px 0 18px; background:linear-gradient(to right, transparent, #ddd, transparent);}
 
 .footer{text-align:center;}
-.footer small{display:block; font-size:11px; color:#8b8b8b; margin-bottom:6px;}
-.footer img{height:15px; width:auto; display:block; margin:0 auto 4px;}
-.legal{margin-top:10px; font-size:10px; color:#aaa;}
+.footer small{display:block; font-size:12px; color:#8b8b8b; margin-bottom:8px;}
+.footer img{height:18px; width:auto; display:block; margin:0 auto 6px;}
+.legal{margin-top:10px; font-size:11px; color:#aaa;}
 .legal a{color:inherit; text-decoration:none; margin:0 6px;}
 </style>
 </head>
@@ -186,7 +204,9 @@ ${btnHtml}
 
   <div class="footer">
     <small>سپۆنسەر کراوە لەلایەن</small>
-    <img src="https://image2url.com/r2/default/images/1772341251543-7af0365b-156d-4da9-8d00-99c497f16b70.png" alt="My Logo">
+    <a href="https://www.proxopages.com" target="_blank">
+      <img src="https://image2url.com/r2/default/images/1772341251543-7af0365b-156d-4da9-8d00-99c497f16b70.png" alt="My Logo">
+    </a>
     <div class="legal">
       <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | 
       <a href="https://proxopages.com/terms" target="_blank">Terms & Conditions</a>
@@ -204,9 +224,6 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 }(window, document, 'ttq');
 
 document.addEventListener("DOMContentLoaded", function() {
-    const videoParam = new URLSearchParams(window.location.search).get('v') || "${video}";
-    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + videoParam);
-    
 ${btnJs}
 });
 <\/script>
