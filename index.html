@@ -195,7 +195,7 @@
 
             if (container) {
                 container.innerHTML = '';
-                const filtered = allFeedbacks.filter(fb => !fb.lang || fb.lang === '' || fb.lang === lang);
+                const filtered = allFeedbacks;
                 filtered.forEach(fb => {
                     const card = document.createElement('div');
                     card.className = 'card';
