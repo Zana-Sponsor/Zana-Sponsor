@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Optimized Speed & Smoothness1</title>
+    <title>Proxo Builder - Optimized Speed & Smoothness1 V4</title>
     <style>
         @font-face {
             font-family: 'Rudaw';
@@ -99,16 +99,16 @@ function generate() {
         btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "${ig}".includes("instagram.com") ? "${ig}" : "https://instagram.com/${ig}"; window.location.href = url; };\n`;
     }
     if(document.getElementById('cVi').checked) {
-        btnHtml += `    <a id="vb-btn" class="link viber" href="viber://chat?number=${vi}"><i class="fab fa-viber"></i> ڤایبەر</a>\n`;
-        btnJs += `    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); };\n`;
+        btnHtml += `    <a id="vb-btn" class="link viber"><i class="fab fa-viber"></i> ڤایبەر</a>\n`;
+        btnJs += `    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=${vi}"; };\n`;
     }
     if(document.getElementById('cPh').checked) {
-        btnHtml += `    <a id="ph-btn" class="link phone" href="tel:${ph}"><i class="fas fa-phone"></i> کۆڕەک</a>\n`;
-        btnJs += `    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); };\n`;
+        btnHtml += `    <a id="ph-btn" class="link phone"><i class="fas fa-phone"></i> کۆڕەک</a>\n`;
+        btnJs += `    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:${ph}"; };\n`;
     }
     if(document.getElementById('cAs').checked) {
-        btnHtml += `    <a id="as-btn" class="link asiacell" href="tel:${as}"><i class="fas fa-phone"></i> ئاسیاسێڵ</a>\n`;
-        btnJs += `    document.getElementById('as-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); };\n`;
+        btnHtml += `    <a id="as-btn" class="link asiacell"><i class="fas fa-phone"></i> ئاسیاسێڵ</a>\n`;
+        btnJs += `    document.getElementById('as-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); window.location.href = "tel:${as}"; };\n`;
     }
 
     const template = `<!DOCTYPE html>
@@ -164,6 +164,7 @@ body{
   transition:transform .12s ease, box-shadow .12s ease;
   overflow: hidden;
   will-change: transform;
+  cursor: pointer;
 }
 .link:active{transform:scale(.98)}
 
@@ -317,14 +318,9 @@ ${btnJs}
         var clickHand = document.getElementById('click-hand');
         var waBtn = document.getElementById('wa-btn');
         
-        if (clickHand) {
-            clickHand.classList.add('hidden'); // ونبوونی ئیمۆجی
-        }
-        
-        if (waBtn) {
-            waBtn.classList.add('no-shine'); // وەستانی بریقە
-        }
-    }, 6000); // 6 چرکە
+        if (clickHand) { clickHand.classList.add('hidden'); }
+        if (waBtn) { waBtn.classList.add('no-shine'); }
+    }, 6000);
 });
 <\/script>
 
