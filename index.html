@@ -176,3 +176,62 @@
     </footer>
 
     <button onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی!')" class="wa-float"><i class="fab fa-whatsapp"></i></button>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
+        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTM4MjA0NywiZXhwIjoyMDg2OTU4MDQ3fQ.Qxbg0FbFu6MIwT1R5Hbm6jP4JI4j_0RWMvQOc3deUnE';
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+        
+        let allFeedbacks = [];
+
+        async function loadFeedbacks(lang = 'en') {
+            const container = document.getElementById('feedback-container');
+            
+            if (allFeedbacks.length === 0) {
+                const { data } = await supabaseClient.from('feedback').select('*').eq('is_approved', true).order('created_at', { ascending: false });
+                if (data) allFeedbacks = data;
+            }
+
+            if (container) {
+                container.innerHTML = '';
+                const filtered = allFeedbacks;
+                filtered.forEach(fb => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `<div class="rev-avatar" style="width:50px; height:50px; border-radius:50%; background:var(--accent); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-weight:900;">${fb.name.charAt(0)}</div><div class="feedback-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="feedback-text">"${fb.comment}"</p><p class="client-name" style="margin-top: 15px;"><b>- ${fb.name}</b></p>`;
+                    container.appendChild(card);
+                });
+            }
+        }
+        window.addEventListener('DOMContentLoaded', () => loadFeedbacks('en'));
+
+        const toggleBtn = document.getElementById('toggleBtn');
+        const menuMenu = document.getElementById('menuMenu');
+        const menuLinks = document.querySelectorAll('.menu-link');
+
+        function toggleMenu() {
+            menuMenu.classList.toggle('active');
+            toggleBtn.innerHTML = menuMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        }
+        toggleBtn.addEventListener('click', toggleMenu);
+        menuLinks.forEach(link => { link.addEventListener('click', () => { if (menuMenu.classList.contains('active')) toggleMenu(); }); });
+
+        const translations = {
+            en: { nav_home: "Home", nav_services: "Services", nav_feedback: "Testimonials", hero_title: "Scale Your Brand with TikTok Ads", hero_desc: "The ultimate agency for TikTok sponsorship in Iraq. We connect your products to millions of potential customers with precision.", btn_start: "Launch Campaign", supported_by: "Officially Supported By", services_title: "Targeted Advertising Solutions", ser1_t: "Ad Management", ser1_d: "Full management of your TikTok Business Center.", ser2_t: "ROI Optimization", ser2_d: "We track and optimize every dollar spent.", feedback_title: "Trusted by Business Owners", footer_about: "The leading agency for TikTok growth in Iraq.", footer_links: "Quick Links", write_feedback: "Write a Feedback", legal_terms: "Terms", legal_privacy: "Privacy" },
+            ku: { nav_home: "سەرەتا", nav_services: "خزمەتگوزارییەکان", nav_feedback: "فیدباکەکان", hero_title: "کارەکەت گەورە بکە بە سپۆنسەری تیکتۆک", hero_desc: "باشترین ئاژانس بۆ سپۆنسەری تیکتۆک لە عێراق. کاڵاکانت دەگەیەنین بە ملیۆنان کڕیار.", btn_start: "دەستپێبکە", supported_by: "پشتیوانی کراوە لەلایەن", services_title: "چارەسەری سپۆنسەری ئامانجدار", ser1_t: "بەڕێوەبردنی سپۆنسەر", ser1_d: "بەڕێوەبردنی تەواوی Business Centerی تیکتۆک.", ser2_t: "زیادکردنی قازانج", ser2_d: "چاودێری و زیادکردنی سوود لە پارە خەرجکراوەکان.", feedback_title: "خاوەنکارەکان متمانەمان پێ دەکەن", footer_about: "ئاژانسی پێشەنگ بۆ گەشەکردنی تیکتۆک لە عێراق.", footer_links: "لینکە خێراکان", write_feedback: "فیدباک بنووسە", legal_terms: "مەرج و یاساکان", legal_privacy: "سیاسەتی پاراستنی نهێنی" }
+        };
+
+        function changeLang(lang) {
+            document.body.className = (lang === 'ku') ? 'rtl' : 'ltr';
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[lang][key]) el.innerText = translations[lang][key];
+            });
+            document.getElementById('feedbackLink').href = `feedback.html?lang=${lang}`;
+            loadFeedbacks(lang);
+            if (menuMenu.classList.contains('active')) toggleMenu();
+        }
+    </script>
+</body>
+</html>
