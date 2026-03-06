@@ -33,7 +33,12 @@ body{
   width:90px;height:90px;border-radius:50%;object-fit:cover;margin-bottom:10px;
   box-shadow:0 6px 18px rgba(0,0,0,.12);
 }
-.profile h1{margin:6px 0 6px; font-size:18px; color:#000000;}
+.profile h1{
+    margin:6px 0 6px; 
+    font-size:18px; 
+    color:#000000;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* سیبەر بۆ ناوی سەرەکی */
+}
 .profile p{margin:10px 8px 0; font-size:14px; color:#000000; line-height:1.7;}
 
 .links{display:flex; flex-direction:column; gap:14px; margin:28px 0 28px;}
@@ -47,7 +52,10 @@ body{
   font-weight:700;
   color:#fff; text-decoration:none;
   min-height:48px;
-  box-shadow:0 8px 20px rgba(0,0,0,.12);
+  /* زیادکردنی سیبەری دوگمەکە بۆ ئەوەی زیاتر دەربکەوێت */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+  /* سیبەر بۆ دەقی ناو دوگمەکە */
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
   transition:transform .12s ease, box-shadow .12s ease;
   overflow: hidden;
   will-change: transform;
@@ -58,9 +66,18 @@ body{
 .link i{
   position:absolute;
   left:18px;
-  font-size:20px;
   width:26px;
   text-align:center;
+}
+
+/* گەورەکردنی تایبەتی ئایکۆنی واتسئاپ */
+.whatsapp i {
+    font-size: 26px; /* قەبارەکەی لێرە گەورە کراوە */
+}
+
+/* قەبارەی ئایکۆنی کۆڕەک وەک خۆی */
+.phone i {
+    font-size: 20px;
 }
 
 .whatsapp{background:#25D366; position:relative;}
@@ -75,7 +92,6 @@ body{
   height: 100%;
   background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
   transform: skewX(-25deg);
-  /* بریقەکە بەردەوام دەبێت تا JS دەیوەستێنێت */
   animation: shine 2s infinite;
 }
 
@@ -84,13 +100,11 @@ body{
   100% { left: 150%; }
 }
 
-/* کلاسێک بۆ وەستاندنی بریقە */
 .whatsapp.no-shine::after {
   animation: none;
   display: none;
 }
 
-/* container بۆ پەنجە و بازنە */
 .hand-container {
     position: absolute;
     right: 15px;
@@ -107,23 +121,19 @@ body{
     opacity: 1;
 }
 
-/* کلاسێک بۆ ئەوەی ئیمۆجیەکە ون بێت */
 .hand-container.hidden {
     opacity: 0;
 }
 
-/* خودی ئیمۆجی پەنجەکە */
 .finger-emoji {
     font-size: 25px;
     position: relative;
     z-index: 2;
     animation: clickAnim 1s infinite;
-    /* زیادکردنی margin بۆ گۆڕینی شوێن */
     margin-left: 10px;
     margin-top: 15px;
 }
 
-/* بازنە خڕەکە (پەنجەمۆر) */
 .click-circle {
     position: absolute;
     width: 25px;
@@ -134,13 +144,11 @@ body{
     z-index: 1;
 }
 
-/* ئانیمەیشنی پەنجە */
 @keyframes clickAnim {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(0.9); }
 }
 
-/* ئانیمەیشنی بازنە خڕەکە */
 @keyframes pulse {
     0% { transform: scale(1); opacity: 0.8; }
     100% { transform: scale(2.5); opacity: 0; }
@@ -197,7 +205,7 @@ body{
 </div>
 
 <script>
-// TikTok Pixel Code
+// TikTok Pixel Code لێرە وەکو خۆیەتی...
 !function (w, d, t) {
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
 var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script")
@@ -211,12 +219,9 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/9647518661260?text=" + message; };
     document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:07518661260"; };
 
-
-    // نەمانی ئیمۆجیەکە و بریقەکە دوای 6 چرکە بە نەرمی
     setTimeout(function() {
         var clickHand = document.getElementById('click-hand');
         var waBtn = document.getElementById('wa-btn');
-        
         if (clickHand) { clickHand.classList.add('hidden'); }
         if (waBtn) { waBtn.classList.add('no-shine'); }
     }, 6000);
