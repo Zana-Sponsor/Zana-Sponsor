@@ -105,7 +105,7 @@ function generate() {
 
     // WhatsApp
     if(activeButtons.includes('wa')) {
-        let hasHand = (activeButtons.length === 1 || activeButtons[0] === 'wa') ? handHtml : '';
+        let hasHand = (activeButtons.length === 1) ? handHtml : '';
         btnHtml += `    <a id="wa-btn" class="link whatsapp">\n        <i class="fab fa-whatsapp"></i> \n        واتسئاپ \${hasHand}\n    </a>\n`;
         btnJs += `    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "\${videoParam}");\n`;
         btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/\${wa}?text=" + message; };\n`;
@@ -118,22 +118,26 @@ function generate() {
     }
     // Instagram
     if(activeButtons.includes('ig')) {
-        btnHtml += `    <a id="ig-btn" class="link instagram"><i class="fab fa-instagram"></i> ئینستاگرام</a>\n`;
+        let hasHand = (activeButtons.length === 1) ? handHtml : '';
+        btnHtml += `    <a id="ig-btn" class="link instagram"><i class="fab fa-instagram"></i> ئینستاگرام \${hasHand}</a>\n`;
         btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "\${ig}".includes("instagram.com") ? "\${ig}" : "https://instagram.com/\${ig}"; window.location.href = url; };\n`;
     }
     // Viber
     if(activeButtons.includes('vi')) {
-        btnHtml += `    <a id="vb-btn" class="link viber"><i class="fab fa-viber"></i> ڤایبەر</a>\n`;
+        let hasHand = (activeButtons.length === 1) ? handHtml : '';
+        btnHtml += `    <a id="vb-btn" class="link viber"><i class="fab fa-viber"></i> ڤایبەر \${hasHand}</a>\n`;
         btnJs += `    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=\${vi}"; };\n`;
     }
     // Korek
     if(activeButtons.includes('ph')) {
-        btnHtml += `    <a id="ph-btn" class="link phone"><i class="fas fa-phone"></i> کۆڕەک</a>\n`;
+        let hasHand = (activeButtons.length === 1) ? handHtml : '';
+        btnHtml += `    <a id="ph-btn" class="link phone"><i class="fas fa-phone"></i> کۆڕەک \${hasHand}</a>\n`;
         btnJs += `    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:\${ph}"; };\n`;
     }
     // Asiacell
     if(activeButtons.includes('as')) {
-        btnHtml += `    <a id="as-btn" class="link asiacell"><i class="fas fa-phone"></i> ئاسیاسێڵ</a>\n`;
+        let hasHand = (activeButtons.length === 1) ? handHtml : '';
+        btnHtml += `    <a id="as-btn" class="link asiacell"><i class="fas fa-phone"></i> ئاسیاسێڵ \${hasHand}</a>\n`;
         btnJs += `    document.getElementById('as-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); window.location.href = "tel:\${as}"; };\n`;
     }
 
@@ -159,12 +163,14 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 .profile p{margin:10px 8px 0; font-size:14px; color:#000000; line-height:1.7;}
 .links{display:flex; flex-direction:column; gap:14px; margin:28px 0 28px;}
 .link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition:transform .12s ease, box-shadow .12s ease; overflow: hidden; will-change: transform; cursor: pointer; }
-.link:active{transform:scale(.98)}
 .link i{ position:absolute; left:18px; width:30px; text-align:center; font-size:24px; }
 .whatsapp{background:#25D366; position:relative;}
 .telegram{background:#26A5E4; position:relative;}
+.viber{background:#7360f2;}
+.phone{background:#0062AD}
+.asiacell{background:#ff0000}
+.instagram{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af,#515bd4);}
 
-/* Shine Effect */
 .whatsapp::after, .telegram::after {
   content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite;
 }
@@ -178,10 +184,6 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 @keyframes clickAnim { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.9); } }
 @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.5); opacity: 0; } }
 
-.viber{background:#7360f2;}
-.phone{background:#0062AD}
-.asiacell{background:#ff0000}
-.instagram{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af,#515bd4);}
 .divider{width:100%; height:1px; margin:28px 0 18px; background:linear-gradient(to right, transparent, #ddd, transparent);}
 .footer{text-align:center;}
 .footer small{display:block; font-size:10px; color:#656565; margin-bottom:8px;}
