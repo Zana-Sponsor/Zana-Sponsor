@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Optimized Speed & Smoothness1 V6</title>
+    <title>Proxo Builder - Optimized Speed & Smoothness1 V7</title>
     <style>
         @font-face {
             font-family: 'Rudaw';
@@ -45,6 +45,9 @@
             <label class="toggle-item"><input type="checkbox" id="cWa" checked onchange="toggleExtra('cWa', 'wa-extra'); generate()"> واتسئاپ</label>
             <div id="wa-extra" class="hidden-input" style="display:block;"><input type="text" id="waVal" placeholder="9647500000000" oninput="generate()"></div>
 
+            <label class="toggle-item"><input type="checkbox" id="cTg" onchange="toggleExtra('cTg', 'tg-extra'); generate()"> تێلیگرام</label>
+            <div id="tg-extra" class="hidden-input"><input type="text" id="tgVal" placeholder="username" oninput="generate()"></div>
+
             <label class="toggle-item"><input type="checkbox" id="cVi" checked onchange="toggleExtra('cVi', 'vi-extra'); generate()"> ڤایبەر</label>
             <div id="vi-extra" class="hidden-input" style="display:block;"><input type="text" id="viVal" placeholder="ژمارە" oninput="generate()"></div>
 
@@ -79,6 +82,7 @@ function generate() {
     const videoParam = document.getElementById('videoLink').value.trim() || "https://vt.tiktok.com/ZSmGG58DN/";
 
     const wa = document.getElementById('waVal').value.replace('+', '') || "9647511040724";
+    const tg = document.getElementById('tgVal').value || "username";
     const vi = document.getElementById('viVal').value || "9647511040724";
     const ig = document.getElementById('igVal').value || "username";
     const ph = document.getElementById('phVal').value || "07511040724";
@@ -86,29 +90,51 @@ function generate() {
 
     let finalLogo = logoUrl !== "" ? logoUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=0062AD&color=fff&size=200&bold=true`;
 
+    let activeButtons = [];
+    if(document.getElementById('cWa').checked) activeButtons.push('wa');
+    if(document.getElementById('cTg').checked) activeButtons.push('tg');
+    if(document.getElementById('cVi').checked) activeButtons.push('vi');
+    if(document.getElementById('cIg').checked) activeButtons.push('ig');
+    if(document.getElementById('cPh').checked) activeButtons.push('ph');
+    if(document.getElementById('cAs').checked) activeButtons.push('as');
+
     let btnHtml = '';
     let btnJs = '';
 
-    if(document.getElementById('cWa').checked) {
-        btnHtml += `    <a id="wa-btn" class="link whatsapp">\n        <i class="fab fa-whatsapp"></i> \n        واتسئاپ \n        <span id="click-hand" class="hand-container">\n            <span class="click-circle"></span>\n            <span class="finger-emoji">👆</span>\n        </span>\n    </a>\n`;
-        btnJs += `    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "${videoParam}");\n`;
-        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/${wa}?text=" + message; };\n`;
+    const handHtml = `\n        <span id="click-hand" class="hand-container">\n            <span class="click-circle"></span>\n            <span class="finger-emoji">👆</span>\n        </span>`;
+
+    // WhatsApp
+    if(activeButtons.includes('wa')) {
+        let hasHand = (activeButtons.length === 1 || activeButtons[0] === 'wa') ? handHtml : '';
+        btnHtml += `    <a id="wa-btn" class="link whatsapp">\n        <i class="fab fa-whatsapp"></i> \n        واتسئاپ \${hasHand}\n    </a>\n`;
+        btnJs += `    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "\${videoParam}");\n`;
+        btnJs += `    document.getElementById('wa-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'WhatsApp' }] }); window.location.href = "https://wa.me/\${wa}?text=" + message; };\n`;
     }
-    if(document.getElementById('cIg').checked) {
+    // Telegram
+    if(activeButtons.includes('tg')) {
+        let hasHand = (activeButtons.length === 1) ? handHtml : '';
+        btnHtml += `    <a id="tg-btn" class="link telegram">\n        <i class="fab fa-telegram"></i> \n        تێلیگرام \${hasHand}\n    </a>\n`;
+        btnJs += `    document.getElementById('tg-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Telegram' }] }); window.location.href = "https://t.me/\${tg}"; };\n`;
+    }
+    // Instagram
+    if(activeButtons.includes('ig')) {
         btnHtml += `    <a id="ig-btn" class="link instagram"><i class="fab fa-instagram"></i> ئینستاگرام</a>\n`;
-        btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "${ig}".includes("instagram.com") ? "${ig}" : "https://instagram.com/${ig}"; window.location.href = url; };\n`;
+        btnJs += `    document.getElementById('ig-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Instagram' }] }); let url = "\${ig}".includes("instagram.com") ? "\${ig}" : "https://instagram.com/\${ig}"; window.location.href = url; };\n`;
     }
-    if(document.getElementById('cVi').checked) {
+    // Viber
+    if(activeButtons.includes('vi')) {
         btnHtml += `    <a id="vb-btn" class="link viber"><i class="fab fa-viber"></i> ڤایبەر</a>\n`;
-        btnJs += `    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=${vi}"; };\n`;
+        btnJs += `    document.getElementById('vb-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Viber' }] }); window.location.href = "viber://chat?number=\${vi}"; };\n`;
     }
-    if(document.getElementById('cPh').checked) {
+    // Korek
+    if(activeButtons.includes('ph')) {
         btnHtml += `    <a id="ph-btn" class="link phone"><i class="fas fa-phone"></i> کۆڕەک</a>\n`;
-        btnJs += `    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:${ph}"; };\n`;
+        btnJs += `    document.getElementById('ph-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Korek' }] }); window.location.href = "tel:\${ph}"; };\n`;
     }
-    if(document.getElementById('cAs').checked) {
+    // Asiacell
+    if(activeButtons.includes('as')) {
         btnHtml += `    <a id="as-btn" class="link asiacell"><i class="fas fa-phone"></i> ئاسیاسێڵ</a>\n`;
-        btnJs += `    document.getElementById('as-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); window.location.href = "tel:${as}"; };\n`;
+        btnJs += `    document.getElementById('as-btn').onclick = function() { if(window.ttq) ttq.track('Contact', { contents: [{ content_name: 'Phone_Asiacell' }] }); window.location.href = "tel:\${as}"; };\n`;
     }
 
     const template = `<!DOCTYPE html>
@@ -122,147 +148,41 @@ function generate() {
 @font-face {
     font-family: 'Rudaw';
     src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/new_rudaw_bold.woff2') format('woff2');
-    font-weight: bold;
-    font-style: normal;
-    font-display: swap;
+    font-weight: bold; font-style: normal; font-display: swap;
 }
 *{box-sizing:border-box}
-body{
-  margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif;
-  background:#ffffff;
-  display:flex; align-items:center; justify-content:center;
-}
-
-.container{
-  width:100%;
-  max-width:380px;
-  padding:36px 16px 40px;
-  text-align:center;
-  background:#fff;
-}
-
+body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background:#ffffff; display:flex; align-items:center; justify-content:center; }
+.container{ width:100%; max-width:380px; padding:36px 16px 40px; text-align:center; background:#fff; }
 .profile{padding:18px 8px 10px; margin-bottom:24px;}
-.profile img{
-  width:90px;height:90px;border-radius:50%;object-fit:cover;margin-bottom:10px;
-  box-shadow:0 6px 18px rgba(0,0,0,.12);
-}
-.profile h1{
-    margin:6px 0 6px; 
-    font-size:18px; 
-    color:#000000;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-}
+.profile img{ width:90px;height:90px;border-radius:50%;object-fit:cover;margin-bottom:10px; box-shadow:0 6px 18px rgba(0,0,0,.12); }
+.profile h1{ margin:6px 0 6px; font-size:18px; color:#000000; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
 .profile p{margin:10px 8px 0; font-size:14px; color:#000000; line-height:1.7;}
-
 .links{display:flex; flex-direction:column; gap:14px; margin:28px 0 28px;}
-
-.link{
-  position:relative;
-  display:flex; align-items:center; justify-content:center;
-  padding:14px 18px 14px 48px;
-  border-radius:999px;
-  font-size:16px;
-  font-weight:700;
-  color:#fff; text-decoration:none;
-  min-height:48px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-  transition:transform .12s ease, box-shadow .12s ease;
-  overflow: hidden;
-  will-change: transform;
-  cursor: pointer;
-}
+.link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition:transform .12s ease, box-shadow .12s ease; overflow: hidden; will-change: transform; cursor: pointer; }
 .link:active{transform:scale(.98)}
-
-.link i{
-  position:absolute;
-  left:18px;
-  width:30px;
-  text-align:center;
-  font-size:24px;
-}
-
+.link i{ position:absolute; left:18px; width:30px; text-align:center; font-size:24px; }
 .whatsapp{background:#25D366; position:relative;}
+.telegram{background:#26A5E4; position:relative;}
 
-/* زیادکردنی بریقە بۆ واتسئاپ */
-.whatsapp::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
-  transform: skewX(-25deg);
-  animation: shine 2s infinite;
+/* Shine Effect */
+.whatsapp::after, .telegram::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite;
 }
+@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }
+.no-shine::after { animation: none !important; display: none !important; }
 
-@keyframes shine {
-  0% { left: -100%; }
-  100% { left: 150%; }
-}
-
-.whatsapp.no-shine::after {
-  animation: none;
-  display: none;
-}
-
-.hand-container {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 60px;
-    height: 60px;
-    z-index: 10;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.8s ease-out;
-    opacity: 1;
-}
-
-.hand-container.hidden {
-    opacity: 0;
-}
-
-.finger-emoji {
-    font-size: 25px;
-    position: relative;
-    z-index: 2;
-    animation: clickAnim 1s infinite;
-    margin-left: 10px;
-    margin-top: 15px;
-}
-
-.click-circle {
-    position: absolute;
-    width: 25px;
-    height: 25px;
-    border: 3px solid rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    animation: pulse 1s infinite;
-    z-index: 1;
-}
-
-@keyframes clickAnim {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(0.9); }
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 0.8; }
-    100% { transform: scale(2.5); opacity: 0; }
-}
+.hand-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; z-index: 10; pointer-events: none; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease-out; opacity: 1; }
+.hand-container.hidden { opacity: 0; }
+.finger-emoji { font-size: 25px; position: relative; z-index: 2; animation: clickAnim 1s infinite; margin-left: 10px; margin-top: 15px; }
+.click-circle { position: absolute; width: 25px; height: 25px; border: 3px solid rgba(255, 255, 255, 0.8); border-radius: 50%; animation: pulse 1s infinite; z-index: 1; }
+@keyframes clickAnim { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.9); } }
+@keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.5); opacity: 0; } }
 
 .viber{background:#7360f2;}
 .phone{background:#0062AD}
 .asiacell{background:#ff0000}
 .instagram{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af,#515bd4);}
-
 .divider{width:100%; height:1px; margin:28px 0 18px; background:linear-gradient(to right, transparent, #ddd, transparent);}
-
 .footer{text-align:center;}
 .footer small{display:block; font-size:10px; color:#656565; margin-bottom:8px;}
 .footer img{height:14px; width:auto; display:block; margin:0 auto 6px;}
@@ -271,55 +191,34 @@ body{
 </style>
 </head>
 <body>
-
 <div class="container">
   <div class="profile">
-    <img src="${finalLogo}" alt="Logo">
-    <h1>${brand}</h1>
+    <img src="\${finalLogo}" alt="Logo">
+    <h1>\${brand}</h1>
     <p>بۆ زانیاری زیاتر، پەیوەندی بکە لەڕێگەی دوگمەکانەوە.</p>
   </div>
-
-  <div class="links">
-${btnHtml}
-  </div>
-
+  <div class="links">\${btnHtml}</div>
   <div class="divider"></div>
-
   <div class="footer">
     <small>سپۆنسەر کراوە لەلایەن</small>
-    <a href="https://www.proxopages.com" target="_blank">
-      <img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo">
-    </a>
-    <div class="legal">
-      <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | 
-      <a href="https://proxopages.com/terms" target="_blank">Terms & Conditions</a>
-    </div>
+    <a href="https://www.proxopages.com" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a>
+    <div class="legal"><a href="https://proxopages.com/policy">Privacy Policy</a> | <a href="https://proxopages.com/terms">Terms & Conditions</a></div>
   </div>
 </div>
-
 <script>
-!function (w, d, t) {
-  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
-var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script")
-;s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(s,e)};
-  ttq.load('D6BIIA3C77U1CE9DCUMG');
-  ttq.page();
-}(window, document, 'ttq');
-
+!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script");s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(s,e)};ttq.load('D6BIIA3C77U1CE9DCUMG');ttq.page();}(window,document,'ttq');
 document.addEventListener("DOMContentLoaded", function() {
-${btnJs}
-
+\${btnJs}
     setTimeout(function() {
         var clickHand = document.getElementById('click-hand');
-        var waBtn = document.getElementById('wa-btn');
+        var shineBtn = document.querySelector('.whatsapp, .telegram');
         if (clickHand) { clickHand.classList.add('hidden'); }
-        if (waBtn) { waBtn.classList.add('no-shine'); }
+        if (shineBtn) { shineBtn.classList.add('no-shine'); }
     }, 6000);
 });
 <\/script>
-
 </body>
-</html>`;
+</html>\`;
     document.getElementById('output').value = template;
 }
 
