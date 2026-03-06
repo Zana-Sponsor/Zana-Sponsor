@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Optimized Speed & Smoothness1 V4</title>
+    <title>Proxo Builder - Optimized Speed & Smoothness1 V6</title>
     <style>
         @font-face {
             font-family: 'Rudaw';
@@ -177,14 +177,9 @@ body{
 .link i{
   position:absolute;
   left:18px;
-  width:26px;
+  width:30px;
   text-align:center;
-  font-size:20px;
-}
-
-/* گەورەکردنی تایبەتی ئایکۆنی واتسئاپ */
-.whatsapp i {
-    font-size: 26px;
+  font-size:24px;
 }
 
 .whatsapp{background:#25D366; position:relative;}
@@ -279,13 +274,13 @@ body{
 
 <div class="container">
   <div class="profile">
-    <img src="\${finalLogo}" alt="Logo">
-    <h1>\${brand}</h1>
+    <img src="${finalLogo}" alt="Logo">
+    <h1>${brand}</h1>
     <p>بۆ زانیاری زیاتر، پەیوەندی بکە لەڕێگەی دوگمەکانەوە.</p>
   </div>
 
   <div class="links">
-\${btnHtml}
+${btnHtml}
   </div>
 
   <div class="divider"></div>
@@ -303,7 +298,6 @@ body{
 </div>
 
 <script>
-// TikTok Pixel Code
 !function (w, d, t) {
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
 var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script")
@@ -313,13 +307,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 }(window, document, 'ttq');
 
 document.addEventListener("DOMContentLoaded", function() {
-\${btnJs}
+${btnJs}
 
-    // نەمانی ئیمۆجیەکە و بریقەکە دوای 6 چرکە بە نەرمی
     setTimeout(function() {
         var clickHand = document.getElementById('click-hand');
         var waBtn = document.getElementById('wa-btn');
-        
         if (clickHand) { clickHand.classList.add('hidden'); }
         if (waBtn) { waBtn.classList.add('no-shine'); }
     }, 6000);
@@ -327,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <\/script>
 
 </body>
-</html>\`;
+</html>`;
     document.getElementById('output').value = template;
 }
 
