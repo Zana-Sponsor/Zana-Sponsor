@@ -10,13 +10,14 @@
 *{box-sizing:border-box}
 body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background:#ffffff; display:flex; align-items:center; justify-content:center; }
 .container{ width:100%; max-width:380px; padding:36px 16px 40px; text-align:center; background:#fff; }
-.profile img{ width:90px;height:90px;border-radius:50%;object-fit:cover;margin-bottom:8px; box-shadow:0 6px 18px rgba(0,0,0,.12); }
-.profile h1{ margin:6px 0 6px; font-size:18px; color:#000; text-shadow: none; }
-.profile p{ margin:10px 8px 0; font-size:14px; color:#000; line-height:1.7; text-shadow: none; }
+.profile{padding:18px 8px 10px; margin-bottom:24px;}
+.profile img{ width:92px;height:92px;border-radius:50%;object-fit:cover;margin-bottom:10px; box-shadow:0 6px 18px rgba(0,0,0,.12); }
+.profile h1{ margin:6px 0 6px; font-size:18px; color:#000; }
+.profile p{ margin:10px 8px 0; font-size:14px; color:#000; line-height:1.7; }
 .links{ display:flex; flex-direction:column; gap:14px; margin:28px 0; }
 .link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition:transform .12s ease; overflow: hidden; cursor: pointer; }
 .link:active{transform:scale(.98)}
-.link i{ position:absolute; left:18px; font-size:24px; text-align:center; width:26px; }
+.link i{ position:absolute; left:18px; font-size:22px; text-align:center; width:26px; text-shadow: none !important; }
 .whatsapp{background:#25D366;}
 .telegram{background:#26A5E4;}
 .viber{background:#7360f2;}
@@ -47,15 +48,15 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
     <p>بۆ زانیاری زیاتر، پەیوەندی بکە لەڕێگەی دوگمەکانەوە.</p>
   </div>
   <div class="links">    <a id="wa-btn" class="link whatsapp shine-active">
-        <i class="fab fa-whatsapp"></i> 
+        <i class="fab fa-whatsapp" style="font-size: 24px;"></i> 
         واتسئاپ 
         <span id="click-hand" class="hand-container">
             <span class="click-circle"></span>
             <span class="finger-emoji">👆</span>
         </span>
     </a>
+    <a id="vb-btn" class="link viber "><i class="fab fa-viber"></i> ڤایبەر </a>
     <a id="ph-btn" class="link phone "><i class="fas fa-phone"></i> کۆڕەک </a>
-    <a id="as-btn" class="link asiacell "><i class="fas fa-phone"></i> ئاسیاسێڵ </a>
 </div>
   <div class="divider"></div>
   <div class="footer">
@@ -69,10 +70,10 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + "https://vt.tiktok.com/ZSuLB9MgD/");
+    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + "https://vt.tiktok.com/ZSuLfhKVt/");
     document.getElementById("wa-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { contents: [{ content_name: "WhatsApp" }] }); window.location.href = "https://wa.me/9647738668861?text=" + message; };
-    document.getElementById("ph-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { contents: [{ content_name: "Phone_Korek" }] }); window.location.href = "tel:07510074008"; };
-    document.getElementById("as-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { contents: [{ content_name: "Phone_Asiacell" }] }); window.location.href = "tel:07738668861"; };
+    document.getElementById("vb-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { contents: [{ content_name: "Viber" }] }); window.location.href = "viber://chat?number=9647738668861"; };
+    document.getElementById("ph-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { contents: [{ content_name: "Phone_Korek" }] }); window.location.href = "tel:9647738668861"; };
 
     setTimeout(function() {
         var clickHand = document.getElementById('click-hand');
