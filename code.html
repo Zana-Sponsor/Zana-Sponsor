@@ -79,14 +79,14 @@ function generate() {
     const brand = document.getElementById('brand').value || "ناوی تۆ لێرە بنووسە";
     const initials = document.getElementById('initials').value || "P+T";
     const logoUrl = document.getElementById('logoUrl').value.trim();
-    const videoParam = document.getElementById('videoLink').value.trim() || "https://vt.tiktok.com/ZSmGG58DN/";
+    const videoParam = document.getElementById('videoLink').value.trim() || "https://vt.tiktok.com/...";
 
     const wa = document.getElementById('waVal').value.replace('+', '') || "9647511040724";
-    const tg = document.getElementById('tgVal').value || "username";
+    const tg = document.getElementById('tgVal').value || "@username";
     const vi = document.getElementById('viVal').value || "9647511040724";
-    const ig = document.getElementById('igVal').value || "username";
+    const ig = document.getElementById('igVal').value || "@username";
     const ph = document.getElementById('phVal').value || "07511040724";
-    const as = document.getElementById('asVal').value || "07700000000";
+    const as = document.getElementById('asVal').value || "07701234567";
 
     let finalLogo = logoUrl !== "" ? logoUrl : "https://ui-avatars.com/api/?name=" + encodeURIComponent(initials) + "&background=0062AD&color=fff&size=200&bold=true";
 
@@ -107,7 +107,7 @@ function generate() {
         let shineClass = (index === 0) ? 'shine-active' : '';
 
         if(btn === 'wa') {
-            btnHtml += '    <a id="wa-btn" class="link whatsapp ' + shineClass + '">\n        <i class="fab fa-whatsapp"></i> \n        واتسئاپ ' + hasHand + '\n    </a>\n';
+            btnHtml += '    <a id="wa-btn" class="link whatsapp ' + shineClass + '">\n        <i class="fab fa-whatsapp" style="font-size: 24px;"></i> \n        واتسئاپ ' + hasHand + '\n    </a>\n';
             btnJs += '    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "' + videoParam + '");\n    document.getElementById("wa-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { contents: [{ content_name: "WhatsApp" }] }); window.location.href = "https://wa.me/' + wa + '?text=" + message; };\n';
         }
         if(btn === 'tg') {
@@ -151,7 +151,7 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 .links{ display:flex; flex-direction:column; gap:14px; margin:28px 0; }
 .link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition:transform .12s ease; overflow: hidden; cursor: pointer; }
 .link:active{transform:scale(.98)}
-.link i{ position:absolute; left:18px; font-size:20px; text-align:center; width:26px; text-shadow: none !important; }
+.link i{ position:absolute; left:18px; font-size:22px; text-align:center; width:26px; text-shadow: none !important; }
 .whatsapp{background:#25D366;}
 .telegram{background:#26A5E4;}
 .viber{background:#7360f2;}
@@ -214,7 +214,7 @@ function copy() {
     document.execCommand('copy');
     alert("کۆدەکە بە تەواوی کۆپی کرا! ✅");
 }
-generate();
+  generate();
 </script>
 </body>
 </html>
