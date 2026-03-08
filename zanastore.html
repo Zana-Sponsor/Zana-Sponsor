@@ -15,8 +15,8 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 .profile h1{ margin:6px 0 6px; font-size:18px; color:#000; }
 .profile p{ margin:10px 8px 0; font-size:14px; color:#000; line-height:1.7; }
 .links{ display:flex; flex-direction:column; gap:14px; margin:28px 0; }
-.link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition:transform .12s ease; overflow: hidden; cursor: pointer; }
-.link:active{transform:scale(.98)}
+.link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; cursor: pointer; }
+.link:active{transform:scale(0.92)}
 .link i{ position:absolute; left:18px; font-size:22px; text-align:center; width:26px; text-shadow: none !important; }
 .whatsapp{background:#25D366;}
 .telegram{background:#26A5E4;}
@@ -44,7 +44,7 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 <div class="container">
   <div class="profile">
     <img src="https://image2url.com/r2/default/images/1772756949098-d6d76b46-8ea1-4475-a900-a41c4bec7bc4.webp" alt="Logo">
-    <h1>زانا سپۆنسەر</h1>
+    <h1>Zana Store</h1>
     <p>بۆ زانیاری زیاتر، پەیوەندی بکە لەڕێگەی دوگمەکانەوە.</p>
   </div>
   <div class="links">    <a id="wa-btn" class="link whatsapp shine-active">
@@ -69,11 +69,21 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
   </div>
 </div>
 <script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script")
+;s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(s,e)};
+  
+  ttq.load('D6BIIA3C77U1CE9DCUMG');
+  ttq.page();
+
+}(window, document, 'ttq');
+
 document.addEventListener("DOMContentLoaded", function() {
-    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + "https://vt.tiktok.com/ZSuLfhKVt/");
-    document.getElementById("wa-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { contents: [{ content_name: "WhatsApp" }] }); window.location.href = "https://wa.me/9647738668861?text=" + message; };
-    document.getElementById("vb-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { contents: [{ content_name: "Viber" }] }); window.location.href = "viber://chat?number=9647738668861"; };
-    document.getElementById("ph-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { contents: [{ content_name: "Phone_Korek" }] }); window.location.href = "tel:9647738668861"; };
+    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + "https://vt.tiktok.com/ZSu2Hr6gw/");
+    document.getElementById("wa-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Contact_Lead" }); window.location.href = "https://wa.me/9647738668861?text=" + message; };
+    document.getElementById("vb-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Contact_Lead" }); window.location.href = "viber://chat?number=9647738668861"; };
+    document.getElementById("ph-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Contact_Lead" }); window.location.href = "tel:07510074008"; };
 
     setTimeout(function() {
         var clickHand = document.getElementById('click-hand');
