@@ -81,9 +81,9 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 
 document.addEventListener("DOMContentLoaded", function() {
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + "https://vt.tiktok.com/ZSuFUhA4g/");
-    document.getElementById("wa-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Contact_Lead" }); window.location.href = "https://wa.me/9647507252570?text=" + message; };
-    document.getElementById("vb-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Contact_Lead" }); window.location.href = "viber://chat?number=9647507252570"; };
-    document.getElementById("ph-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Contact_Lead" }); window.location.href = "tel:9647507252570"; };
+    document.getElementById("wa-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "wa-btn", content_name: "Contact_Lead" }); window.location.href = "https://wa.me/9647507252570?text=" + message; };
+    document.getElementById("vb-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "vb-btn", content_name: "Contact_Lead" }); window.location.href = "viber://chat?number=9647507252570"; };
+    document.getElementById("ph-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "tel-btn", content_name: "Contact_Lead" }); window.location.href = "tel:9647507252570"; };
 
     setTimeout(function() {
         var clickHand = document.getElementById('click-hand');
