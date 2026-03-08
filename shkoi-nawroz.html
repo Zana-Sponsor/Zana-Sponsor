@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proxo - Links</title>
+<title>Proxo - Fixed Click</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 @font-face { font-family: 'Rudaw'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/new_rudaw_bold.woff2') format('woff2'); font-weight: bold; font-style: normal; font-display: swap; }
@@ -19,11 +19,8 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 .link:active{transform:scale(.98)}
 .link i{ position:absolute; left:18px; font-size:22px; text-align:center; width:26px; text-shadow: none !important; }
 .whatsapp{background:#25D366;}
-.telegram{background:#26A5E4;}
 .viber{background:#7360f2;}
 .phone{background:#0062AD}
-.asiacell{background:#ff0000}
-.instagram{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af,#515bd4);}
 .shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }
 @keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }
 .no-shine::after { animation: none !important; display: none !important; }
@@ -36,8 +33,6 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 .divider{ width:100%; height:1px; margin:28px 0 18px; background:linear-gradient(to right, transparent, #ddd, transparent); }
 .footer small{ display:block; font-size:10px; color:#656565; margin-bottom:8px; }
 .footer img{ height:14px; margin:0 auto 6px; display:block; }
-.legal{margin-top:10px; font-size:10px; color:#656565;}
-.legal a{color:inherit; text-decoration:none; margin:0 6px;}
 </style>
 </head>
 <body>
@@ -49,8 +44,7 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
   </div>
   <div class="links">
     <a id="wa-btn" class="link whatsapp shine-active">
-        <i class="fab fa-whatsapp" style="font-size: 24px;"></i> 
-        واتسئاپ 
+        <i class="fab fa-whatsapp"></i> واتسئاپ 
         <span id="click-hand" class="hand-container">
             <span class="click-circle"></span>
             <span class="finger-emoji">👆</span>
@@ -63,50 +57,44 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
   <div class="footer">
     <small>سپۆنسەر کراوە لەلایەن</small>
     <a href="https://www.proxopages.com" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a>
-    <div class="legal">
-      <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | 
-      <a href="https://proxopages.com/terms" target="_blank">Terms & Conditions</a>
-    </div>
   </div>
 </div>
+
 <script>
 !function (w, d, t) {
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
 var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script")
 ;s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(s,e)};
-  
   ttq.load('D6BIIA3C77U1CE9DCUMG');
   ttq.page();
-
 }(window, document, 'ttq');
 
 document.addEventListener("DOMContentLoaded", function() {
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + "https://vt.tiktok.com/ZSuFUhA4g/");
     
-    // سیستەمی ڕێگری لە دووبارە کلیک کردن
-    let isProcessing = false;
+    // لێرەدا قفڵەکە دادەنێین بۆ ئەوەی ڕێگری لە دوو کلیک بکەین
+    let sentTags = {}; 
 
-    function handleContact(btnId, eventName, url) {
+    function safeTrack(btnId, eventName, url) {
         document.getElementById(btnId).onclick = function(e) {
             e.preventDefault();
-            if (isProcessing) return; // ئەگەر قفڵ بوو، هیچ مەکە
             
-            isProcessing = true;
-            if(window.ttq) {
-                ttq.track("Contact", { content_id: btnId, content_name: eventName });
+            // ئەگەر ئەم دوگمەیە پێشتر یەکجار نێردرابێت، ئیتر مەنێرە
+            if (!sentTags[btnId]) {
+                if(window.ttq) {
+                    ttq.track("Contact", { content_id: btnId, content_name: eventName });
+                }
+                sentTags[btnId] = true; 
             }
             
-            // دوای ٢ چرکە قفڵەکە دەکاتەوە
-            setTimeout(() => { isProcessing = false; }, 2000);
-            
-            // گواستنەوە بۆ لینکەکە
+            // دوای کلیکەکە یەکسەر دەچێت بۆ لینکەکە
             window.location.href = url;
         };
     }
 
-    handleContact("wa-btn", "WhatsApp", "https://wa.me/9647507252570?text=" + message);
-    handleContact("vb-btn", "Viber", "viber://chat?number=9647507252570");
-    handleContact("ph-btn", "Phone_Korek", "tel:9647507252570");
+    safeTrack("wa-btn", "WhatsApp_Fixed", "https://wa.me/9647507252570?text=" + message);
+    safeTrack("vb-btn", "Viber_Fixed", "viber://chat?number=9647507252570");
+    safeTrack("ph-btn", "Korek_Fixed", "tel:9647507252570");
 
     setTimeout(function() {
         var clickHand = document.getElementById('click-hand');
