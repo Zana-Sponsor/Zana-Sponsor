@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proxo - Fixed Click</title>
+<title>عەقارات شکۆی نەورۆز</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 @font-face { font-family: 'Rudaw'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/new_rudaw_bold.woff2') format('woff2'); font-weight: bold; font-style: normal; font-display: swap; }
@@ -33,6 +33,8 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 .divider{ width:100%; height:1px; margin:28px 0 18px; background:linear-gradient(to right, transparent, #ddd, transparent); }
 .footer small{ display:block; font-size:10px; color:#656565; margin-bottom:8px; }
 .footer img{ height:14px; margin:0 auto 6px; display:block; }
+.legal{margin-top:10px; font-size:10px; color:#656565;}
+.legal a{color:inherit; text-decoration:none; margin:0 6px;}
 </style>
 </head>
 <body>
@@ -44,7 +46,8 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
   </div>
   <div class="links">
     <a id="wa-btn" class="link whatsapp shine-active">
-        <i class="fab fa-whatsapp"></i> واتسئاپ 
+        <i class="fab fa-whatsapp" style="font-size: 24px;"></i> 
+        واتسئاپ 
         <span id="click-hand" class="hand-container">
             <span class="click-circle"></span>
             <span class="finger-emoji">👆</span>
@@ -57,6 +60,10 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
   <div class="footer">
     <small>سپۆنسەر کراوە لەلایەن</small>
     <a href="https://www.proxopages.com" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a>
+    <div class="legal">
+      <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | 
+      <a href="https://proxopages.com/terms" target="_blank">Terms & Conditions</a>
+    </div>
   </div>
 </div>
 
@@ -72,29 +79,33 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);re
 document.addEventListener("DOMContentLoaded", function() {
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + "https://vt.tiktok.com/ZSuFUhA4g/");
     
-    // لێرەدا قفڵەکە دادەنێین بۆ ئەوەی ڕێگری لە دوو کلیک بکەین
-    let sentTags = {}; 
+    let isClicked = false;
 
-    function safeTrack(btnId, eventName, url) {
-        document.getElementById(btnId).onclick = function(e) {
+    function handleAction(btnId, eventLabel, url) {
+        const btn = document.getElementById(btnId);
+        btn.onclick = function(e) {
             e.preventDefault();
-            
-            // ئەگەر ئەم دوگمەیە پێشتر یەکجار نێردرابێت، ئیتر مەنێرە
-            if (!sentTags[btnId]) {
-                if(window.ttq) {
-                    ttq.track("Contact", { content_id: btnId, content_name: eventName });
-                }
-                sentTags[btnId] = true; 
+            if (isClicked) return;
+            isClicked = true;
+
+            // ناردنی داتا بۆ تیکتۆک
+            if(window.ttq) {
+                ttq.track("Contact", { content_id: btnId, content_name: eventLabel });
             }
-            
-            // دوای کلیکەکە یەکسەر دەچێت بۆ لینکەکە
+
+            // گواستنەوە بۆ بەرنامەکە
             window.location.href = url;
+
+            // ڕیفرێشکردنی لاپەڕەکە دوای نیو چرکە
+            setTimeout(function() {
+                window.location.reload();
+            }, 500);
         };
     }
 
-    safeTrack("wa-btn", "WhatsApp_Fixed", "https://wa.me/9647507252570?text=" + message);
-    safeTrack("vb-btn", "Viber_Fixed", "viber://chat?number=9647507252570");
-    safeTrack("ph-btn", "Korek_Fixed", "tel:9647507252570");
+    handleAction("wa-btn", "WhatsApp", "https://wa.me/9647507252570?text=" + message);
+    handleAction("vb-btn", "Viber", "viber://chat?number=9647507252570");
+    handleAction("ph-btn", "Korek", "tel:9647507252570");
 
     setTimeout(function() {
         var clickHand = document.getElementById('click-hand');
