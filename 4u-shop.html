@@ -11,7 +11,17 @@
 body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background:#ffffff; display:flex; align-items:center; justify-content:center; }
 .container{ width:100%; max-width:380px; padding:36px 16px 40px; text-align:center; background:#fff; }
 .profile{padding:18px 8px 10px; margin-bottom:24px;}
-.profile img{ width:92px;height:92px;border-radius:50%;object-fit:cover;margin-bottom:10px; box-shadow:0 6px 18px rgba(0,0,0,.12); }
+.profile img {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.12);
+  /* ئەم دوو دێڕەی خوارەوە زیاد کراوە */
+  border: 3px solid #0062AD; /* ڕەنگ و خەستی چوارچێوەکە */
+  padding: 3px; /* مەودای نێوان وێنەکە و چوارچێوەکە */
+}
 .profile h1{ margin:6px 0 6px; font-size:20px; color:#000; }
 .profile p{ margin:10px 8px 0; font-size:14px; color:#000; line-height:1.7; }
 .links{ display:flex; flex-direction:column; gap:14px; margin:28px 0; }
