@@ -10,14 +10,12 @@
     
     <style>
         :root {
-            --primary-green: #22c55e;
-            --soft-bg: #f3f4f6;
+            --primary: #22c55e;
+            --soft-bg: #f8fafc;
             --card-white: #ffffff;
-            --text-dark: #1f2937;
-            --text-gray: #6b7280;
-            --border: #e5e7eb;
-            --warning-bg: #fff9eb;
-            --warning-text: #92400e;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
+            --border: #f1f5f9;
         }
 
         body { 
@@ -27,95 +25,96 @@
             margin: 0; padding: 0; 
         }
 
+        /* بەشی ناڤباری نوێ */
         nav { 
-            padding: 15px 5%; background: white; 
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            padding: 12px 5%; background: white; 
+            display: flex; justify-content: center; align-items: center;
+            border-bottom: 1px solid var(--border);
         }
-        .logo-img { height: 22px; }
+        .logo-img { height: 18px; opacity: 0.9; }
 
-        .container { padding: 30px 5%; max-width: 600px; margin: auto; }
+        .container { padding: 20px 5%; max-width: 500px; margin: auto; }
 
+        /* دیزاینی نوێی بەشی سەرەوە - بچووکتر و مۆدێرن */
         .top-status {
-            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-            border: 2px solid var(--primary-green);
-            border-radius: 25px; padding: 20px;
-            text-align: center; margin-bottom: 25px;
-            position: relative;
+            text-align: center; margin-bottom: 20px; padding: 15px;
         }
-        .top-status h2 { color: #15803d; margin: 0; font-size: 22px; font-weight: 900; }
-        .live-icon { 
-            position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
-            background: white; color: var(--primary-green);
-            width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #dcfce7; color: #15803d;
+            padding: 6px 16px; border-radius: 50px;
+            font-size: 13px; font-weight: 900; border: 1px solid #bbf7d0;
         }
+        .pulse {
+            width: 8px; height: 8px; background: #22c55e;
+            border-radius: 50%; box-shadow: 0 0 0 rgba(34, 197, 94, 0.4);
+            animation: pulse-animation 2s infinite;
+        }
+        @keyframes pulse-animation { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
 
+        /* کارتی ڕیکلام - دیزاینی پاکتر */
         .ad-card {
-            background: var(--card-white); border-radius: 24px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            padding: 25px; margin-bottom: 25px;
+            background: var(--card-white); border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            padding: 20px; margin-bottom: 20px;
             border: 1px solid var(--border);
         }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .status-tag { background: #f0fdf4; color: #16a34a; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: bold; }
-        .order-id { color: var(--text-gray); font-size: 13px; font-weight: 700; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .order-id { color: var(--text-gray); font-size: 11px; font-weight: 700; background: #f8fafc; padding: 3px 10px; border-radius: 6px; }
 
         .countdown-box {
-            background: var(--warning-bg); color: var(--warning-text);
-            padding: 12px; border-radius: 15px; margin: 15px 0;
-            border: 1px solid #fef3c7; text-align: center;
-            font-size: 14px; font-weight: 900;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: #fefce8; color: #854d0e;
+            padding: 10px; border-radius: 12px; margin: 10px 0;
+            border: 1px solid #fef08a; text-align: center;
+            font-size: 13px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
         }
 
-        .divider { height: 1px; background: var(--border); margin: 20px 0; }
+        .divider { height: 1px; background: var(--border); margin: 15px 0; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        /* داتاکان بچووکتر کراونەتەوە */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .stat-box { 
-            background: #f9fafb; padding: 15px 5px; border-radius: 18px; 
-            text-align: center; border: 1px solid #f3f4f6;
+            background: #fcfcfc; padding: 12px 4px; border-radius: 14px; 
+            text-align: center; border: 1px solid #f8fafc;
         }
-        .stat-box i { font-size: 18px; color: var(--text-dark); margin-bottom: 8px; display: block; }
-        .stat-value { display: block; font-size: 18px; font-weight: 900; color: #111827; }
-        .stat-label { font-size: 11px; color: var(--text-gray); }
+        .stat-box i { font-size: 14px; color: var(--text-gray); margin-bottom: 5px; display: block; }
+        .stat-value { display: block; font-size: 16px; font-weight: 900; color: #0f172a; }
+        .stat-label { font-size: 10px; color: var(--text-gray); font-weight: 400; }
 
-        .thumb-box { text-align: center; margin: 20px 0; }
-        .ad-thumb { width: 100px; height: 100px; border-radius: 18px; object-fit: cover; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .thumb-box { text-align: center; margin: 15px 0; }
+        .ad-thumb { width: 80px; height: 80px; border-radius: 15px; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
-        .sync-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .sync-row { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 10px; }
         .sync-btn { 
-            font-size: 13px; font-weight: 900; color: var(--text-dark); 
-            display: flex; align-items: center; gap: 8px; cursor: pointer;
-            background: #eee; padding: 5px 12px; border-radius: 50px; transition: 0.3s;
+            font-size: 11px; font-weight: 700; color: var(--text-gray); 
+            display: flex; align-items: center; gap: 5px; cursor: pointer;
+            background: #f1f5f9; padding: 4px 10px; border-radius: 50px;
         }
-        .sync-btn:hover { background: #ddd; }
         .sync-btn i.spinning { animation: fa-spin 1s infinite linear; }
         
-        .sync-text { font-size: 13px; font-weight: 900; color: #16a34a; display: flex; align-items: center; gap: 5px; }
-        .dot { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .sync-text { font-size: 11px; font-weight: 700; color: #10b981; display: flex; align-items: center; gap: 5px; }
 
-        .loading { text-align: center; padding: 50px; color: var(--text-gray); font-weight: bold; }
+        .loading { text-align: center; padding: 40px; color: var(--text-gray); font-size: 13px; }
     </style>
 </head>
 <body>
 
     <nav>
-        <div style="width:20px"></div>
         <img src="https://image2url.com/r2/default/images/1771403050640-6d5e5c5e-a1dc-45de-a7f4-b5f386e82668.png" class="logo-img">
-        <div style="width:20px"></div>
     </nav>
 
     <div class="container">
         <div class="top-status">
-            <div class="live-icon"><i class="fas fa-bolt"></i></div>
-            <h2>ڕیکلامەکەت چالاکە!</h2>
+            <div class="status-pill">
+                <div class="pulse"></div>
+                ئاماری ڕاستەوخۆ (LIVE)
+            </div>
         </div>
 
         <div id="live-ads-container">
-            <div class="loading">پەیوەندی بە تیکتۆکەوە دەکرێت...</div>
+            <div class="loading">خەریکی بەستنەوەی داتاکانین...</div>
         </div>
     </div>
 
@@ -128,45 +127,48 @@
         function getTimeLeft(endDate) {
             if (!endDate) return "دیاری نەکراوە";
             const diff = new Date(endDate).getTime() - new Date().getTime();
-            if (diff <= 0) return "تەواو بووە";
+            if (diff <= 0) return "کۆتایی هاتووە";
             
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             
-            return `${days} ڕۆژ، ${hours} ک، ${mins} خ ماوە`;
+            return `${days}ڕ، ${hours}ک، ${mins}خ ماوە`;
         }
 
-        // فەنکشنی نوێکردنەوەی دەستی
         async function manualRefresh(btn) {
             const icon = btn.querySelector('i');
-            icon.classList.add('spinning'); // دەستپێکردنی سووڕانەوە
-            
-            await fetchLiveAds(); // هێنانەوەی داتاکان
-            
-            setTimeout(() => {
-                icon.classList.remove('spinning'); // وەستاندنی سووڕانەوە دوای ١ چرکە
-            }, 1000);
+            icon.classList.add('spinning');
+            await fetchLiveAds();
+            setTimeout(() => { icon.classList.remove('spinning'); }, 800);
         }
 
         async function fetchLiveAds() {
             const container = document.getElementById('live-ads-container');
-            const { data, error } = await supabaseClient.from('ads1').select('*').eq('status', 'active');
+            const { data, error } = await supabaseClient.from('ads1').select('*').order('status', { ascending: true });
 
-            if (error) { container.innerHTML = `<div class="loading">Error.</div>`; return; }
+            if (error) { container.innerHTML = `<div class="loading">هەڵەیەک ڕوویدا.</div>`; return; }
 
             if (data && data.length > 0) {
                 container.innerHTML = '';
                 data.forEach(ad => {
+                    const isCompleted = ad.status === 'completed';
                     container.innerHTML += `
-                        <div class="ad-card">
+                        <div class="ad-card" style="${isCompleted ? 'opacity: 0.7; filter: grayscale(0.2);' : ''}">
                             <div class="card-header">
-                                <span class="status-tag">چالاک</span>
-                                <span class="order-id">ئۆردەر PROXO-${ad.tiktok_ad_id || '0000'}</span>
+                                <span class="order-id">#NASS-${ad.tiktok_ad_id || '0000'}</span>
+                                <div class="sync-text" style="${isCompleted ? 'color: #ef4444' : ''}">
+                                    ${isCompleted ? 'تەواو بووە' : 'ڕاستەوخۆ'}
+                                </div>
                             </div>
 
-                            <div class="countdown-box">
-                                <i class="fas fa-hourglass-half"></i> کاتی ماوە: ${getTimeLeft(ad.end_date)}
+                            <div class="thumb-box">
+                                <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb">
+                                <h3 style="font-size: 15px; margin: 10px 0 0 0;">${ad.customer_name || 'کڕیار'}</h3>
+                            </div>
+
+                            <div class="countdown-box" style="${isCompleted ? 'background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0;' : ''}">
+                                <i class="fas fa-clock"></i> ${isCompleted ? 'کۆتایی هات' : getTimeLeft(ad.end_date)}
                             </div>
 
                             <div class="divider"></div>
@@ -175,11 +177,6 @@
                                 <div class="sync-btn" onclick="manualRefresh(this)">
                                     <i class="fas fa-sync-alt"></i> نوێکردنەوە
                                 </div>
-                                <div class="sync-text">ئامارەکان <span class="dot"></span> ڕاستەوخۆ</div>
-                            </div>
-
-                            <div class="thumb-box">
-                                <img src="${ad.thumbnail_url || 'https://via.placeholder.com/100'}" class="ad-thumb">
                             </div>
 
                             <div class="stats-grid">
@@ -189,13 +186,13 @@
                                     <span class="stat-label">بینین</span>
                                 </div>
                                 <div class="stat-box">
-                                    <i class="fas fa-comment-dots"></i>
+                                    <i class="fas fa-mouse-pointer"></i>
                                     <span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span>
                                     <span class="stat-label">کلیک</span>
                                 </div>
                                 <div class="stat-box">
-                                    <i class="fas fa-wallet"></i>
-                                    <span class="stat-value">$${parseFloat(ad.spend || 0).toFixed(2)}</span>
+                                    <i class="fas fa-tag"></i>
+                                    <span class="stat-value">$${parseFloat(ad.spend || 0).toFixed(1)}</span>
                                     <span class="stat-label">خەرجکراو</span>
                                 </div>
                             </div>
@@ -203,11 +200,10 @@
                     `;
                 });
             } else {
-                container.innerHTML = `<div class="loading">هیچ ڕیکلامێکی چالاک نییە.</div>`;
+                container.innerHTML = `<div class="loading">هیچ زانیارییەک بەردەست نییە.</div>`;
             }
         }
 
-        // Realtime update
         supabaseClient.channel('live-updates').on('postgres_changes', 
         { event: '*', schema: 'public', table: 'ads1' }, () => fetchLiveAds()).subscribe();
 
