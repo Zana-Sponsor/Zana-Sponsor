@@ -3,104 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxo Admin - دەستکاری خێرا</title>
+    <title>Proxo Admin Ultimate</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --primary: #2563eb;
-            --tiktok-red: #fe2c55;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --bg: #f8fafc;
-            --white: #ffffff;
-            --border: #e2e8f0;
+            --primary: #3b82f6;
+            --accent: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --border: #334155;
         }
 
-        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); margin: 0; padding: 20px; color: #1e293b; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        
-        .header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 25px; background: var(--white); padding: 20px; 
-            border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
-        }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; }
 
-        .inline-input {
-            width: 100px; padding: 8px; border: 1px solid transparent; border-radius: 6px;
-            font-family: inherit; font-weight: bold; text-align: center;
-            background: #f1f5f9; transition: 0.2s;
-        }
-        .inline-input:focus { border-color: var(--primary); background: var(--white); outline: none; }
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+        .stat-card i { position: absolute; left: -10px; bottom: -10px; font-size: 80px; opacity: 0.1; color: var(--primary); }
+        .stat-card h3 { margin: 0; font-size: 14px; color: #94a3b8; }
+        .stat-card p { margin: 10px 0 0; font-size: 24px; font-weight: 800; color: var(--text); }
 
-        .table-container { background: var(--white); border-radius: 15px; overflow-x: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 1100px; }
-        th { background: #f8fafc; padding: 15px; font-size: 13px; color: #64748b; border-bottom: 2px solid var(--border); }
-        td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        /* Add Form */
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 30px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end; }
+        input, select { background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: white; font-family: inherit; transition: 0.3s; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
 
-        .thumbnail-mini { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; background: #eee; }
-        .btn-add { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: bold; }
-        .action-btn { width: 35px; height: 35px; border-radius: 8px; border: none; cursor: pointer; color: white; transition: 0.2s; margin-left: 5px; }
-        .btn-delete { background: var(--tiktok-red); }
+        /* Table */
+        .table-wrap { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th { background: rgba(15, 23, 42, 0.5); padding: 18px; font-size: 13px; color: #94a3b8; border-bottom: 2px solid var(--border); }
+        td { padding: 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tr:hover { background: rgba(51, 65, 85, 0.3); }
+
+        .inline-edit { background: transparent; border: 1px solid transparent; color: var(--primary); font-weight: 800; font-size: 16px; width: 100px; text-align: center; cursor: pointer; }
+        .inline-edit:focus { background: #0f172a; border-radius: 5px; border-color: var(--primary); }
+
+        .badge { padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; }
+        .bg-active { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .bg-completed { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .action-group { display: flex; gap: 8px; }
+        .btn-circle { width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: white; }
+        .btn-link { background: var(--accent); }
+        .btn-del { background: var(--danger); }
+        .btn-circle:hover { transform: translateY(-3px); filter: brightness(1.2); }
+
+        .thumb { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; border: 2px solid var(--border); }
         
-        .status-select { padding: 5px; border-radius: 6px; border: 1px solid var(--border); font-family: inherit; font-size: 12px; cursor: pointer; }
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        
-        /* ئەنیمەیشن بۆ پاشەکەوتکردن */
-        .saving { background: #dcfce7 !important; transition: 0.3s; }
+        .saving-row { animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>Proxo - پانێڵی کۆنترۆڵی خێرا</h1>
-        <div id="sync-status" style="font-size: 12px; color: var(--success);">
-            <i class="fas fa-sync-alt fa-spin"></i> پەیوەندی ڕاستەوخۆ چالاکە
+    <div class="header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+        <div>
+            <h1 style="margin:0; font-size:28px; font-weight:800; background: linear-gradient(to left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PROXO AGENCY</h1>
+            <p style="color:#94a3b8; margin:5px 0 0;">بەڕێوەبردنی سپۆنسەر و کڕیارەکان</p>
+        </div>
+        <div id="realtime-indicator" style="background:rgba(16, 185, 129, 0.1); color:#10b981; padding:8px 15px; border-radius:50px; font-size:12px; font-weight:bold;">
+            <i class="fas fa-satellite-dish"></i> Live Sync چالاکە
         </div>
     </div>
 
-    <div id="adForm" style="background: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <label style="font-size:12px; font-weight:bold;">ناوی کڕیار</label>
-            <input type="text" id="custName" placeholder="تاهیر...">
-        </div>
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <label style="font-size:12px; font-weight:bold;">TikTok Ad ID</label>
-            <input type="text" id="adId" placeholder="تەنها ژمارەکە">
-        </div>
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <label style="font-size:12px; font-weight:bold;">وێنە (URL)</label>
-            <input type="text" id="thumbUrl" placeholder="لینکی وێنە">
-        </div>
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <label style="font-size:12px; font-weight:bold;">دەستپێکردن</label>
+    <div class="stats-grid">
+        <div class="stat-card"><h3>کۆی بینین</h3><p id="total-imp">0</p><i class="fas fa-eye"></i></div>
+        <div class="stat-card"><h3>کۆی کلیک</h3><p id="total-clicks">0</p><i class="fas fa-mouse-pointer"></i></div>
+        <div class="stat-card"><h3>کۆی خەرجی</h3><p id="total-spend">$0</p><i class="fas fa-dollar-sign"></i></div>
+        <div class="stat-card"><h3>ڕیکلامە چالاکەکان</h3><p id="active-ads">0</p><i class="fas fa-bolt"></i></div>
+    </div>
+
+    <div class="glass-panel">
+        <h2 style="font-size:16px; margin-bottom:20px;"><i class="fas fa-user-plus"></i> کڕیاری نوێ زیاد بکە</h2>
+        <div class="form-grid" id="adForm">
+            <input type="text" id="custName" placeholder="ناوی کڕیار">
+            <input type="text" id="adId" placeholder="TikTok Ad ID">
+            <input type="text" id="imgUrl" placeholder="لینکی وێنە">
             <input type="datetime-local" id="startDate">
-        </div>
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <label style="font-size:12px; font-weight:bold;">کۆتایی</label>
             <input type="datetime-local" id="endDate">
+            <button onclick="addNewAd()" class="btn-circle" style="width:100%; background:var(--primary); font-family:inherit; font-weight:800;">زیادکردن</button>
         </div>
-        <button class="btn-add" onclick="addNewAd()" style="align-self: flex-end;">زانیارییەکان بنێرە</button>
     </div>
 
-    <div class="table-container">
+    <div class="table-wrap">
+        <div style="padding:20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <input type="text" id="searchInput" placeholder="بگەڕێ بۆ ناوی کڕیار..." oninput="filterTable()" style="width:300px;">
+        </div>
         <table>
             <thead>
                 <tr>
                     <th>وێنە</th>
-                    <th>کڕیار / ID</th>
+                    <th>کڕیار / ناسنامە</th>
                     <th>👁️ بینین</th>
                     <th>🖱️ کلیک</th>
                     <th>💰 خەرجی ($)</th>
-                    <th>دۆخی ڕیکلام</th>
+                    <th>دۆخ</th>
                     <th>کردارەکان</th>
                 </tr>
             </thead>
             <tbody id="ads-list">
-                <tr><td colspan="7" style="text-align:center; padding:30px;">خەریکی گەڕانە بەدوای داتاکاندا...</td></tr>
+                <tr><td colspan="7" style="text-align:center; padding:50px; color:#94a3b8;"><i class="fas fa-spinner fa-spin"></i> خەریکی هێنانی داتاکانە...</td></tr>
             </tbody>
         </table>
     </div>
@@ -113,103 +124,94 @@
 
     async function fetchAds() {
         const { data, error } = await supabaseClient.from('ads1').select('*').order('created_at', { ascending: false });
-        if (!error) renderAds(data);
+        if (!error) {
+            renderAds(data);
+            calculateStats(data);
+        }
+    }
+
+    function calculateStats(ads) {
+        document.getElementById('total-imp').innerText = ads.reduce((a, b) => a + (b.impressions || 0), 0).toLocaleString();
+        document.getElementById('total-clicks').innerText = ads.reduce((a, b) => a + (b.clicks || 0), 0).toLocaleString();
+        document.getElementById('total-spend').innerText = '$' + ads.reduce((a, b) => a + (b.spend || 0), 0).toFixed(2);
+        document.getElementById('active-ads').innerText = ads.filter(a => a.status === 'active').length;
     }
 
     function renderAds(ads) {
         const list = document.getElementById('ads-list');
         list.innerHTML = ads.map(ad => `
-            <tr>
-                <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/45'}" class="thumbnail-mini"></td>
+            <tr id="row-${ad.id}">
+                <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/50'}" class="thumb"></td>
                 <td>
-                    <b>${ad.customer_name}</b><br>
-                    <small style="color:var(--primary)">ID: ${ad.tiktok_ad_id}</small>
+                    <div style="font-weight:800; color:white;">${ad.customer_name}</div>
+                    <div style="font-size:11px; color:#64748b;">PROXO-${ad.tiktok_ad_id}</div>
                 </td>
+                <td><input type="number" class="inline-edit" value="${ad.impressions || 0}" onchange="fastUpdate('${ad.id}', 'impressions', this.value)"></td>
+                <td><input type="number" class="inline-edit" value="${ad.clicks || 0}" onchange="fastUpdate('${ad.id}', 'clicks', this.value)"></td>
+                <td><input type="number" step="0.1" class="inline-edit" value="${ad.spend || 0}" onchange="fastUpdate('${ad.id}', 'spend', this.value)"></td>
                 <td>
-                    <input type="number" class="inline-input" value="${ad.impressions || 0}" 
-                    onchange="updateField('${ad.id}', 'impressions', this.value, this)">
-                </td>
-                <td>
-                    <input type="number" class="inline-input" value="${ad.clicks || 0}" 
-                    onchange="updateField('${ad.id}', 'clicks', this.value, this)">
-                </td>
-                <td>
-                    <input type="number" step="0.1" class="inline-input" value="${ad.spend || 0}" 
-                    onchange="updateField('${ad.id}', 'spend', this.value, this)">
-                </td>
-                <td>
-                    <select class="status-select" onchange="updateField('${ad.id}', 'status', this.value, this)">
+                    <select onchange="fastUpdate('${ad.id}', 'status', this.value)" style="padding:4px; font-size:11px;">
                         <option value="active" ${ad.status === 'active' ? 'selected' : ''}>Active</option>
                         <option value="completed" ${ad.status === 'completed' ? 'selected' : ''}>Completed</option>
-                        <option value="scheduled" ${ad.status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
                     </select>
                 </td>
-                <td>
-                    <button class="action-btn btn-delete" onclick="deleteAd('${ad.id}')"><i class="fas fa-trash"></i></button>
+                <td class="action-group">
+                    <button class="btn-circle btn-link" onclick="copyLiveLink('${ad.id}')" title="کۆپی لینکی ڵایڤ"><i class="fas fa-link"></i></button>
+                    <button class="btn-circle btn-del" onclick="deleteAd('${ad.id}')"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');
     }
 
-    async function updateField(id, field, value, element) {
-        const updateData = {};
-        updateData[field] = (field === 'spend') ? parseFloat(value) : (field === 'status' ? value : parseInt(value));
-
-        // نیشاندانی ئەنیمەیشنی پاشەکەوتکردن
-        if(element) element.classList.add('saving');
-
-        const { error } = await supabaseClient.from('ads1').update(updateData).eq('id', id);
-
-        if (error) {
-            alert("هەڵە لە نوێکردنەوە");
-            if(element) element.style.borderColor = "red";
-        } else {
-            setTimeout(() => { if(element) element.classList.remove('saving'); }, 500);
+    async function fastUpdate(id, field, value) {
+        const row = document.getElementById(`row-${id}`);
+        row.classList.add('saving-row');
+        
+        const val = (field === 'spend') ? parseFloat(value) : (field === 'status' ? value : parseInt(value));
+        const { error } = await supabaseClient.from('ads1').update({ [field]: val }).eq('id', id);
+        
+        if (!error) {
+            row.classList.remove('saving-row');
+            // نوێکردنەوەی کارتەکانی ئامار بەبێ ڕیفرێش
+            const { data } = await supabaseClient.from('ads1').select('*');
+            calculateStats(data);
         }
+    }
+
+    function copyLiveLink(id) {
+        const url = `https://proxopages.com/live.html?id=${id}`;
+        navigator.clipboard.writeText(url);
+        alert("لینکی کڕیار کۆپی کرا!");
     }
 
     async function addNewAd() {
-        const name = document.getElementById('custName').value;
-        if(!name) return alert("تکایە ناوی کڕیار بنووسە");
-
         const payload = {
-            customer_name: name,
+            customer_name: document.getElementById('custName').value,
             tiktok_ad_id: document.getElementById('adId').value,
-            thumbnail_url: document.getElementById('thumbUrl').value,
-            start_date: document.getElementById('startDate').value ? new Date(document.getElementById('startDate').value).toISOString() : new Date().toISOString(),
-            end_date: document.getElementById('endDate').value ? new Date(document.getElementById('endDate').value).toISOString() : new Date().toISOString(),
-            impressions: 0, clicks: 0, spend: 0, status: 'active'
+            thumbnail_url: document.getElementById('imgUrl').value,
+            start_date: document.getElementById('startDate').value || new Date().toISOString(),
+            end_date: document.getElementById('endDate').value || new Date().toISOString(),
+            status: 'active', impressions: 0, clicks: 0, spend: 0
         };
-
         const { error } = await supabaseClient.from('ads1').insert([payload]);
-        if (!error) { 
-            fetchAds();
-            document.querySelectorAll('#adForm input').forEach(i => i.value = '');
-        } else {
-            alert(error.message);
-        }
+        if (!error) { fetchAds(); document.querySelectorAll('#adForm input').forEach(i => i.value = ''); }
     }
 
     async function deleteAd(id) {
-        if (confirm("دڵنیای لە سڕینەوەی ئەم کڕیارە؟")) {
-            await supabaseClient.from('ads1').delete().eq('id', id);
-            fetchAds();
-        }
+        if (confirm("دڵنیای؟")) { await supabaseClient.from('ads1').delete().eq('id', id); fetchAds(); }
     }
 
-    // چالاککردنی Real-time (دەقە بە دەقە)
-    supabaseClient
-        .channel('admin_changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'ads1' }, (payload) => {
-            console.log('Change received!', payload);
-            // لێرە تەنها ئەگەر گۆڕانکارییەکە لە دەرەوە بێت (وەک تیکتۆک) خشتەکە نوێ دەکەینەوە
-            // بۆ ئەوەی فووکس لەسەر ئینپوتەکانمان نەڕوات کاتێک خۆمان دەستکاری دەکەین
-            if (payload.eventType === 'INSERT' || payload.eventType === 'DELETE') {
-                fetchAds();
-            }
-        })
-        .subscribe();
+    function filterTable() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#ads-list tr');
+        rows.forEach(row => {
+            const name = row.cells[1].innerText.toLowerCase();
+            row.style.display = name.includes(query) ? '' : 'none';
+        });
+    }
 
+    // Real-time listener
+    supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ads1' }, () => fetchAds()).subscribe();
     window.onload = fetchAds;
 </script>
 </body>
