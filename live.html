@@ -113,45 +113,41 @@
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         function getStatusInfo(startDate, endDate, manualStatus) {
-    const now = new Date();
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+            const now = new Date();
+            const start = new Date(startDate);
+            const end = new Date(endDate);
 
-    // ڕێکخستنی کات بۆ ئەوەی بە شێوازی (سەعات:دەقە AM/PM) بێت
-    const timeStr = start.toLocaleTimeString('en-GB', { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        hour12: true 
-    });
-    
-    // ڕێکخستنی بەروار
-    const dateStr = start.toLocaleDateString('en-GB', { 
-        day: '2-digit', 
-        month: '2-digit', 
-        year: 'numeric' 
-    });
+            // بەکارهێنانی Intl.DateTimeFormat بۆ جێگیرکردنی کاتی هەولێر
+            const formatter = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Baghdad',
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', hour12: true
+            });
 
-    if (manualStatus === 'completed' || now > end) {
-        return { text: "تەواو بووە", class: "status-completed-box", color: "#ef4444", icon: "fa-check-circle", label: "کۆتایی هات" };
-    } else if (now < start) {
-        return { 
-            text: "کات بۆ دانراو", 
-            class: "status-scheduled-box", 
-            color: "#2563eb", 
-            icon: "fa-calendar-alt", 
-            label: `دەست پێ دەکات لە: ${dateStr} کاتژمێر ${timeStr.toUpperCase()}` 
-        };
-    } else {
-        return { 
-            text: "چالاکە", 
-            class: "status-active-box", 
-            color: "#10b981", 
-            icon: "fa-bolt", 
-            label: "کاتی ماوە: " + getTimeLeft(endDate) 
-        };
-    }
-}
+            const parts = formatter.formatToParts(start);
+            const dateStr = `${parts.find(p => p.type === 'day').value}/${parts.find(p => p.type === 'month').value}/${parts.find(p => p.type === 'year').value}`;
+            const timeStr = `${parts.find(p => p.type === 'hour').value}:${parts.find(p => p.type === 'minute').value} ${parts.find(p => p.type === 'dayPeriod').value.toUpperCase()}`;
 
+            if (manualStatus === 'completed' || now > end) {
+                return { text: "تەواو بووە", class: "status-completed-box", color: "#ef4444", icon: "fa-check-circle", label: "کۆتایی هات" };
+            } else if (now < start) {
+                return { 
+                    text: "کات بۆ دانراو", 
+                    class: "status-scheduled-box", 
+                    color: "#2563eb", 
+                    icon: "fa-calendar-alt", 
+                    label: `دەست پێ دەکات لە: ${dateStr} کاتژمێر ${timeStr}` 
+                };
+            } else {
+                return { 
+                    text: "چالاکە", 
+                    class: "status-active-box", 
+                    color: "#10b981", 
+                    icon: "fa-bolt", 
+                    label: "کاتی ماوە: " + getTimeLeft(endDate) 
+                };
+            }
+        }
 
         function getTimeLeft(endDate) {
             const diff = new Date(endDate).getTime() - new Date().getTime();
