@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxo Admin - Fast Add & Budget</title>
+    <title>Proxo Admin - Fully Editable</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -149,18 +149,30 @@
     }
 
     async function fastUpdate(id, field, value, el) {
-        let val = (field === 'spend' || field === 'budget') ? parseFloat(value) : (field === 'status' ? value : parseInt(value));
+        let val;
+        // دڵنیابوونەوە لە ناردنی داتا بە جۆری دروست (ژمارە یان تێکست)
+        if (field === 'spend' || field === 'budget') {
+            val = parseFloat(value) || 0;
+        } else if (field === 'status') {
+            val = value;
+        } else {
+            val = parseInt(value) || 0;
+        }
+
         const { error } = await supabaseClient.from('ads1').update({ [field]: val }).eq('id', id);
+        
         if (!error) {
+            // نیشاندانی کاریگەری (Effect) کاتێک سەیڤ دەبێت
             el.parentElement.parentElement.classList.add('saving-effect');
             setTimeout(() => el.parentElement.parentElement.classList.remove('saving-effect'), 500);
-            updateStatsLocally();
+            
+            // ئەپدەیتکردنی ئامارەکان بەبێ ڕیفرێشکردنی هەموو لاپەڕەکە
+            const { data } = await supabaseClient.from('ads1').select('*');
+            if (data) updateStats(data);
+        } else {
+            console.error("Error updating:", error);
+            alert("هەڵەیەک ڕوویدا لە کاتی نوێکردنەوە");
         }
-    }
-
-    async function updateStatsLocally() {
-        const { data } = await supabaseClient.from('ads1').select('*');
-        if (data) updateStats(data);
     }
 
     function copyLiveLink(id) {
@@ -176,14 +188,25 @@
             thumbnail_url: document.getElementById('imgUrl').value,
             start_date: document.getElementById('startDate').value || new Date().toISOString(),
             end_date: document.getElementById('endDate').value || new Date().toISOString(),
-            status: 'active', impressions: 0, clicks: 0, spend: 0
+            status: 'active', 
+            impressions: 0, 
+            clicks: 0, 
+            spend: 0
         };
         const { error } = await supabaseClient.from('ads1').insert([payload]);
-        if (!error) { fetchAds(); document.querySelectorAll('#adForm input').forEach(i => i.value = ''); }
+        if (!error) { 
+            fetchAds(); 
+            document.querySelectorAll('#adForm input').forEach(i => i.value = ''); 
+        } else {
+            alert("هەڵەیەک لە سەیڤکردن ڕوویدا");
+        }
     }
 
     async function deleteAd(id) {
-        if (confirm("دڵنیای لە سڕینەوە؟")) { await supabaseClient.from('ads1').delete().eq('id', id); fetchAds(); }
+        if (confirm("دڵنیای لە سڕینەوە؟")) { 
+            await supabaseClient.from('ads1').delete().eq('id', id); 
+            fetchAds(); 
+        }
     }
 
     window.onload = fetchAds;
