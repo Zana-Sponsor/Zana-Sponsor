@@ -30,7 +30,8 @@
             color: #000; padding: 5px 40px; font-size: 9px; font-weight: 900; transform: rotate(-45deg);
             box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 10; border: 1px solid rgba(255,255,255,0.3);
             text-align: center; width: 100px;
-            display: flex; align-items: center; justify-content: center; gap: 4px; /* بۆ ڕێکخستنی تاجەکە */
+            /* هێنانە ناوەڕاستی تاج و نووسین */
+            display: flex; align-items: center; justify-content: center; gap: 4px;
         }
 
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; position: relative; }
@@ -112,8 +113,8 @@
                 container.innerHTML = '';
                 data.forEach(ad => {
                     const statusInfo = getStatusInfo(ad.start_date, ad.end_date, ad.status);
-                    /* لێرە تاجەکە گەڕایەوە ناو کۆدەکە */
-                    const bestBadge = ad.is_best ? `<div class="best-seller-ribbon"><i class="fas fa-crown" style="font-size: 8px;"></i> باشترین فرۆش</div>` : '';
+                    /* لێرە تاجەکە و نووسینەکە لە سەنتەر جێگیر کراون */
+                    const bestBadge = ad.is_best ? `<div class="best-seller-ribbon"><i class="fas fa-crown" style="font-size: 8px;"></i><span>باشترین فرۆش</span></div>` : '';
                     
                     container.innerHTML += `
                         <div class="ad-card" style="${statusInfo.text === 'تەواو بووە' ? 'opacity: 0.8;' : ''}">
