@@ -34,7 +34,6 @@
 
         .container { padding: 20px 5%; max-width: 500px; margin: auto; }
 
-        /* ستایلی بەشی گەڕان */
         .search-section {
             background: white; padding: 15px; border-radius: 20px;
             margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
@@ -54,7 +53,6 @@
             padding: 8px 15px; border-radius: 10px; font-weight: 700;
             cursor: pointer; font-size: 13px; transition: 0.3s;
         }
-        .search-btn:hover { opacity: 0.9; }
 
         .top-status { text-align: center; margin-bottom: 20px; padding: 15px; }
         .status-pill {
@@ -119,7 +117,7 @@
         <div class="search-section">
             <div class="search-box">
                 <i class="fas fa-search" style="color: #94a3b8;"></i>
-                <input type="text" id="searchInput" placeholder="ئایدی ڕیکلامەکەت بنووسە... (بۆ نموونە: 1234)">
+                <input type="text" id="searchInput" placeholder="ئایدی یان PROXO-xxxx بنووسە...">
                 <button class="search-btn" onclick="fetchLiveAds()">بگەڕێ</button>
             </div>
         </div>
@@ -142,39 +140,36 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
+        // چارەسەری کۆتایی کات بێ پشت بەستن بە کاتی ناوخۆیی مۆبایل
         function getStatusInfo(startDate, endDate, manualStatus) {
             const now = new Date();
             
-            function adjustTime(dateStr) {
-                const d = new Date(dateStr);
-                d.setHours(d.getHours() + 3); 
-                return d;
+            function parseToKurd(isoStr) {
+                const d = new Date(isoStr);
+                // زیادکردنی ٣ کاتژمێر بۆ کاتی کوردستان
+                return new Date(d.getTime() + (3 * 60 * 60 * 1000));
             }
 
-            const start = adjustTime(startDate);
-            const end = adjustTime(endDate);
+            const kurdStart = parseToKurd(startDate);
+            const kurdEnd = parseToKurd(endDate);
 
-            const timeStr = start.toLocaleTimeString('en-GB', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                hour12: true 
-            });
+            const timeStr = kurdStart.getUTCHours().toString().padStart(2, '0') + ":" + 
+                            kurdStart.getUTCMinutes().toString().padStart(2, '0');
             
-            const dateStr = start.toLocaleDateString('en-GB', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric' 
-            });
+            const dateStr = kurdStart.getUTCDate().toString().padStart(2, '0') + "/" + 
+                            (kurdStart.getUTCMonth() + 1).toString().padStart(2, '0') + "/" + 
+                            kurdStart.getUTCFullYear();
 
-            if (manualStatus === 'completed' || now > end) {
+            // بەراوردکردنەکە بە UTC دەکرێت بۆ وردی زیاتر
+            if (manualStatus === 'completed' || now.getTime() > new Date(endDate).getTime()) {
                 return { text: "تەواو بووە", class: "status-completed-box", color: "#ef4444", icon: "fa-check-circle", label: "کۆتایی هات" };
-            } else if (now < start) {
+            } else if (now.getTime() < new Date(startDate).getTime()) {
                 return { 
                     text: "کات بۆ دانراو", 
                     class: "status-scheduled-box", 
                     color: "#2563eb", 
                     icon: "fa-calendar-alt", 
-                    label: `دەست پێ دەکات لە: ${dateStr} کاتژمێر ${timeStr.toUpperCase()}` 
+                    label: `دەست پێ دەکات: ${dateStr} - ${timeStr}` 
                 };
             } else {
                 return { 
@@ -197,16 +192,11 @@
 
         async function fetchLiveAds() {
             const container = document.getElementById('live-ads-container');
-            const searchValue = document.getElementById('searchInput').value.trim();
-            
-            // پاککردنەوەی ئایدییەکە (ئەگەر PROXO- ی تێدابوو لای دەبات بۆ گەڕان)
-            const cleanId = searchValue.replace(/PROXO-/i, '');
+            const searchVal = document.getElementById('searchInput').value.trim();
+            const cleanId = searchVal.replace(/PROXO-/i, '');
 
             let query = supabaseClient.from('ads1').select('*');
-
-            if (cleanId) {
-                query = query.eq('tiktok_ad_id', cleanId);
-            }
+            if (cleanId) query = query.eq('tiktok_ad_id', cleanId);
 
             const { data, error } = await query.order('created_at', { ascending: false });
 
@@ -216,62 +206,34 @@
                 container.innerHTML = '';
                 data.forEach(ad => {
                     const statusInfo = getStatusInfo(ad.start_date, ad.end_date, ad.status);
-                    
                     container.innerHTML += `
-                        <div class="ad-card" style="${statusInfo.text === 'تەواو بووە' ? 'opacity: 0.7;' : ''}">
+                        <div class="ad-card" style="${statusInfo.text === 'تەواو بووە' ? 'opacity: 0.8;' : ''}">
                             <div class="card-header">
                                 <span class="order-id">#PROXO-${ad.tiktok_ad_id || '0000'}</span>
                                 <div class="sync-text" style="color: ${statusInfo.color}">
                                     <i class="fas ${statusInfo.icon}"></i> ${statusInfo.text}
                                 </div>
                             </div>
-
                             <div class="thumb-box">
                                 <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb">
                                 <h3 style="font-size: 15px; margin: 10px 0 0 0;">${ad.customer_name || 'کڕیار'}</h3>
                             </div>
-
-                            <div class="countdown-box ${statusInfo.class}">
-                                ${statusInfo.label}
-                            </div>
-
+                            <div class="countdown-box ${statusInfo.class}">${statusInfo.label}</div>
                             <div class="divider"></div>
-
                             <div class="stats-grid">
-                                <div class="stat-box">
-                                    <i class="fas fa-eye"></i>
-                                    <span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span>
-                                    <span class="stat-label">بینین</span>
-                                </div>
-                                <div class="stat-box">
-                                    <i class="fas fa-mouse-pointer"></i>
-                                    <span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span>
-                                    <span class="stat-label">کلیک</span>
-                                </div>
-                                <div class="stat-box">
-                                    <i class="fas fa-tag"></i>
-                                    <span class="stat-value">$${parseFloat(ad.spend || 0).toFixed(1)}</span>
-                                    <span class="stat-label">خەرجکراو</span>
-                                </div>
+                                <div class="stat-box"><i class="fas fa-eye"></i><span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span><span class="stat-label">بینین</span></div>
+                                <div class="stat-box"><i class="fas fa-mouse-pointer"></i><span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span><span class="stat-label">کلیک</span></div>
+                                <div class="stat-box"><i class="fas fa-tag"></i><span class="stat-value">$${parseFloat(ad.spend || 0).toFixed(1)}</span><span class="stat-label">خەرجکراو</span></div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
             } else {
-                container.innerHTML = `<div class="loading">هیچ ڕیکلامێک بەم ئایدییە نەدۆزرایەوە.</div>`;
+                container.innerHTML = `<div class="loading">هیچ زانیارییەک نەدۆزرایەوە.</div>`;
             }
         }
 
-        // کارکردنی دوگمەی Enter بۆ گەڕان
-        document.getElementById('searchInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                fetchLiveAds();
-            }
-        });
-
-        supabaseClient.channel('live-updates').on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'ads1' }, () => fetchLiveAds()).subscribe();
-
+        document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchLiveAds(); });
+        supabaseClient.channel('live-updates').on('postgres_changes', { event: '*', schema: 'public', table: 'ads1' }, () => fetchLiveAds()).subscribe();
         window.onload = fetchLiveAds;
     </script>
 </body>
