@@ -169,7 +169,7 @@
     // ٤. گۆڕینی دۆخی ڕیکلام (Active, Completed, هتد)
     async function updateStatus(id, newStatus) {
         const { error } = await supabaseClient
-            .from('ads')
+            .from('ads1')
             .update({ status: newStatus })
             .eq('id', id);
         
