@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxo Admin - Fully Editable</title>
+    <title>Proxo Admin - Best Seller Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,6 +18,7 @@
             --card: #1e293b;
             --text: #f8fafc;
             --border: #334155;
+            --gold: #fbbf24;
         }
 
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.6; }
@@ -45,6 +46,8 @@
         .btn-link { background: var(--accent); }
         .btn-del { background: var(--danger); }
         .btn-add { background: var(--primary); font-weight: 800; width: 100% !important; height: 45px; cursor: pointer; border-radius: 10px; border: none; color: white; font-family: inherit; }
+        .btn-best { background: #334155; }
+        .btn-best.active { background: var(--gold); color: #000; }
 
         .thumb { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; }
         .saving-effect { animation: blink 0.5s ease-in-out; }
@@ -101,12 +104,7 @@
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-    function handleEnter(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            addNewAd();
-        }
-    }
+    function handleEnter(event) { if (event.key === "Enter") { event.preventDefault(); addNewAd(); } }
 
     async function fetchAds() {
         const { data, error } = await supabaseClient.from('ads1').select('*').order('created_at', { ascending: false });
@@ -141,6 +139,9 @@
                     </select>
                 </td>
                 <td>
+                    <button class="btn-circle btn-best ${ad.is_best ? 'active' : ''}" onclick="toggleBest('${ad.id}', ${ad.is_best})" title="Best Selling">
+                        <i class="fas fa-crown"></i>
+                    </button>
                     <button class="btn-circle btn-link" onclick="copyLiveLink('${ad.id}')" title="Copy Link"><i class="fas fa-link"></i></button>
                     <button class="btn-circle btn-del" onclick="deleteAd('${ad.id}')" title="Delete"><i class="fas fa-trash"></i></button>
                 </td>
@@ -148,31 +149,20 @@
         `).join('');
     }
 
-    async function fastUpdate(id, field, value, el) {
-        let val;
-        // دڵنیابوونەوە لە ناردنی داتا بە جۆری دروست (ژمارە یان تێکست)
-        if (field === 'spend' || field === 'budget') {
-            val = parseFloat(value) || 0;
-        } else if (field === 'status') {
-            val = value;
-        } else {
-            val = parseInt(value) || 0;
-        }
+    async function toggleBest(id, currentStatus) {
+        const { error } = await supabaseClient.from('ads1').update({ is_best: !currentStatus }).eq('id', id);
+        if (!error) fetchAds();
+    }
 
+    async function fastUpdate(id, field, value, el) {
+        let val = (field === 'spend' || field === 'budget') ? parseFloat(value) : (field === 'status' ? value : parseInt(value));
         const { error } = await supabaseClient.from('ads1').update({ [field]: val }).eq('id', id);
-        
         if (!error) {
-            // نیشاندانی کاریگەری (Effect) کاتێک سەیڤ دەبێت
             el.parentElement.parentElement.classList.add('saving-effect');
             setTimeout(() => el.parentElement.parentElement.classList.remove('saving-effect'), 500);
-            
-            // ئەپدەیتکردنی ئامارەکان بەبێ ڕیفرێشکردنی هەموو لاپەڕەکە
             const { data } = await supabaseClient.from('ads1').select('*');
             if (data) updateStats(data);
-        } else {
-            console.error("Error updating:", error);
-            alert("هەڵەیەک ڕوویدا لە کاتی نوێکردنەوە");
-        }
+        } else { alert("کێشەیەک لە نوێکردنەوە ڕوویدا"); }
     }
 
     function copyLiveLink(id) {
@@ -188,27 +178,14 @@
             thumbnail_url: document.getElementById('imgUrl').value,
             start_date: document.getElementById('startDate').value || new Date().toISOString(),
             end_date: document.getElementById('endDate').value || new Date().toISOString(),
-            status: 'active', 
-            impressions: 0, 
-            clicks: 0, 
-            spend: 0
+            status: 'active', impressions: 0, clicks: 0, spend: 0, is_best: false
         };
         const { error } = await supabaseClient.from('ads1').insert([payload]);
-        if (!error) { 
-            fetchAds(); 
-            document.querySelectorAll('#adForm input').forEach(i => i.value = ''); 
-        } else {
-            alert("هەڵەیەک لە سەیڤکردن ڕوویدا");
-        }
+        if (!error) { fetchAds(); document.querySelectorAll('#adForm input').forEach(i => i.value = ''); }
+        else { alert("هەڵە لە سەیڤکردن. دڵنیابەوە ستوونەکان لە سۆپابەیس دروستن."); }
     }
 
-    async function deleteAd(id) {
-        if (confirm("دڵنیای لە سڕینەوە؟")) { 
-            await supabaseClient.from('ads1').delete().eq('id', id); 
-            fetchAds(); 
-        }
-    }
-
+    async function deleteAd(id) { if (confirm("دڵنیای لە سڕینەوە؟")) { await supabaseClient.from('ads1').delete().eq('id', id); fetchAds(); } }
     window.onload = fetchAds;
 </script>
 </body>
