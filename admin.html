@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+    <meta charset="UTF-8">
+    <title>Proxo Admin - بەڕێوەبردنی ڕیکلامەکان</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; padding: 40px; }
+        .admin-container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: right; }
+        .btn { padding: 8px 15px; border-radius: 5px; cursor: pointer; border: none; font-weight: bold; }
+        .btn-approve { background: #25d366; color: white; }
+        .btn-reject { background: #fe2c55; color: white; }
+        .btn-finish { background: #2563eb; color: white; }
+        input, select { padding: 10px; margin: 5px; border-radius: 5px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h2>پنێڵی ئەدمینی Proxo</h2>
+        
+        <div style="background: #fafafa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+            <h3>زیادکردنی ڕیکلامی نوێ</h3>
+            <input type="text" id="custName" placeholder="ناوی کڕیار">
+            <input type="text" id="adId" placeholder="TikTok Ad ID">
+            <input type="text" id="thumbUrl" placeholder="لینکی وێنەی ڤیدیۆ">
+            <button class="btn btn-finish" onclick="addNewAd()">زیادکردن</button>
+        </div>
+
+        <h3>لیستی ڕیکلامەکان</h3>
+        <table id="adsTable">
+            <thead>
+                <tr>
+                    <th>کڕیار</th>
+                    <th>Ad ID</th>
+                    <th>دۆخی ڕیکلام</th>
+                    <th>کردارەکان</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        // لێرەدا دەبێت فانکشنەکانی Supabase زیاد بکەیت بۆ ئەوەی داتاکە بە ڕاستی پاشەکەوت بێت
+        function addNewAd() {
+            alert("ڕیکلامەکە زیاد کرا و ئێستا چاوەڕوانی تەسدیقە!");
+        }
+        
+        function updateStatus(id, status) {
+            alert("دۆخی ڕیکلامی " + id + " گۆڕدرا بۆ: " + status);
+        }
+    </script>
+</body>
+</html>
