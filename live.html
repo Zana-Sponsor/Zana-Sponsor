@@ -140,42 +140,55 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-        // چارەسەری کۆتایی کات بێ پشت بەستن بە کاتی ناوخۆیی مۆبایل
+        // لۆژیکی دۆخی ڕیکلام - لێرە هەموو شتێک چاک کراوە
         function getStatusInfo(startDate, endDate, manualStatus) {
             const now = new Date();
-            
-            function parseToKurd(isoStr) {
-                const d = new Date(isoStr);
-                // زیادکردنی ٣ کاتژمێر بۆ کاتی کوردستان
-                return new Date(d.getTime() + (3 * 60 * 60 * 1000));
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            // نیشاندانی کات بە جوانی بۆ Scheduled
+            function formatTime(d) {
+                const h = d.getHours().toString().padStart(2, '0');
+                const m = d.getMinutes().toString().padStart(2, '0');
+                const dd = d.getDate().toString().padStart(2, '0');
+                const mm = (d.getMonth() + 1).toString().padStart(2, '0');
+                const yy = d.getFullYear();
+                return `${dd}/${mm}/${yy} - ${h}:${m}`;
             }
 
-            const kurdStart = parseToKurd(startDate);
-            const kurdEnd = parseToKurd(endDate);
-
-            const timeStr = kurdStart.getUTCHours().toString().padStart(2, '0') + ":" + 
-                            kurdStart.getUTCMinutes().toString().padStart(2, '0');
+            // ١. ئەگەر بە دەستی لە ئادمین کرابێتە Completed یان کاتەکەی تەواو بووبێت
+            if (manualStatus === 'completed' || now > end) {
+                return { text: "تەواو بووە", class: "status-completed-box", color: "#64748b", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە" };
+            } 
             
-            const dateStr = kurdStart.getUTCDate().toString().padStart(2, '0') + "/" + 
-                            (kurdStart.getUTCMonth() + 1).toString().padStart(2, '0') + "/" + 
-                            kurdStart.getUTCFullYear();
-
-            // بەراوردکردنەکە بە UTC دەکرێت بۆ وردی زیاتر
-            if (manualStatus === 'completed' || now.getTime() > new Date(endDate).getTime()) {
-                return { text: "تەواو بووە", class: "status-completed-box", color: "#ef4444", icon: "fa-check-circle", label: "کۆتایی هات" };
-            } else if (now.getTime() < new Date(startDate).getTime()) {
+            // ٢. ئەگەر بە دەستی لە ئادمین کرابێتە Active (یەکسەر چالاکی دەکات بێ گوێدانە کات)
+            else if (manualStatus === 'active') {
+                return { 
+                    text: "چالاکە", 
+                    class: "status-active-box", 
+                    color: "#22c55e", 
+                    icon: "fa-bolt", 
+                    label: "کاتی ماوە: " + getTimeLeft(endDate) 
+                };
+            } 
+            
+            // ٣. ئەگەر کاتەکەی مابێت و تۆش نەتکردبێت بە Active
+            else if (now < start) {
                 return { 
                     text: "کات بۆ دانراو", 
                     class: "status-scheduled-box", 
                     color: "#2563eb", 
                     icon: "fa-calendar-alt", 
-                    label: `دەست پێ دەکات: ${dateStr} - ${timeStr}` 
+                    label: `دەست پێ دەکات: ${formatTime(start)}` 
                 };
-            } else {
+            } 
+            
+            // ٤. بۆ هەر حاڵەتێکی تر کە کاتەکەی گەیشتبێت
+            else {
                 return { 
                     text: "چالاکە", 
                     class: "status-active-box", 
-                    color: "#10b981", 
+                    color: "#22c55e", 
                     icon: "fa-bolt", 
                     label: "کاتی ماوە: " + getTimeLeft(endDate) 
                 };
@@ -192,15 +205,24 @@
 
         async function fetchLiveAds() {
             const container = document.getElementById('live-ads-container');
+            const urlParams = new URLSearchParams(window.location.search);
+            const adIdFromUrl = urlParams.get('id'); // وەرگرتنی ئایدی لە لینکەکەوە
             const searchVal = document.getElementById('searchInput').value.trim();
-            const cleanId = searchVal.replace(/PROXO-/i, '');
+            const cleanId = searchVal.replace(/PROXO-/i, '') || adIdFromUrl;
 
             let query = supabaseClient.from('ads1').select('*');
-            if (cleanId) query = query.eq('tiktok_ad_id', cleanId);
+            if (cleanId) {
+                // ئەگەر ئایدی سۆپابەیس بێت یان تیکتۆک ئایدی
+                if (cleanId.length > 15) {
+                    query = query.eq('id', cleanId);
+                } else {
+                    query = query.eq('tiktok_ad_id', cleanId);
+                }
+            }
 
             const { data, error } = await query.order('created_at', { ascending: false });
 
-            if (error) { container.innerHTML = `<div class="loading">هەڵەیەک ڕوویدا.</div>`; return; }
+            if (error) { container.innerHTML = `<div class="loading">هەڵەیەک ڕوویدا لە پەیوەندی.</div>`; return; }
 
             if (data && data.length > 0) {
                 container.innerHTML = '';
@@ -228,7 +250,7 @@
                         </div>`;
                 });
             } else {
-                container.innerHTML = `<div class="loading">هیچ زانیارییەک نەدۆزرایەوە.</div>`;
+                container.innerHTML = `<div class="loading">هیچ ڕیکلامێکی چالاک بۆ ئەم ئایدییە نەدۆزرایەوە.</div>`;
             }
         }
 
