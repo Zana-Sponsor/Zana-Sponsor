@@ -25,7 +25,6 @@
         
         .ad-card { background: var(--card-white); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); position: relative; overflow: hidden; }
         
-        /* شریتی باشترین فرۆش - بە تەواوی ناوەڕاست کراوە */
         .best-seller-ribbon {
             position: absolute; 
             top: 15px; 
@@ -46,7 +45,6 @@
             gap: 5px;
         }
 
-        /* ستایلی سووڕ بۆ شریتەکە کاتێک تەواو دەبێت */
         .best-seller-ribbon.completed {
             background: linear-gradient(45deg, #991b1b, #dc2626) !important;
             color: #fff !important;
@@ -100,9 +98,9 @@
 
         function getStatusInfo(startDate, endDate, manualStatus) {
             const now = new Date(); const start = new Date(startDate); const end = new Date(endDate);
-            if (manualStatus === 'completed' || now > end) return { text: "تەواو بووە", class: "status-completed-box", color: "#dc2626", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە" };
-            else if (manualStatus === 'active' || (now >= start && now <= end)) return { text: "چالاکە", class: "status-active-box", color: "#22c55e", icon: "fa-bolt", label: "کاتی ماوە: " + getTimeLeft(endDate) };
-            else return { text: "کات بۆ دانراو", class: "status-scheduled-box", color: "#2563eb", icon: "fa-calendar-alt", label: `<div>بەم زووانە دەست پێ دەکات</div><div class="start-time-label">دەستپێکردن: ${formatIraqTime(startDate)}</div>` };
+            if (manualStatus === 'completed' || now > end) return { text: "تەواو بووە", class: "status-completed-box", color: "#dc2626", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە", sortOrder: 3 };
+            else if (manualStatus === 'active' || (now >= start && now <= end)) return { text: "چالاکە", class: "status-active-box", color: "#22c55e", icon: "fa-bolt", label: "کاتی ماوە: " + getTimeLeft(endDate), sortOrder: 1 };
+            else return { text: "کات بۆ دانراو", class: "status-scheduled-box", color: "#2563eb", icon: "fa-calendar-alt", label: `<div>بەم زووانە دەست پێ دەکات</div><div class="start-time-label">دەستپێکردن: ${formatIraqTime(startDate)}</div>`, sortOrder: 2 };
         }
 
         function getTimeLeft(endDate) {
@@ -129,9 +127,14 @@
             if (error) { container.innerHTML = `<div class="loading">هەڵەیەک ڕوویدا.</div>`; return; }
 
             if (data && data.length > 0) {
+                // ڕیزکردنی داتاکان بەپێی ستاتۆس
+                const sortedData = data.map(ad => {
+                    return { ...ad, statusInfo: getStatusInfo(ad.start_date, ad.end_date, ad.status) };
+                }).sort((a, b) => a.statusInfo.sortOrder - b.statusInfo.sortOrder);
+
                 container.innerHTML = '';
-                data.forEach(ad => {
-                    const statusInfo = getStatusInfo(ad.start_date, ad.end_date, ad.status);
+                sortedData.forEach(ad => {
+                    const statusInfo = ad.statusInfo;
                     const isCompleted = statusInfo.text === "تەواو بووە";
                     
                     const bestBadge = ad.is_best ? 
