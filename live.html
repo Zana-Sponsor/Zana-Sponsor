@@ -198,6 +198,9 @@
                     const isRejected = statusInfo.text === "ڕەتکرایەوە";
                     const bestBadge = ad.is_best ? `<div class="best-seller-ribbon"><i class="fas fa-crown"></i><span>باشترین فرۆش</span></div>` : '';
                     
+                    // لێرە دیاری دەکەین کە نیشانەی دراوەکە چی بێت
+                    const currencySymbol = (ad.currency === 'IQD' || ad.currency === 'دینار') ? 'د.ع' : '$';
+                    
                     const card = `
                         <div class="ad-card" style="animation-delay: ${index * 0.1}s; ${isCompleted ? 'opacity: 0.7;' : ''} ${isRejected ? 'border-color: #fecaca;' : ''}">
                             ${bestBadge}
@@ -208,7 +211,7 @@
                             <div class="thumb-box">
                                 <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb">
                                 <h3 style="font-size: 16px; margin: 12px 0 4px 0; font-weight: 900;">${ad.customer_name || 'کڕیار'}</h3>
-                                <div style="font-size: 15px; color: #16a34a; font-weight: 700;">$${ad.budget || '0'}</div>
+                                <div style="font-size: 15px; color: #16a34a; font-weight: 700;">${currencySymbol}${ad.budget || '0'}</div>
                             </div>
                             
                             <div class="countdown-box ${statusInfo.class}">${statusInfo.label}</div>
@@ -221,7 +224,7 @@
                             <div class="stats-grid">
                                 <div class="stat-box"><i class="fas fa-eye"></i><span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span><span class="stat-label">بینین</span></div>
                                 <div class="stat-box"><i class="fas fa-mouse-pointer"></i><span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span><span class="stat-label">کلیک</span></div>
-                                <div class="stat-box"><i class="fas fa-wallet"></i><span class="stat-value">$${parseFloat(ad.spend || 0).toFixed(1)}</span><span class="stat-label">خەرجکراو</span></div>
+                                <div class="stat-box"><i class="fas fa-wallet"></i><span class="stat-value">${currencySymbol}${(ad.spend || 0).toLocaleString()}</span><span class="stat-label">خەرجکراو</span></div>
                             </div>
                         </div>`;
                     container.innerHTML += card;
