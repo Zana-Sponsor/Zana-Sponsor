@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxo Admin Ultimate - Fast Add Enabled</title>
+    <title>Proxo Admin - Fast Add & Budget</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -101,7 +101,6 @@
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-    // فەنکشنی ناسینەوەی ئینتەر
     function handleEnter(event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -150,11 +149,7 @@
     }
 
     async function fastUpdate(id, field, value, el) {
-        let val;
-        if (field === 'spend' || field === 'budget') val = parseFloat(value);
-        else if (field === 'status') val = value;
-        else val = parseInt(value);
-
+        let val = (field === 'spend' || field === 'budget') ? parseFloat(value) : (field === 'status' ? value : parseInt(value));
         const { error } = await supabaseClient.from('ads1').update({ [field]: val }).eq('id', id);
         if (!error) {
             el.parentElement.parentElement.classList.add('saving-effect');
@@ -185,7 +180,6 @@
         };
         const { error } = await supabaseClient.from('ads1').insert([payload]);
         if (!error) { fetchAds(); document.querySelectorAll('#adForm input').forEach(i => i.value = ''); }
-        else { alert("هەڵەیەک لە سەیڤکردن ڕوویدا"); }
     }
 
     async function deleteAd(id) {
