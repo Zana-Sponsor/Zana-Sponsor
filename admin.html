@@ -84,7 +84,13 @@
                 <option value="instagram">Instagram</option>
                 <option value="snapchat">Snapchat</option>
             </select>
-            <input type="number" id="adBudget" placeholder="بڕی دۆلار $" onkeypress="handleEnter(event)">
+            <div style="display: flex; gap: 5px;">
+                <input type="number" id="adBudget" placeholder="بڕی پارە" onkeypress="handleEnter(event)">
+                <select id="adCurrency" style="width: 80px;">
+                    <option value="USD">USD</option>
+                    <option value="IQD">IQD</option>
+                </select>
+            </div>
             <input type="text" id="imgUrl" placeholder="لینکی وێنە" onkeypress="handleEnter(event)">
             <input type="datetime-local" id="startDate" onkeypress="handleEnter(event)">
             <input type="datetime-local" id="endDate" onkeypress="handleEnter(event)">
@@ -99,10 +105,11 @@
                     <th>وێنە</th>
                     <th>کڕیار / ID</th>
                     <th>پلاتفۆرم</th>
-                    <th>💰 بڕی دۆلار ($)</th>
+                    <th>دراو</th>
+                    <th>💰 بڕی پارە</th>
                     <th>👁️ بینین</th>
                     <th>🖱️ کلیک</th>
-                    <th>💵 خەرجی ($)</th>
+                    <th>💵 خەرجی</th>
                     <th>دۆخ</th>
                     <th>کردارەکان</th>
                 </tr>
@@ -127,7 +134,11 @@
     function updateStats(ads) {
         document.getElementById('total-imp').innerText = ads.reduce((a, b) => a + (b.impressions || 0), 0).toLocaleString();
         document.getElementById('total-clicks').innerText = ads.reduce((a, b) => a + (b.clicks || 0), 0).toLocaleString();
-        document.getElementById('total-spend').innerText = '$' + ads.reduce((a, b) => a + (b.spend || 0), 0).toFixed(2);
+        
+        // تەنها ئەو خەرجیانە هەژمار دەکات کە بە دۆلارن بۆ ستاتیسکتی سەرەکی
+        const totalDollarSpend = ads.filter(a => a.currency !== 'IQD').reduce((a, b) => a + (b.spend || 0), 0);
+        document.getElementById('total-spend').innerText = '$' + totalDollarSpend.toFixed(2);
+        
         document.getElementById('active-ads').innerText = ads.filter(a => a.status === 'active').length;
     }
 
@@ -160,10 +171,16 @@
                         </select>
                     </div>
                 </td>
+                <td>
+                    <select onchange="fastUpdate('${ad.id}', 'currency', this.value, this)" style="width:70px; padding:4px; font-size:11px;">
+                        <option value="USD" ${ad.currency === 'USD' ? 'selected' : ''}>USD</option>
+                        <option value="IQD" ${ad.currency === 'IQD' ? 'selected' : ''}>IQD</option>
+                    </select>
+                </td>
                 <td><input type="number" class="inline-edit-input budget-input" value="${ad.budget || 0}" onchange="fastUpdate('${ad.id}', 'budget', this.value, this)"></td>
                 <td><input type="number" class="inline-edit-input" value="${ad.impressions || 0}" onchange="fastUpdate('${ad.id}', 'impressions', this.value, this)"></td>
                 <td><input type="number" class="inline-edit-input" value="${ad.clicks || 0}" onchange="fastUpdate('${ad.id}', 'clicks', this.value, this)"></td>
-                <td><input type="number" step="0.1" class="inline-edit-input" value="${ad.spend || 0}" onchange="fastUpdate('${ad.id}', 'spend', this.value, this)"></td>
+                <td><input type="number" step="${ad.currency === 'IQD' ? '1000' : '0.1'}" class="inline-edit-input" value="${ad.spend || 0}" onchange="fastUpdate('${ad.id}', 'spend', this.value, this)"></td>
                 <td>
                     <select onchange="fastUpdate('${ad.id}', 'status', this.value, this)" style="width:110px; background:#0f172a; color:white; border:1px solid #334155;">
                         <option value="active" ${ad.status === 'active' ? 'selected' : ''}>Active</option>
@@ -189,12 +206,20 @@
     }
 
     async function fastUpdate(id, field, value, el) {
-        let val = (field === 'spend' || field === 'budget') ? parseFloat(value) : (field === 'status' || field === 'platform' ? value : parseInt(value));
+        let val;
+        if (field === 'spend' || field === 'budget') {
+            val = parseFloat(value);
+        } else if (field === 'impressions' || field === 'clicks') {
+            val = parseInt(value);
+        } else {
+            val = value;
+        }
+
         const { error } = await supabaseClient.from('ads1').update({ [field]: val }).eq('id', id);
         if (!error) {
             el.parentElement.parentElement.classList.add('saving-effect');
             setTimeout(() => el.parentElement.parentElement.classList.remove('saving-effect'), 500);
-            if(field === 'platform') fetchAds();
+            if(field === 'platform' || field === 'currency') fetchAds();
             else {
                 const { data } = await supabaseClient.from('ads1').select('*');
                 if (data) updateStats(data);
@@ -212,6 +237,7 @@
             customer_name: document.getElementById('custName').value,
             tiktok_ad_id: document.getElementById('adId').value,
             platform: document.getElementById('adPlatform').value,
+            currency: document.getElementById('adCurrency').value,
             budget: parseFloat(document.getElementById('adBudget').value) || 0,
             thumbnail_url: document.getElementById('imgUrl').value,
             start_date: document.getElementById('startDate').value || new Date().toISOString(),
