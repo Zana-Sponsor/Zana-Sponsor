@@ -110,7 +110,7 @@
     // ١. وەرگرتنی هەموو ڕیکلامەکان
     async function fetchAds() {
         const { data, error } = await supabaseClient
-            .from('ads')
+            .from('ads1')
             .select('*')
             .order('created_at', { ascending: false });
 
