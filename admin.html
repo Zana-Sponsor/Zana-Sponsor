@@ -54,7 +54,6 @@
         .saving-effect { animation: blink 0.5s ease-in-out; }
         @keyframes blink { 50% { background: #10b98133; } }
         
-        /* Platform Icons Colors */
         .plat-tiktok { color: #fff; }
         .plat-facebook { color: #1877F2; }
         .plat-instagram { color: #E4405F; }
@@ -170,6 +169,7 @@
                         <option value="active" ${ad.status === 'active' ? 'selected' : ''}>Active</option>
                         <option value="completed" ${ad.status === 'completed' ? 'selected' : ''}>Completed</option>
                         <option value="scheduled" ${ad.status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
+                        <option value="rejected" ${ad.status === 'rejected' ? 'selected' : ''}>Rejected</option>
                     </select>
                 </td>
                 <td>
@@ -194,7 +194,7 @@
         if (!error) {
             el.parentElement.parentElement.classList.add('saving-effect');
             setTimeout(() => el.parentElement.parentElement.classList.remove('saving-effect'), 500);
-            if(field === 'platform') fetchAds(); // ڕیفریش بۆ گۆڕینی ئایکۆنەکە
+            if(field === 'platform') fetchAds();
             else {
                 const { data } = await supabaseClient.from('ads1').select('*');
                 if (data) updateStats(data);
@@ -220,7 +220,7 @@
         };
         const { error } = await supabaseClient.from('ads1').insert([payload]);
         if (!error) { fetchAds(); document.querySelectorAll('#adForm input').forEach(i => i.value = ''); }
-        else { alert("هەڵە لە سەیڤکردن. دڵنیابەوە ستوونی platform لە سۆپابەیس دروستە."); }
+        else { alert("هەڵە لە سەیڤکردن."); }
     }
 
     async function deleteAd(id) { if (confirm("دڵنیای لە سڕینەوە؟")) { await supabaseClient.from('ads1').delete().eq('id', id); fetchAds(); } }
