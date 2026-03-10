@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --primary: #22c55e; --soft-bg: #f8fafc; --card-white: #ffffff; --text-dark: #0f172a; --text-gray: #64748b; --border: #f1f5f9; }
+        :root { --primary: #22c55e; --soft-bg: #f8fafc; --card-white: #ffffff; --text-dark: #0f172a; --text-gray: #64748b; --border: #f1f5f9; --gold: #fbbf24; }
         body { background-color: var(--soft-bg); color: var(--text-dark); font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
         nav { padding: 12px 5%; background: white; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid var(--border); }
         .logo-img { height: 18px; opacity: 0.9; }
@@ -22,7 +22,11 @@
         .status-pill { display: inline-flex; align-items: center; gap: 8px; background: #dcfce7; color: #15803d; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 900; border: 1px solid #bbf7d0; }
         .pulse { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 0 rgba(34, 197, 94, 0.4); animation: pulse-animation 2s infinite; }
         @keyframes pulse-animation { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
+        
+        /* Ad Card & Best Seller Crown Styles */
         .ad-card { background: var(--card-white); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); position: relative; }
+        .crown-badge { position: absolute; top: -12px; left: 20px; background: var(--gold); color: #000; width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4); border: 2px solid white; z-index: 5; transform: rotate(-10deg); }
+        
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .order-id { color: var(--text-gray); font-size: 11px; font-weight: 700; background: #f8fafc; padding: 3px 10px; border-radius: 6px; }
         .countdown-box { padding: 10px; border-radius: 12px; margin: 10px 0; text-align: center; font-size: 13px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
@@ -62,40 +66,20 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-        // فەنکشنی ڕێکخستنی کات بە کاتی عێراق و AM/PM
         function formatIraqTime(dateString) {
-            const options = { 
-                timeZone: 'Asia/Baghdad',
-                year: 'numeric', 
-                month: 'numeric', 
-                day: 'numeric',
-                hour: 'numeric', 
-                minute: 'numeric', 
-                hour12: true 
-            };
+            const options = { timeZone: 'Asia/Baghdad', hour: 'numeric', minute: 'numeric', hour12: true };
             return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
         }
 
         function getStatusInfo(startDate, endDate, manualStatus) {
             const now = new Date(); const start = new Date(startDate); const end = new Date(endDate);
-            if (manualStatus === 'completed' || now > end) {
-                return { text: "تەواو بووە", class: "status-completed-box", color: "#64748b", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە" };
-            } else if (manualStatus === 'active' || (now >= start && now <= end)) {
-                return { text: "چالاکە", class: "status-active-box", color: "#22c55e", icon: "fa-bolt", label: "کاتی ماوە: " + getTimeLeft(endDate) };
-            } else {
-                return { 
-                    text: "کات بۆ دانراو", 
-                    class: "status-scheduled-box", 
-                    color: "#2563eb", 
-                    icon: "fa-calendar-alt", 
-                    label: `<div>بەم زووانە دەست پێ دەکات</div><div class="start-time-label">دەستپێکردن: ${formatIraqTime(startDate)}</div>` 
-                };
-            }
+            if (manualStatus === 'completed' || now > end) return { text: "تەواو بووە", class: "status-completed-box", color: "#64748b", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە" };
+            else if (manualStatus === 'active' || (now >= start && now <= end)) return { text: "چالاکە", class: "status-active-box", color: "#22c55e", icon: "fa-bolt", label: "کاتی ماوە: " + getTimeLeft(endDate) };
+            else return { text: "کات بۆ دانراو", class: "status-scheduled-box", color: "#2563eb", icon: "fa-calendar-alt", label: `<div>بەم زووانە دەست پێ دەکات</div><div class="start-time-label">دەستپێکردن: ${formatIraqTime(startDate)}</div>` };
         }
 
         function getTimeLeft(endDate) {
             const diff = new Date(endDate).getTime() - new Date().getTime();
-            if (diff <= 0) return "تەواو بووە";
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             return `${days}ڕ، ${hours}س ماوە`;
@@ -121,8 +105,11 @@
                 container.innerHTML = '';
                 data.forEach(ad => {
                     const statusInfo = getStatusInfo(ad.start_date, ad.end_date, ad.status);
+                    const bestBadge = ad.is_best ? `<div class="crown-badge"><i class="fas fa-crown"></i></div>` : '';
+                    
                     container.innerHTML += `
                         <div class="ad-card" style="${statusInfo.text === 'تەواو بووە' ? 'opacity: 0.8;' : ''}">
+                            ${bestBadge}
                             <div class="card-header">
                                 <span class="order-id">#PROXO-${ad.tiktok_ad_id || '0000'}</span>
                                 <div class="sync-text" style="color: ${statusInfo.color}"><i class="fas ${statusInfo.icon}"></i> ${statusInfo.text}</div>
