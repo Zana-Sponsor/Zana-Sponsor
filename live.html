@@ -40,12 +40,7 @@
         .countdown-box { padding: 10px; border-radius: 12px; margin: 10px 0; text-align: center; font-size: 13px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
         .status-active-box { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
         .status-scheduled-box { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
-        /* ئەوەی پێشوو لابەرە و ئەمە دابنێ */
-        .status-completed-box { 
-    background: #fef2f2; 
-    color: #dc2626; 
-    border: 1px solid #fecaca; 
-}
+        .status-completed-box { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
         .divider { height: 1px; background: var(--border); margin: 15px 0; }
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .stat-box { background: #fcfcfc; padding: 12px 4px; border-radius: 14px; text-align: center; border: 1px solid #f8fafc; }
@@ -86,7 +81,7 @@
 
         function getStatusInfo(startDate, endDate, manualStatus) {
             const now = new Date(); const start = new Date(startDate); const end = new Date(endDate);
-            if (manualStatus === 'completed' || now > end) return { text: "تەواو بووە", class: "status-completed-box", color: "#dc2626", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە" };
+            if (manualStatus === 'completed' || now > end) return { text: "تەواو بووە", class: "status-completed-box", color: "#64748b", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە" };
             else if (manualStatus === 'active' || (now >= start && now <= end)) return { text: "چالاکە", class: "status-active-box", color: "#22c55e", icon: "fa-bolt", label: "کاتی ماوە: " + getTimeLeft(endDate) };
             else return { text: "کات بۆ دانراو", class: "status-scheduled-box", color: "#2563eb", icon: "fa-calendar-alt", label: `<div>بەم زووانە دەست پێ دەکات</div><div class="start-time-label">دەستپێکردن: ${formatIraqTime(startDate)}</div>` };
         }
