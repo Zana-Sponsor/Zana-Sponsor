@@ -25,7 +25,6 @@
             margin: 0; padding: 0; 
         }
 
-        /* بەشی ناڤباری نوێ */
         nav { 
             padding: 12px 5%; background: white; 
             display: flex; justify-content: center; align-items: center;
@@ -35,10 +34,7 @@
 
         .container { padding: 20px 5%; max-width: 500px; margin: auto; }
 
-        /* دیزاینی نوێی بەشی سەرەوە - بچووکتر و مۆدێرن */
-        .top-status {
-            text-align: center; margin-bottom: 20px; padding: 15px;
-        }
+        .top-status { text-align: center; margin-bottom: 20px; padding: 15px; }
         .status-pill {
             display: inline-flex; align-items: center; gap: 8px;
             background: #dcfce7; color: #15803d;
@@ -52,28 +48,30 @@
         }
         @keyframes pulse-animation { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
 
-        /* کارتی ڕیکلام - دیزاینی پاکتر */
         .ad-card {
             background: var(--card-white); border-radius: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             padding: 20px; margin-bottom: 20px;
             border: 1px solid var(--border);
+            position: relative;
         }
 
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .order-id { color: var(--text-gray); font-size: 11px; font-weight: 700; background: #f8fafc; padding: 3px 10px; border-radius: 6px; }
 
         .countdown-box {
-            background: #fefce8; color: #854d0e;
             padding: 10px; border-radius: 12px; margin: 10px 0;
-            border: 1px solid #fef08a; text-align: center;
-            font-size: 13px; font-weight: 700;
+            text-align: center; font-size: 13px; font-weight: 700;
             display: flex; align-items: center; justify-content: center; gap: 6px;
         }
+        
+        /* ڕەنگی کاتی جیاواز */
+        .status-active-box { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .status-scheduled-box { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+        .status-completed-box { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
 
         .divider { height: 1px; background: var(--border); margin: 15px 0; }
 
-        /* داتاکان بچووکتر کراونەتەوە */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .stat-box { 
             background: #fcfcfc; padding: 12px 4px; border-radius: 14px; 
@@ -94,7 +92,7 @@
         }
         .sync-btn i.spinning { animation: fa-spin 1s infinite linear; }
         
-        .sync-text { font-size: 11px; font-weight: 700; color: #10b981; display: flex; align-items: center; gap: 5px; }
+        .sync-text { font-size: 11px; font-weight: 900; display: flex; align-items: center; gap: 5px; }
 
         .loading { text-align: center; padding: 40px; color: var(--text-gray); font-size: 13px; }
     </style>
@@ -124,41 +122,45 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-        function getTimeLeft(endDate) {
-            if (!endDate) return "دیاری نەکراوە";
-            const diff = new Date(endDate).getTime() - new Date().getTime();
-            if (diff <= 0) return "کۆتایی هاتووە";
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            
-            return `${days}ڕ، ${hours}ک، ${mins}خ ماوە`;
+        function getStatusInfo(startDate, endDate, manualStatus) {
+            const now = new Date();
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (manualStatus === 'completed' || now > end) {
+                return { text: "تەواو بووە", class: "status-completed-box", color: "#ef4444", icon: "fa-check-circle", label: "کۆتایی هات" };
+            } else if (now < start) {
+                return { text: "کات بۆ دانراو", class: "status-scheduled-box", color: "#2563eb", icon: "fa-calendar-alt", label: "دەست پێ دەکات لە: " + start.toLocaleDateString('ku-IQ') };
+            } else {
+                return { text: "چالاکە", class: "status-active-box", color: "#10b981", icon: "fa-bolt", label: "کاتی ماوە: " + getTimeLeft(endDate) };
+            }
         }
 
-        async function manualRefresh(btn) {
-            const icon = btn.querySelector('i');
-            icon.classList.add('spinning');
-            await fetchLiveAds();
-            setTimeout(() => { icon.classList.remove('spinning'); }, 800);
+        function getTimeLeft(endDate) {
+            const diff = new Date(endDate).getTime() - new Date().getTime();
+            if (diff <= 0) return "تەواو بووە";
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            return `${days}ڕ، ${hours}س ماوە`;
         }
 
         async function fetchLiveAds() {
             const container = document.getElementById('live-ads-container');
-            const { data, error } = await supabaseClient.from('ads1').select('*').order('status', { ascending: true });
+            const { data, error } = await supabaseClient.from('ads1').select('*').order('created_at', { ascending: false });
 
             if (error) { container.innerHTML = `<div class="loading">هەڵەیەک ڕوویدا.</div>`; return; }
 
             if (data && data.length > 0) {
                 container.innerHTML = '';
                 data.forEach(ad => {
-                    const isCompleted = ad.status === 'completed';
+                    const statusInfo = getStatusInfo(ad.start_date, ad.end_date, ad.status);
+                    
                     container.innerHTML += `
-                        <div class="ad-card" style="${isCompleted ? 'opacity: 0.7; filter: grayscale(0.2);' : ''}">
+                        <div class="ad-card" style="${statusInfo.text === 'تەواو بووە' ? 'opacity: 0.7;' : ''}">
                             <div class="card-header">
-                                <span class="order-id">#NASS-${ad.tiktok_ad_id || '0000'}</span>
-                                <div class="sync-text" style="${isCompleted ? 'color: #ef4444' : ''}">
-                                    ${isCompleted ? 'تەواو بووە' : 'ڕاستەوخۆ'}
+                                <span class="order-id">#PROXO-${ad.tiktok_ad_id || '0000'}</span>
+                                <div class="sync-text" style="color: ${statusInfo.color}">
+                                    <i class="fas ${statusInfo.icon}"></i> ${statusInfo.text}
                                 </div>
                             </div>
 
@@ -167,17 +169,11 @@
                                 <h3 style="font-size: 15px; margin: 10px 0 0 0;">${ad.customer_name || 'کڕیار'}</h3>
                             </div>
 
-                            <div class="countdown-box" style="${isCompleted ? 'background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0;' : ''}">
-                                <i class="fas fa-clock"></i> ${isCompleted ? 'کۆتایی هات' : getTimeLeft(ad.end_date)}
+                            <div class="countdown-box ${statusInfo.class}">
+                                ${statusInfo.label}
                             </div>
 
                             <div class="divider"></div>
-
-                            <div class="sync-row">
-                                <div class="sync-btn" onclick="manualRefresh(this)">
-                                    <i class="fas fa-sync-alt"></i> نوێکردنەوە
-                                </div>
-                            </div>
 
                             <div class="stats-grid">
                                 <div class="stat-box">
