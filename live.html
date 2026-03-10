@@ -79,7 +79,8 @@
 
         .status-active-box { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
         .status-scheduled-box { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
-        .status-completed-box { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .status-completed-box { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+        .status-rejected-box { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
         
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .stat-box { background: #fafafa; padding: 12px 5px; border-radius: 16px; text-align: center; border: 1px solid #f5f5f5; }
@@ -144,7 +145,6 @@
             return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
         }
 
-        // فەنکشنی نوێ بۆ دیاریکردنی زانیاری پلاتفۆرم
         function getPlatformInfo(platform) {
             const p = (platform || 'tiktok').toLowerCase();
             if (p.includes('facebook') || p.includes('فەیسبووک')) return { name: 'Facebook Ads', icon: 'fa-facebook', color: '#1877F2' };
@@ -155,7 +155,9 @@
 
         function getStatusInfo(startDate, endDate, manualStatus) {
             const now = new Date(); const start = new Date(startDate); const end = new Date(endDate);
-            if (manualStatus === 'completed' || now > end) return { text: "تەواو بووە", class: "status-completed-box", color: "#dc2626", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە", sortOrder: 3 };
+            
+            if (manualStatus === 'rejected') return { text: "ڕەتکرایەوە", class: "status-rejected-box", color: "#dc2626", icon: "fa-times-circle", label: "ئەم ڕیکلامە ڕەتکرایەوە", sortOrder: 4 };
+            if (manualStatus === 'completed' || now > end) return { text: "تەواو بووە", class: "status-completed-box", color: "#64748b", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە", sortOrder: 3 };
             else if (manualStatus === 'active' || (now >= start && now <= end)) return { text: "چالاکە", class: "status-active-box", color: "#22c55e", icon: "fa-bolt", label: "کاتی ماوە: " + getTimeLeft(endDate), sortOrder: 1 };
             else return { text: "کات بۆ دانراو", class: "status-scheduled-box", color: "#2563eb", icon: "fa-calendar-alt", label: `دەستپێکردن: ${formatIraqTime(startDate)}`, sortOrder: 2 };
         }
@@ -191,12 +193,13 @@
                 container.innerHTML = '';
                 sortedData.forEach((ad, index) => {
                     const statusInfo = ad.statusInfo;
-                    const plat = getPlatformInfo(ad.platform); // بانگکردنی زانیاری پلاتفۆرم
+                    const plat = getPlatformInfo(ad.platform);
                     const isCompleted = statusInfo.text === "تەواو بووە";
+                    const isRejected = statusInfo.text === "ڕەتکرایەوە";
                     const bestBadge = ad.is_best ? `<div class="best-seller-ribbon"><i class="fas fa-crown"></i><span>باشترین فرۆش</span></div>` : '';
                     
                     const card = `
-                        <div class="ad-card" style="animation-delay: ${index * 0.1}s; ${isCompleted ? 'opacity: 0.7;' : ''}">
+                        <div class="ad-card" style="animation-delay: ${index * 0.1}s; ${isCompleted ? 'opacity: 0.7;' : ''} ${isRejected ? 'border-color: #fecaca;' : ''}">
                             ${bestBadge}
                             <div class="card-header">
                                 <span class="order-id">#PROXO-${ad.tiktok_ad_id || '0000'}</span>
