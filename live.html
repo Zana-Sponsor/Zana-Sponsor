@@ -140,13 +140,11 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-        // لۆژیکی دۆخی ڕیکلام - لێرە هەموو شتێک چاک کراوە
         function getStatusInfo(startDate, endDate, manualStatus) {
             const now = new Date();
             const start = new Date(startDate);
             const end = new Date(endDate);
 
-            // نیشاندانی کات بە جوانی بۆ Scheduled
             function formatTime(d) {
                 const h = d.getHours().toString().padStart(2, '0');
                 const m = d.getMinutes().toString().padStart(2, '0');
@@ -156,12 +154,9 @@
                 return `${dd}/${mm}/${yy} - ${h}:${m}`;
             }
 
-            // ١. ئەگەر بە دەستی لە ئادمین کرابێتە Completed یان کاتەکەی تەواو بووبێت
             if (manualStatus === 'completed' || now > end) {
                 return { text: "تەواو بووە", class: "status-completed-box", color: "#64748b", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە" };
             } 
-            
-            // ٢. ئەگەر بە دەستی لە ئادمین کرابێتە Active (یەکسەر چالاکی دەکات بێ گوێدانە کات)
             else if (manualStatus === 'active') {
                 return { 
                     text: "چالاکە", 
@@ -171,8 +166,6 @@
                     label: "کاتی ماوە: " + getTimeLeft(endDate) 
                 };
             } 
-            
-            // ٣. ئەگەر کاتەکەی مابێت و تۆش نەتکردبێت بە Active
             else if (now < start) {
                 return { 
                     text: "کات بۆ دانراو", 
@@ -182,8 +175,6 @@
                     label: `دەست پێ دەکات: ${formatTime(start)}` 
                 };
             } 
-            
-            // ٤. بۆ هەر حاڵەتێکی تر کە کاتەکەی گەیشتبێت
             else {
                 return { 
                     text: "چالاکە", 
@@ -200,19 +191,19 @@
             if (diff <= 0) return "تەواو بووە";
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            return `${days}ڕ، ${hours}ک ماوە`;
+            // گۆڕینی "ک" بۆ "س" لێرە ئەنجامدراوە
+            return `${days}ڕ، ${hours}س ماوە`;
         }
 
         async function fetchLiveAds() {
             const container = document.getElementById('live-ads-container');
             const urlParams = new URLSearchParams(window.location.search);
-            const adIdFromUrl = urlParams.get('id'); // وەرگرتنی ئایدی لە لینکەکەوە
+            const adIdFromUrl = urlParams.get('id');
             const searchVal = document.getElementById('searchInput').value.trim();
             const cleanId = searchVal.replace(/PROXO-/i, '') || adIdFromUrl;
 
             let query = supabaseClient.from('ads1').select('*');
             if (cleanId) {
-                // ئەگەر ئایدی سۆپابەیس بێت یان تیکتۆک ئایدی
                 if (cleanId.length > 15) {
                     query = query.eq('id', cleanId);
                 } else {
@@ -228,6 +219,7 @@
                 container.innerHTML = '';
                 data.forEach(ad => {
                     const statusInfo = getStatusInfo(ad.start_date, ad.end_date, ad.status);
+                    // لێرە نرخی دۆلارەکە (Budget) زیاد کراوە لە خوار ناوەکە
                     container.innerHTML += `
                         <div class="ad-card" style="${statusInfo.text === 'تەواو بووە' ? 'opacity: 0.8;' : ''}">
                             <div class="card-header">
@@ -238,7 +230,8 @@
                             </div>
                             <div class="thumb-box">
                                 <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb">
-                                <h3 style="font-size: 15px; margin: 10px 0 0 0;">${ad.customer_name || 'کڕیار'}</h3>
+                                <h3 style="font-size: 15px; margin: 10px 0 2px 0;">${ad.customer_name || 'کڕیار'}</h3>
+                                <div style="font-size: 12px; color: #22c55e; font-weight: 800; margin-bottom: 10px;">ئەم ڕیکلامە $${ad.budget || '0'} دۆلاریە</div>
                             </div>
                             <div class="countdown-box ${statusInfo.class}">${statusInfo.label}</div>
                             <div class="divider"></div>
