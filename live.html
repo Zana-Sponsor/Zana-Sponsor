@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxo - Live Ad Campaigns</title>
+    <link rel="icon" type="image/jpeg" href="https://image2url.com/r2/default/images/1772248056478-a5a04d98-be5f-4ee9-8f08-09db2be8fd1a.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --accent: #2563eb; 
+            --tiktok-red: #fe2c55;
+            --bg: #000000;
+            --card-bg: #111111;
+            --text-gray: #94a3b8;
+        }
+
+        body { 
+            background-color: var(--bg); 
+            color: white; 
+            font-family: 'Vazirmatn', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        /* Header Area */
+        nav { 
+            padding: 20px 6%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #222;
+        }
+        .logo-img { height: 24px; }
+        .back-link { color: white; text-decoration: none; font-weight: 700; font-size: 14px; }
+
+        .container { padding: 60px 6%; max-width: 1200px; margin: auto; }
+
+        .live-header { text-align: center; margin-bottom: 60px; }
+        .live-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(254, 44, 85, 0.1); color: var(--tiktok-red);
+            padding: 8px 20px; border-radius: 50px; font-weight: 900; font-size: 14px;
+        }
+        .dot { width: 10px; height: 10px; background: var(--tiktok-red); border-radius: 50%; animation: blink 1.5s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        /* Grid System */
+        .ads-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 30px; 
+        }
+
+        /* Ad Card Style */
+        .ad-card {
+            background: var(--card-bg); border: 1px solid #222; border-radius: 24px;
+            overflow: hidden; transition: 0.4s; position: relative;
+        }
+        .ad-card:hover { transform: translateY(-10px); border-color: var(--tiktok-red); }
+
+        .ad-thumb { width: 100%; height: 220px; object-fit: cover; }
+        .ad-content { padding: 25px; }
+        .client-name { color: var(--text-gray); font-size: 14px; display: block; margin-bottom: 20px; }
+        
+        .stats-row { display: flex; justify-content: space-between; align-items: center; }
+        .stat-box { text-align: center; flex: 1; }
+        .stat-value { display: block; font-size: 26px; font-weight: 900; }
+        .stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+        .divider { width: 1px; height: 35px; background: #222; }
+
+        .loading { text-align: center; font-size: 18px; color: var(--text-gray); padding: 50px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html"><img src="https://image2url.com/r2/default/images/1771403050640-6d5e5c5e-a1dc-45de-a7f4-b5f386e82668.png" class="logo-img"></a>
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    </nav>
+
+    <div class="container">
+        <div class="live-header">
+            <div class="live-badge"><span class="dot"></span> LIVE CAMPAIGNS</div>
+            <h1 style="font-size: 40px; font-weight: 900; margin: 20px 0 10px;">Real-Time Ad Tracking</h1>
+            <p style="color: var(--text-gray);">ئەنجامی ڕاستەقینەی ڕیکلامە چالاکەکانمان لە تیک تۆکەوە ببینه</p>
+        </div>
+
+        <div id="live-ads-container" class="ads-grid">
+            <div class="loading">Loading live data...</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
+        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTM4MjA0NywiZXhwIjoyMDg2OTU4MDQ3fQ.Qxbg0FbFu6MIwT1R5Hbm6jP4JI4j_0RWMvQOc3deUnE';
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+
+        async function fetchLiveAds() {
+            const container = document.getElementById('live-ads-container');
+            
+            const { data, error } = await supabaseClient
+                .from('ads')
+                .select('*')
+                .eq('status', 'active')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                container.innerHTML = `<div class="loading">Error loading data.</div>`;
+                return;
+            }
+
+            if (data && data.length > 0) {
+                container.innerHTML = '';
+                data.forEach(ad => {
+                    container.innerHTML += `
+                        <div class="ad-card">
+                            <img src="${ad.thumbnail_url || 'https://via.placeholder.com/400x220'}" class="ad-thumb">
+                            <div class="ad-content">
+                                <span class="client-name"><i class="fas fa-briefcase"></i> ${ad.customer_name}</span>
+                                <div class="stats-row">
+                                    <div class="stat-box">
+                                        <span class="stat-value" style="color: var(--tiktok-red);">$${parseFloat(ad.spend).toLocaleString()}</span>
+                                        <span class="stat-label">Total Spend</span>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <div class="stat-box">
+                                        <span class="stat-value">${ad.clicks.toLocaleString()}</span>
+                                        <span class="stat-label">Clicks</span>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <div class="stat-box">
+                                        <span class="stat-value">${ad.impressions.toLocaleString()}</span>
+                                        <span class="stat-label">Impressions</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                container.innerHTML = `<div class="loading">هیچ ڕیکلامێکی چالاک نییە لە ئێستادا.</div>`;
+            }
+        }
+
+        // لۆدکردنی داتا و نوێکردنەوەی هەموو ٦٠ چرکە جارێک
+        window.onload = fetchLiveAds;
+        setInterval(fetchLiveAds, 60000);
+    </script>
+</body>
+</html>
