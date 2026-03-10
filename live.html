@@ -113,34 +113,45 @@
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         function getStatusInfo(startDate, endDate, manualStatus) {
-            const now = new Date();
-            const start = new Date(startDate);
-            const end = new Date(endDate);
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-            // فۆرماتکردنی کات و بەروار بە کوردی
-            const timeStr = start.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
-            const dateStr = start.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    // ڕێکخستنی کات بۆ ئەوەی بە شێوازی (سەعات:دەقە AM/PM) بێت
+    const timeStr = start.toLocaleTimeString('en-GB', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: true 
+    });
+    
+    // ڕێکخستنی بەروار
+    const dateStr = start.toLocaleDateString('en-GB', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric' 
+    });
 
-            if (manualStatus === 'completed' || now > end) {
-                return { text: "تەواو بووە", class: "status-completed-box", color: "#ef4444", icon: "fa-check-circle", label: "کۆتایی هات" };
-            } else if (now < start) {
-                return { 
-                    text: "کات بۆ دانراو", 
-                    class: "status-scheduled-box", 
-                    color: "#2563eb", 
-                    icon: "fa-calendar-alt", 
-                    label: `دەست پێ دەکات لە: ${dateStr} کاتژمێر ${timeStr}` 
-                };
-            } else {
-                return { 
-                    text: "چالاکە", 
-                    class: "status-active-box", 
-                    color: "#10b981", 
-                    icon: "fa-bolt", 
-                    label: "کاتی ماوە: " + getTimeLeft(endDate) 
-                };
-            }
-        }
+    if (manualStatus === 'completed' || now > end) {
+        return { text: "تەواو بووە", class: "status-completed-box", color: "#ef4444", icon: "fa-check-circle", label: "کۆتایی هات" };
+    } else if (now < start) {
+        return { 
+            text: "کات بۆ دانراو", 
+            class: "status-scheduled-box", 
+            color: "#2563eb", 
+            icon: "fa-calendar-alt", 
+            label: `دەست پێ دەکات لە: ${dateStr} کاتژمێر ${timeStr.toUpperCase()}` 
+        };
+    } else {
+        return { 
+            text: "چالاکە", 
+            class: "status-active-box", 
+            color: "#10b981", 
+            icon: "fa-bolt", 
+            label: "کاتی ماوە: " + getTimeLeft(endDate) 
+        };
+    }
+}
+
 
         function getTimeLeft(endDate) {
             const diff = new Date(endDate).getTime() - new Date().getTime();
