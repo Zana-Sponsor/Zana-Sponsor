@@ -34,6 +34,28 @@
 
         .container { padding: 20px 5%; max-width: 500px; margin: auto; }
 
+        /* ستایلی بەشی گەڕان */
+        .search-section {
+            background: white; padding: 15px; border-radius: 20px;
+            margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid var(--border);
+        }
+        .search-box {
+            display: flex; gap: 8px; background: #f1f5f9;
+            padding: 8px 12px; border-radius: 12px; align-items: center;
+        }
+        .search-box input {
+            flex: 1; border: none; background: transparent;
+            font-family: 'Vazirmatn'; font-size: 14px; outline: none;
+            color: var(--text-dark);
+        }
+        .search-btn {
+            background: var(--primary); color: white; border: none;
+            padding: 8px 15px; border-radius: 10px; font-weight: 700;
+            cursor: pointer; font-size: 13px; transition: 0.3s;
+        }
+        .search-btn:hover { opacity: 0.9; }
+
         .top-status { text-align: center; margin-bottom: 20px; padding: 15px; }
         .status-pill {
             display: inline-flex; align-items: center; gap: 8px;
@@ -94,6 +116,14 @@
     </nav>
 
     <div class="container">
+        <div class="search-section">
+            <div class="search-box">
+                <i class="fas fa-search" style="color: #94a3b8;"></i>
+                <input type="text" id="searchInput" placeholder="ئایدی ڕیکلامەکەت بنووسە... (بۆ نموونە: 1234)">
+                <button class="search-btn" onclick="fetchLiveAds()">بگەڕێ</button>
+            </div>
+        </div>
+
         <div class="top-status">
             <div class="status-pill">
                 <div class="pulse"></div>
@@ -113,51 +143,49 @@
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         function getStatusInfo(startDate, endDate, manualStatus) {
-    const now = new Date();
-    
-    // زیادکردنی 3 کاتژمێر بە دەستی بۆ کاتی کوردستان
-    function adjustTime(dateStr) {
-        const d = new Date(dateStr);
-        d.setHours(d.getHours() + 3); 
-        return d;
-    }
+            const now = new Date();
+            
+            function adjustTime(dateStr) {
+                const d = new Date(dateStr);
+                d.setHours(d.getHours() + 3); 
+                return d;
+            }
 
-    const start = adjustTime(startDate);
-    const end = adjustTime(endDate);
+            const start = adjustTime(startDate);
+            const end = adjustTime(endDate);
 
-    const timeStr = start.toLocaleTimeString('en-GB', { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        hour12: true 
-    });
-    
-    const dateStr = start.toLocaleDateString('en-GB', { 
-        day: '2-digit', 
-        month: '2-digit', 
-        year: 'numeric' 
-    });
+            const timeStr = start.toLocaleTimeString('en-GB', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: true 
+            });
+            
+            const dateStr = start.toLocaleDateString('en-GB', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric' 
+            });
 
-    if (manualStatus === 'completed' || now > end) {
-        return { text: "تەواو بووە", class: "status-completed-box", color: "#ef4444", icon: "fa-check-circle", label: "کۆتایی هات" };
-    } else if (now < start) {
-        return { 
-            text: "کات بۆ دانراو", 
-            class: "status-scheduled-box", 
-            color: "#2563eb", 
-            icon: "fa-calendar-alt", 
-            label: `دەست پێ دەکات لە: ${dateStr} کاتژمێر ${timeStr.toUpperCase()}` 
-        };
-    } else {
-        return { 
-            text: "چالاکە", 
-            class: "status-active-box", 
-            color: "#10b981", 
-            icon: "fa-bolt", 
-            label: "کاتی ماوە: " + getTimeLeft(endDate) 
-        };
-    }
-}
-
+            if (manualStatus === 'completed' || now > end) {
+                return { text: "تەواو بووە", class: "status-completed-box", color: "#ef4444", icon: "fa-check-circle", label: "کۆتایی هات" };
+            } else if (now < start) {
+                return { 
+                    text: "کات بۆ دانراو", 
+                    class: "status-scheduled-box", 
+                    color: "#2563eb", 
+                    icon: "fa-calendar-alt", 
+                    label: `دەست پێ دەکات لە: ${dateStr} کاتژمێر ${timeStr.toUpperCase()}` 
+                };
+            } else {
+                return { 
+                    text: "چالاکە", 
+                    class: "status-active-box", 
+                    color: "#10b981", 
+                    icon: "fa-bolt", 
+                    label: "کاتی ماوە: " + getTimeLeft(endDate) 
+                };
+            }
+        }
 
         function getTimeLeft(endDate) {
             const diff = new Date(endDate).getTime() - new Date().getTime();
@@ -169,7 +197,18 @@
 
         async function fetchLiveAds() {
             const container = document.getElementById('live-ads-container');
-            const { data, error } = await supabaseClient.from('ads1').select('*').order('created_at', { ascending: false });
+            const searchValue = document.getElementById('searchInput').value.trim();
+            
+            // پاککردنەوەی ئایدییەکە (ئەگەر PROXO- ی تێدابوو لای دەبات بۆ گەڕان)
+            const cleanId = searchValue.replace(/PROXO-/i, '');
+
+            let query = supabaseClient.from('ads1').select('*');
+
+            if (cleanId) {
+                query = query.eq('tiktok_ad_id', cleanId);
+            }
+
+            const { data, error } = await query.order('created_at', { ascending: false });
 
             if (error) { container.innerHTML = `<div class="loading">هەڵەیەک ڕوویدا.</div>`; return; }
 
@@ -219,9 +258,16 @@
                     `;
                 });
             } else {
-                container.innerHTML = `<div class="loading">هیچ زانیارییەک بەردەست نییە.</div>`;
+                container.innerHTML = `<div class="loading">هیچ ڕیکلامێک بەم ئایدییە نەدۆزرایەوە.</div>`;
             }
         }
+
+        // کارکردنی دوگمەی Enter بۆ گەڕان
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                fetchLiveAds();
+            }
+        });
 
         supabaseClient.channel('live-updates').on('postgres_changes', 
         { event: '*', schema: 'public', table: 'ads1' }, () => fetchLiveAds()).subscribe();
