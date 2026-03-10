@@ -13,6 +13,7 @@
             --primary: #2563eb;
             --tiktok-red: #fe2c55;
             --success: #22c55e;
+            --warning: #f59e0b;
             --bg: #f8fafc;
             --white: #ffffff;
             --border: #e2e8f0;
@@ -27,70 +28,79 @@
             border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
         }
 
-        /* ستایلی خانەی دەستکاری ناو خشتە */
         .inline-input {
-            width: 90px;
-            padding: 5px 8px;
-            border: 1px solid transparent;
-            border-radius: 6px;
-            font-family: inherit;
-            font-weight: bold;
-            text-align: center;
-            background: #f1f5f9;
-            transition: 0.2s;
+            width: 100px; padding: 8px; border: 1px solid transparent; border-radius: 6px;
+            font-family: inherit; font-weight: bold; text-align: center;
+            background: #f1f5f9; transition: 0.2s;
         }
-        .inline-input:focus {
-            border-color: var(--primary);
-            background: var(--white);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-        }
+        .inline-input:focus { border-color: var(--primary); background: var(--white); outline: none; }
 
         .table-container { background: var(--white); border-radius: 15px; overflow-x: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 1000px; }
+        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 1100px; }
         th { background: #f8fafc; padding: 15px; font-size: 13px; color: #64748b; border-bottom: 2px solid var(--border); }
         td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
 
-        .btn-add { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: bold; }
-        .action-btn { width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; color: white; transition: 0.2s; }
+        .thumbnail-mini { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; background: #eee; }
+        .btn-add { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: bold; }
+        .action-btn { width: 35px; height: 35px; border-radius: 8px; border: none; cursor: pointer; color: white; transition: 0.2s; margin-left: 5px; }
         .btn-delete { background: var(--tiktok-red); }
         
-        /* شاردنەوەی دوگمەی زیادکردنی ژمارە لە ناو ئینپوت */
+        .status-select { padding: 5px; border-radius: 6px; border: 1px solid var(--border); font-family: inherit; font-size: 12px; cursor: pointer; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        /* ئەنیمەیشن بۆ پاشەکەوتکردن */
+        .saving { background: #dcfce7 !important; transition: 0.3s; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>Proxo - بەڕێوەبردنی خێرا</h1>
-        <button class="btn-add" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-            <i class="fas fa-plus"></i> کڕیاری نوێ
-        </button>
+        <h1>Proxo - پانێڵی کۆنترۆڵی خێرا</h1>
+        <div id="sync-status" style="font-size: 12px; color: var(--success);">
+            <i class="fas fa-sync-alt fa-spin"></i> پەیوەندی ڕاستەوخۆ چالاکە
+        </div>
     </div>
 
-    <div id="adForm" style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
-        <input type="text" id="custName" placeholder="ناوی کڕیار">
-        <input type="text" id="adId" placeholder="TikTok Ad ID">
-        <input type="datetime-local" id="startDate">
-        <input type="datetime-local" id="endDate">
-        <button class="btn-add" onclick="addNewAd()">پاشەکەوت</button>
+    <div id="adForm" style="background: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <label style="font-size:12px; font-weight:bold;">ناوی کڕیار</label>
+            <input type="text" id="custName" placeholder="تاهیر...">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <label style="font-size:12px; font-weight:bold;">TikTok Ad ID</label>
+            <input type="text" id="adId" placeholder="تەنها ژمارەکە">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <label style="font-size:12px; font-weight:bold;">وێنە (URL)</label>
+            <input type="text" id="thumbUrl" placeholder="لینکی وێنە">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <label style="font-size:12px; font-weight:bold;">دەستپێکردن</label>
+            <input type="datetime-local" id="startDate">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <label style="font-size:12px; font-weight:bold;">کۆتایی</label>
+            <input type="datetime-local" id="endDate">
+        </div>
+        <button class="btn-add" onclick="addNewAd()" style="align-self: flex-end;">زانیارییەکان بنێرە</button>
     </div>
 
     <div class="table-container">
         <table>
             <thead>
                 <tr>
+                    <th>وێنە</th>
                     <th>کڕیار / ID</th>
-                    <th>👁️ بینین (Impressions)</th>
-                    <th>🖱️ کلیک (Clicks)</th>
+                    <th>👁️ بینین</th>
+                    <th>🖱️ کلیک</th>
                     <th>💰 خەرجی ($)</th>
-                    <th>دۆخ</th>
+                    <th>دۆخی ڕیکلام</th>
                     <th>کردارەکان</th>
                 </tr>
             </thead>
             <tbody id="ads-list">
-                <tr><td colspan="6" style="text-align:center; padding:30px;">خەریکی هێنانە...</td></tr>
+                <tr><td colspan="7" style="text-align:center; padding:30px;">خەریکی گەڕانە بەدوای داتاکاندا...</td></tr>
             </tbody>
         </table>
     </div>
@@ -110,23 +120,30 @@
         const list = document.getElementById('ads-list');
         list.innerHTML = ads.map(ad => `
             <tr>
+                <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/45'}" class="thumbnail-mini"></td>
                 <td>
                     <b>${ad.customer_name}</b><br>
-                    <small style="color:var(--primary)">PROXO-${ad.tiktok_ad_id}</small>
+                    <small style="color:var(--primary)">ID: ${ad.tiktok_ad_id}</small>
                 </td>
                 <td>
                     <input type="number" class="inline-input" value="${ad.impressions || 0}" 
-                    onchange="updateField('${ad.id}', 'impressions', this.value)">
+                    onchange="updateField('${ad.id}', 'impressions', this.value, this)">
                 </td>
                 <td>
                     <input type="number" class="inline-input" value="${ad.clicks || 0}" 
-                    onchange="updateField('${ad.id}', 'clicks', this.value)">
+                    onchange="updateField('${ad.id}', 'clicks', this.value, this)">
                 </td>
                 <td>
                     <input type="number" step="0.1" class="inline-input" value="${ad.spend || 0}" 
-                    onchange="updateField('${ad.id}', 'spend', this.value)">
+                    onchange="updateField('${ad.id}', 'spend', this.value, this)">
                 </td>
-                <td><small>${ad.status || 'active'}</small></td>
+                <td>
+                    <select class="status-select" onchange="updateField('${ad.id}', 'status', this.value, this)">
+                        <option value="active" ${ad.status === 'active' ? 'selected' : ''}>Active</option>
+                        <option value="completed" ${ad.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        <option value="scheduled" ${ad.status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
+                    </select>
+                </td>
                 <td>
                     <button class="action-btn btn-delete" onclick="deleteAd('${ad.id}')"><i class="fas fa-trash"></i></button>
                 </td>
@@ -134,45 +151,64 @@
         `).join('');
     }
 
-    // فەنکشنی نوێکردنەوەی خێرا (Inline Update)
-    async function updateField(id, field, value) {
+    async function updateField(id, field, value, element) {
         const updateData = {};
-        updateData[field] = (field === 'spend') ? parseFloat(value) : parseInt(value);
+        updateData[field] = (field === 'spend') ? parseFloat(value) : (field === 'status' ? value : parseInt(value));
 
-        const { error } = await supabaseClient
-            .from('ads1')
-            .update(updateData)
-            .eq('id', id);
+        // نیشاندانی ئەنیمەیشنی پاشەکەوتکردن
+        if(element) element.classList.add('saving');
+
+        const { error } = await supabaseClient.from('ads1').update(updateData).eq('id', id);
 
         if (error) {
-            alert("هەڵە: " + error.message);
+            alert("هەڵە لە نوێکردنەوە");
+            if(element) element.style.borderColor = "red";
         } else {
-            console.log(`Updated ${field} to ${value}`);
-            // لێرە پێویست بە ڕیفرێش ناکات چونکە کڕیارەکە ڕاستەوخۆ لەوێ دەبینێت
+            setTimeout(() => { if(element) element.classList.remove('saving'); }, 500);
         }
     }
 
     async function addNewAd() {
+        const name = document.getElementById('custName').value;
+        if(!name) return alert("تکایە ناوی کڕیار بنووسە");
+
         const payload = {
-            customer_name: document.getElementById('custName').value,
+            customer_name: name,
             tiktok_ad_id: document.getElementById('adId').value,
+            thumbnail_url: document.getElementById('thumbUrl').value,
             start_date: document.getElementById('startDate').value ? new Date(document.getElementById('startDate').value).toISOString() : new Date().toISOString(),
             end_date: document.getElementById('endDate').value ? new Date(document.getElementById('endDate').value).toISOString() : new Date().toISOString(),
             impressions: 0, clicks: 0, spend: 0, status: 'active'
         };
+
         const { error } = await supabaseClient.from('ads1').insert([payload]);
         if (!error) { 
             fetchAds();
             document.querySelectorAll('#adForm input').forEach(i => i.value = '');
+        } else {
+            alert(error.message);
         }
     }
 
     async function deleteAd(id) {
-        if (confirm("دڵنیای؟")) {
+        if (confirm("دڵنیای لە سڕینەوەی ئەم کڕیارە؟")) {
             await supabaseClient.from('ads1').delete().eq('id', id);
             fetchAds();
         }
     }
+
+    // چالاککردنی Real-time (دەقە بە دەقە)
+    supabaseClient
+        .channel('admin_changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'ads1' }, (payload) => {
+            console.log('Change received!', payload);
+            // لێرە تەنها ئەگەر گۆڕانکارییەکە لە دەرەوە بێت (وەک تیکتۆک) خشتەکە نوێ دەکەینەوە
+            // بۆ ئەوەی فووکس لەسەر ئینپوتەکانمان نەڕوات کاتێک خۆمان دەستکاری دەکەین
+            if (payload.eventType === 'INSERT' || payload.eventType === 'DELETE') {
+                fetchAds();
+            }
+        })
+        .subscribe();
 
     window.onload = fetchAds;
 </script>
