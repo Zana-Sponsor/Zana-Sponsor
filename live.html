@@ -69,7 +69,6 @@
         
         .countdown-box { padding: 12px; border-radius: 15px; margin: 15px 0 8px 0; text-align: center; font-size: 13px; font-weight: 700; }
         
-        /* Platform Style */
         .platform-box {
             display: flex; align-items: center; justify-content: center; gap: 6px;
             font-size: 11px; font-weight: 700; color: var(--text-gray);
@@ -84,7 +83,7 @@
         
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .stat-box { background: #fafafa; padding: 12px 5px; border-radius: 16px; text-align: center; border: 1px solid #f5f5f5; }
-        .stat-value { display: block; font-size: 16px; font-weight: 900; }
+        .stat-value { display: block; font-size: 15px; font-weight: 900; }
         .stat-label { font-size: 11px; color: var(--text-gray); }
         
         .thumb-box { text-align: center; margin: 10px 0; }
@@ -147,15 +146,14 @@
 
         function getPlatformInfo(platform) {
             const p = (platform || 'tiktok').toLowerCase();
-            if (p.includes('facebook') || p.includes('فەیسبووک')) return { name: 'Facebook Ads', icon: 'fa-facebook', color: '#1877F2' };
-            if (p.includes('instagram') || p.includes('ئینستاگرام')) return { name: 'Instagram Ads', icon: 'fa-instagram', color: '#E4405F' };
-            if (p.includes('snapchat') || p.includes('سناپ')) return { name: 'Snapchat Ads', icon: 'fa-snapchat', color: '#FFFC00' };
+            if (p.includes('facebook')) return { name: 'Facebook Ads', icon: 'fa-facebook', color: '#1877F2' };
+            if (p.includes('instagram')) return { name: 'Instagram Ads', icon: 'fa-instagram', color: '#E4405F' };
+            if (p.includes('snapchat')) return { name: 'Snapchat Ads', icon: 'fa-snapchat', color: '#FFFC00' };
             return { name: 'TikTok Ads', icon: 'fa-tiktok', color: '#000000' };
         }
 
         function getStatusInfo(startDate, endDate, manualStatus) {
             const now = new Date(); const start = new Date(startDate); const end = new Date(endDate);
-            
             if (manualStatus === 'rejected') return { text: "ڕەتکرایەوە", class: "status-rejected-box", color: "#dc2626", icon: "fa-times-circle", label: "ئەم ڕیکلامە ڕەتکرایەوە", sortOrder: 4 };
             if (manualStatus === 'completed' || now > end) return { text: "تەواو بووە", class: "status-completed-box", color: "#64748b", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە", sortOrder: 3 };
             else if (manualStatus === 'active' || (now >= start && now <= end)) return { text: "چالاکە", class: "status-active-box", color: "#22c55e", icon: "fa-bolt", label: "کاتی ماوە: " + getTimeLeft(endDate), sortOrder: 1 };
@@ -194,20 +192,21 @@
                 sortedData.forEach((ad, index) => {
                     const statusInfo = ad.statusInfo;
                     const plat = getPlatformInfo(ad.platform);
-                    const isCompleted = statusInfo.text === "تەواو بووە";
-                    const isRejected = statusInfo.text === "ڕەتکرایەوە";
                     const bestBadge = ad.is_best ? `<div class="best-seller-ribbon"><i class="fas fa-crown"></i><span>باشترین فرۆش</span></div>` : '';
                     
-                    // لێرە دیاری دەکەین کە نیشانەی دراوەکە چی بێت و چۆن ژمارەکە نیشان بدات
-                    const isIQD = (ad.currency === 'IQD' || ad.currency === 'دینار');
-                    const currencySymbol = isIQD ? 'د.ع' : '$';
+                    const isIQD = (ad.currency === 'IQD');
                     
-                    // ئەگەر دینار بوو، ژمارەکان بە فاریزەوە نیشان بدە (نموونە: 150,000)
-                    const formattedBudget = isIQD ? (ad.budget || 0).toLocaleString() : (ad.budget || 0);
-                    const formattedSpend = isIQD ? (ad.spend || 0).toLocaleString() : parseFloat(ad.spend || 0).toFixed(1);
+                    // ڕێکخستنی شێوازی نیشاندانی بودجە و خەرجی
+                    const formattedBudget = isIQD ? 
+                        (ad.budget || 0).toLocaleString() + ' د.ع' : 
+                        '$' + (ad.budget || 0);
+
+                    const formattedSpend = isIQD ? 
+                        (ad.spend || 0).toLocaleString() + ' د.ع' : 
+                        '$' + parseFloat(ad.spend || 0).toFixed(1);
 
                     const card = `
-                        <div class="ad-card" style="animation-delay: ${index * 0.1}s; ${isCompleted ? 'opacity: 0.7;' : ''} ${isRejected ? 'border-color: #fecaca;' : ''}">
+                        <div class="ad-card" style="animation-delay: ${index * 0.1}s; ${statusInfo.text === "تەواو بووە" ? 'opacity: 0.7;' : ''}">
                             ${bestBadge}
                             <div class="card-header">
                                 <span class="order-id">#PROXO-${ad.tiktok_ad_id || '0000'}</span>
@@ -216,7 +215,7 @@
                             <div class="thumb-box">
                                 <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb">
                                 <h3 style="font-size: 16px; margin: 12px 0 4px 0; font-weight: 900;">${ad.customer_name || 'کڕیار'}</h3>
-                                <div style="font-size: 15px; color: #16a34a; font-weight: 700;">${currencySymbol}${formattedBudget}</div>
+                                <div style="font-size: 15px; color: #16a34a; font-weight: 700;">${formattedBudget}</div>
                             </div>
                             
                             <div class="countdown-box ${statusInfo.class}">${statusInfo.label}</div>
@@ -229,7 +228,7 @@
                             <div class="stats-grid">
                                 <div class="stat-box"><i class="fas fa-eye"></i><span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span><span class="stat-label">بینین</span></div>
                                 <div class="stat-box"><i class="fas fa-mouse-pointer"></i><span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span><span class="stat-label">کلیک</span></div>
-                                <div class="stat-box"><i class="fas fa-wallet"></i><span class="stat-value">${currencySymbol}${formattedSpend}</span><span class="stat-label">خەرجکراو</span></div>
+                                <div class="stat-box"><i class="fas fa-wallet"></i><span class="stat-value">${formattedSpend}</span><span class="stat-label">خەرجکراو</span></div>
                             </div>
                         </div>`;
                     container.innerHTML += card;
