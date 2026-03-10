@@ -2,55 +2,117 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proxo Admin - بەڕێوەبردنی ڕیکلامەکان</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; background: #f4f7f6; padding: 40px; }
-        .admin-container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        :root { --primary: #2563eb; --danger: #fe2c55; --success: #25d366; }
+        body { font-family: sans-serif; background: #f8fafc; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .form-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px; background: #f1f5f9; padding: 20px; border-radius: 10px; }
+        input, select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: right; }
-        .btn { padding: 8px 15px; border-radius: 5px; cursor: pointer; border: none; font-weight: bold; }
-        .btn-approve { background: #25d366; color: white; }
-        .btn-reject { background: #fe2c55; color: white; }
-        .btn-finish { background: #2563eb; color: white; }
-        input, select { padding: 10px; margin: 5px; border-radius: 5px; border: 1px solid #ddd; }
+        .btn { padding: 8px 15px; border-radius: 6px; cursor: pointer; border: none; font-weight: bold; transition: 0.3s; }
+        .btn-add { background: var(--primary); color: white; width: 100%; }
+        .status-active { color: var(--success); font-weight: bold; }
+        .status-pending { color: orange; font-weight: bold; }
+        .action-btns { display: flex; gap: 5px; }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <h2>پنێڵی ئەدمینی Proxo</h2>
-        
-        <div style="background: #fafafa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
-            <h3>زیادکردنی ڕیکلامی نوێ</h3>
-            <input type="text" id="custName" placeholder="ناوی کڕیار">
-            <input type="text" id="adId" placeholder="TikTok Ad ID">
-            <input type="text" id="thumbUrl" placeholder="لینکی وێنەی ڤیدیۆ">
-            <button class="btn btn-finish" onclick="addNewAd()">زیادکردن</button>
-        </div>
 
-        <h3>لیستی ڕیکلامەکان</h3>
-        <table id="adsTable">
-            <thead>
-                <tr>
-                    <th>کڕیار</th>
-                    <th>Ad ID</th>
-                    <th>دۆخی ڕیکلام</th>
-                    <th>کردارەکان</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                </tbody>
-        </table>
+<div class="container">
+    <h2>بەڕێوەبردنی ڕیکلامەکانی Proxo</h2>
+
+    <div class="form-group">
+        <input type="text" id="custName" placeholder="ناوی کڕیار">
+        <input type="text" id="adId" placeholder="TikTok Ad ID">
+        <input type="text" id="thumbUrl" placeholder="لینکی وێنەی ڤیدیۆ (URL)">
+        <button class="btn btn-add" onclick="addNewAd()">زیادکردنی ڕیکلام</button>
     </div>
 
-    <script>
-        // لێرەدا دەبێت فانکشنەکانی Supabase زیاد بکەیت بۆ ئەوەی داتاکە بە ڕاستی پاشەکەوت بێت
-        function addNewAd() {
-            alert("ڕیکلامەکە زیاد کرا و ئێستا چاوەڕوانی تەسدیقە!");
+    <table>
+        <thead>
+            <tr>
+                <th>کڕیار</th>
+                <th>TikTok Ad ID</th>
+                <th>دۆخ</th>
+                <th>کردارەکان</th>
+            </tr>
+        </thead>
+        <tbody id="ads-list">
+            </tbody>
+    </table>
+</div>
+
+
+
+<script>
+    // بەستنەوە بە Supabase (هەمان کۆدەکانت)
+    const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... (کۆدەکەت لێرە دابنێ)';
+    const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+
+    // ١. وەرگرتنی ڕیکلامەکان لە داتابەیس
+    async function fetchAds() {
+        const { data, error } = await supabaseClient.from('ads').select('*').order('created_at', { ascending: false });
+        if (data) renderAds(data);
+    }
+
+    function renderAds(ads) {
+        const list = document.getElementById('ads-list');
+        list.innerHTML = '';
+        ads.forEach(ad => {
+            list.innerHTML += `
+                <tr>
+                    <td>${ad.customer_name}</td>
+                    <td><code>${ad.tiktok_ad_id}</code></td>
+                    <td class="status-${ad.status}">${ad.status}</td>
+                    <td class="action-btns">
+                        <button class="btn" style="background:#25d366;color:white" onclick="updateStatus('${ad.id}', 'active')">چالاک</button>
+                        <button class="btn" style="background:#2563eb;color:white" onclick="updateStatus('${ad.id}', 'completed')">تەواو</button>
+                        <button class="btn" style="background:#fe2c55;color:white" onclick="deleteAd('${ad.id}')">سڕینەوە</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    // ٢. زیادکردنی ڕیکلامی نوێ
+    async function addNewAd() {
+        const name = document.getElementById('custName').value;
+        const ad_id = document.getElementById('adId').value;
+        const img = document.getElementById('thumbUrl').value;
+
+        if(!name || !ad_id) return alert("تکایە خانەکان پڕ بکەرەوە");
+
+        const { error } = await supabaseClient.from('ads').insert([
+            { customer_name: name, tiktok_ad_id: ad_id, thumbnail_url: img }
+        ]);
+
+        if(!error) {
+            alert("ڕیکلامەکە زیاد کرا!");
+            fetchAds();
         }
-        
-        function updateStatus(id, status) {
-            alert("دۆخی ڕیکلامی " + id + " گۆڕدرا بۆ: " + status);
+    }
+
+    // ٣. گۆڕینی دۆخی ڕیکلام
+    async function updateStatus(id, newStatus) {
+        await supabaseClient.from('ads').update({ status: newStatus }).eq('id', id);
+        fetchAds();
+    }
+
+    // ٤. سڕینەوەی ڕیکلام
+    async function deleteAd(id) {
+        if(confirm("دڵنیای لە سڕینەوەی ئەم ڕیکلامە؟")) {
+            await supabaseClient.from('ads').delete().eq('id', id);
+            fetchAds();
         }
-    </script>
+    }
+
+    window.onload = fetchAds;
+</script>
+
 </body>
 </html>
