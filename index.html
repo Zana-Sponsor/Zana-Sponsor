@@ -7,7 +7,7 @@
     <title>Proxo</title>
     <link rel="icon" type="image/jpeg" href="https://image2url.com/r2/default/images/1772248056478-a5a04d98-be5f-4ee9-8f08-09db2be8fd1a.jpg">
     
-        <script>
+    <script>
     !function (w, d, t) {
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
       var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script")
@@ -20,7 +20,6 @@
 
     function trackAndRedirect(url) {
       if (window.ttq) {
-        // چاککردنی کێشەی Content ID بۆ Contact
         window.ttq.track('Contact', {
           content_id: 'contact_button',
           content_name: 'WhatsApp Contact'
@@ -76,7 +75,6 @@
         h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; text-align: center; margin-bottom: 50px; }
         .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .card { background: var(--soft-bg); padding: 40px 30px; border-radius: 30px; text-align: center; transition: 0.4s; }
-        .feedback-stars { color: var(--star-gold); font-size: 14px; margin-bottom: 12px; display: flex; justify-content: center; gap: 3px; }
         footer { background: var(--footer-bg); color: #ffffff; padding: 80px 6% 0; }
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; padding-bottom: 60px; }
         .footer-logo { height: 24px; width: auto; margin-bottom: 20px; filter: brightness(0) invert(1); }
@@ -84,27 +82,10 @@
         .social-icons { display: flex; gap: 15px; }
         .social-icons a { width: 45px; height: 45px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; cursor: pointer; }
         .legal-section { background: #000; padding: 30px 6%; border-top: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-        .proxo-legal-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-        .proxo-legal-links a { color: #94a3b8; text-decoration: none; font-size: 13px; transition: 0.3s; }
-        .proxo-legal-links a:hover { color: white; }
         .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; z-index: 1000; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4); cursor: pointer; border: none; }
         .rtl { direction: rtl; text-align: right; }
         .ltr { direction: ltr; text-align: left; }
         .rtl .wa-float { right: auto; left: 30px; }
-
-        /* بەشی Live Ads */
-        .live-ads-area { padding: 80px 6%; background: #000; color: #fff; }
-        .live-header { text-align: center; margin-bottom: 50px; }
-        .live-pulse { display: inline-block; width: 10px; height: 10px; background: var(--tiktok-red); border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(254, 44, 85, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(254, 44, 85, 0); } 100% { box-shadow: 0 0 0 0 rgba(254, 44, 85, 0); } }
-        .ad-card { background: #111; border: 1px solid #222; border-radius: 20px; overflow: hidden; transition: 0.3s; position: relative; }
-        .ad-card:hover { border-color: var(--tiktok-red); transform: translateY(-5px); }
-        .ad-thumb { width: 100%; height: 180px; object-fit: cover; filter: brightness(0.8); }
-        .ad-info { padding: 20px; }
-        .ad-client { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 10px; }
-        .ad-stats { display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 15px; }
-        .stat-v { display: block; font-size: 20px; font-weight: 900; }
-        .stat-l { font-size: 10px; color: #64748b; text-transform: uppercase; }
     </style>
 </head>
 <body class="ltr">
@@ -121,7 +102,7 @@
         </div>
         <a href="#home" class="menu-link" data-key="nav_home">Home</a>
         <a href="#services" class="menu-link" data-key="nav_services">Services</a>
-        <a href="#live-ads" class="menu-link" data-key="nav_live">Live Ads</a>
+        <a href="live.html" class="menu-link" data-key="nav_live">Live Ads</a>
         <a href="#feedback" class="menu-link" data-key="nav_feedback">Testimonials</a>
     </div>
 
@@ -138,16 +119,6 @@
                 <div class="int-item"><i class="fas fa-wallet" style="color:var(--accent)"></i> FastPay</div>
             </div>
         </div>
-    </section>
-
-    <section id="live-ads" class="live-ads-area">
-        <div class="live-header">
-            <span class="live-pulse"></span>
-            <h2 data-key="live_title" style="color: #fff; margin-bottom: 10px;">Live Ad Campaigns</h2>
-            <p data-key="live_desc" style="color: #94a3b8;">Real-time results from our active TikTok sponsorships</p>
-        </div>
-        <div class="grid-layout" id="live-ads-container">
-            </div>
     </section>
 
     <section id="services" style="background:#fafafa">
@@ -198,10 +169,6 @@
             </div>
         </div>
         <div class="legal-section">
-            <div class="proxo-legal-links">
-                <a href="terms.html" data-key="legal_terms">مەرج و یاساکان</a>
-                <a href="policy.html" data-key="legal_privacy">سیاسەتی پاراستنی نهێنی</a>
-            </div>
             <div style="color: #64748b; font-size: 13px;">© 2026 PROXO KRD. All Rights Reserved.</div>
         </div>
     </footer>
@@ -232,32 +199,7 @@
                 });
             }
         }
-
-        async function loadLiveAds() {
-            const container = document.getElementById('live-ads-container');
-            const { data, error } = await supabaseClient.from('ads').select('*').eq('status', 'active');
-            if (data && container) {
-                container.innerHTML = '';
-                data.forEach(ad => {
-                    container.innerHTML += `
-                        <div class="ad-card">
-                            <img src="${ad.thumbnail_url || 'https://via.placeholder.com/400x200'}" class="ad-thumb">
-                            <div class="ad-info">
-                                <span class="ad-client"><i class="fas fa-user-tie"></i> ${ad.customer_name}</span>
-                                <div class="ad-stats">
-                                    <div style="text-align:center"><span class="stat-v" style="color:var(--tiktok-red)">$${ad.spend}</span><span class="stat-l">Spend</span></div>
-                                    <div style="text-align:center"><span class="stat-v" style="color:#fff">${ad.clicks}</span><span class="stat-l">Clicks</span></div>
-                                </div>
-                            </div>
-                        </div>`;
-                });
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            loadFeedbacks('en');
-            loadLiveAds();
-        });
+        window.addEventListener('DOMContentLoaded', () => loadFeedbacks('en'));
 
         const toggleBtn = document.getElementById('toggleBtn');
         const menuMenu = document.getElementById('menuMenu');
@@ -271,8 +213,8 @@
         menuLinks.forEach(link => { link.addEventListener('click', () => { if (menuMenu.classList.contains('active')) toggleMenu(); }); });
 
         const translations = {
-            en: { nav_home: "Home", nav_services: "Services", nav_feedback: "Testimonials", nav_live: "Live Ads", hero_title: "Scale Your Brand with TikTok Ads", hero_desc: "The ultimate agency for TikTok sponsorship in Iraq. We connect your products to millions of potential customers with precision.", btn_start: "Launch Campaign", supported_by: "Officially Supported By", live_title: "Live Ad Campaigns", live_desc: "Real-time results from our active TikTok sponsorships", services_title: "Targeted Advertising Solutions", ser1_t: "Ad Management", ser1_d: "Full management of your TikTok Business Center.", ser2_t: "ROI Optimization", ser2_d: "We track and optimize every dollar spent.", feedback_title: "Trusted by Business Owners", footer_about: "The leading agency for TikTok growth in Iraq.", footer_links: "Quick Links", write_feedback: "Write a Feedback", legal_terms: "Terms", legal_privacy: "Privacy" },
-            ku: { nav_home: "سەرەتا", nav_services: "خزمەتگوزارییەکان", nav_feedback: "فیدباکەکان", nav_live: "ڕیکلامە زیندووەکان", hero_title: "کارەکەت گەورە بکە بە سپۆنسەری تیکتۆک", hero_desc: "باشترین ئاژانس بۆ سپۆنسەری تیکتۆک لە عێراق. کاڵاکانت دەگەیەنین بە ملیۆنان کڕیار.", btn_start: "دەستپێبکە", supported_by: "پشتیوانی کراوە لەلایەن", live_title: "ڕیکلامە چالاکەکان", live_desc: "ئەنجامی ڕاستەوخۆ لە سپۆنسەرەکانمانەوە", services_title: "چارەسەری سپۆنسەری ئامانجدار", ser1_t: "بەڕێوەبردنی سپۆنسەر", ser1_d: "بەڕێوەبردنی تەواوی Business Centerی تیکتۆک.", ser2_t: "زیادکردنی قازانج", ser2_d: "چاودێری و زیادکردنی سوود لە پارە خەرجکراوەکان.", feedback_title: "خاوەنکارەکان متمانەمان پێ دەکەن", footer_about: "ئاژانسی پێشەنگ بۆ گەشەکردنی تیکتۆک لە عێراق.", footer_links: "لینکە خێراکان", write_feedback: "فیدباک بنووسە", legal_terms: "مەرج و یاساکان", legal_privacy: "سیاسەتی پاراستنی نهێنی" }
+            en: { nav_home: "Home", nav_services: "Services", nav_feedback: "Testimonials", nav_live: "Live Ads", hero_title: "Scale Your Brand with TikTok Ads", hero_desc: "The ultimate agency for TikTok sponsorship in Iraq. We connect your products to millions of potential customers with precision.", btn_start: "Launch Campaign", supported_by: "Officially Supported By", services_title: "Targeted Advertising Solutions", ser1_t: "Ad Management", ser1_d: "Full management of your TikTok Business Center.", ser2_t: "ROI Optimization", ser2_d: "We track and optimize every dollar spent.", feedback_title: "Trusted by Business Owners", footer_about: "The leading agency for TikTok growth in Iraq.", footer_links: "Quick Links", write_feedback: "Write a Feedback" },
+            ku: { nav_home: "سەرەتا", nav_services: "خزمەتگوزارییەکان", nav_feedback: "فیدباکەکان", nav_live: "ڕیکلامە چالاکەکان", hero_title: "کارەکەت گەورە بکە بە سپۆنسەری تیکتۆک", hero_desc: "باشترین ئاژانس بۆ سپۆنسەری تیکتۆک لە عێراق. کاڵاکانت دەگەیەنین بە ملیۆنان کڕیار.", btn_start: "دەستپێبکە", supported_by: "پشتیوانی کراوە لەلایەن", services_title: "چارەسەری سپۆنسەری ئامانجدار", ser1_t: "بەڕێوەبردنی سپۆنسەر", ser1_d: "بەڕێوەبردنی تەواوی Business Centerی تیکتۆک.", ser2_t: "زیادکردنی قازانج", ser2_d: "چاودێری و زیادکردنی سوود لە پارە خەرجکراوەکان.", feedback_title: "خاوەنکارەکان متمانەمان پێ دەکەن", footer_about: "ئاژانسی پێشەنگ بۆ گەشەکردنی تیکتۆک لە عێراق.", footer_links: "لینکە خێراکان", write_feedback: "فیدباک بنووسە" }
         };
 
         function changeLang(lang) {
@@ -282,6 +224,9 @@
                 if (translations[lang][key]) el.innerText = translations[lang][key];
             });
             document.getElementById('feedbackLink').href = `feedback.html?lang=${lang}`;
+            // بەستنەوەی مێنیوی لایڤ بە پارامیتەری زمان
+            document.querySelector('[data-key="nav_live"]').href = `live.html?lang=${lang}`;
+            loadFeedbacks(lang);
             if (menuMenu.classList.contains('active')) toggleMenu();
         }
     </script>
