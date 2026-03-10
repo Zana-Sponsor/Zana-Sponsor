@@ -25,7 +25,7 @@
         .ad-card { background: var(--card-white); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); position: relative; }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .order-id { color: var(--text-gray); font-size: 11px; font-weight: 700; background: #f8fafc; padding: 3px 10px; border-radius: 6px; }
-        .countdown-box { padding: 10px; border-radius: 12px; margin: 10px 0; text-align: center; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .countdown-box { padding: 10px; border-radius: 12px; margin: 10px 0; text-align: center; font-size: 13px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
         .status-active-box { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
         .status-scheduled-box { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
         .status-completed-box { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
@@ -39,6 +39,7 @@
         .ad-thumb { width: 80px; height: 80px; border-radius: 15px; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
         .sync-text { font-size: 11px; font-weight: 900; display: flex; align-items: center; gap: 5px; }
         .loading { text-align: center; padding: 40px; color: var(--text-gray); font-size: 13px; }
+        .start-time-label { font-size: 11px; opacity: 0.8; font-weight: 400; }
     </style>
 </head>
 <body>
@@ -61,11 +62,35 @@
         const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
+        // فەنکشنی ڕێکخستنی کات بە کاتی عێراق و AM/PM
+        function formatIraqTime(dateString) {
+            const options = { 
+                timeZone: 'Asia/Baghdad',
+                year: 'numeric', 
+                month: 'numeric', 
+                day: 'numeric',
+                hour: 'numeric', 
+                minute: 'numeric', 
+                hour12: true 
+            };
+            return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
+        }
+
         function getStatusInfo(startDate, endDate, manualStatus) {
             const now = new Date(); const start = new Date(startDate); const end = new Date(endDate);
-            if (manualStatus === 'completed' || now > end) return { text: "تەواو بووە", class: "status-completed-box", color: "#64748b", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە" };
-            else if (manualStatus === 'active' || (now >= start && now <= end)) return { text: "چالاکە", class: "status-active-box", color: "#22c55e", icon: "fa-bolt", label: "کاتی ماوە: " + getTimeLeft(endDate) };
-            else return { text: "کات بۆ دانراو", class: "status-scheduled-box", color: "#2563eb", icon: "fa-calendar-alt", label: "بەم زووانە دەست پێ دەکات" };
+            if (manualStatus === 'completed' || now > end) {
+                return { text: "تەواو بووە", class: "status-completed-box", color: "#64748b", icon: "fa-check-circle", label: "ڕیکلامەکە کۆتایی هاتووە" };
+            } else if (manualStatus === 'active' || (now >= start && now <= end)) {
+                return { text: "چالاکە", class: "status-active-box", color: "#22c55e", icon: "fa-bolt", label: "کاتی ماوە: " + getTimeLeft(endDate) };
+            } else {
+                return { 
+                    text: "کات بۆ دانراو", 
+                    class: "status-scheduled-box", 
+                    color: "#2563eb", 
+                    icon: "fa-calendar-alt", 
+                    label: `<div>بەم زووانە دەست پێ دەکات</div><div class="start-time-label">دەستپێکردن: ${formatIraqTime(startDate)}</div>` 
+                };
+            }
         }
 
         function getTimeLeft(endDate) {
