@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proxo Admin - بەڕێوەبردنی ڕیکلامەکان</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -13,14 +13,20 @@
             --primary: #2563eb;
             --tiktok-red: #fe2c55;
             --success: #22c55e;
+            --warning: #f59e0b;
             --bg: #f8fafc;
             --white: #ffffff;
+            --border: #e2e8f0;
         }
 
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); margin: 0; padding: 20px; color: #1e293b; }
         .container { max-width: 1100px; margin: 0 auto; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 30px; background: var(--white); padding: 20px; 
+            border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+        }
         .header h1 { margin: 0; font-size: 22px; color: var(--primary); font-weight: 900; }
 
         .add-form { 
@@ -31,7 +37,7 @@
         }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         label { font-weight: bold; font-size: 13px; color: #475569; }
-        input { padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; transition: 0.3s; font-family: inherit; }
+        input { padding: 12px; border: 1px solid var(--border); border-radius: 8px; outline: none; transition: 0.3s; font-family: inherit; }
         input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
         
         .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; }
@@ -39,22 +45,23 @@
         .btn-main:hover { background: #1d4ed8; transform: translateY(-2px); }
 
         .table-container { background: var(--white); border-radius: 15px; overflow-x: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 800px; }
-        th { background: #f1f5f9; padding: 15px; font-size: 13px; color: #64748b; }
-        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 850px; }
+        th { background: #f1f5f9; padding: 15px; font-size: 13px; color: #64748b; border-bottom: 2px solid var(--border); }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; vertical-align: middle; }
         
         .status-badge { padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .status-active { background: #dcfce7; color: #166534; }
         .status-completed { background: #fee2e2; color: #991b1b; }
 
         .actions { display: flex; gap: 8px; }
-        .action-btn { width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
+        .action-btn { width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
         .btn-play { background: var(--success); }
-        .btn-stop { background: var(--warning); background-color: #f59e0b; }
+        .btn-stop { background: var(--warning); }
         .btn-delete { background: var(--tiktok-red); }
         .action-btn:hover { opacity: 0.8; transform: scale(1.1); }
 
-        .thumbnail-mini { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1px solid #eee; }
+        .thumbnail-mini { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid #eee; }
+        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -73,7 +80,7 @@
             <input type="text" id="custName" placeholder="بۆ نموونە: تاهیر">
         </div>
         <div class="form-group">
-            <label>Order ID (کۆد)</label>
+            <label>TikTok Ad ID</label>
             <input type="text" id="adId" placeholder="وەک: 5050">
         </div>
         <div class="form-group">
@@ -95,13 +102,15 @@
                 <tr>
                     <th>وێنە</th>
                     <th>کڕیار</th>
-                    <th>Order ID</th>
+                    <th>Ad ID</th>
                     <th>کاتی ماوە</th>
                     <th>دۆخ</th>
                     <th>کردارەکان</th>
                 </tr>
             </thead>
-            <tbody id="ads-list"></tbody>
+            <tbody id="ads-list">
+                <tr><td colspan="6" style="text-align:center; padding:30px;">خەریکی بارکردنی داتاکانە...</td></tr>
+            </tbody>
         </table>
     </div>
 </div>
@@ -111,14 +120,13 @@
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-    // فەنکشن بۆ حیسابکردنی کات لەناو خشتەکەدا
     function calculateTimeLeft(endDate) {
         if (!endDate) return "---";
         const diff = new Date(endDate).getTime() - new Date().getTime();
         if (diff <= 0) return "تەواوبووە";
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        return `${days}ڕ و ${hours}ک`;
+        return `${days} ڕۆژ و ${hours} کاتژمێر`;
     }
 
     async function fetchAds() {
@@ -127,7 +135,10 @@
             .select('*')
             .order('created_at', { ascending: false });
 
-        if (error) return console.error(error);
+        if (error) {
+            console.error("Fetch error:", error);
+            return;
+        }
         renderAds(data);
     }
 
@@ -135,18 +146,23 @@
         const list = document.getElementById('ads-list');
         list.innerHTML = '';
 
+        if (!ads || ads.length === 0) {
+            list.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:#64748b;">هیچ سپۆنسەرێک نییە</td></tr>';
+            return;
+        }
+
         ads.forEach(ad => {
             const timeStr = calculateTimeLeft(ad.end_date);
             list.innerHTML += `
                 <tr>
                     <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/50'}" class="thumbnail-mini"></td>
-                    <td><b>${ad.customer_name}</b></td>
+                    <td><b style="color:#1e293b;">${ad.customer_name || 'ناو دیاری نەکراوە'}</b></td>
                     <td><code>NASS-${ad.tiktok_ad_id || '0000'}</code></td>
-                    <td><span style="font-size:12px; color:#666;">${timeStr}</span></td>
-                    <td><span class="status-badge status-${ad.status || 'active'}">${ad.status}</span></td>
+                    <td><span style="font-size:12px; color:#6b7280; font-weight:bold;">${timeStr}</span></td>
+                    <td><span class="status-badge status-${ad.status || 'active'}">${(ad.status || 'active').toUpperCase()}</span></td>
                     <td class="actions">
                         <button class="action-btn btn-play" title="چالاککردن" onclick="updateStatus('${ad.id}', 'active')"><i class="fas fa-play"></i></button>
-                        <button class="action-btn btn-stop" title="ڕاگرتن" onclick="updateStatus('${ad.id}', 'completed')"><i class="fas fa-stop"></i></button>
+                        <button class="action-btn btn-stop" title="تەواوبوون" onclick="updateStatus('${ad.id}', 'completed')"><i class="fas fa-check-double"></i></button>
                         <button class="action-btn btn-delete" title="سڕینەوە" onclick="deleteAd('${ad.id}')"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
@@ -160,14 +176,14 @@
         const img = document.getElementById('thumbUrl').value;
         const end = document.getElementById('endDate').value;
 
-        if (!name || !end) return alert("تکایە ناوی کڕیار و کاتی کۆتایی هاتن دیاری بکە");
+        if (!name || !end) return alert("تکایە ناوی کڕیار و کاتی کۆتایی هاتن بنووسە");
 
         const { error } = await supabaseClient.from('ads1').insert([
             { 
                 customer_name: name, 
                 tiktok_ad_id: ad_id, 
                 thumbnail_url: img, 
-                end_date: end, // گرنگ: ناردنی کات بۆ سۆپابەیس
+                end_date: end, 
                 status: 'active' 
             }
         ]);
@@ -175,7 +191,6 @@
         if (error) {
             alert("هەڵە: " + error.message);
         } else {
-            // پاککردنەوەی فۆرمەکە
             document.querySelectorAll('input').forEach(input => input.value = '');
             fetchAds();
         }
@@ -187,7 +202,7 @@
     }
 
     async function deleteAd(id) {
-        if (confirm("ئایا دڵنیایت لە سڕینەوە؟")) {
+        if (confirm("ئایا دڵنیایت لە سڕینەوەی ئەم سپۆنسەرە؟")) {
             const { error } = await supabaseClient.from('ads1').delete().eq('id', id);
             if (!error) fetchAds();
         }
