@@ -32,7 +32,7 @@
         .add-form { 
             background: var(--white); padding: 25px; border-radius: 15px; margin-bottom: 30px; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
             gap: 15px; align-items: end; 
         }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
@@ -42,27 +42,25 @@
         
         .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; }
         .btn-main { background: var(--primary); color: white; }
-        .btn-main:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .btn-update { background: var(--warning); color: white; }
+        .btn-cancel { background: #64748b; color: white; }
 
         .table-container { background: var(--white); border-radius: 15px; overflow-x: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 900px; }
+        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 1000px; }
         th { background: #f1f5f9; padding: 15px; font-size: 13px; color: #64748b; border-bottom: 2px solid var(--border); }
         td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; vertical-align: middle; }
         
-        .status-badge { padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .status-badge { padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: bold; }
         .status-active { background: #dcfce7; color: #166534; }
         .status-completed { background: #fee2e2; color: #991b1b; }
-        .status-scheduled { background: #e0f2fe; color: #0369a1; }
 
-        .actions { display: flex; gap: 8px; }
-        .action-btn { width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
-        .btn-play { background: var(--success); }
-        .btn-stop { background: var(--warning); }
+        .actions { display: flex; gap: 5px; }
+        .action-btn { width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; transition: 0.2s; }
+        .btn-edit { background: #3b82f6; }
         .btn-delete { background: var(--tiktok-red); }
-        .action-btn:hover { opacity: 0.8; transform: scale(1.1); }
-
-        .thumbnail-mini { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid #eee; }
-        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--primary); font-weight: bold; font-size: 12px; }
+        
+        .thumbnail-mini { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; }
+        .stats-mini { font-size: 11px; color: #64748b; display: block; }
     </style>
 </head>
 <body>
@@ -71,34 +69,53 @@
     <div class="header">
         <h1>Proxo Agency - پانێڵی بەڕێوەبردن</h1>
         <div id="connection-status" style="font-size: 12px; color: var(--success); font-weight: bold;">
-            <i class="fas fa-circle"></i> پەیوەستە بە سۆپابەیس
+            <i class="fas fa-circle"></i> سێرڤەر چالاکە
         </div>
     </div>
 
-    <div class="add-form">
+    <div class="add-form" id="adForm">
+        <input type="hidden" id="editingId">
         <div class="form-group">
             <label>ناوی کڕیار</label>
-            <input type="text" id="custName" placeholder="بۆ نموونە: تاهیر">
+            <input type="text" id="custName" placeholder="تاهیر">
         </div>
         <div class="form-group">
-            <label>TikTok Ad ID</label>
-            <input type="text" id="adId" placeholder="تەنها ژمارەکە">
+            <label>Ad ID</label>
+            <input type="text" id="adId" placeholder="123456789">
+        </div>
+        <div class="form-group">
+            <label>بینین (Impressions)</label>
+            <input type="number" id="impressions" value="0">
+        </div>
+        <div class="form-group">
+            <label>کلیک (Clicks)</label>
+            <input type="number" id="clicks" value="0">
+        </div>
+        <div class="form-group">
+            <label>خەرجی (Spend $)</label>
+            <input type="number" step="0.1" id="spend" value="0">
         </div>
         <div class="form-group">
             <label>دەستپێکردن</label>
             <input type="datetime-local" id="startDate">
         </div>
         <div class="form-group">
-            <label>کۆتایی هاتن</label>
+            <label>کۆتایی</label>
             <input type="datetime-local" id="endDate">
         </div>
         <div class="form-group">
             <label>وێنە (URL)</label>
-            <input type="text" id="thumbUrl" placeholder="لینکی وێنە">
+            <input type="text" id="thumbUrl">
         </div>
-        <button class="btn btn-main" onclick="addNewAd()">
-            <i class="fas fa-plus"></i> زیادکردن
-        </button>
+        
+        <div id="formActions" style="display: flex; gap: 10px; grid-column: 1 / -1;">
+            <button id="mainBtn" class="btn btn-main" onclick="handleSubmit()">
+                <i class="fas fa-plus"></i> زیادکردن
+            </button>
+            <button id="cancelBtn" class="btn btn-cancel" style="display:none;" onclick="resetForm()">
+                پاشگەزبوونەوە
+            </button>
+        </div>
     </div>
 
     <div class="table-container">
@@ -106,16 +123,15 @@
             <thead>
                 <tr>
                     <th>وێنە</th>
-                    <th>کڕیار</th>
-                    <th>ID</th>
-                    <th>کاتی دەستپێکردن</th>
-                    <th>کاتی کۆتایی</th>
+                    <th>کڕیار / ID</th>
+                    <th>ئامارەکان</th>
+                    <th>کاتی چالاکبوون</th>
                     <th>دۆخ</th>
                     <th>کردارەکان</th>
                 </tr>
             </thead>
             <tbody id="ads-list">
-                <tr><td colspan="7" style="text-align:center; padding:30px;">خەریکی بارکردنی داتاکانە...</td></tr>
+                <tr><td colspan="6" style="text-align:center; padding:30px;">خەریکی هێنانە...</td></tr>
             </tbody>
         </table>
     </div>
@@ -126,102 +142,98 @@
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-    function formatKurdishDate(dateStr) {
-        if (!dateStr) return "---";
-        const date = new Date(dateStr);
-        return date.toLocaleString('en-GB', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
-    }
-
     async function fetchAds() {
-        const { data, error } = await supabaseClient
-            .from('ads1')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        if (error) return console.error(error);
-        renderAds(data);
+        const { data, error } = await supabaseClient.from('ads1').select('*').order('created_at', { ascending: false });
+        if (!error) renderAds(data);
     }
 
     function renderAds(ads) {
         const list = document.getElementById('ads-list');
-        list.innerHTML = '';
-
-        if (!ads || ads.length === 0) {
-            list.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px;">هیچ داتایەک نییە</td></tr>';
-            return;
-        }
-
-        ads.forEach(ad => {
-            const now = new Date();
-            const start = new Date(ad.start_date);
-            const end = new Date(ad.end_date);
-            
-            let displayStatus = ad.status || 'active';
-            if (displayStatus === 'active' && start > now) displayStatus = 'scheduled';
-            if (end < now) displayStatus = 'completed';
-
-            list.innerHTML += `
-                <tr style="${displayStatus === 'completed' ? 'opacity: 0.6' : ''}">
-                    <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/50'}" class="thumbnail-mini"></td>
-                    <td><b>${ad.customer_name || 'بێ ناو'}</b></td>
-                    <td><code>PROXO-${ad.tiktok_ad_id}</code></td>
-                    <td style="font-size:12px;">${formatKurdishDate(ad.start_date)}</td>
-                    <td style="font-size:12px;">${formatKurdishDate(ad.end_date)}</td>
-                    <td><span class="status-badge status-${displayStatus}">${displayStatus}</span></td>
-                    <td class="actions">
-                        <button class="action-btn btn-play" onclick="updateStatus('${ad.id}', 'active')"><i class="fas fa-play"></i></button>
-                        <button class="action-btn btn-stop" onclick="updateStatus('${ad.id}', 'completed')"><i class="fas fa-check-double"></i></button>
-                        <button class="action-btn btn-delete" onclick="deleteAd('${ad.id}')"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `;
-        });
+        list.innerHTML = ads.map(ad => `
+            <tr>
+                <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/45'}" class="thumbnail-mini"></td>
+                <td>
+                    <b>${ad.customer_name}</b><br>
+                    <small style="color:var(--primary)">PROXO-${ad.tiktok_ad_id}</small>
+                </td>
+                <td>
+                    <span class="stats-mini">👁️ ${ad.impressions || 0}</span>
+                    <span class="stats-mini">🖱️ ${ad.clicks || 0}</span>
+                    <span class="stats-mini">💰 $${ad.spend || 0}</span>
+                </td>
+                <td style="font-size:11px;">
+                    لە: ${new Date(ad.start_date).toLocaleString('en-GB')}<br>
+                    بۆ: ${new Date(ad.end_date).toLocaleString('en-GB')}
+                </td>
+                <td><span class="status-badge status-${ad.status || 'active'}">${ad.status || 'active'}</span></td>
+                <td class="actions">
+                    <button class="action-btn btn-edit" onclick="prepareEdit(${JSON.stringify(ad).replace(/"/g, '&quot;')})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn btn-delete" onclick="deleteAd('${ad.id}')"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
     }
 
-    async function addNewAd() {
-    const name = document.getElementById('custName').value;
-    const ad_id = document.getElementById('adId').value;
-    const start = document.getElementById('startDate').value; // کاتی هەڵبژێردراو
-    const end = document.getElementById('endDate').value;
-    const img = document.getElementById('thumbUrl').value;
+    async function handleSubmit() {
+        const id = document.getElementById('editingId').value;
+        const payload = {
+            customer_name: document.getElementById('custName').value,
+            tiktok_ad_id: document.getElementById('adId').value,
+            impressions: parseInt(document.getElementById('impressions').value) || 0,
+            clicks: parseInt(document.getElementById('clicks').value) || 0,
+            spend: parseFloat(document.getElementById('spend').value) || 0,
+            start_date: new Date(document.getElementById('startDate').value).toISOString(),
+            end_date: new Date(document.getElementById('endDate').value).toISOString(),
+            thumbnail_url: document.getElementById('thumbUrl').value,
+            status: 'active'
+        };
 
-    if (!name || !start || !end) return alert("تکایە هەموو خانەکان پڕ بکەرەوە");
-
-    // لێرە کاتەکە وەک خۆی (ISO) دەگۆڕین بێ ئەوەی براوسەر دەستکاری بکات
-    const { error } = await supabaseClient.from('ads1').insert([
-        { 
-            customer_name: name, 
-            tiktok_ad_id: ad_id, 
-            start_date: new Date(start).toISOString(), 
-            end_date: new Date(end).toISOString(), 
-            thumbnail_url: img, 
-            status: 'active' 
+        let result;
+        if (id) {
+            result = await supabaseClient.from('ads1').update(payload).eq('id', id);
+        } else {
+            result = await supabaseClient.from('ads1').insert([payload]);
         }
-    ]);
-    // باقی کۆدەکە وەک خۆی..
 
-        if (error) alert(error.message);
-        else {
-            document.querySelectorAll('input').forEach(i => i.value = '');
-            fetchAds();
-        }
+        if (result.error) alert(result.error.message);
+        else { resetForm(); fetchAds(); }
     }
 
-    async function updateStatus(id, newStatus) {
-        await supabaseClient.from('ads1').update({ status: newStatus }).eq('id', id);
-        fetchAds();
+    function prepareEdit(ad) {
+        document.getElementById('editingId').value = ad.id;
+        document.getElementById('custName').value = ad.customer_name;
+        document.getElementById('adId').value = ad.tiktok_ad_id;
+        document.getElementById('impressions').value = ad.impressions;
+        document.getElementById('clicks').value = ad.clicks;
+        document.getElementById('spend').value = ad.spend;
+        
+        // گۆڕینی کات بۆ فۆرماتێک کە input دەیناسێتەوە
+        if(ad.start_date) document.getElementById('startDate').value = ad.start_date.substring(0,16);
+        if(ad.end_date) document.getElementById('endDate').value = ad.end_date.substring(0,16);
+        
+        document.getElementById('thumbUrl').value = ad.thumbnail_url;
+        
+        document.getElementById('mainBtn').innerHTML = '<i class="fas fa-save"></i> نوێکردنەوە';
+        document.getElementById('mainBtn').className = 'btn btn-update';
+        document.getElementById('cancelBtn').style.display = 'block';
+    }
+
+    function resetForm() {
+        document.getElementById('editingId').value = '';
+        document.querySelectorAll('#adForm input').forEach(i => i.value = (i.type === 'number' ? 0 : ''));
+        document.getElementById('mainBtn').innerHTML = '<i class="fas fa-plus"></i> زیادکردن';
+        document.getElementById('mainBtn').className = 'btn btn-main';
+        document.getElementById('cancelBtn').style.display = 'none';
     }
 
     async function deleteAd(id) {
-        if (confirm("دڵنیای لە سڕینەوە؟")) {
+        if (confirm("ئایا دڵنیای لە سڕینەوە؟")) {
             await supabaseClient.from('ads1').delete().eq('id', id);
             fetchAds();
         }
     }
 
-    // Realtime
-    supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ads1' }, () => fetchAds()).subscribe();
-
+    supabaseClient.channel('admin-realtime').on('postgres_changes', { event: '*', schema: 'public', table: 'ads1' }, () => fetchAds()).subscribe();
     window.onload = fetchAds;
 </script>
 </body>
