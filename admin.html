@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proxo Admin - بەڕێوەبردنی ڕیکلامەکان</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -12,66 +13,75 @@
             --primary: #2563eb;
             --tiktok-red: #fe2c55;
             --success: #22c55e;
-            --warning: #f59e0b;
             --bg: #f8fafc;
             --white: #ffffff;
         }
 
-        body { font-family: sans-serif; background-color: var(--bg); margin: 0; padding: 20px; color: #1e293b; }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); margin: 0; padding: 20px; color: #1e293b; }
         .container { max-width: 1100px; margin: 0 auto; }
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .header h1 { margin: 0; font-size: 24px; color: var(--primary); }
+        .header h1 { margin: 0; font-size: 22px; color: var(--primary); font-weight: 900; }
 
-        .add-form { background: var(--white); padding: 25px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end; }
+        .add-form { 
+            background: var(--white); padding: 25px; border-radius: 15px; margin-bottom: 30px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 15px; align-items: end; 
+        }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
-        label { font-weight: bold; font-size: 14px; }
-        input { padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; transition: 0.3s; }
+        label { font-weight: bold; font-size: 13px; color: #475569; }
+        input { padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; transition: 0.3s; font-family: inherit; }
         input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
         
-        .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; }
         .btn-main { background: var(--primary); color: white; }
-        .btn-main:hover { background: #1d4ed8; }
+        .btn-main:hover { background: #1d4ed8; transform: translateY(-2px); }
 
-        .table-container { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; text-align: right; }
-        th { background: #f1f5f9; padding: 15px; font-size: 14px; color: #64748b; }
-        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 15px; }
+        .table-container { background: var(--white); border-radius: 15px; overflow-x: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 800px; }
+        th { background: #f1f5f9; padding: 15px; font-size: 13px; color: #64748b; }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
         
-        .status-badge { padding: 5px 12px; border-radius: 50px; font-size: 12px; font-weight: bold; }
+        .status-badge { padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .status-active { background: #dcfce7; color: #166534; }
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-completed { background: #e0f2fe; color: #075985; }
+        .status-completed { background: #fee2e2; color: #991b1b; }
 
         .actions { display: flex; gap: 8px; }
-        .action-btn { width: 35px; height: 35px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-check { background: var(--success); color: white; }
-        .btn-finish { background: var(--primary); color: white; }
-        .btn-delete { background: var(--tiktok-red); color: white; }
-        .action-btn:hover { opacity: 0.8; transform: translateY(-2px); }
+        .action-btn { width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
+        .btn-play { background: var(--success); }
+        .btn-stop { background: var(--warning); background-color: #f59e0b; }
+        .btn-delete { background: var(--tiktok-red); }
+        .action-btn:hover { opacity: 0.8; transform: scale(1.1); }
 
-        .thumbnail-mini { width: 50px; height: 30px; border-radius: 4px; object-fit: cover; background: #eee; }
+        .thumbnail-mini { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; border: 1px solid #eee; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>Proxo Agency - Admin Panel</h1>
-        <div id="connection-status" style="font-size: 12px; color: var(--success);"><i class="fas fa-circle"></i> Connected to Supabase</div>
+        <h1>Proxo Agency - پانێڵی بەڕێوەبردن</h1>
+        <div id="connection-status" style="font-size: 12px; color: var(--success); font-weight: bold;">
+            <i class="fas fa-circle"></i> پەیوەستە بە سۆپابەیس
+        </div>
     </div>
 
     <div class="add-form">
         <div class="form-group">
             <label>ناوی کڕیار</label>
-            <input type="text" id="custName" placeholder="بۆ نموونە: کۆمپانیای ئەحمەد">
+            <input type="text" id="custName" placeholder="بۆ نموونە: تاهیر">
         </div>
         <div class="form-group">
-            <label>TikTok Ad ID</label>
-            <input type="text" id="adId" placeholder="کۆدی ڕیکلام">
+            <label>Order ID (کۆد)</label>
+            <input type="text" id="adId" placeholder="وەک: 5050">
         </div>
         <div class="form-group">
-            <label>وێنەی ڤیدیۆ (URL)</label>
+            <label>کاتی کۆتایی هاتن</label>
+            <input type="datetime-local" id="endDate">
+        </div>
+        <div class="form-group">
+            <label>وێنە (URL)</label>
             <input type="text" id="thumbUrl" placeholder="لینکی وێنە">
         </div>
         <button class="btn btn-main" onclick="addNewAd()">
@@ -85,7 +95,8 @@
                 <tr>
                     <th>وێنە</th>
                     <th>کڕیار</th>
-                    <th>Ad ID</th>
+                    <th>Order ID</th>
+                    <th>کاتی ماوە</th>
                     <th>دۆخ</th>
                     <th>کردارەکان</th>
                 </tr>
@@ -96,40 +107,46 @@
 </div>
 
 <script>
-    // ڕێکخستنی Supabase - دڵنیابەرەوە کلیلەکە بە ڕاستی دادەنێیت
     const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-    // ١. وەرگرتنی هەموو ڕیکلامەکان لە ads1
+    // فەنکشن بۆ حیسابکردنی کات لەناو خشتەکەدا
+    function calculateTimeLeft(endDate) {
+        if (!endDate) return "---";
+        const diff = new Date(endDate).getTime() - new Date().getTime();
+        if (diff <= 0) return "تەواوبووە";
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        return `${days}ڕ و ${hours}ک`;
+    }
+
     async function fetchAds() {
         const { data, error } = await supabaseClient
             .from('ads1')
             .select('*')
             .order('created_at', { ascending: false });
 
-        if (error) {
-            console.error("Error fetching:", error);
-            return;
-        }
+        if (error) return console.error(error);
         renderAds(data);
     }
 
-    // ٢. نیشاندانی داتاکان
     function renderAds(ads) {
         const list = document.getElementById('ads-list');
         list.innerHTML = '';
 
         ads.forEach(ad => {
+            const timeStr = calculateTimeLeft(ad.end_date);
             list.innerHTML += `
                 <tr>
                     <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/50'}" class="thumbnail-mini"></td>
                     <td><b>${ad.customer_name}</b></td>
-                    <td><code>${ad.tiktok_ad_id || 'N/A'}</code></td>
-                    <td><span class="status-badge status-${ad.status || 'pending'}">${(ad.status || 'pending').toUpperCase()}</span></td>
+                    <td><code>NASS-${ad.tiktok_ad_id || '0000'}</code></td>
+                    <td><span style="font-size:12px; color:#666;">${timeStr}</span></td>
+                    <td><span class="status-badge status-${ad.status || 'active'}">${ad.status}</span></td>
                     <td class="actions">
-                        <button class="action-btn btn-check" title="چالاککردن" onclick="updateStatus('${ad.id}', 'active')"><i class="fas fa-play"></i></button>
-                        <button class="action-btn btn-finish" title="تەواوبوون" onclick="updateStatus('${ad.id}', 'completed')"><i class="fas fa-check-double"></i></button>
+                        <button class="action-btn btn-play" title="چالاککردن" onclick="updateStatus('${ad.id}', 'active')"><i class="fas fa-play"></i></button>
+                        <button class="action-btn btn-stop" title="ڕاگرتن" onclick="updateStatus('${ad.id}', 'completed')"><i class="fas fa-stop"></i></button>
                         <button class="action-btn btn-delete" title="سڕینەوە" onclick="deleteAd('${ad.id}')"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
@@ -137,40 +154,38 @@
         });
     }
 
-    // ٣. زیادکردنی ڕیکلامی نوێ بۆ ads1
     async function addNewAd() {
         const name = document.getElementById('custName').value;
         const ad_id = document.getElementById('adId').value;
         const img = document.getElementById('thumbUrl').value;
+        const end = document.getElementById('endDate').value;
 
-        if (!name) return alert("تکایە ناوی کڕیار بنووسە");
+        if (!name || !end) return alert("تکایە ناوی کڕیار و کاتی کۆتایی هاتن دیاری بکە");
 
         const { error } = await supabaseClient.from('ads1').insert([
-            { customer_name: name, tiktok_ad_id: ad_id, thumbnail_url: img, status: 'active' }
+            { 
+                customer_name: name, 
+                tiktok_ad_id: ad_id, 
+                thumbnail_url: img, 
+                end_date: end, // گرنگ: ناردنی کات بۆ سۆپابەیس
+                status: 'active' 
+            }
         ]);
 
         if (error) {
-            console.error(error);
-            alert("هەڵەیەک ڕوویدا: " + error.message);
+            alert("هەڵە: " + error.message);
         } else {
-            document.getElementById('custName').value = '';
-            document.getElementById('adId').value = '';
-            document.getElementById('thumbUrl').value = '';
+            // پاککردنەوەی فۆرمەکە
+            document.querySelectorAll('input').forEach(input => input.value = '');
             fetchAds();
         }
     }
 
-    // ٤. گۆڕینی دۆخ
     async function updateStatus(id, newStatus) {
-        const { error } = await supabaseClient
-            .from('ads1')
-            .update({ status: newStatus })
-            .eq('id', id);
-        
+        const { error } = await supabaseClient.from('ads1').update({ status: newStatus }).eq('id', id);
         if (!error) fetchAds();
     }
 
-    // ٥. سڕینەوە لە ads1
     async function deleteAd(id) {
         if (confirm("ئایا دڵنیایت لە سڕینەوە؟")) {
             const { error } = await supabaseClient.from('ads1').delete().eq('id', id);
