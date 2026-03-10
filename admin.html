@@ -40,7 +40,7 @@
         th { background: rgba(15, 23, 42, 0.5); padding: 18px; font-size: 13px; color: #94a3b8; border-bottom: 2px solid var(--border); }
         td { padding: 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 
-        .inline-edit-input { background: #0f172a; border: 1px solid var(--border); color: var(--primary); font-weight: 800; padding: 5px; border-radius: 5px; width: 85px; text-align: center; }
+        .inline-edit-input { background: #0f172a; border: 1px solid var(--border); color: var(--primary); font-weight: 800; padding: 5px; border-radius: 5px; width: 95px; text-align: center; }
         .budget-input { color: #10b981 !important; border-color: #10b98144; }
 
         .btn-circle { width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: white; transition: 0.3s; margin: 0 2px; }
@@ -70,7 +70,7 @@
     <div class="stats-grid">
         <div class="stat-card"><h3>کۆی بینین</h3><p id="total-imp">0</p><i class="fas fa-eye"></i></div>
         <div class="stat-card"><h3>کۆی کلیک</h3><p id="total-clicks">0</p><i class="fas fa-mouse-pointer"></i></div>
-        <div class="stat-card"><h3>کۆی خەرجی</h3><p id="total-spend">$0</p><i class="fas fa-dollar-sign"></i></div>
+        <div class="stat-card"><h3>کۆی خەرجی (USD)</h3><p id="total-spend">$0</p><i class="fas fa-dollar-sign"></i></div>
         <div class="stat-card"><h3>ڕیکلامە چالاکەکان</h3><p id="active-ads">0</p><i class="fas fa-bolt"></i></div>
     </div>
 
@@ -86,9 +86,9 @@
             </select>
             <div style="display: flex; gap: 5px;">
                 <input type="number" id="adBudget" placeholder="بڕی پارە" onkeypress="handleEnter(event)">
-                <select id="adCurrency" style="width: 80px;">
-                    <option value="USD">USD</option>
-                    <option value="IQD">IQD</option>
+                <select id="adCurrency" style="width: 85px;">
+                    <option value="USD">USD ($)</option>
+                    <option value="IQD">IQD (د.ع)</option>
                 </select>
             </div>
             <input type="text" id="imgUrl" placeholder="لینکی وێنە" onkeypress="handleEnter(event)">
@@ -106,10 +106,10 @@
                     <th>کڕیار / ID</th>
                     <th>پلاتفۆرم</th>
                     <th>دراو</th>
-                    <th>💰 بڕی پارە</th>
+                    <th>💰 بودجە</th>
                     <th>👁️ بینین</th>
                     <th>🖱️ کلیک</th>
-                    <th>💵 خەرجی</th>
+                    <th>💵 خەرجکراو</th>
                     <th>دۆخ</th>
                     <th>کردارەکان</th>
                 </tr>
@@ -135,7 +135,7 @@
         document.getElementById('total-imp').innerText = ads.reduce((a, b) => a + (b.impressions || 0), 0).toLocaleString();
         document.getElementById('total-clicks').innerText = ads.reduce((a, b) => a + (b.clicks || 0), 0).toLocaleString();
         
-        // تەنها ئەو خەرجیانە هەژمار دەکات کە بە دۆلارن بۆ ستاتیسکتی سەرەکی
+        // تەنها ئەو خەرجیانە هەژمار دەکات کە بە دۆلارن بۆ ئاماری گشتی
         const totalDollarSpend = ads.filter(a => a.currency !== 'IQD').reduce((a, b) => a + (b.spend || 0), 0);
         document.getElementById('total-spend').innerText = '$' + totalDollarSpend.toFixed(2);
         
@@ -153,7 +153,11 @@
 
     function renderAds(ads) {
         const list = document.getElementById('ads-list');
-        list.innerHTML = ads.map(ad => `
+        list.innerHTML = ads.map(ad => {
+            const isIQD = (ad.currency === 'IQD' || ad.currency === 'دینار');
+            const suffix = isIQD ? ' د.ع' : ' $';
+            
+            return `
             <tr id="row-${ad.id}">
                 <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/45'}" class="thumb"></td>
                 <td>
@@ -172,15 +176,25 @@
                     </div>
                 </td>
                 <td>
-                    <select onchange="fastUpdate('${ad.id}', 'currency', this.value, this)" style="width:70px; padding:4px; font-size:11px;">
+                    <select onchange="fastUpdate('${ad.id}', 'currency', this.value, this)" style="width:75px; padding:4px; font-size:11px;">
                         <option value="USD" ${ad.currency === 'USD' ? 'selected' : ''}>USD</option>
                         <option value="IQD" ${ad.currency === 'IQD' ? 'selected' : ''}>IQD</option>
                     </select>
                 </td>
-                <td><input type="number" class="inline-edit-input budget-input" value="${ad.budget || 0}" onchange="fastUpdate('${ad.id}', 'budget', this.value, this)"></td>
+                <td>
+                    <div style="display:flex; align-items:center; gap:4px;">
+                        <input type="number" class="inline-edit-input budget-input" value="${ad.budget || 0}" onchange="fastUpdate('${ad.id}', 'budget', this.value, this)">
+                        <span style="font-size:10px; color:#10b981;">${suffix}</span>
+                    </div>
+                </td>
                 <td><input type="number" class="inline-edit-input" value="${ad.impressions || 0}" onchange="fastUpdate('${ad.id}', 'impressions', this.value, this)"></td>
                 <td><input type="number" class="inline-edit-input" value="${ad.clicks || 0}" onchange="fastUpdate('${ad.id}', 'clicks', this.value, this)"></td>
-                <td><input type="number" step="${ad.currency === 'IQD' ? '1000' : '0.1'}" class="inline-edit-input" value="${ad.spend || 0}" onchange="fastUpdate('${ad.id}', 'spend', this.value, this)"></td>
+                <td>
+                    <div style="display:flex; align-items:center; gap:4px;">
+                        <input type="number" step="${isIQD ? '500' : '0.1'}" class="inline-edit-input" value="${ad.spend || 0}" onchange="fastUpdate('${ad.id}', 'spend', this.value, this)">
+                        <span style="font-size:10px; color:#94a3b8;">${suffix}</span>
+                    </div>
+                </td>
                 <td>
                     <select onchange="fastUpdate('${ad.id}', 'status', this.value, this)" style="width:110px; background:#0f172a; color:white; border:1px solid #334155;">
                         <option value="active" ${ad.status === 'active' ? 'selected' : ''}>Active</option>
@@ -197,7 +211,7 @@
                     <button class="btn-circle btn-del" onclick="deleteAd('${ad.id}')" title="Delete"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
-        `).join('');
+        `}).join('');
     }
 
     async function toggleBest(id, currentStatus) {
@@ -217,8 +231,8 @@
 
         const { error } = await supabaseClient.from('ads1').update({ [field]: val }).eq('id', id);
         if (!error) {
-            el.parentElement.parentElement.classList.add('saving-effect');
-            setTimeout(() => el.parentElement.parentElement.classList.remove('saving-effect'), 500);
+            el.parentElement.closest('tr').classList.add('saving-effect');
+            setTimeout(() => el.parentElement.closest('tr').classList.remove('saving-effect'), 500);
             if(field === 'platform' || field === 'currency') fetchAds();
             else {
                 const { data } = await supabaseClient.from('ads1').select('*');
