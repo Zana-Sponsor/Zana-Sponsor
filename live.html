@@ -120,17 +120,25 @@
         }
 
         function calculateProgress(start, end, status) {
-            // ئەگەر ئادمین دۆخەکەی گۆڕیبوو بۆ تەواوبوو یان ڕەتکراوە، یەکسەر بیکە بە ١٠٠
-            if (status === 'completed' || status === 'rejected' || status === 'تەواو بووە' || status === 'ڕەتکرایەوە') {
-                return 100;
-            }
-            const startTime = new Date(start).getTime();
-            const endTime = new Date(end).getTime();
-            const now = new Date().getTime();
-            if (now < startTime) return 0;
-            if (now > endTime) return 100;
-            return ((now - startTime) / (endTime - startTime)) * 100;
-        }
+    // ئەگەر ڕەتکرابووەوە، پڕۆگرێس بکە بە ٠
+    if (status === 'rejected' || status === 'ڕەتکرایەوە') {
+        return 0;
+    }
+    // ئەگەر تەواو بوو بوو، بیکە بە ١٠٠
+    if (status === 'completed' || status === 'تەواو بووە') {
+        return 100;
+    }
+
+    const startTime = new Date(start).getTime();
+    const endTime = new Date(end).getTime();
+    const now = new Date().getTime();
+
+    if (now < startTime) return 0;
+    if (now > endTime) return 100;
+    
+    return ((now - startTime) / (endTime - startTime)) * 100;
+}
+
 
         function getPlatformInfo(platform) {
             const p = (platform || 'tiktok').toLowerCase();
