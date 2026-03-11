@@ -135,11 +135,10 @@
         document.getElementById('total-imp').innerText = ads.reduce((a, b) => a + (b.impressions || 0), 0).toLocaleString();
         document.getElementById('total-clicks').innerText = ads.reduce((a, b) => a + (b.clicks || 0), 0).toLocaleString();
         
-        // تەنها ئەو خەرجیانە هەژمار دەکات کە بە دۆلارن بۆ ئاماری گشتی
         const totalDollarSpend = ads.filter(a => a.currency !== 'IQD').reduce((a, b) => a + (b.spend || 0), 0);
         document.getElementById('total-spend').innerText = '$' + totalDollarSpend.toFixed(2);
         
-        document.getElementById('active-ads').innerText = ads.filter(a => a.status === 'active').length;
+        document.getElementById('active-ads').innerText = ads.filter(a => a.status === 'active' || a.status === 'چالاکە').length;
     }
 
     function getPlatIcon(p) {
@@ -161,8 +160,8 @@
             <tr id="row-${ad.id}">
                 <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/45'}" class="thumb"></td>
                 <td>
-                    <div style="font-weight:800; color:white;">${ad.customer_name}</div>
-                    <small style="color:#64748b;">ID: ${ad.tiktok_ad_id}</small>
+                    <div style="font-weight:800; color:white;">${ad.customer_name || 'بێ ناو'}</div>
+                    <small style="color:#64748b;">ID: ${ad.ad_id || '---'}</small>
                 </td>
                 <td>
                     <div style="display:flex; align-items:center; gap:8px;">
@@ -197,10 +196,10 @@
                 </td>
                 <td>
                     <select onchange="fastUpdate('${ad.id}', 'status', this.value, this)" style="width:110px; background:#0f172a; color:white; border:1px solid #334155;">
-                        <option value="active" ${ad.status === 'active' ? 'selected' : ''}>Active</option>
-                        <option value="completed" ${ad.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        <option value="active" ${ad.status === 'active' || ad.status === 'چالاکە' ? 'selected' : ''}>Active</option>
+                        <option value="completed" ${ad.status === 'completed' || ad.status === 'تەواو بووە' ? 'selected' : ''}>Completed</option>
                         <option value="scheduled" ${ad.status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
-                        <option value="rejected" ${ad.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                        <option value="rejected" ${ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە' ? 'selected' : ''}>Rejected</option>
                     </select>
                 </td>
                 <td>
@@ -249,7 +248,7 @@
     async function addNewAd() {
         const payload = {
             customer_name: document.getElementById('custName').value,
-            tiktok_ad_id: document.getElementById('adId').value,
+            ad_id: document.getElementById('adId').value, // لێرە گۆڕدرا بۆ ad_id
             platform: document.getElementById('adPlatform').value,
             currency: document.getElementById('adCurrency').value,
             budget: parseFloat(document.getElementById('adBudget').value) || 0,
@@ -260,7 +259,7 @@
         };
         const { error } = await supabaseClient.from('ads1').insert([payload]);
         if (!error) { fetchAds(); document.querySelectorAll('#adForm input').forEach(i => i.value = ''); }
-        else { alert("هەڵە لە سەیڤکردن."); }
+        else { alert("هەڵە لە سەیڤکردن: " + error.message); }
     }
 
     async function deleteAd(id) { if (confirm("دڵنیای لە سڕینەوە؟")) { await supabaseClient.from('ads1').delete().eq('id', id); fetchAds(); } }
