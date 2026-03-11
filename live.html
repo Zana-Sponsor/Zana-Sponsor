@@ -9,13 +9,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --primary: #22c55e; --soft-bg: #f8fafc; --card-white: #ffffff; --text-dark: #0f172a; --text-gray: #64748b; --border: #f1f5f9; }
+        :root { --primary: #22c55e; --soft-bg: #f8fafc; --card-white: #ffffff; --text-dark: #0f172a; --text-gray: #64748b; --border: #f1f5f9; --red: #ef4444; }
         body { background-color: var(--soft-bg); color: var(--text-dark); font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
 
-        .main-header { background: white; padding: 20px 5%; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .main-header { background: white; padding: 15px 5%; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
         .header-content { max-width: 500px; margin: auto; display: flex; justify-content: space-between; align-items: center; }
         .logo-img { height: 22px; }
         
+        /* بەشی ڕاستەوخۆ لە ناوەڕاست */
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0fdf4;
+            padding: 4px 12px;
+            border-radius: 50px;
+            color: #16a34a;
+            font-size: 12px;
+            font-weight: 900;
+            border: 1px solid #dcfce7;
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
         .refresh-btn { cursor: pointer; width: 40px; height: 40px; background: var(--soft-bg); border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: var(--text-dark); border: none; }
         .spinning { animation: spin 0.8s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -30,19 +56,10 @@
         .ad-card { background: var(--card-white); border-radius: 28px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.03); overflow: hidden; }
         
         .id-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .id-badge { 
-            background: #1e293b; color: #f8fafc; padding: 5px 14px; border-radius: 10px; 
-            font-size: 11px; font-weight: 800; letter-spacing: 0.5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        .platform-chip {
-            padding: 5px 12px; border-radius: 10px; font-size: 11px; font-weight: 900;
-            display: flex; align-items: center; gap: 6px; background: #f1f5f9;
-        }
+        .id-badge { background: #1e293b; color: #f8fafc; padding: 5px 14px; border-radius: 10px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+        .platform-chip { padding: 5px 12px; border-radius: 10px; font-size: 11px; font-weight: 900; display: flex; align-items: center; gap: 6px; background: #f1f5f9; }
         
-        .thumb-box { text-align: center; margin-bottom: 15px; position: relative; }
+        .thumb-box { text-align: center; margin-bottom: 15px; }
         .ad-thumb { width: 95px; height: 95px; border-radius: 28px; object-fit: cover; border: 4px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         
         .budget-tag { display: inline-flex; align-items: center; gap: 6px; background: #f0fdf4; color: #16a34a; padding: 6px 16px; border-radius: 50px; font-size: 15px; font-weight: 900; margin-top: 10px; }
@@ -56,7 +73,8 @@
         .progress-info { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; margin-bottom: 6px; color: var(--text-gray); }
         .progress-bar-bg { background: #f1f5f9; height: 7px; border-radius: 10px; overflow: hidden; }
         .progress-bar-fill { background: linear-gradient(90deg, #22c55e, #4ade80); height: 100%; transition: width 0.5s linear; }
-        
+        .bg-red { background: var(--red) !important; }
+
         .status-badge { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 16px; font-size: 13px; font-weight: 800; }
         .active-bg { background: #f0fdf4; color: #166534; }
         .completed-bg { background: #f1f5f9; color: #64748b; }
@@ -66,8 +84,6 @@
         .stat-box { background: var(--soft-bg); padding: 12px 5px; border-radius: 18px; text-align: center; border: 1px solid #f1f5f9; }
         .stat-value { display: block; font-size: 14px; font-weight: 900; }
         .stat-label { font-size: 10px; color: var(--text-gray); }
-
-        .loading-text { text-align: center; padding: 50px; color: var(--text-gray); font-weight: 700; }
     </style>
 </head>
 <body>
@@ -77,6 +93,12 @@
             <a href="https://www.proxopages.com">
                 <img src="https://image2url.com/r2/default/images/1771403050640-6d5e5c5e-a1dc-45de-a7f4-b5f386e82668.png" class="logo-img">
             </a>
+            
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                <span>ڕاستەوخۆ</span>
+            </div>
+
             <button class="refresh-btn" onclick="refreshData()">
                 <i class="fas fa-sync-alt" id="refreshIcon"></i>
             </button>
@@ -90,10 +112,7 @@
             <button class="filter-btn" onclick="filterAds('تەواو بووە', this)">کۆتایی</button>
             <button class="filter-btn" onclick="filterAds('ڕەتکرایەوە', this)">ڕەتکراوە</button>
         </div>
-
-        <div id="live-ads-container">
-            <div class="loading-text">خەریکی ئامادەکردنی داتاکانین...</div>
-        </div>
+        <div id="live-ads-container"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -106,10 +125,9 @@
         let updateInterval;
 
         async function refreshData() {
-            const icon = document.getElementById('refreshIcon');
-            icon.classList.add('spinning');
+            document.getElementById('refreshIcon').classList.add('spinning');
             await fetchLiveAds();
-            setTimeout(() => icon.classList.remove('spinning'), 800);
+            setTimeout(() => document.getElementById('refreshIcon').classList.remove('spinning'), 800);
         }
 
         function formatAdDate(d) {
@@ -120,32 +138,14 @@
         }
 
         function calculateProgress(start, end, status) {
-    // ئەگەر ڕەتکرابووەوە، پڕۆگرێس بکە بە ٠
-    if (status === 'rejected' || status === 'ڕەتکرایەوە') {
-        return 0;
-    }
-    // ئەگەر تەواو بوو بوو، بیکە بە ١٠٠
-    if (status === 'completed' || status === 'تەواو بووە') {
-        return 100;
-    }
-
-    const startTime = new Date(start).getTime();
-    const endTime = new Date(end).getTime();
-    const now = new Date().getTime();
-
-    if (now < startTime) return 0;
-    if (now > endTime) return 100;
-    
-    return ((now - startTime) / (endTime - startTime)) * 100;
-}
-
-
-        function getPlatformInfo(platform) {
-            const p = (platform || 'tiktok').toLowerCase();
-            if (p.includes('facebook')) return { icon: 'fa-facebook', color: '#1877F2', name: 'Facebook' };
-            if (p.includes('instagram')) return { icon: 'fa-instagram', color: '#E4405F', name: 'Instagram' };
-            if (p.includes('snapchat')) return { icon: 'fa-snapchat', color: '#FFFC00', name: 'Snapchat' };
-            return { icon: 'fa-tiktok', color: '#000000', name: 'TikTok' };
+            if (status === 'rejected' || status === 'ڕەتکرایەوە') return 0;
+            if (status === 'completed' || status === 'تەواو بووە') return 100;
+            const startTime = new Date(start).getTime();
+            const endTime = new Date(end).getTime();
+            const now = new Date().getTime();
+            if (now < startTime) return 0;
+            if (now > endTime) return 100;
+            return ((now - startTime) / (endTime - startTime)) * 100;
         }
 
         async function fetchLiveAds() {
@@ -156,25 +156,17 @@
                 const now = new Date();
                 const start = new Date(ad.start_date);
                 const end = new Date(ad.end_date);
-                
                 let s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
 
-                // مەرجەکان لێرە چاککراون بۆ ئەوەی گوێڕایەڵی فەرمانی ئادمین بن
                 if (ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە') {
                     s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
-                } 
-                else if (ad.status === 'completed' || ad.status === 'تەواو بووە') {
+                } else if (ad.status === 'completed' || ad.status === 'تەواو بووە') {
                     s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
-                }
-                else if (ad.status === 'active' || (now >= start && now <= end)) {
+                } else if (ad.status === 'active' || (now >= start && now <= end)) {
                     s = { text: "چالاکە", icon: "fa-bolt-lightning", class: "active-bg", order: 1 };
                 }
                 
-                return { 
-                    ...ad, 
-                    statusInfo: s, 
-                    currentProgress: calculateProgress(ad.start_date, ad.end_date, ad.status) 
-                };
+                return { ...ad, statusInfo: s, currentProgress: calculateProgress(ad.start_date, ad.end_date, ad.status) };
             }).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
 
             renderAds(allAdsData);
@@ -199,61 +191,43 @@
         function filterAds(status, btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            if (status === 'all') renderAds(allAdsData);
-            else renderAds(allAdsData.filter(ad => ad.statusInfo.text === status));
+            renderAds(status === 'all' ? allAdsData : allAdsData.filter(ad => ad.statusInfo.text === status));
         }
 
         function renderAds(adsList) {
             const container = document.getElementById('live-ads-container');
             container.innerHTML = adsList.map(ad => {
                 const isIQD = ad.currency === 'IQD';
-                const budget = isIQD ? (ad.budget || 0).toLocaleString() + ' د.ع' : '$' + (ad.budget || 0);
-                const spend = isIQD ? (ad.spend || 0).toLocaleString() : (ad.spend || 0);
-                const plat = getPlatformInfo(ad.platform);
                 const s = ad.statusInfo;
+                const isRejected = ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە';
                 
                 return `
                     <div class="ad-card">
                         <div class="id-container">
-                            <div class="id-badge">
-                                <i class="fas fa-fingerprint"></i>
-                                ID: Ad-${ad.tiktok_ad_id || '0000'}
-                            </div>
-                            <div class="platform-chip" style="color: ${plat.color}">
-                                <i class="fab ${plat.icon}"></i>
-                                ${plat.name}
-                            </div>
+                            <div class="id-badge"><i class="fas fa-fingerprint"></i> ID: Ad-${ad.tiktok_ad_id || '0000'}</div>
+                            <div class="platform-chip"><i class="fab fa-tiktok"></i> TikTok</div>
                         </div>
-                        
-                        <div class="thumb-box">
-                            <img src="${ad.thumbnail_url || 'https://via.placeholder.com/100'}" class="ad-thumb">
-                            <h3 style="margin:12px 0 2px 0; font-size:17px; font-weight:900;">${ad.customer_name || 'کڕیار'}</h3>
-                            <div class="budget-tag"><i class="fas fa-wallet"></i> ${budget}</div>
+                        <div class="thumb-box" style="text-align:center">
+                            <img src="${ad.thumbnail_url || ''}" class="ad-thumb">
+                            <h3 style="margin:12px 0 2px 0; font-weight:900;">${ad.customer_name || ''}</h3>
+                            <div class="budget-tag"><i class="fas fa-wallet"></i> ${isIQD ? (ad.budget || 0).toLocaleString() + ' د.ع' : '$' + (ad.budget || 0)}</div>
                         </div>
-
                         <div class="time-info">
-                            <div class="time-block">
-                                <span class="time-label">دەستپێکردن</span>
-                                <span class="time-val">${formatAdDate(ad.start_date)}</span>
-                            </div>
+                            <div class="time-block"><span class="time-label">دەستپێکردن</span><span class="time-val">${formatAdDate(ad.start_date)}</span></div>
                             <div style="align-self:center; color:#cbd5e1"><i class="fas fa-long-arrow-alt-left"></i></div>
-                            <div class="time-block">
-                                <span class="time-label">کۆتایی</span>
-                                <span class="time-val">${formatAdDate(ad.end_date)}</span>
-                            </div>
+                            <div class="time-block"><span class="time-label">کۆتایی</span><span class="time-val">${formatAdDate(ad.end_date)}</span></div>
                         </div>
-
                         <div class="progress-section">
                             <div class="progress-info"><span>بەڕێوەچوون</span><span id="text-${ad.id}">${ad.currentProgress.toFixed(2)}%</span></div>
-                            <div class="progress-bar-bg"><div id="bar-${ad.id}" class="progress-bar-fill" style="width: ${ad.currentProgress}%"></div></div>
+                            <div class="progress-bar-bg">
+                                <div id="bar-${ad.id}" class="progress-bar-fill ${isRejected ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%"></div>
+                            </div>
                         </div>
-
                         <div class="status-badge ${s.class}"><i class="fas ${s.icon}"></i> ${s.text}</div>
-
                         <div class="stats-grid">
                             <div class="stat-box"><span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span><span class="stat-label">بینین</span></div>
                             <div class="stat-box"><span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span><span class="stat-label">کلیک</span></div>
-                            <div class="stat-box"><span class="stat-value">${isIQD ? spend : '$'+spend}</span><span class="stat-label">خەرجی</span></div>
+                            <div class="stat-box"><span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span><span class="stat-label">خەرجی</span></div>
                         </div>
                     </div>`;
             }).join('');
