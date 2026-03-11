@@ -143,15 +143,33 @@
             if (error) return;
 
             allAdsData = data.map(ad => {
-                const now = new Date();
-                const start = new Date(ad.start_date);
-                const end = new Date(ad.end_date);
-                let s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
-                if (ad.status === 'rejected') s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
-                else if (ad.status === 'active' || (now >= start && now <= end)) s = { text: "چالاکە", icon: "fa-bolt-lightning", class: "active-bg", order: 1 };
-                
-                return { ...ad, statusInfo: s, currentProgress: calculateProgress(ad.start_date, ad.end_date) };
-            }).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
+    const now = new Date();
+    const start = new Date(ad.start_date);
+    const end = new Date(ad.end_date);
+    
+    let s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
+
+    // 1. ئەگەر ڕەتکرابووەوە
+    if (ad.status === 'rejected') {
+        s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
+    } 
+    // 2. ئەگەر بە دەست تێنەدرابوو (تەواو بوو)
+    else if (ad.status === 'completed') {
+        s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
+    }
+    // 3. تەنها ئەگەر "active" بوو، سەیری کاتەکە بکات بۆ دڵنیایی
+    else if (ad.status === 'active') {
+        if (now < start) {
+            s = { text: "چاوەڕوانە", icon: "fa-clock", class: "completed-bg", order: 3 };
+        } else if (now >= start && now <= end) {
+            s = { text: "چالاکە", icon: "fa-bolt-lightning", class: "active-bg", order: 1 };
+        } else {
+            s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
+        }
+    }
+    
+    return { ...ad, statusInfo: s, currentProgress: calculateProgress(ad.start_date, ad.end_date) };
+}).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
 
             renderAds(allAdsData);
             startLiveUpdates();
