@@ -146,19 +146,26 @@
         }
 
         function startLiveUpdates() {
-            if (updateInterval) clearInterval(updateInterval);
-            updateInterval = setInterval(() => {
-                allAdsData.forEach(ad => {
-                    if (ad.statusInfo.text === "چالاکە") {
-                        const newProgress = calculateProgress(ad.start_date, ad.end_date);
-                        const bar = document.getElementById(`bar-${ad.id}`);
-                        const text = document.getElementById(`text-${ad.id}`);
-                        if (bar) bar.style.width = newProgress + '%';
-                        if (text) text.innerText = Math.floor(newProgress) + '%';
-                    }
-                });
-            }, 1000);
-        }
+    // ئەگەر پێشتر کاتژمێرێک هەبوو، بیوەستێنە بۆ ئەوەی تێکەڵ نەبن
+    if (updateInterval) clearInterval(updateInterval);
+
+    // هەموو ١ چرکە جارێک (1000ms) ئەم فەرمانە دووبارە دەبێتەوە
+    updateInterval = setInterval(() => {
+        allAdsData.forEach(ad => {
+            if (ad.statusInfo.text === "چالاکە") {
+                // ئەژمارکردنی ڕێژەی نوێ بە وردی
+                const newProgress = calculateProgress(ad.start_date, ad.end_date);
+                
+                // دۆزینەوەی هێڵەکە و دەقەکە لەناو لاپەڕەکەدا
+                const bar = document.getElementById(`bar-${ad.id}`);
+                const text = document.getElementById(`text-${ad.id}`);
+                
+                if (bar) bar.style.width = newProgress + '%';
+                if (text) text.innerText = Math.floor(newProgress) + '%';
+            }
+        });
+    }, 1000); // دەتوانیت بیکەیتە 60000 ئەگەر تەنها دەقە بە دەقەت دەوێت
+}
 
         function filterAds(status, btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
