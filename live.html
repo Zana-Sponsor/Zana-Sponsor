@@ -89,7 +89,6 @@
         .stat-label { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 9px; color: var(--text-gray); margin-bottom: 4px; }
         .stat-value { display: block; font-size: 13px; font-weight: 900; }
 
-        /* ستایلی سپۆنسەر لێرەدایە */
         .sponsored-footer {
             margin-top: 25px;
             text-align: center;
@@ -155,7 +154,7 @@
 
             html2canvas(card, {
                 useCORS: true,
-                scale: 3, // کوالێتی بەرزتر
+                scale: 3,
                 backgroundColor: "#ffffff"
             }).then(canvas => {
                 const link = document.createElement('a');
@@ -191,7 +190,16 @@
         }
 
         async function fetchLiveAds() {
-            const { data, error } = await supabaseClient.from('ads1').select('*');
+            // ئەگەر ID لە لینکەکەدا هەبوو، تەنها ئەو یەکە نیشان بدە، ئەگینا هەمووی نیشان بدە
+            const urlParams = new URLSearchParams(window.location.search);
+            const specificId = urlParams.get('id');
+
+            let query = supabaseClient.from('ads1').select('*');
+            if (specificId) {
+                query = query.eq('id', specificId);
+            }
+
+            const { data, error } = await query;
             if (error) return;
 
             allAdsData = data.map(ad => {
@@ -202,10 +210,10 @@
 
                 if (ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە') {
                     s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
-                } else if (ad.status === 'completed' || ad.status === 'تەواو بووە') {
-                    s = { text: "تەواو بووە", icon: "fa-circle-check", class: "completed-bg", order: 2 };
                 } else if (ad.status === 'active' || (now >= start && now <= end)) {
                     s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
+                } else if (ad.status === 'completed' || ad.status === 'تەواو بووە') {
+                    s = { text: "تەواو بووە", icon: "fa-circle-check", class: "completed-bg", order: 2 };
                 }
                 
                 return { ...ad, statusInfo: s, currentProgress: calculateProgress(ad.start_date, ad.end_date, ad.status) };
@@ -227,7 +235,7 @@
                         if (text) text.innerText = newProgress.toFixed(2) + '%';
                     }
                 });
-            }, 1000);
+            }, 60000); // هەر یەک دەقە جارێک داتاکە نوێ بکەرەوە
         }
 
         function filterAds(status, btn) {
@@ -236,8 +244,21 @@
             renderAds(status === 'all' ? allAdsData : allAdsData.filter(ad => ad.statusInfo.text === status));
         }
 
+        function getPlatIcon(p) {
+            switch(p) {
+                case 'facebook': return '<i class="fab fa-facebook"></i> FACEBOOK AD';
+                case 'instagram': return '<i class="fab fa-instagram"></i> INSTAGRAM AD';
+                case 'snapchat': return '<i class="fab fa-snapchat"></i> SNAPCHAT AD';
+                default: return '<i class="fab fa-tiktok"></i> TIKTOK AD';
+            }
+        }
+
         function renderAds(adsList) {
             const container = document.getElementById('live-ads-container');
+            if (adsList.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:50px;">هیچ داتایەک نەدۆزرایەوە</p>';
+                return;
+            }
             container.innerHTML = adsList.map(ad => {
                 const isIQD = ad.currency === 'IQD';
                 const s = ad.statusInfo;
@@ -247,17 +268,17 @@
                 return `
                     <div class="ad-card" id="card-${ad.id}">
                         <div class="id-container">
-                            <div class="id-badge"><i class="fas fa-barcode"></i> #${ad.tiktok_ad_id || '0000'}</div>
-                            <div class="platform-chip"><i class="fab fa-tiktok"></i> TIKTOK AD</div>
+                            <div class="id-badge"><i class="fas fa-barcode"></i> #${ad.ad_id || '0000'}</div>
+                            <div class="platform-chip">${getPlatIcon(ad.platform)}</div>
                         </div>
                         <div class="thumb-box">
-                            <img src="${ad.thumbnail_url || ''}" class="ad-thumb" crossOrigin="anonymous">
+                            <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb" crossOrigin="anonymous">
                             <div class="customer-title">${ad.customer_name || 'بەکارهێنەر'}</div>
                             <div class="budget-tag"><i class="fas fa-coins"></i> ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</div>
                             <div class="status-badge ${s.class}">
                                 <i class="fas ${s.icon}"></i> ${s.text}
                             </div>
-                            ${isCompleted ? `<button class="download-btn" onclick="downloadReceipt('${ad.id}', '${ad.customer_name}')"><i class="fas fa-download"></i> داگرتن</button>` : ''}
+                            ${isCompleted ? `<br><button class="download-btn" onclick="downloadReceipt('${ad.id}', '${ad.customer_name}')"><i class="fas fa-download"></i> داگرتن</button>` : ''}
                         </div>
                         <div class="time-info">
                             <div class="time-block">
