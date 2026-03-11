@@ -161,7 +161,8 @@
                 const text = document.getElementById(`text-${ad.id}`);
                 
                 if (bar) bar.style.width = newProgress + '%';
-                if (text) text.innerText = Math.floor(newProgress) + '%';
+                // لە جیاتی Math.floor ئەمە بنوسە:
+                if (text) text.innerText = newProgress.toFixed(2) + '%';
             }
         });
     }, 1000); // دەتوانیت بیکەیتە 60000 ئەگەر تەنها دەقە بە دەقەت دەوێت
