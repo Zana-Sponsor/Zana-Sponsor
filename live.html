@@ -3,77 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxo Live - چاودێری ڕاستەوخۆ</title>
+    <title>Proxo Live - پسوولەی ڕیکلامەکان</title>
     <link rel="icon" type="image/jpeg" href="https://image2url.com/r2/default/images/1772248056478-a5a04d98-be5f-4ee9-8f08-09db2be8fd1a.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        :root { --primary: #22c55e; --soft-bg: #f8fafc; --card-white: #ffffff; --text-dark: #0f172a; --text-gray: #64748b; --border: #f1f5f9; --red: #ef4444; }
+        :root { --primary: #22c55e; --soft-bg: #e2e8f0; --card-white: #ffffff; --text-dark: #0f172a; --text-gray: #64748b; --border: #cbd5e1; --red: #ef4444; }
         body { background-color: var(--soft-bg); color: var(--text-dark); font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
 
-        .main-header { background: white; padding: 15px 5%; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .main-header { background: white; padding: 15px 5%; border-bottom: 2px dashed var(--border); position: sticky; top: 0; z-index: 100; }
         .header-content { max-width: 500px; margin: auto; display: flex; justify-content: space-between; align-items: center; }
         .logo-img { height: 22px; }
         
         .live-indicator {
             display: flex; align-items: center; gap: 6px; background: #f0fdf4;
-            padding: 4px 12px; border-radius: 50px; color: #16a34a; font-size: 12px; font-weight: 900; border: 1px solid #dcfce7;
+            padding: 4px 12px; border-radius: 50px; color: #16a34a; font-size: 11px; font-weight: 900; border: 1px solid #dcfce7;
         }
-        .live-dot { width: 8px; height: 8px; background-color: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; }
+        .live-dot { width: 7px; height: 7px; background-color: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; }
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
 
-        .refresh-btn { cursor: pointer; width: 40px; height: 40px; background: var(--soft-bg); border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: var(--text-dark); border: none; }
+        .refresh-btn { cursor: pointer; width: 35px; height: 35px; background: var(--soft-bg); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-dark); border: none; }
         .spinning { animation: spin 0.8s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .container { padding: 20px 5%; max-width: 500px; margin: auto; }
 
-        .filter-wrapper { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 20px; padding-bottom: 5px; }
-        .filter-wrapper::-webkit-scrollbar { display: none; }
-        .filter-btn { white-space: nowrap; padding: 8px 16px; border-radius: 50px; border: 1px solid var(--border); background: white; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--text-gray); transition: 0.3s; }
+        .filter-wrapper { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 25px; }
+        .filter-btn { white-space: nowrap; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: white; font-size: 11px; font-weight: 700; cursor: pointer; color: var(--text-gray); }
         .filter-btn.active { background: var(--text-dark); color: white; border-color: var(--text-dark); }
 
-        .ad-card { background: var(--card-white); border-radius: 28px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.03); overflow: hidden; }
-        
-        /* دیزاینی نوێی ئایدی */
-        .id-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .id-badge { 
-            background: #f8fafc; color: #94a3b8; padding: 4px 10px; border-radius: 8px; 
-            font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 4px;
-            border: 1px dashed #e2e8f0;
+        .ad-card { 
+            background: var(--card-white); 
+            padding: 25px 20px 40px 20px; 
+            margin-bottom: 30px; 
+            position: relative; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
+            clip-path: polygon(0 0, 100% 0, 100% 95%, 98% 100%, 95% 95%, 92% 100%, 89% 95%, 86% 100%, 83% 95%, 80% 100%, 77% 95%, 74% 100%, 71% 95%, 68% 100%, 65% 95%, 62% 100%, 59% 95%, 56% 100%, 53% 95%, 50% 100%, 47% 95%, 44% 100%, 41% 95%, 38% 100%, 35% 95%, 32% 100%, 29% 95%, 26% 100%, 23% 95%, 20% 100%, 17% 95%, 14% 100%, 11% 95%, 8% 100%, 5% 95%, 2% 100%, 0 95%);
         }
-        .platform-chip { padding: 5px 12px; border-radius: 10px; font-size: 11px; font-weight: 900; display: flex; align-items: center; gap: 6px; background: #f1f5f9; }
-        
-        .thumb-box { text-align: center; margin-bottom: 15px; }
-        .ad-thumb { width: 95px; height: 95px; border-radius: 28px; object-fit: cover; border: 4px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        
-        .budget-tag { display: inline-flex; align-items: center; gap: 6px; background: #f0fdf4; color: #16a34a; padding: 6px 16px; border-radius: 50px; font-size: 15px; font-weight: 900; margin-top: 10px; }
 
-        .time-info { display: flex; justify-content: space-between; background: #f8fafc; padding: 10px; border-radius: 15px; margin: 15px 0; border: 1px dashed #e2e8f0; }
-        .time-block { text-align: center; flex: 1; }
-        .time-label { display: block; font-size: 10px; color: var(--text-gray); font-weight: 700; }
-        .time-val { display: block; font-size: 11px; font-weight: 900; color: var(--text-dark); }
+        .ad-card::before {
+            content: "";
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            right: 20px;
+            border-top: 1px dashed #e2e8f0;
+        }
+        
+        .id-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .id-badge { color: #94a3b8; font-size: 10px; font-weight: 700; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 4px; display: flex; align-items: center; gap: 5px; }
+        .platform-chip { font-size: 10px; font-weight: 900; color: var(--text-gray); display: flex; align-items: center; gap: 5px; }
+        
+        .thumb-box { text-align: center; margin-bottom: 20px; }
+        .ad-thumb { width: 80px; height: 80px; border-radius: 15px; object-fit: cover; filter: grayscale(20%); border: 1px solid #eee; margin-bottom: 10px; }
+        
+        .customer-title { font-size: 18px; font-weight: 900; margin: 5px 0; letter-spacing: -0.5px; }
+        .budget-tag { font-size: 22px; font-weight: 900; color: #000; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .budget-tag i { font-size: 16px; color: #64748b; }
 
-        .progress-section { margin: 18px 0; }
-        .progress-info { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; margin-bottom: 6px; color: var(--text-gray); }
-        .progress-bar-bg { background: #f1f5f9; height: 7px; border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { background: linear-gradient(90deg, #22c55e, #4ade80); height: 100%; transition: width 0.5s linear; }
+        .time-info { border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; padding: 12px 0; margin: 15px 0; display: flex; justify-content: space-between; }
+        .time-block { text-align: right; }
+        .time-label { display: flex; align-items: center; gap: 4px; font-size: 9px; color: var(--text-gray); text-transform: uppercase; margin-bottom: 2px; }
+        .time-val { display: block; font-size: 11px; font-weight: 700; }
+
+        .progress-section { margin-bottom: 20px; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; margin-bottom: 6px; color: #94a3b8; }
+        .progress-info span { display: flex; align-items: center; gap: 4px; }
+        .progress-bar-bg { background: #f8fafc; height: 6px; border: 1px solid #f1f5f9; border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { background: #27272a; height: 100%; transition: width 0.5s linear; }
         .bg-red { background: var(--red) !important; }
 
-        .status-badge { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 16px; font-size: 13px; font-weight: 800; }
-        .active-bg { background: #f0fdf4; color: #166534; }
-        .completed-bg { background: #f1f5f9; color: #64748b; }
-        .rejected-bg { background: #fef2f2; color: #dc2626; }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 4px; font-size: 10px; font-weight: 800; margin-bottom: 15px; border: 1px solid currentColor; }
+        .active-bg { color: #16a34a; background: #f0fdf4; }
+        .completed-bg { color: #64748b; background: #f1f5f9; }
+        .rejected-bg { color: #dc2626; background: #fef2f2; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .stat-box { background: var(--soft-bg); padding: 12px 5px; border-radius: 18px; text-align: center; border: 1px solid #f1f5f9; }
-        .stat-value { display: block; font-size: 14px; font-weight: 900; }
-        .stat-label { font-size: 10px; color: var(--text-gray); }
+        .stats-grid { border-top: 1px dashed #e2e8f0; padding-top: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .stat-box { text-align: center; }
+        .stat-label { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 9px; color: var(--text-gray); margin-bottom: 4px; }
+        .stat-value { display: block; font-size: 13px; font-weight: 900; }
+
+        .download-btn {
+            background: #27272a; color: white; border: none; padding: 4px 8px; 
+            border-radius: 4px; cursor: pointer; font-size: 10px; margin-right: 8px;
+            display: inline-flex; align-items: center; gap: 4px; transition: 0.3s;
+        }
+        .download-btn:hover { background: #000; }
     </style>
 </head>
 <body>
@@ -95,10 +116,10 @@
 
     <div class="container">
         <div class="filter-wrapper">
-            <button class="filter-btn active" onclick="filterAds('all', this)">هەمووی</button>
-            <button class="filter-btn" onclick="filterAds('چالاکە', this)">چالاک</button>
-            <button class="filter-btn" onclick="filterAds('تەواو بووە', this)">کۆتایی</button>
-            <button class="filter-btn" onclick="filterAds('ڕەتکرایەوە', this)">ڕەتکراوە</button>
+            <button class="filter-btn active" onclick="filterAds('all', this)"><i class="fas fa-list-ul"></i> هەمووی</button>
+            <button class="filter-btn" onclick="filterAds('چالاکە', this)"><i class="fas fa-bolt"></i> چالاک</button>
+            <button class="filter-btn" onclick="filterAds('تەواو بووە', this)"><i class="fas fa-check"></i> کۆتایی</button>
+            <button class="filter-btn" onclick="filterAds('ڕەتکرایەوە', this)"><i class="fas fa-times"></i> ڕەتکراوە</button>
         </div>
         <div id="live-ads-container"></div>
     </div>
@@ -111,6 +132,25 @@
 
         let allAdsData = [];
         let updateInterval;
+
+        async function downloadReceipt(id, name) {
+            const card = document.getElementById(`card-${id}`);
+            // کاتی کێشانی وێنەکە، دوگمەی داگرتنەکە دەشارینەوە بۆ ئەوەی لە وێنەکەدا نەبێت
+            const btn = card.querySelector('.download-btn');
+            if(btn) btn.style.visibility = 'hidden';
+
+            html2canvas(card, {
+                useCORS: true,
+                scale: 2,
+                backgroundColor: "#ffffff"
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Proxo-Receipt-${name}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                if(btn) btn.style.visibility = 'visible';
+            });
+        }
 
         async function refreshData() {
             document.getElementById('refreshIcon').classList.add('spinning');
@@ -144,14 +184,14 @@
                 const now = new Date();
                 const start = new Date(ad.start_date);
                 const end = new Date(ad.end_date);
-                let s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
+                let s = { text: "تەواو بووە", icon: "fa-circle-check", class: "completed-bg", order: 2 };
 
                 if (ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە') {
                     s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
                 } else if (ad.status === 'completed' || ad.status === 'تەواو بووە') {
-                    s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
+                    s = { text: "تەواو بووە", icon: "fa-circle-check", class: "completed-bg", order: 2 };
                 } else if (ad.status === 'active' || (now >= start && now <= end)) {
-                    s = { text: "چالاکە", icon: "fa-bolt-lightning", class: "active-bg", order: 1 };
+                    s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
                 }
                 
                 return { ...ad, statusInfo: s, currentProgress: calculateProgress(ad.start_date, ad.end_date, ad.status) };
@@ -188,37 +228,55 @@
                 const isIQD = ad.currency === 'IQD';
                 const s = ad.statusInfo;
                 const isRejected = ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە';
+                const isCompleted = s.text === "تەواو بووە";
                 
                 return `
-                    <div class="ad-card">
+                    <div class="ad-card" id="card-${ad.id}">
                         <div class="id-container">
-                            <div class="id-badge">
-                                <i class="fas fa-hashtag" style="font-size: 8px;"></i>
-                                ID-${ad.tiktok_ad_id || '0000'}
-                            </div>
-                            <div class="platform-chip"><i class="fab fa-tiktok"></i> TikTok</div>
+                            <div class="id-badge"><i class="fas fa-barcode"></i> #${ad.tiktok_ad_id || '0000'}</div>
+                            <div class="platform-chip"><i class="fab fa-tiktok"></i> TIKTOK AD</div>
                         </div>
                         <div class="thumb-box">
-                            <img src="${ad.thumbnail_url || ''}" class="ad-thumb">
-                            <h3 style="margin:12px 0 2px 0; font-weight:900;">${ad.customer_name || ''}</h3>
-                            <div class="budget-tag"><i class="fas fa-wallet"></i> ${isIQD ? (ad.budget || 0).toLocaleString() + ' د.ع' : '$' + (ad.budget || 0)}</div>
+                            <img src="${ad.thumbnail_url || ''}" class="ad-thumb" crossOrigin="anonymous">
+                            <div class="customer-title">${ad.customer_name || 'بەکارهێنەر'}</div>
+                            <div class="budget-tag"><i class="fas fa-coins"></i> ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</div>
+                            <div class="status-badge ${s.class}">
+                                <i class="fas ${s.icon}"></i> ${s.text}
+                            </div>
+                            ${isCompleted ? `<button class="download-btn" onclick="downloadReceipt('${ad.id}', '${ad.customer_name}')"><i class="fas fa-download"></i> داگرتن</button>` : ''}
                         </div>
                         <div class="time-info">
-                            <div class="time-block"><span class="time-label">دەستپێکردن</span><span class="time-val">${formatAdDate(ad.start_date)}</span></div>
-                            <div style="align-self:center; color:#cbd5e1"><i class="fas fa-long-arrow-alt-left"></i></div>
-                            <div class="time-block"><span class="time-label">کۆتایی</span><span class="time-val">${formatAdDate(ad.end_date)}</span></div>
+                            <div class="time-block">
+                                <span class="time-label"><i class="far fa-calendar-check"></i> دەستپێکردن</span>
+                                <span class="time-val">${formatAdDate(ad.start_date)}</span>
+                            </div>
+                            <div class="time-block" style="text-align:left">
+                                <span class="time-label" style="justify-content:flex-end">کۆتایی <i class="far fa-calendar-times"></i></span>
+                                <span class="time-val">${formatAdDate(ad.end_date)}</span>
+                            </div>
                         </div>
                         <div class="progress-section">
-                            <div class="progress-info"><span>بەڕێوەچوون</span><span id="text-${ad.id}">${ad.currentProgress.toFixed(2)}%</span></div>
+                            <div class="progress-info">
+                                <span><i class="fas fa-spinner"></i> بەڕێوەچوون</span>
+                                <span id="text-${ad.id}">${ad.currentProgress.toFixed(2)}%</span>
+                            </div>
                             <div class="progress-bar-bg">
                                 <div id="bar-${ad.id}" class="progress-bar-fill ${isRejected ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%"></div>
                             </div>
                         </div>
-                        <div class="status-badge ${s.class}"><i class="fas ${s.icon}"></i> ${s.text}</div>
                         <div class="stats-grid">
-                            <div class="stat-box"><span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span><span class="stat-label">بینین</span></div>
-                            <div class="stat-box"><span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span><span class="stat-label">کلیک</span></div>
-                            <div class="stat-box"><span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span><span class="stat-label">خەرجی</span></div>
+                            <div class="stat-box">
+                                <span class="stat-label"><i class="far fa-eye"></i> بینین</span>
+                                <span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label"><i class="fas fa-mouse-pointer"></i> کلیک</span>
+                                <span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label"><i class="fas fa-receipt"></i> خەرجی</span>
+                                <span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
+                            </div>
                         </div>
                     </div>`;
             }).join('');
