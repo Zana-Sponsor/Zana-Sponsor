@@ -47,7 +47,6 @@
         
         .budget-tag { display: inline-flex; align-items: center; gap: 6px; background: #f0fdf4; color: #16a34a; padding: 6px 16px; border-radius: 50px; font-size: 15px; font-weight: 900; margin-top: 10px; }
 
-        /* بەشی کاتی دەستپێکردن و کۆتایی */
         .time-info { display: flex; justify-content: space-between; background: #f8fafc; padding: 10px; border-radius: 15px; margin: 15px 0; border: 1px dashed #e2e8f0; }
         .time-block { text-align: center; flex: 1; }
         .time-label { display: block; font-size: 10px; color: var(--text-gray); font-weight: 700; }
@@ -113,7 +112,6 @@
             setTimeout(() => icon.classList.remove('spinning'), 800);
         }
 
-        // فەنکشنی جوانکردنی بەروار
         function formatAdDate(d) {
             if(!d) return "--/--";
             const date = new Date(d);
@@ -121,7 +119,11 @@
                    date.toLocaleTimeString('ku-IQ', {hour:'2-digit', minute:'2-digit', hour12:true});
         }
 
-        function calculateProgress(start, end) {
+        function calculateProgress(start, end, status) {
+            // ئەگەر ئادمین دۆخەکەی گۆڕیبوو بۆ تەواوبوو یان ڕەتکراوە، یەکسەر بیکە بە ١٠٠
+            if (status === 'completed' || status === 'rejected' || status === 'تەواو بووە' || status === 'ڕەتکرایەوە') {
+                return 100;
+            }
             const startTime = new Date(start).getTime();
             const endTime = new Date(end).getTime();
             const now = new Date().getTime();
@@ -143,33 +145,29 @@
             if (error) return;
 
             allAdsData = data.map(ad => {
-    const now = new Date();
-    const start = new Date(ad.start_date);
-    const end = new Date(ad.end_date);
-    
-    let s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
+                const now = new Date();
+                const start = new Date(ad.start_date);
+                const end = new Date(ad.end_date);
+                
+                let s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
 
-    // 1. ئەگەر ڕەتکرابووەوە
-    if (ad.status === 'rejected') {
-        s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
-    } 
-    // 2. ئەگەر بە دەست تێنەدرابوو (تەواو بوو)
-    else if (ad.status === 'completed') {
-        s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
-    }
-    // 3. تەنها ئەگەر "active" بوو، سەیری کاتەکە بکات بۆ دڵنیایی
-    else if (ad.status === 'active') {
-        if (now < start) {
-            s = { text: "چاوەڕوانە", icon: "fa-clock", class: "completed-bg", order: 3 };
-        } else if (now >= start && now <= end) {
-            s = { text: "چالاکە", icon: "fa-bolt-lightning", class: "active-bg", order: 1 };
-        } else {
-            s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
-        }
-    }
-    
-    return { ...ad, statusInfo: s, currentProgress: calculateProgress(ad.start_date, ad.end_date) };
-}).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
+                // مەرجەکان لێرە چاککراون بۆ ئەوەی گوێڕایەڵی فەرمانی ئادمین بن
+                if (ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە') {
+                    s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
+                } 
+                else if (ad.status === 'completed' || ad.status === 'تەواو بووە') {
+                    s = { text: "تەواو بووە", icon: "fa-check-circle", class: "completed-bg", order: 2 };
+                }
+                else if (ad.status === 'active' || (now >= start && now <= end)) {
+                    s = { text: "چالاکە", icon: "fa-bolt-lightning", class: "active-bg", order: 1 };
+                }
+                
+                return { 
+                    ...ad, 
+                    statusInfo: s, 
+                    currentProgress: calculateProgress(ad.start_date, ad.end_date, ad.status) 
+                };
+            }).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
 
             renderAds(allAdsData);
             startLiveUpdates();
@@ -180,7 +178,7 @@
             updateInterval = setInterval(() => {
                 allAdsData.forEach(ad => {
                     if (ad.statusInfo.text === "چالاکە") {
-                        const newProgress = calculateProgress(ad.start_date, ad.end_date);
+                        const newProgress = calculateProgress(ad.start_date, ad.end_date, ad.status);
                         const bar = document.getElementById(`bar-${ad.id}`);
                         const text = document.getElementById(`text-${ad.id}`);
                         if (bar) bar.style.width = newProgress + '%';
