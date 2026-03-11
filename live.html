@@ -89,8 +89,23 @@
         .stat-label { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 9px; color: var(--text-gray); margin-bottom: 4px; }
         .stat-value { display: block; font-size: 13px; font-weight: 900; }
 
+        /* ستایلی سپۆنسەر لێرەدایە */
+        .sponsored-footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 9px;
+            color: #94a3b8;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border-top: 1px solid #f8fafc;
+            padding-top: 10px;
+        }
+
         .download-btn {
-            background: #27272a; color: white; border: none; padding: 4px 8px; 
+            background: #27272a; color: white; border: none; padding: 4px 10px; 
             border-radius: 4px; cursor: pointer; font-size: 10px; margin-right: 8px;
             display: inline-flex; align-items: center; gap: 4px; transition: 0.3s;
         }
@@ -135,13 +150,12 @@
 
         async function downloadReceipt(id, name) {
             const card = document.getElementById(`card-${id}`);
-            // کاتی کێشانی وێنەکە، دوگمەی داگرتنەکە دەشارینەوە بۆ ئەوەی لە وێنەکەدا نەبێت
             const btn = card.querySelector('.download-btn');
             if(btn) btn.style.visibility = 'hidden';
 
             html2canvas(card, {
                 useCORS: true,
-                scale: 2,
+                scale: 3, // کوالێتی بەرزتر
                 backgroundColor: "#ffffff"
             }).then(canvas => {
                 const link = document.createElement('a');
@@ -277,6 +291,9 @@
                                 <span class="stat-label"><i class="fas fa-receipt"></i> خەرجی</span>
                                 <span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
                             </div>
+                        </div>
+                        <div class="sponsored-footer">
+                            <i class="fas fa-shield-halved"></i> سپۆنسەرکراوە لەلایەن تیمی پڕۆکسۆ
                         </div>
                     </div>`;
             }).join('');
