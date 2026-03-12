@@ -63,12 +63,47 @@
         .menu-overlay a { text-decoration: none; color: var(--text-dark); font-size: 22px; font-weight: 800; transition: 0.3s; }
         .lang-switch { margin-bottom: 30px; display: flex; gap: 10px; }
         .lang-switch button { padding: 8px 20px; border-radius: 50px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: 700; }
+        
         #home { padding: 120px 6% 60px; text-align: center; background: radial-gradient(circle at top right, #eff6ff 0%, #ffffff 70%); }
         #home h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 900; margin-bottom: 20px; color: var(--text-dark); }
         #home p { max-width: 650px; margin: 0 auto 30px; font-size: 18px; color: var(--text-gray); }
-        .btn-main { background: var(--accent); color: white !important; padding: 16px 40px; border-radius: 50px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; transition: 0.4s; text-decoration: none; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); cursor: pointer; border: none; }
         
-        /* --- ستایلی ئاگادارییەکەی سەرەوە --- */
+        /* --- دوگمەی سەرەکی لەگەڵ بریقەی جوڵاو --- */
+        .btn-main { 
+            background: var(--accent); 
+            color: white !important; 
+            padding: 16px 40px; 
+            border-radius: 50px; 
+            font-weight: 700; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 10px; 
+            transition: 0.4s; 
+            text-decoration: none; 
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); 
+            cursor: pointer; 
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-main::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s;
+            animation: btnSweep 3s infinite;
+        }
+
+        @keyframes btnSweep {
+            20%, 100% { left: 100%; }
+        }
+
+        /* --- ئاگادارییەکە (Notification) --- */
         #live-ads-notify {
             position: fixed;
             top: 15px;
@@ -76,24 +111,44 @@
             transform: translateX(-50%);
             background: var(--accent);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 12px;
             z-index: 3000;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             font-family: 'Rudaw', sans-serif !important;
             font-weight: bold;
-            animation: fadeInDown 0.6s ease;
-            transition: 0.4s ease;
             direction: rtl;
             white-space: nowrap;
+            overflow: hidden; 
+            animation: slideInFromTop 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
-        @keyframes fadeInDown {
-            from { top: -100px; opacity: 0; }
+
+        /* بریقەی بەهێزکراو */
+        #live-ads-notify::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg);
+            animation: softSweep 3.5s infinite ease-in-out;
+        }
+
+        @keyframes slideInFromTop {
+            from { top: -80px; opacity: 0; }
             to { top: 15px; opacity: 1; }
+        }
+
+        @keyframes softSweep {
+            0% { left: -150%; }
+            30% { left: 150%; }
+            100% { left: 150%; }
         }
 
         .integration-section { margin-top: 60px; padding: 25px 0; border-top: 1px solid #eee; }
@@ -217,14 +272,15 @@
         
         let allFeedbacks = [];
 
-        // ونبوونی ئاگادارییەکە دوای 5 چرکە
+        // کاتەکەم زیاد کردووە بۆ 15000 میللی چرکە (واتە 15 چرکە)
         setTimeout(function() {
             const notify = document.getElementById('live-ads-notify');
             if (notify) {
                 notify.style.opacity = '0';
+                notify.style.transform = 'translateX(-50%) translateY(-20px)';
                 setTimeout(() => notify.style.display = 'none', 500);
             }
-        }, 5000);
+        }, 15000);
 
         async function loadFeedbacks(lang = 'en') {
             const container = document.getElementById('feedback-container');
