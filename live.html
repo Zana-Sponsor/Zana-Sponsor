@@ -308,24 +308,24 @@
                         <div class="progress-section">
                             <div class="progress-info">
                                 <span><i class="fas fa-spinner"></i> بەڕێوەچوون</span>
-                                <span id="text-${ad.id}">${ad.currentProgress.toFixed(2)}%</span>
+                                <span id="text-${tiktok_ad_id}">${ad.currentProgress.toFixed(2)}%</span>
                             </div>
                             <div class="progress-bar-bg">
-                                <div id="bar-${ad.id}" class="progress-bar-fill ${isRejected ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%"></div>
+                                <div id="bar-${tiktok_ad_id}" class="progress-bar-fill ${isRejected ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%"></div>
                             </div>
                         </div>
                         <div class="stats-grid">
                             <div class="stat-box">
                                 <span class="stat-label"><i class="far fa-eye"></i> بینین</span>
-                                <span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span>
+                                <span class="stat-value">${(impressions || 0).toLocaleString()}</span>
                             </div>
                             <div class="stat-box">
                                 <span class="stat-label"><i class="fas fa-mouse-pointer"></i> کلیک</span>
-                                <span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span>
+                                <span class="stat-value">${(clicks || 0).toLocaleString()}</span>
                             </div>
                             <div class="stat-box">
                                 <span class="stat-label"><i class="fas fa-receipt"></i> خەرجی</span>
-                                <span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
+                                <span class="stat-value">${isIQD ? (spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
                             </div>
                         </div>
                         <div class="sponsored-footer">
