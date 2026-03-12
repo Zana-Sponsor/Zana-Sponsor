@@ -275,64 +275,65 @@
                 return;
             }
             container.innerHTML = adsList.map(ad => {
-                const isIQD = ad.currency === 'IQD';
-                const s = ad.statusInfo;
-                const isRejected = ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە';
-                const isCompleted = s.text === "تەواو بووە";
-                
-                return `
-                    <div class="ad-card" id="card-${ad.id}">
-                        <div class="id-container">
-                            <div class="id-badge"><i class="fas fa-barcode"></i> #${ad.ad_id || '0000'}</div>
-                            <div class="platform-chip">${getPlatIcon(ad.platform)}</div>
-                        </div>
-                        <div class="thumb-box">
-                            <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb" crossOrigin="anonymous">
-                            <div class="customer-title">${ad.customer_name || 'بەکارهێنەر'}</div>
-                            <div class="budget-tag"><i class="fas fa-coins"></i> ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</div>
-                            <div class="status-badge ${s.class}">
-                                <i class="fas ${s.icon}"></i> ${s.text}
-                            </div>
-                            ${isCompleted ? `<br><button class="download-btn" onclick="downloadReceipt('${ad.id}', '${ad.customer_name}')"><i class="fas fa-download"></i> داگرتن</button>` : ''}
-                        </div>
-                        <div class="time-info">
-                            <div class="time-block">
-                                <span class="time-label"><i class="far fa-calendar-check"></i> دەستپێکردن</span>
-                                <span class="time-val">${formatAdDate(ad.start_date)}</span>
-                            </div>
-                            <div class="time-block" style="text-align:left">
-                                <span class="time-label" style="justify-content:flex-end">کۆتایی <i class="far fa-calendar-times"></i></span>
-                                <span class="time-val">${formatAdDate(ad.end_date)}</span>
-                            </div>
-                        </div>
-                        <div class="progress-section">
-                            <div class="progress-info">
-                                <span><i class="fas fa-spinner"></i> بەڕێوەچوون</span>
-                                <span id="text-${tiktok_ad_id}">${ad.currentProgress.toFixed(2)}%</span>
-                            </div>
-                            <div class="progress-bar-bg">
-                                <div id="bar-${tiktok_ad_id}" class="progress-bar-fill ${isRejected ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%"></div>
-                            </div>
-                        </div>
-                        <div class="stats-grid">
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="far fa-eye"></i> بینین</span>
-                                <span class="stat-value">${(impressions || 0).toLocaleString()}</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="fas fa-mouse-pointer"></i> کلیک</span>
-                                <span class="stat-value">${(clicks || 0).toLocaleString()}</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="fas fa-receipt"></i> خەرجی</span>
-                                <span class="stat-value">${isIQD ? (spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
-                            </div>
-                        </div>
-                        <div class="sponsored-footer">
-                            <i class="fas fa-shield-halved"></i> سپۆنسەرکراوە لەلایەن تیمی پڕۆکسۆ
-                        </div>
-                    </div>`;
-            }).join('');
+    const isIQD = ad.currency === 'IQD';
+    const s = ad.statusInfo;
+    const isRejected = ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە';
+    const isCompleted = s.text === "تەواو بووە";
+    
+    // لێرە گۆڕانکاری کراوە بۆ ئەوەی داتاکان بناسێتەوە
+    return `
+        <div class="ad-card" id="card-${ad.id}">
+            <div class="id-container">
+                <div class="id-badge"><i class="fas fa-barcode"></i> #${ad.ad_id || '0000'}</div>
+                <div class="platform-chip">${getPlatIcon(ad.platform)}</div>
+            </div>
+            <div class="thumb-box">
+                <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb" crossOrigin="anonymous">
+                <div class="customer-title">${ad.customer_name || 'بەکارهێنەر'}</div>
+                <div class="budget-tag"><i class="fas fa-coins"></i> ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</div>
+                <div class="status-badge ${s.class}">
+                    <i class="fas ${s.icon}"></i> ${s.text}
+                </div>
+                ${isCompleted ? `<br><button class="download-btn" onclick="downloadReceipt('${ad.id}', '${ad.customer_name}')"><i class="fas fa-download"></i> داگرتن</button>` : ''}
+            </div>
+            <div class="time-info">
+                <div class="time-block">
+                    <span class="time-label"><i class="far fa-calendar-check"></i> دەستپێکردن</span>
+                    <span class="time-val">${formatAdDate(ad.start_date)}</span>
+                </div>
+                <div class="time-block" style="text-align:left">
+                    <span class="time-label" style="justify-content:flex-end">کۆتایی <i class="far fa-calendar-times"></i></span>
+                    <span class="time-val">${formatAdDate(ad.end_date)}</span>
+                </div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-info">
+                    <span><i class="fas fa-spinner"></i> بەڕێوەچوون</span>
+                    <span id="text-${ad.id}">${ad.currentProgress.toFixed(2)}%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="bar-${ad.id}" class="progress-bar-fill ${isRejected ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%"></div>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label"><i class="far fa-eye"></i> بینین</span>
+                    <span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label"><i class="fas fa-mouse-pointer"></i> کلیک</span>
+                    <span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label"><i class="fas fa-receipt"></i> خەرجی</span>
+                    <span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
+                </div>
+            </div>
+            <div class="sponsored-footer">
+                <i class="fas fa-shield-halved"></i> سپۆنسەرکراوە لەلایەن تیمی پڕۆکسۆ
+            </div>
+        </div>`;
+}).join('');
         }
 
         window.onload = fetchLiveAds;
