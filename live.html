@@ -88,6 +88,10 @@
         .stat-box { text-align: center; }
         .stat-label { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 9px; color: var(--text-gray); margin-bottom: 4px; }
         .stat-value { display: block; font-size: 13px; font-weight: 900; }
+  .stat-value, .budget-tag {
+    font-variant-numeric: tabular-nums; /* وا دەکات ژمارەکان ڕێک وەک یەک بن و نەجوڵێن */
+    letter-spacing: 0.5px;
+}
 
         .sponsored-footer {
             margin-top: 25px;
@@ -172,11 +176,22 @@
         }
 
         function formatAdDate(d) {
-            if(!d) return "--/--";
-            const date = new Date(d);
-            return date.toLocaleDateString('ku-IQ', {month:'numeric', day:'numeric'}) + " " + 
-                   date.toLocaleTimeString('ku-IQ', {hour:'2-digit', minute:'2-digit', hour12:true});
-        }
+    if(!d) return "--/--";
+    const date = new Date(d);
+    
+    // بەکارهێنانی کاتی بەغدا/هەولێر بۆ ئەوەی جیاوازییەکە نەمێنێت
+    return date.toLocaleDateString('ku-IQ', {
+        month: 'numeric', 
+        day: 'numeric',
+        timeZone: 'Asia/Baghdad' // دڵنیابوونەوە لە کاتی هەولێر
+    }) + " " + 
+    date.toLocaleTimeString('ku-IQ', {
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: true,
+        timeZone: 'Asia/Baghdad' // دڵنیابوونەوە لە کاتی هەولێر
+    });
+}
 
         function calculateProgress(start, end, status) {
             if (status === 'rejected' || status === 'ڕەتکرایەوە') return 0;
