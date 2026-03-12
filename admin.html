@@ -121,7 +121,7 @@
 
 <script>
     const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk';
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
     function handleEnter(event) { if (event.key === "Enter") { event.preventDefault(); addNewAd(); } }
@@ -186,84 +186,70 @@
                         <span style="font-size:10px; color:#10b981;">${suffix}</span>
                     </div>
                 </td>
-                <td><input type="number" class="inline-edit-input" value="${ad.impressions || 0}" onchange="fastUpdate('${ad.id}', 'impressions', this.value, this)"></td>
-                <td><input type="number" class="inline-edit-input" value="${ad.clicks || 0}" onchange="fastUpdate('${ad.id}', 'clicks', this.value, this)"></td>
+                <td>${(ad.impressions || 0).toLocaleString()}</td>
+                <td>${(ad.clicks || 0).toLocaleString()}</td>
+                <td>${isIQD ? (ad.spend || 0).toLocaleString() : '$' + (ad.spend || 0)}</td>
                 <td>
-                    <div style="display:flex; align-items:center; gap:4px;">
-                        <input type="number" step="${isIQD ? '500' : '0.1'}" class="inline-edit-input" value="${ad.spend || 0}" onchange="fastUpdate('${ad.id}', 'spend', this.value, this)">
-                        <span style="font-size:10px; color:#94a3b8;">${suffix}</span>
-                    </div>
-                </td>
-                <td>
-                    <select onchange="fastUpdate('${ad.id}', 'status', this.value, this)" style="width:110px; background:#0f172a; color:white; border:1px solid #334155;">
-                        <option value="active" ${ad.status === 'active' || ad.status === 'چالاکە' ? 'selected' : ''}>Active</option>
-                        <option value="completed" ${ad.status === 'completed' || ad.status === 'تەواو بووە' ? 'selected' : ''}>Completed</option>
-                        <option value="scheduled" ${ad.status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
-                        <option value="rejected" ${ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە' ? 'selected' : ''}>Rejected</option>
+                    <select onchange="fastUpdate('${ad.id}', 'status', this.value, this)" style="padding:4px; font-size:11px;">
+                        <option value="active" ${ad.status === 'active' || ad.status === 'چالاکە' ? 'selected' : ''}>چالاک</option>
+                        <option value="completed" ${ad.status === 'completed' || ad.status === 'تەواو بووە' ? 'selected' : ''}>کۆتایی</option>
+                        <option value="rejected" ${ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە' ? 'selected' : ''}>ڕەتکراوە</option>
                     </select>
                 </td>
                 <td>
-                    <button class="btn-circle btn-best ${ad.is_best ? 'active' : ''}" onclick="toggleBest('${ad.id}', ${ad.is_best})" title="Best Selling">
-                        <i class="fas fa-crown"></i>
-                    </button>
-                    <button class="btn-circle btn-link" onclick="copyLiveLink('${ad.id}')" title="Copy Link"><i class="fas fa-link"></i></button>
-                    <button class="btn-circle btn-del" onclick="deleteAd('${ad.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                    <button onclick="deleteAd('${ad.id}')" class="btn-circle btn-del"><i class="fas fa-trash"></i></button>
+                    <a href="https://proxopages.com/live?id=${ad.id}" target="_blank" class="btn-circle btn-link"><i class="fas fa-external-link-alt"></i></a>
                 </td>
-            </tr>
-        `}).join('');
+            </tr>`;
+        }).join('');
     }
 
-    async function toggleBest(id, currentStatus) {
-        const { error } = await supabaseClient.from('ads1').update({ is_best: !currentStatus }).eq('id', id);
-        if (!error) fetchAds();
-    }
-
-    async function fastUpdate(id, field, value, el) {
-        let val;
-        if (field === 'spend' || field === 'budget') {
-            val = parseFloat(value);
-        } else if (field === 'impressions' || field === 'clicks') {
-            val = parseInt(value);
-        } else {
-            val = value;
-        }
-
-        const { error } = await supabaseClient.from('ads1').update({ [field]: val }).eq('id', id);
+    async function fastUpdate(id, field, value, element) {
+        const { error } = await supabaseClient.from('tiktok_report2').update({ [field]: value }).eq('id', id);
         if (!error) {
-            el.parentElement.closest('tr').classList.add('saving-effect');
-            setTimeout(() => el.parentElement.closest('tr').classList.remove('saving-effect'), 500);
-            if(field === 'platform' || field === 'currency') fetchAds();
-            else {
-                const { data } = await supabaseClient.from('ads1').select('*');
-                if (data) updateStats(data);
-            }
-        } else { alert("کێشەیەک لە نوێکردنەوە ڕوویدا"); }
-    }
-
-    function copyLiveLink(id) {
-        const url = `https://proxopages.com/live?id=${id}`;
-        navigator.clipboard.writeText(url).then(() => { alert("✅ لینکی تایبەتی کڕیار کۆپی کرا!"); });
+            const row = document.getElementById(`row-${id}`);
+            row.classList.add('saving-effect');
+            setTimeout(() => row.classList.remove('saving-effect'), 500);
+            updateStatsAfterChange();
+        }
     }
 
     async function addNewAd() {
-        const payload = {
+        const newAd = {
             customer_name: document.getElementById('custName').value,
-            ad_id: document.getElementById('adId').value, // لێرە گۆڕدرا بۆ ad_id
+            ad_id: document.getElementById('adId').value,
             platform: document.getElementById('adPlatform').value,
+            budget: document.getElementById('adBudget').value,
             currency: document.getElementById('adCurrency').value,
-            budget: parseFloat(document.getElementById('adBudget').value) || 0,
             thumbnail_url: document.getElementById('imgUrl').value,
-            start_date: document.getElementById('startDate').value || new Date().toISOString(),
-            end_date: document.getElementById('endDate').value || new Date().toISOString(),
-            status: 'active', impressions: 0, clicks: 0, spend: 0, is_best: false
+            start_date: document.getElementById('startDate').value,
+            end_date: document.getElementById('endDate').value,
+            status: 'active'
         };
-        const { error } = await supabaseClient.from('ads1').insert([payload]);
-        if (!error) { fetchAds(); document.querySelectorAll('#adForm input').forEach(i => i.value = ''); }
-        else { alert("هەڵە لە سەیڤکردن: " + error.message); }
+
+        const { error } = await supabaseClient.from('tiktok_report2').insert([newAd]);
+        if (!error) {
+            fetchAds();
+            document.querySelectorAll('#adForm input').forEach(i => i.value = '');
+        } else {
+            alert('هەڵە: ' + error.message);
+        }
     }
 
-    async function deleteAd(id) { if (confirm("دڵنیای لە سڕینەوە؟")) { await supabaseClient.from('ads1').delete().eq('id', id); fetchAds(); } }
+    async function deleteAd(id) {
+        if (confirm('دڵنیای لە سڕینەوە؟')) {
+            const { error } = await supabaseClient.from('tiktok_report2').delete().eq('id', id);
+            if (!error) fetchAds();
+        }
+    }
+
+    async function updateStatsAfterChange() {
+        const { data } = await supabaseClient.from('tiktok_report2').select('*');
+        if (data) updateStats(data);
+    }
+
     window.onload = fetchAds;
 </script>
+
 </body>
 </html>
