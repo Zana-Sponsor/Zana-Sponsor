@@ -221,14 +221,15 @@
                 const now = new Date();
                 const start = new Date(ad.start_date);
                 const end = new Date(ad.end_date);
-                let s = { text: "تەواو بووە", icon: "fa-circle-check", class: "completed-bg", order: 2 };
+                // لە جیاتی ئەوەی تەنها بەپێی کات بڕیار بدات، سەیری داتای تیکتۆک دەکات
+                let s = { text: "تەواو بووە", icon: "fa-circle-check", class: "completed-bg" };
 
-                if (ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە') {
-                    s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
-                } else if (ad.status === 'active' || (now >= start && now <= end)) {
-                    s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
-                } else if (ad.status === 'completed' || ad.status === 'تەواو بووە') {
-                    s = { text: "تەواو بووە", icon: "fa-circle-check", class: "completed-bg", order: 2 };
+                if (ad.delivery_status === 'AD_STATUS_DELIVERY_OK') {
+                    s = { text: "چالاکە", icon: "fa-bolt", class: "active-bg" };
+                } else if (ad.delivery_status === 'AD_STATUS_QUOTA_EXCEEDED') {
+                    s = { text: "بودجە تەواو بوو", icon: "fa-coins", class: "rejected-bg" };
+                } else if (ad.delivery_status === 'AD_STATUS_NOT_DELIVERING') {
+                    s = { text: "وەستاوە", icon: "fa-pause", class: "completed-bg" };
                 }
                 
                 return { ...ad, statusInfo: s, currentProgress: calculateProgress(ad.start_date, ad.end_date, ad.status) };
