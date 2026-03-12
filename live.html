@@ -88,10 +88,6 @@
         .stat-box { text-align: center; }
         .stat-label { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 9px; color: var(--text-gray); margin-bottom: 4px; }
         .stat-value { display: block; font-size: 13px; font-weight: 900; }
-  .stat-value, .budget-tag {
-    font-variant-numeric: tabular-nums; /* وا دەکات ژمارەکان ڕێک وەک یەک بن و نەجوڵێن */
-    letter-spacing: 0.5px;
-}
 
         .sponsored-footer {
             margin-top: 25px;
@@ -176,22 +172,11 @@
         }
 
         function formatAdDate(d) {
-    if(!d) return "--/--";
-    const date = new Date(d);
-    
-    // بەکارهێنانی کاتی بەغدا/هەولێر بۆ ئەوەی جیاوازییەکە نەمێنێت
-    return date.toLocaleDateString('ku-IQ', {
-        month: 'numeric', 
-        day: 'numeric',
-        timeZone: 'Asia/Baghdad' // دڵنیابوونەوە لە کاتی هەولێر
-    }) + " " + 
-    date.toLocaleTimeString('ku-IQ', {
-        hour: '2-digit', 
-        minute: '2-digit', 
-        hour12: true,
-        timeZone: 'Asia/Baghdad' // دڵنیابوونەوە لە کاتی هەولێر
-    });
-}
+            if(!d) return "--/--";
+            const date = new Date(d);
+            return date.toLocaleDateString('ku-IQ', {month:'numeric', day:'numeric'}) + " " + 
+                   date.toLocaleTimeString('ku-IQ', {hour:'2-digit', minute:'2-digit', hour12:true});
+        }
 
         function calculateProgress(start, end, status) {
             if (status === 'rejected' || status === 'ڕەتکرایەوە') return 0;
@@ -209,7 +194,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const specificId = urlParams.get('id');
 
-            let query = supabaseClient.from('ads1').select('*');
+            let query = supabaseClient.from('tiktok_report2').select('*');
             if (specificId) {
                 query = query.eq('id', specificId);
             }
@@ -274,28 +259,16 @@
                 container.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:50px;">هیچ داتایەک نەدۆزرایەوە</p>';
                 return;
             }
-            function renderAds(adsList) {
-            const container = document.getElementById('live-ads-container');
-            if (adsList.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#94a3b8; margin-top:50px;">هیچ داتایەک نەدۆزرایەوە</p>';
-                return;
-            }
             container.innerHTML = adsList.map(ad => {
                 const isIQD = ad.currency === 'IQD';
                 const s = ad.statusInfo;
                 const isRejected = ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە';
                 const isCompleted = s.text === "تەواو بووە";
                 
-                // دڵنیابوونەوە لەوەی ژمارەکان سفر نین ئەگەر داتاکە null بوو
-                const spendVal = ad.spend || 0;
-                const clickVal = ad.clicks || 0;
-                const viewVal = ad.impressions || 0;
-                const adIdVal = ad.ad_id || ad.tiktok_ad_id || '0000';
-
                 return `
                     <div class="ad-card" id="card-${ad.id}">
                         <div class="id-container">
-                            <div class="id-badge"><i class="fas fa-barcode"></i> #${adIdVal}</div>
+                            <div class="id-badge"><i class="fas fa-barcode"></i> #${ad.ad_id || '0000'}</div>
                             <div class="platform-chip">${getPlatIcon(ad.platform)}</div>
                         </div>
                         <div class="thumb-box">
@@ -329,15 +302,15 @@
                         <div class="stats-grid">
                             <div class="stat-box">
                                 <span class="stat-label"><i class="far fa-eye"></i> بینین</span>
-                                <span class="stat-value">${viewVal.toLocaleString()}</span>
+                                <span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span>
                             </div>
                             <div class="stat-box">
                                 <span class="stat-label"><i class="fas fa-mouse-pointer"></i> کلیک</span>
-                                <span class="stat-value">${clickVal.toLocaleString()}</span>
+                                <span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span>
                             </div>
                             <div class="stat-box">
                                 <span class="stat-label"><i class="fas fa-receipt"></i> خەرجی</span>
-                                <span class="stat-value">${isIQD ? spendVal.toLocaleString() : '$'+spendVal}</span>
+                                <span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
                             </div>
                         </div>
                         <div class="sponsored-footer">
