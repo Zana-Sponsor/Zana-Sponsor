@@ -121,13 +121,13 @@
 
 <script>
     const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
     function handleEnter(event) { if (event.key === "Enter") { event.preventDefault(); addNewAd(); } }
 
     async function fetchAds() {
-        const { data, error } = await supabaseClient.from('ads1').select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabaseClient.from('tiktok_report2').select('*').order('created_at', { ascending: false });
         if (!error) { renderAds(data); updateStats(data); }
     }
 
