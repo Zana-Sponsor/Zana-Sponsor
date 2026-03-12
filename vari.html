@@ -7,42 +7,63 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 @font-face { font-family: 'Rudaw'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/new_rudaw_bold.woff2') format('woff2'); font-weight: bold; font-style: normal; font-display: swap; }
-*{box-sizing:border-box}
+*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;} /* بۆ ئەوەی ڕەنگی شین لەکاتی کلیک لە مۆبایل دەرنەکەوێت */
+
 body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background:#ffffff; display:flex; align-items:center; justify-content:center; }
 .container{ width:100%; max-width:380px; padding:36px 16px 40px; text-align:center; background:#fff; }
 .profile{padding:18px 8px 10px; margin-bottom:24px;}
 .profile img {
-  width: 92px;
-  height: 92px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.12);
-  /* ئەم دوو دێڕەی خوارەوە زیاد کراوە */
-  padding: 1px;
+  width: 92px; height: 92px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.12); padding: 1px;
   background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
 }
 .profile h1{ margin:6px 0 6px; font-size:18px; color:#000; }
 .profile p{ margin:10px 8px 0; font-size:14px; color:#000; line-height:1.7; }
+
 .links{ display:flex; flex-direction:column; gap:14px; margin:28px 0; }
-.link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; cursor: pointer; }
-.link:active{transform:scale(0.92)}
-.link i{ position:absolute; left:18px; font-size:22px; text-align:center; width:26px; text-shadow: none !important; }
+.link{ 
+  position:relative; display:flex; align-items:center; justify-content:center; 
+  padding:14px 18px; border-radius:999px; font-size:16px; font-weight:700; 
+  color:#fff; text-decoration:none; min-height:48px; 
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); 
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* نەرمتر کردنی جوڵە */
+  overflow: hidden; cursor: pointer; transform: scale(1);
+}
+
+/* هەستی کڕیار لەکاتی کلیک کردن - زۆر نەرم */
+.link:active { transform: scale(0.95); opacity: 0.9; }
+
+.link i{ position:absolute; left:18px; font-size:22px; text-shadow: none !important; }
 .whatsapp{background:#25D366;}
 .telegram{background:#26A5E4;}
-.viber{background:#7360f2;}
-.phone{background:#0062AD}
-.asiacell{background:#ff0000}
-.instagram{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af,#515bd4);}
-.shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }
+
+/* چاککردنی بریقەکە بۆ ئەوەی نەبێتە ڕێگر */
+.shine-active::after { 
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; 
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); 
+  transform: skewX(-25deg); animation: shine 2s infinite; 
+  pointer-events: none; /* گرنگ: ڕێگری لە کلیک ناکات */
+}
+
 @keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }
-.no-shine::after { animation: none !important; display: none !important; }
-.hand-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; z-index: 10; pointer-events: none; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease-out; opacity: 1; }
-.hand-container.hidden { opacity: 0; }
-.finger-emoji { font-size: 25px; position: relative; z-index: 2; animation: clickAnim 1s infinite; margin-left: 10px; margin-top: 15px; }
-.click-circle { position: absolute; width: 25px; height: 25px; border: 3px solid rgba(255, 255, 255, 0.8); border-radius: 50%; animation: pulse 1s infinite; z-index: 1; }
-@keyframes clickAnim { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.9); } }
+.no-shine::after { display: none !important; }
+
+/* چاککردنی ئیمۆجییەکە */
+.hand-container { 
+  position: absolute; right: 15px; top: 50%; transform: translateY(-50%); 
+  width: 60px; height: 60px; z-index: 10; 
+  pointer-events: none; /* گرنگ: بۆ ئەوەی کلیکەکە ڕاستەوخۆ بچێت بۆ دوگمەکە */
+  display: flex; align-items: center; justify-content: center; 
+  transition: opacity 0.5s ease;
+}
+.hand-container.hidden { opacity: 0; visibility: hidden; }
+
+.finger-emoji { font-size: 25px; animation: clickAnim 1s infinite; margin-top: 10px; }
+.click-circle { position: absolute; width: 25px; height: 25px; border: 3px solid rgba(255, 255, 255, 0.8); border-radius: 50%; animation: pulse 1s infinite; }
+
+@keyframes clickAnim { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(5px) scale(0.9); } }
 @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.5); opacity: 0; } }
+
 .divider{ width:100%; height:1px; margin:28px 0 18px; background:linear-gradient(to right, transparent, #ddd, transparent); }
 .footer small{ display:block; font-size:10px; color:#656565; margin-bottom:8px; }
 .footer img{ height:14px; margin:0 auto 6px; display:block; }
@@ -51,25 +72,29 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 </style>
 </head>
 <body>
+
 <div class="container">
   <div class="profile">
     <img src="https://image2url.com/r2/default/images/1772756949098-d6d76b46-8ea1-4475-a900-a41c4bec7bc4.webp" alt="Logo">
     <h1>VAR1 ACCOUNT</h1>
     <p>بۆ زانیاری زیاتر، پەیوەندی بکە لەڕێگەی دوگمەکانەوە.</p>
   </div>
-  <div class="links">    <a id="wa-btn" class="link whatsapp shine-active">
-        <i class="fab fa-whatsapp" style="font-size: 24px;"></i> 
+
+  <div class="links">
+    <a id="wa-btn" class="link whatsapp shine-active">
+        <i class="fab fa-whatsapp"></i> 
         واتسئاپ 
         <span id="click-hand" class="hand-container">
             <span class="click-circle"></span>
             <span class="finger-emoji">👆</span>
         </span>
     </a>
-    <a id="tg-btn" class="link telegram ">
+    <a id="tg-btn" class="link telegram">
         <i class="fab fa-telegram"></i> 
         تێلیگرام 
     </a>
-</div>
+  </div>
+
   <div class="divider"></div>
   <div class="footer">
     <small>سپۆنسەر کراوە لەلایەن</small>
@@ -80,22 +105,32 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
     </div>
   </div>
 </div>
+
 <script>
+// TikTok Pixel (بێ دەستکاری ماوەتەوە)
 !function (w, d, t) {
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
 var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script")
 ;s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(s,e)};
-  
   ttq.load('D6BIIA3C77U1CE9DCUMG');
   ttq.page();
-
 }(window, document, 'ttq');
 
 document.addEventListener("DOMContentLoaded", function() {
     const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + "https://vt.tiktok.com/ZSuDXFrVE/");
-    document.getElementById("wa-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "WhatsApp_Ku" }); window.location.href = "https://wa.me/9647519919185?text=" + message; };
-    document.getElementById("tg-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Telegram_Ku" }); window.location.href = "https://t.me/iamv4ri"; };
+    
+    // بەکارهێنانی Event Listener لە جیاتی onclick بۆ خێرایی زیاتر
+    document.getElementById("wa-btn").addEventListener("click", function(e) {
+        if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "WhatsApp_Ku" });
+        window.location.href = "https://wa.me/9647519919185?text=" + message;
+    });
 
+    document.getElementById("tg-btn").addEventListener("click", function(e) {
+        if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Telegram_Ku" });
+        window.location.href = "https://t.me/iamv4ri";
+    });
+
+    // لادانی ئیمۆجی و بریقە دوای 6 چرکە
     setTimeout(function() {
         var clickHand = document.getElementById('click-hand');
         var shineBtn = document.querySelector('.shine-active');
