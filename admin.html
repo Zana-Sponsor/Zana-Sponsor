@@ -75,7 +75,7 @@
     <div class="glass-panel">
         <div class="form-grid" id="adForm">
             <input type="text" id="custName" placeholder="ناوی کڕیار" onkeypress="handleEnter(event)">
-            <input type="text" id="adId" placeholder="Ad ID" onkeypress="handleEnter(event)">
+            <input type="text" id="adId" placeholder="Ad ID (بێ هێمای #)" onkeypress="handleEnter(event)">
             <select id="adPlatform">
                 <option value="tiktok">TikTok</option>
                 <option value="facebook">Facebook</option>
@@ -125,7 +125,6 @@
     function handleEnter(event) { if (event.key === "Enter") { event.preventDefault(); addNewAd(); } }
 
     async function fetchAds() {
-        // فێتچ کردنی داتاکان بەپێی نوێترین ID
         const { data, error } = await supabaseClient.from('tiktok_report2').select('*').order('id', { ascending: false });
         if (!error) { renderAds(data); updateStats(data); }
     }
@@ -191,7 +190,7 @@
                 <td>
                     <select onchange="fastUpdate('${ad.id}', 'status', this.value, this)" style="padding:4px; font-size:11px;">
                         <option value="active" ${ad.status === 'active' || ad.status === 'چالاکە' ? 'selected' : ''}>چالاک</option>
-                        <option value="completed" ${ad.status === 'completed' || ad.status === 'تەواو بووە' ? 'selected' : ''}>کۆتایی</option>
+                        <option value="تەواوبوو" ${ad.status === 'completed' || ad.status === 'تەواوبوو' ? 'selected' : ''}>تەواوبوو</option>
                         <option value="rejected" ${ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە' ? 'selected' : ''}>ڕەتکراوە</option>
                     </select>
                 </td>
@@ -217,14 +216,17 @@
         const nameInput = document.getElementById('custName');
         const idInput = document.getElementById('adId');
         
-        if (!nameInput.value || !idInput.value) {
+        // پاککردنەوەی ئایدی لە نیشانەی # ئەگەر کڕیار بە هەڵە داینابوو
+        let cleanAdId = idInput.value.replace('#', '').trim();
+
+        if (!nameInput.value || !cleanAdId) {
             alert('تکایە ناوی کڕیار و Ad ID بنووسە');
             return;
         }
 
         const newAd = {
             customer_name: nameInput.value,
-            ad_id: idInput.value,
+            ad_id: cleanAdId,
             platform: document.getElementById('adPlatform').value,
             budget: parseFloat(document.getElementById('adBudget').value) || 0,
             currency: document.getElementById('adCurrency').value,
@@ -232,20 +234,16 @@
             start_date: document.getElementById('startDate').value || null,
             end_date: document.getElementById('endDate').value || null,
             status: 'active',
-            spend: 0,        // ڕێگری لە NULL
-            impressions: 0,  // ڕێگری لە NULL
-            clicks: 0        // ڕێگری لە NULL
+            spend: 0,
+            impressions: 0,
+            clicks: 0
         };
 
         const { error } = await supabaseClient.from('tiktok_report2').insert([newAd]);
         
         if (!error) {
-            // پاککردنەوەی فۆرم
             document.querySelectorAll('#adForm input').forEach(i => i.value = '');
-            // چاوەڕێکردن بۆ دڵنیایی لەوەی Supabase داتاکەی وەرگرتووە
-            setTimeout(() => {
-                fetchAds();
-            }, 500);
+            setTimeout(() => { fetchAds(); }, 500);
         } else {
             alert('هەڵە: ' + error.message);
         }
