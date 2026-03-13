@@ -38,7 +38,7 @@
         .filter-btn { white-space: nowrap; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: white; font-size: 11px; font-weight: 700; cursor: pointer; color: var(--text-gray); }
         .filter-btn.active { background: var(--text-dark); color: white; border-color: var(--text-dark); }
 
-        /* --- بەشی ناوەڕاستی نوێکراوە --- */
+        /* --- بەشی ناوەڕاست --- */
         .ad-card { 
             background: var(--card-white); 
             padding: 25px 20px 40px 20px; 
@@ -59,9 +59,9 @@
         .middle-section { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; text-align: right; }
         .ad-thumb { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 2px solid #f1f5f9; }
         .customer-info { flex: 1; }
-        .customer-title { font-size: 18px; font-weight: 900; margin: 0; color: var(--text-dark); }
+        .customer-title { font-size: 18px; font-weight: 900; margin: 0; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
         .budget-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-        .budget-tag { font-size: 16px; font-weight: 900; color: #16a34a; }
+        .budget-tag { font-size: 16px; font-weight: 900; color: #16a34a; display: flex; align-items: center; gap: 5px; }
         
         .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid currentColor; margin-top: 10px; }
         .active-bg { color: #16a34a; background: #f0fdf4; }
@@ -82,7 +82,7 @@
 
         .stats-grid { border-top: 1px dashed #e2e8f0; padding-top: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .stat-box { text-align: center; }
-        .stat-label { font-size: 9px; color: var(--text-gray); margin-bottom: 4px; }
+        .stat-label { font-size: 9px; color: var(--text-gray); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 3px; }
         .stat-value { font-size: 13px; font-weight: 900; }
 
         .sponsored-footer { margin-top: 25px; text-align: center; font-size: 9px; color: #94a3b8; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; border-top: 1px solid #f8fafc; padding-top: 10px; }
@@ -123,7 +123,6 @@
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         let allAdsData = [];
-        let updateInterval;
 
         async function downloadReceipt(id, name) {
             const card = document.getElementById(`card-${id}`);
@@ -218,9 +217,9 @@
                         <div class="middle-section">
                             <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb" crossOrigin="anonymous">
                             <div class="customer-info">
-                                <h3 class="customer-title">${ad.customer_name || 'بەکارهێنەر'}</h3>
+                                <h3 class="customer-title"><i class="fas fa-user-tie"></i> ${ad.customer_name || 'بەکارهێنەر'}</h3>
                                 <div class="budget-row">
-                                    <span class="budget-tag">${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</span>
+                                    <span class="budget-tag"><i class="fas fa-wallet"></i> ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</span>
                                 </div>
                                 <div class="status-badge ${s.class}">
                                     <i class="fas ${s.icon}"></i> ${s.text}
@@ -251,9 +250,18 @@
                         </div>
 
                         <div class="stats-grid">
-                            <div class="stat-box"><span class="stat-label">بینین</span><span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span></div>
-                            <div class="stat-box"><span class="stat-label">کلیک</span><span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span></div>
-                            <div class="stat-box"><span class="stat-label">خەرجی</span><span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span></div>
+                            <div class="stat-box">
+                                <span class="stat-label"><i class="fas fa-eye"></i> بینین</span>
+                                <span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label"><i class="fas fa-hand-pointer"></i> کلیک</span>
+                                <span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label"><i class="fas fa-money-bill-wave"></i> خەرجی</span>
+                                <span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
+                            </div>
                         </div>
                         <div class="sponsored-footer"><i class="fas fa-shield-halved"></i> سپۆنسەرکراوە لەلایەن تیمی پڕۆکسۆ</div>
                     </div>`;
