@@ -172,9 +172,15 @@
             setTimeout(() => document.getElementById('refreshIcon').classList.remove('spinning'), 800);
         }
 
-        function formatArabicTime(dateString) {
-            if (!dateString) return "--:--";
+        function formatArabicDateTime(dateString) {
+            if (!dateString) return "--/-- --:--";
             const date = new Date(dateString);
+            
+            // Format: dd/mm
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            
+            // Time part
             let hours = date.getHours();
             const minutes = date.getMinutes().toString().padStart(2, '0');
             let period = "";
@@ -192,7 +198,7 @@
             hours = hours % 12;
             hours = hours ? hours : 12; 
 
-            return `${hours}:${minutes} ${period}`;
+            return `${day}/${month} - ${hours}:${minutes} ${period}`;
         }
 
         function calculateProgress(start, end, status) {
@@ -303,11 +309,11 @@
                         <div class="time-info">
                             <div class="time-block">
                                 <span class="time-label"><i class="far fa-calendar-check"></i> دەستپێکردن</span>
-                                <span class="time-val">${formatArabicTime(ad.start_date)}</span>
+                                <span class="time-val">${formatArabicDateTime(ad.start_date)}</span>
                             </div>
                             <div class="time-block" style="text-align:left">
                                 <span class="time-label" style="justify-content:flex-end">کۆتایی <i class="far fa-calendar-times"></i></span>
-                                <span class="time-val">${formatArabicTime(ad.end_date)}</span>
+                                <span class="time-val">${formatArabicDateTime(ad.end_date)}</span>
                             </div>
                         </div>
                         <div class="progress-section">
