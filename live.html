@@ -176,13 +176,19 @@
             return ((now - startTime) / (endTime - startTime)) * 100;
         }
 
-        async function fetchLiveAds() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const specificId = urlParams.get('id');
-            let query = supabaseClient.from('tiktok_report2').select('*');
-            if (specificId) query = query.eq('id', specificId);
+        // لەناو ئەم فەنکشنەدا ئەم گۆڕانکارییە بکە
+async function fetchLiveAds() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const specificId = urlParams.get('id');
+    let query = supabaseClient.from('tiktok_report2').select('*');
+    
+    // ئەم دێرە زیاد بکە بۆ ئەوەی تاقیکردنەوەکان بشارێتەوە
+    query = query.neq('customer_name', 'Proxo Final Test');
 
-            const { data, error } = await query;
+    if (specificId) query = query.eq('id', specificId);
+
+    const { data, error } = await query;
+    // بەردەوامی کۆدەکە...;
             if (error) return;
 
             allAdsData = data.map(ad => {
