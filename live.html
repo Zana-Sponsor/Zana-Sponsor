@@ -83,6 +83,7 @@
         .active-bg { color: #16a34a; background: #f0fdf4; }
         .completed-bg { color: #64748b; background: #f1f5f9; }
         .rejected-bg { color: #dc2626; background: #fef2f2; }
+        .pending-bg { color: #f59e0b; background: #fffbeb; }
 
         .stats-grid { border-top: 1px dashed #e2e8f0; padding-top: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .stat-box { text-align: center; }
@@ -172,27 +173,27 @@
         }
 
         function formatArabicTime(dateString) {
-    const date = new Date(dateString);
-    let hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    let period = "";
+            if (!dateString) return "--:--";
+            const date = new Date(dateString);
+            let hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            let period = "";
 
-    if (hours >= 0 && hours < 12) {
-        period = "بەیانی";
-    } else if (hours >= 12 && hours < 16) {
-        period = "نیوەڕۆ";
-    } else if (hours >= 16 && hours < 20) {
-        period = "ئێوارە";
-    } else {
-        period = "شەو";
-    }
+            if (hours >= 0 && hours < 12) {
+                period = "بەیانی";
+            } else if (hours >= 12 && hours < 16) {
+                period = "نیوەڕۆ";
+            } else if (hours >= 16 && hours < 20) {
+                period = "ئێوارە";
+            } else {
+                period = "شەو";
+            }
 
-    // گۆڕینی کاتی ٢٤ سەعاتی بۆ ١٢ سەعاتی
-    hours = hours % 12;
-    hours = hours ? hours : 12; // ئەگەر ٠ بوو بیکە بە ١٢
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
 
-    return `${hours}:${minutes} ${period}`;
-}
+            return `${hours}:${minutes} ${period}`;
+        }
 
         function calculateProgress(start, end, status) {
             if (status === 'rejected' || status === 'ڕەتکرایەوە') return 0;
@@ -219,23 +220,21 @@
 
             allAdsData = data.map(ad => {
                 const now = new Date();
-const start = new Date(ad.start_date);
-const end = new Date(ad.end_date);
+                const start = new Date(ad.start_date);
+                const end = new Date(ad.end_date);
+                let s = {};
 
-if (ad.status === 'ڕەتکرایەوە') {
-    s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
-} else if (now < start) {
-    // ئەگەر کاتی ئێستا پێش کاتی دەستپێکردن بێت
-    s = { text: "کات بۆ دانراو", icon: "fa-calendar-check", class: "pending-bg", order: 2 };
-} else if (now > end || ad.status === 'تەواوبوو') {
-    // ئەگەر کاتەکەی بەسەر چووبێت
-    s = { text: "تەواوبوو", icon: "fa-check-double", class: "completed-bg", order: 3 };
-} else if (ad.status === 'وەستاوە') {
-    s = { text: "وەستاوە", icon: "fa-pause-circle", class: "completed-bg", order: 5 };
-} else {
-    // ئەگەر هیچ کامیان نەبوو، واتە ئێستا چالاکە
-    s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
-}
+                if (ad.status === 'ڕەتکرایەوە') {
+                    s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
+                } else if (now < start) {
+                    s = { text: "کات بۆ دانراو", icon: "fa-calendar-check", class: "pending-bg", order: 2 };
+                } else if (now > end || ad.status === 'تەواوبوو') {
+                    s = { text: "تەواوبوو", icon: "fa-check-double", class: "completed-bg", order: 3 };
+                } else if (ad.status === 'وەستاوە') {
+                    s = { text: "وەستاوە", icon: "fa-pause-circle", class: "completed-bg", order: 5 };
+                } else {
+                    s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
+                }
                 
                 return { ...ad, statusInfo: s, currentProgress: calculateProgress(ad.start_date, ad.end_date, ad.status) };
             }).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
@@ -283,7 +282,7 @@ if (ad.status === 'ڕەتکرایەوە') {
             container.innerHTML = adsList.map(ad => {
                 const isIQD = ad.currency === 'IQD';
                 const s = ad.statusInfo;
-                const isRejected = ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە';
+                const isRejected = ad.status === 'ڕەتکرایەوە';
                 const isCompleted = s.text === "تەواوبوو";
                 
                 return `
@@ -304,11 +303,11 @@ if (ad.status === 'ڕەتکرایەوە') {
                         <div class="time-info">
                             <div class="time-block">
                                 <span class="time-label"><i class="far fa-calendar-check"></i> دەستپێکردن</span>
-                                <span class="time-val">${formatAdDate(ad.start_date)}</span>
+                                <span class="time-val">${formatArabicTime(ad.start_date)}</span>
                             </div>
                             <div class="time-block" style="text-align:left">
                                 <span class="time-label" style="justify-content:flex-end">کۆتایی <i class="far fa-calendar-times"></i></span>
-                                <span class="time-val">${formatAdDate(ad.end_date)}</span>
+                                <span class="time-val">${formatArabicTime(ad.end_date)}</span>
                             </div>
                         </div>
                         <div class="progress-section">
