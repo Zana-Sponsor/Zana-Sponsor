@@ -176,11 +176,10 @@
             if (!dateString) return "--/-- --:--";
             const date = new Date(dateString);
             
-            // Format: dd/mm
+            // گۆڕینی لێرە ئەنجامدرا: مانگ پاشان ڕۆژ
             const day = date.getDate().toString().padStart(2, '0');
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             
-            // Time part
             let hours = date.getHours();
             const minutes = date.getMinutes().toString().padStart(2, '0');
             let period = "";
@@ -198,7 +197,7 @@
             hours = hours % 12;
             hours = hours ? hours : 12; 
 
-            return `${day}/${month} - ${hours}:${minutes} ${period}`;
+            return `${month}/${day} - ${hours}:${minutes} ${period}`;
         }
 
         function calculateProgress(start, end, status) {
