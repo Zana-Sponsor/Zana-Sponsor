@@ -108,10 +108,10 @@
 
     <div class="container">
         <div class="filter-wrapper">
-            <button class="filter-btn active" id="btn-all" onclick="filterAds('all', this)"><i class="fas fa-list-ul"></i> هەمووی</button>
-            <button class="filter-btn" id="btn-active" onclick="filterAds('چالاکە', this)"><i class="fas fa-bolt"></i> چالاک</button>
-            <button class="filter-btn" id="btn-completed" onclick="filterAds('تەواوبوو', this)"><i class="fas fa-check"></i> کۆتایی</button>
-            <button class="filter-btn" id="btn-rejected" onclick="filterAds('ڕەتکرایەوە', this)"><i class="fas fa-times"></i> ڕەتکراوە</button>
+            <button class="filter-btn active" onclick="filterAds('all', this)"><i class="fas fa-list-ul"></i> هەمووی</button>
+            <button class="filter-btn" onclick="filterAds('چالاکە', this)"><i class="fas fa-bolt"></i> چالاک</button>
+            <button class="filter-btn" onclick="filterAds('تەواوبوو', this)"><i class="fas fa-check"></i> کۆتایی</button>
+            <button class="filter-btn" onclick="filterAds('ڕەتکرایەوە', this)"><i class="fas fa-times"></i> ڕەتکراوە</button>
         </div>
         <div id="live-ads-container"></div>
     </div>
@@ -123,7 +123,7 @@
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         let allAdsData = [];
-        let currentFilter = 'all';
+        let currentFilter = 'all'; // گۆڕاوێک بۆ هەڵگرتنی فلتەری ئێستا
 
         async function downloadReceipt(id, name) {
             const card = document.getElementById(`card-${id}`);
@@ -148,6 +148,8 @@
         async function refreshData() {
             document.getElementById('refreshIcon').classList.add('spinning');
             await fetchLiveAds();
+            // دوای ڕێفرێش، فلتەرەکە وەک خۆی لێ دەکەینەوە
+            applyCurrentFilter();
             setTimeout(() => document.getElementById('refreshIcon').classList.remove('spinning'), 800);
         }
 
@@ -191,34 +193,31 @@
                 const start = new Date(ad.start_date);
                 const end = new Date(ad.end_date);
                 let s = {};
-                
-                // لۆژیکی دیاریکردنی دۆخی ڕیکلام
-                if (ad.status === 'ڕەتکرایەوە') {
-                    s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
-                } else if (ad.status === 'تەواوبوو' || now > end) {
-                    s = { text: "تەواوبوو", icon: "fa-check-double", class: "completed-bg", order: 3 };
-                } else if (now < start) {
-                    s = { text: "کات بۆ دانراو", icon: "fa-calendar-check", class: "pending-bg", order: 2 };
-                } else {
-                    s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
-                }
-                
+                if (ad.status === 'ڕەتکرایەوە') s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
+                else if (now < start) s = { text: "کات بۆ دانراو", icon: "fa-calendar-check", class: "pending-bg", order: 2 };
+                else if (now > end || ad.status === 'تەواوبوو') s = { text: "تەواوبوو", icon: "fa-check-double", class: "completed-bg", order: 3 };
+                else s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
                 return { ...ad, statusInfo: s, currentProgress: calculateProgress(ad.start_date, ad.end_date, ad.status) };
             }).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
 
-            // نیشاندانی داتا بە پێی ئەو فلتەرەی کە پێشتر هەڵبژێردراوە
+            renderAds(allAdsData);
+            applyCurrentFilter(); // دڵنیابوونەوە لەوەی فلتەرەکە جێبەجێ کراوە
+        }
+
+        function filterAds(status, btn) {
+            currentFilter = status; // هەڵگرتنی دۆخی فلتەر
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderAds(status === 'all' ? allAdsData : allAdsData.filter(ad => ad.statusInfo.text === status));
+        }
+
+        function applyCurrentFilter() {
+            // ئەم فەنکشنە تەنها بۆ ئەوەیە دوای ڕێفرێش یان گۆڕانکاری، هەمان فلتەر بمێنێتەوە
             if (currentFilter === 'all') {
                 renderAds(allAdsData);
             } else {
                 renderAds(allAdsData.filter(ad => ad.statusInfo.text === currentFilter));
             }
-        }
-
-        function filterAds(status, btn) {
-            currentFilter = status;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderAds(status === 'all' ? allAdsData : allAdsData.filter(ad => ad.statusInfo.text === status));
         }
 
         function getPlatIcon(p) {
@@ -229,7 +228,7 @@
         function renderAds(adsList) {
             const container = document.getElementById('live-ads-container');
             if (adsList.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding: 50px; color: #94a3b8; font-size: 13px;">هیچ ڕیکلامێک لەم بەشەدا نییە</div>';
+                container.innerHTML = '<div style="text-align:center; padding: 40px; color: #94a3b8; font-weight: 700; font-size: 14px;">هیچ ڕیکلامێک بوونی نییە</div>';
                 return;
             }
             container.innerHTML = adsList.map(ad => {
@@ -273,7 +272,7 @@
                                 <span id="text-${ad.id}">${ad.currentProgress.toFixed(2)}%</span>
                             </div>
                             <div class="progress-bar-bg">
-                                <div id="bar-${ad.id}" class="progress-bar-fill ${ad.statusInfo.text === 'ڕەتکرایەوە' ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%"></div>
+                                <div id="bar-${ad.id}" class="progress-bar-fill ${ad.status === 'ڕەتکرایەوە' ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%"></div>
                             </div>
                         </div>
 
