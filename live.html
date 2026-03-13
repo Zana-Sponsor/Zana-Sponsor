@@ -127,11 +127,8 @@
         async function downloadReceipt(id, name) {
             const card = document.getElementById(`card-${id}`);
             const btn = card.querySelector('.download-btn');
-            
-            // شاردنەوەی دوگمەکە کاتی وێنەگرتن بۆ ئەوەی لە پسوولەکە دەرنەچێت
             if(btn) btn.style.display = 'none';
 
-            // زیادکردنی Scale بۆ کواڵێتی HD
             html2canvas(card, { 
                 useCORS: true, 
                 scale: 4, 
@@ -141,7 +138,7 @@
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `Proxo-Receipt-${name}.png`;
-                link.href = canvas.toDataURL("image/png", 1.0); // بەرزترین کواڵێتی
+                link.href = canvas.toDataURL("image/png", 1.0);
                 link.click();
                 if(btn) btn.style.display = 'inline-flex';
             });
@@ -176,19 +173,17 @@
             return ((now - startTime) / (endTime - startTime)) * 100;
         }
 
-        // لەناو ئەم فەنکشنەدا ئەم گۆڕانکارییە بکە
-async function fetchLiveAds() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const specificId = urlParams.get('id');
-    let query = supabaseClient.from('tiktok_report2').select('*');
-    
-    // ئەم دێرە زیاد بکە بۆ ئەوەی تاقیکردنەوەکان بشارێتەوە
-    query = query.neq('customer_name', 'Proxo Final Test');
+        async function fetchLiveAds() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const specificId = urlParams.get('id');
+            let query = supabaseClient.from('tiktok_report2').select('*');
+            
+            // فلتەرکردنی تاقیکردنەوەکان
+            query = query.neq('customer_name', 'Proxo Final Test');
 
-    if (specificId) query = query.eq('id', specificId);
+            if (specificId) query = query.eq('id', specificId);
 
-    const { data, error } = await query;
-    // بەردەوامی کۆدەکە...;
+            const { data, error } = await query;
             if (error) return;
 
             allAdsData = data.map(ad => {
