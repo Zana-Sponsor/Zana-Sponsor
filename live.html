@@ -80,10 +80,10 @@
         .progress-bar-fill { background: #27272a; height: 100%; transition: width 0.5s linear; }
         .bg-red { background: var(--red) !important; }
 
-        .stats-grid { border-top: 1px dashed #e2e8f0; padding-top: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .stats-grid { border-top: 1px dashed #e2e8f0; padding-top: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .stat-box { text-align: center; }
         .stat-label { font-size: 9px; color: var(--text-gray); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 3px; }
-        .stat-value { font-size: 13px; font-weight: 900; }
+        .stat-value { font-size: 11px; font-weight: 900; }
 
         .sponsored-footer { margin-top: 25px; text-align: center; font-size: 9px; color: #94a3b8; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; border-top: 1px solid #f8fafc; padding-top: 10px; }
         .download-btn { background: #27272a; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; margin-top: 10px; display: inline-flex; align-items: center; gap: 4px; }
@@ -123,7 +123,7 @@
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         let allAdsData = [];
-        let currentFilter = 'all'; // گۆڕاوێک بۆ هەڵگرتنی فلتەری ئێستا
+        let currentFilter = 'all';
 
         async function downloadReceipt(id, name) {
             const card = document.getElementById(`card-${id}`);
@@ -148,7 +148,6 @@
         async function refreshData() {
             document.getElementById('refreshIcon').classList.add('spinning');
             await fetchLiveAds();
-            // دوای ڕێفرێش، فلتەرەکە وەک خۆی لێ دەکەینەوە
             applyCurrentFilter();
             setTimeout(() => document.getElementById('refreshIcon').classList.remove('spinning'), 800);
         }
@@ -180,9 +179,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const specificId = urlParams.get('id');
             let query = supabaseClient.from('tiktok_report2').select('*');
-            
             query = query.neq('customer_name', 'Proxo Final Test');
-
             if (specificId) query = query.eq('id', specificId);
 
             const { data, error } = await query;
@@ -201,18 +198,17 @@
             }).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
 
             renderAds(allAdsData);
-            applyCurrentFilter(); // دڵنیابوونەوە لەوەی فلتەرەکە جێبەجێ کراوە
+            applyCurrentFilter();
         }
 
         function filterAds(status, btn) {
-            currentFilter = status; // هەڵگرتنی دۆخی فلتەر
+            currentFilter = status;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             renderAds(status === 'all' ? allAdsData : allAdsData.filter(ad => ad.statusInfo.text === status));
         }
 
         function applyCurrentFilter() {
-            // ئەم فەنکشنە تەنها بۆ ئەوەیە دوای ڕێفرێش یان گۆڕانکاری، هەمان فلتەر بمێنێتەوە
             if (currentFilter === 'all') {
                 renderAds(allAdsData);
             } else {
@@ -222,7 +218,7 @@
 
         function getPlatIcon(p) {
             const platforms = { facebook: 'fa-facebook', instagram: 'fa-instagram', snapchat: 'fa-snapchat' };
-            return `<i class="fab ${platforms[p] || 'fa-tiktok'}"></i> ${p.toUpperCase()} AD`;
+            return `<i class="fab ${platforms[p] || 'fa-tiktok'}"></i> ڕیکلامی ${p.toUpperCase()}`;
         }
 
         function renderAds(adsList) {
@@ -234,6 +230,8 @@
             container.innerHTML = adsList.map(ad => {
                 const isIQD = ad.currency === 'IQD';
                 const s = ad.statusInfo;
+                const cpm = ad.impressions > 0 ? ((ad.spend / ad.impressions) * 1000).toFixed(2) : "0.00";
+
                 return `
                     <div class="ad-card" id="card-${ad.id}">
                         <div class="id-container">
@@ -288,6 +286,10 @@
                             <div class="stat-box">
                                 <span class="stat-label"><i class="fas fa-money-bill-wave"></i> خەرجی</span>
                                 <span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label"><i class="fas fa-chart-line"></i> CPM</span>
+                                <span class="stat-value">${isIQD ? (parseFloat(cpm)).toLocaleString() : '$'+cpm}</span>
                             </div>
                         </div>
                         <div class="sponsored-footer"><i class="fas fa-shield-halved"></i> سپۆنسەرکراوە لەلایەن تیمی پڕۆکسۆ</div>
