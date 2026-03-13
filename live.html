@@ -59,11 +59,13 @@
         .middle-section { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; text-align: right; }
         .ad-thumb { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 2px solid #f1f5f9; }
         .customer-info { flex: 1; }
-        .customer-title { font-size: 18px; font-weight: 900; margin: 0; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
-        .budget-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-        .budget-tag { font-size: 16px; font-weight: 900; color: #16a34a; display: flex; align-items: center; gap: 5px; }
         
-        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid currentColor; margin-top: 10px; }
+        /* ستایلی نوێ بۆ ناو و بودجە */
+        .customer-title { font-size: 15px; font-weight: 800; margin: 0; color: var(--text-dark); display: flex; align-items: center; gap: 6px; opacity: 0.9; }
+        .budget-row { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+        .budget-tag { font-size: 13px; font-weight: 700; color: var(--text-gray); display: flex; align-items: center; gap: 5px; }
+        
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid currentColor; margin-top: 8px; }
         .active-bg { color: #16a34a; background: #f0fdf4; }
         .completed-bg { color: #64748b; background: #f1f5f9; }
         .rejected-bg { color: #dc2626; background: #fef2f2; }
@@ -217,9 +219,9 @@
                         <div class="middle-section">
                             <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb" crossOrigin="anonymous">
                             <div class="customer-info">
-                                <h3 class="customer-title"><i class="fas fa-user-tie"></i> ${ad.customer_name || 'بەکارهێنەر'}</h3>
+                                <h3 class="customer-title"><i class="fas fa-user-check" style="font-size: 13px;"></i> ${ad.customer_name || 'بەکارهێنەر'}</h3>
                                 <div class="budget-row">
-                                    <span class="budget-tag"><i class="fas fa-wallet"></i> ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</span>
+                                    <span class="budget-tag"><i class="fas fa-coins" style="font-size: 11px;"></i> بوجە: ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</span>
                                 </div>
                                 <div class="status-badge ${s.class}">
                                     <i class="fas ${s.icon}"></i> ${s.text}
