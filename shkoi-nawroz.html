@@ -7,17 +7,17 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 @font-face { font-family: 'Rudaw'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/new_rudaw_bold.woff2') format('woff2'); font-weight: bold; font-style: normal; font-display: swap; }
-*{box-sizing:border-box}
-body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background:#ffffff; display:flex; align-items:center; justify-content:center; }
+*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background:#ffffff; display:flex; align-items:center; justify-content:center; overflow-x: hidden;}
 .container{ width:100%; max-width:380px; padding:36px 16px 40px; text-align:center; background:#fff; }
 .profile{padding:18px 8px 10px; margin-bottom:24px;}
-.profile img{ width:92px;height:92px;border-radius:50%;object-fit:cover;margin-bottom:10px; box-shadow:0 6px 18px rgba(0,0,0,.12); }
+.profile img { width: 92px; height: 92px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; box-shadow: 0 6px 18px rgba(0,0,0,.12); padding: 1px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
 .profile h1{ margin:6px 0 6px; font-size:18px; color:#000; }
 .profile p{ margin:10px 8px 0; font-size:14px; color:#000; line-height:1.7; }
 .links{ display:flex; flex-direction:column; gap:14px; margin:28px 0; }
-.link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 2px rgba(0,0,0,0.1); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; cursor: pointer; }
-.link:active{transform:scale(0.92)}
-.link i{ position:absolute; left:18px; font-size:22px; text-align:center; width:26px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+.link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; cursor: pointer; }
+.link:active{ transform: scale(0.95); opacity: 0.9; }
+.link i{ position:absolute; left:18px; font-size:22px; text-align:center; width:26px; text-shadow: none !important; }
 .whatsapp{background:#25D366;}
 .telegram{background:#26A5E4;}
 .viber{background:#7360f2;}
@@ -27,8 +27,8 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 .shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }
 @keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }
 .no-shine::after { animation: none !important; display: none !important; }
-.hand-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; z-index: 10; pointer-events: none; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease-out; opacity: 1; }
-.hand-container.hidden { opacity: 0; }
+.hand-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; z-index: 10; pointer-events: none; display: flex; align-items: center; justify-content: center; transition: opacity 0.4s ease-out; opacity: 1; }
+.hand-container.hidden { opacity: 0 !important; }
 .finger-emoji { font-size: 25px; position: relative; z-index: 2; animation: clickAnim 1s infinite; margin-left: 10px; margin-top: 15px; }
 .click-circle { position: absolute; width: 25px; height: 25px; border: 3px solid rgba(255, 255, 255, 0.8); border-radius: 50%; animation: pulse 1s infinite; z-index: 1; }
 @keyframes clickAnim { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.9); } }
@@ -44,7 +44,7 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 <div class="container">
   <div class="profile">
     <img src="https://image2url.com/r2/default/images/1772756949098-d6d76b46-8ea1-4475-a900-a41c4bec7bc4.webp" alt="Logo">
-    <h1>عەقارات شکۆی نەورۆز</h1>
+    <h1>عقارات شکۆی نەورۆز</h1>
     <p>بۆ زانیاری زیاتر، پەیوەندی بکە لەڕێگەی دوگمەکانەوە.</p>
   </div>
   <div class="links">    <a id="wa-btn" class="link whatsapp shine-active">
@@ -69,27 +69,28 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
   </div>
 </div>
 <script>
+function hideEffects(el) {
+    const hand = document.getElementById('click-hand');
+    if(hand) hand.classList.add('hidden');
+    const shineBtns = document.querySelectorAll('.shine-active');
+    shineBtns.forEach(btn => btn.classList.add('no-shine'));
+}
+
 !function (w, d, t) {
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
 var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script")
 ;s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(s,e)};
-  
   ttq.load('D6BIIA3C77U1CE9DCUMG');
   ttq.page();
-
 }(window, document, 'ttq');
 
 document.addEventListener("DOMContentLoaded", function() {
-    const message = encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + "https://vt.tiktok.com/ZSuFUhA4g/");
-    document.getElementById("wa-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "whatsapp", content_name: "WhatsApp_Click" }); window.location.href = "https://wa.me/9647507252570?text=" + message; };
-    document.getElementById("vb-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "viber", content_name: "Viber_Click" }); window.location.href = "viber://chat?number=9647507252570"; };
-    document.getElementById("ph-btn").onclick = function() { if(window.ttq) ttq.track("Contact", { content_id: "korek", content_name: "Korek_Click" }); window.location.href = "tel:9647507252570"; };
+    document.getElementById("wa-btn").onclick = function() { hideEffects(this); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "WhatsApp_Ku" }); setTimeout(() => { window.location.href = "https://wa.me/9647507252570?text=" + encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + "https://vt.tiktok.com/ZSufJ5k9J/"); }, 150); };
+    document.getElementById("vb-btn").onclick = function() { hideEffects(this); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Viber_Ku" }); setTimeout(() => { window.location.href = "viber://chat?number=9647507252570"; }, 150); };
+    document.getElementById("ph-btn").onclick = function() { hideEffects(this); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Korek_Ku" }); setTimeout(() => { window.location.href = "tel:9647507252570"; }, 150); };
 
     setTimeout(function() {
-        var clickHand = document.getElementById('click-hand');
-        var shineBtn = document.querySelector('.shine-active');
-        if (clickHand) clickHand.classList.add('hidden');
-        if (shineBtn) shineBtn.classList.add('no-shine');
+        hideEffects();
     }, 6000);
 });
 </script>
