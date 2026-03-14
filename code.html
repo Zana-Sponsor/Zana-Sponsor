@@ -108,27 +108,27 @@ function generate() {
 
         if(btn === 'wa') {
             btnHtml += '    <a id="wa-btn" class="link whatsapp ' + shineClass + '">\n        <i class="fab fa-whatsapp" style="font-size: 24px;"></i> \n        واتسئاپ ' + hasHand + '\n    </a>\n';
-            btnJs += '    document.getElementById("wa-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "WhatsApp_Ku" }); setTimeout(() => { window.location.href = "whatsapp://send?phone=' + wa + '&text=" + encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "' + videoParam + '"); }, 150); };\n';
+            btnJs += '    document.getElementById("wa-btn").onclick = function() { handleTrack("WhatsApp_Ku", "whatsapp://send?phone=' + wa + '&text=" + encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "' + videoParam + '")); };\n';
         }
         if(btn === 'tg') {
             btnHtml += '    <a id="tg-btn" class="link telegram ' + shineClass + '">\n        <i class="fab fa-telegram"></i> \n        تێلیگرام ' + hasHand + '\n    </a>\n';
-            btnJs += '    document.getElementById("tg-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Telegram_Ku" }); setTimeout(() => { window.location.href = "https://t.me/' + tg + '"; }, 150); };\n';
+            btnJs += '    document.getElementById("tg-btn").onclick = function() { handleTrack("Telegram_Ku", "https://t.me/' + tg + '"); };\n';
         }
         if(btn === 'ig') {
             btnHtml += '    <a id="ig-btn" class="link instagram ' + shineClass + '"><i class="fab fa-instagram"></i> ئینستاگرام ' + hasHand + '</a>\n';
-            btnJs += '    document.getElementById("ig-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Insta_Ku" }); let url = "' + ig + '".includes("instagram.com") ? "' + ig + '" : "https://instagram.com/' + ig + '"; setTimeout(() => { window.location.href = url; }, 150); };\n';
+            btnJs += '    document.getElementById("ig-btn").onclick = function() { let url = "' + ig + '".includes("instagram.com") ? "' + ig + '" : "https://instagram.com/' + ig + '"; handleTrack("Insta_Ku", url); };\n';
         }
         if(btn === 'vi') {
             btnHtml += '    <a id="vb-btn" class="link viber ' + shineClass + '"><i class="fab fa-viber"></i> ڤایبەر ' + hasHand + '</a>\n';
-            btnJs += '    document.getElementById("vb-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Viber_Ku" }); setTimeout(() => { window.location.href = "viber://chat?number=' + vi + '"; }, 150); };\n';
+            btnJs += '    document.getElementById("vb-btn").onclick = function() { handleTrack("Viber_Ku", "viber://chat?number=' + vi + '"); };\n';
         }
         if(btn === 'ph') {
             btnHtml += '    <a id="ph-btn" class="link phone ' + shineClass + '"><i class="fas fa-phone"></i> کۆڕەک ' + hasHand + '</a>\n';
-            btnJs += '    document.getElementById("ph-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Korek_Ku" }); setTimeout(() => { window.location.href = "tel:' + ph + '"; }, 150); };\n';
+            btnJs += '    document.getElementById("ph-btn").onclick = function() { handleTrack("Korek_Ku", "tel:' + ph + '"); };\n';
         }
         if(btn === 'as') {
             btnHtml += '    <a id="as-btn" class="link asiacell ' + shineClass + '"><i class="fas fa-phone"></i> ئاسیاسێڵ ' + hasHand + '</a>\n';
-            btnJs += '    document.getElementById("as-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Asia_Ku" }); setTimeout(() => { window.location.href = "tel:' + as + '"; }, 150); };\n';
+            btnJs += '    document.getElementById("as-btn").onclick = function() { handleTrack("Asia_Ku", "tel:' + as + '"); };\n';
         }
     });
 
@@ -193,11 +193,22 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
   </div>
 </div>
 <script>
+let isTracked = false;
+
 function hideEffects() {
     const hand = document.getElementById('click-hand');
     const shineBtns = document.querySelectorAll('.shine-active');
     if(hand) hand.classList.add('hidden');
     shineBtns.forEach(btn => btn.classList.add('no-shine'));
+}
+
+function handleTrack(name, url) {
+    hideEffects();
+    if(window.ttq && !isTracked) {
+        ttq.track("Contact", { content_id: "contact_button", content_name: name });
+        isTracked = true;
+    }
+    setTimeout(() => { window.location.href = url; }, 150);
 }
 
 !function (w, d, t) {
