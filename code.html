@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Optimized Speed & Smoothness1 V16</title>
+    <title>Proxo Builder - Optimized Smoothness V17</title>
     <style>
         @font-face {
             font-family: 'Rudaw';
@@ -81,11 +81,11 @@ function generate() {
     const logoUrl = document.getElementById('logoUrl').value.trim();
     const videoParam = document.getElementById('videoLink').value.trim() || "https://vt.tiktok.com/...";
 
-    const wa = document.getElementById('waVal').value.replace('+', '') || "9647511040724";
+    const wa = document.getElementById('waVal').value.replace('+', '') || "9647518661260";
     const tg = document.getElementById('tgVal').value || "@username";
-    const vi = document.getElementById('viVal').value || "9647511040724";
+    const vi = document.getElementById('viVal').value || "9647518661260";
     const ig = document.getElementById('igVal').value || "@username";
-    const ph = document.getElementById('phVal').value || "07511040724";
+    const ph = document.getElementById('phVal').value || "07518661260";
     const as = document.getElementById('asVal').value || "07701234567";
 
     let finalLogo = logoUrl !== "" ? logoUrl : "https://ui-avatars.com/api/?name=" + encodeURIComponent(initials) + "&background=0062AD&color=fff&size=200&bold=true";
@@ -108,27 +108,27 @@ function generate() {
 
         if(btn === 'wa') {
             btnHtml += '    <a id="wa-btn" class="link whatsapp ' + shineClass + '">\n        <i class="fab fa-whatsapp" style="font-size: 24px;"></i> \n        واتسئاپ ' + hasHand + '\n    </a>\n';
-            btnJs += '    document.getElementById("wa-btn").onclick = function() { hideEffects(this); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "WhatsApp_Ku" }); setTimeout(() => { window.location.href = "https://wa.me/' + wa + '?text=" + encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "' + videoParam + '"); }, 150); };\n';
+            btnJs += '    document.getElementById("wa-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "WhatsApp_Ku" }); setTimeout(() => { window.location.href = "whatsapp://send?phone=' + wa + '&text=" + encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "' + videoParam + '"); }, 150); };\n';
         }
         if(btn === 'tg') {
             btnHtml += '    <a id="tg-btn" class="link telegram ' + shineClass + '">\n        <i class="fab fa-telegram"></i> \n        تێلیگرام ' + hasHand + '\n    </a>\n';
-            btnJs += '    document.getElementById("tg-btn").onclick = function() { hideEffects(this); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Telegram_Ku" }); setTimeout(() => { window.location.href = "https://t.me/' + tg + '"; }, 150); };\n';
+            btnJs += '    document.getElementById("tg-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Telegram_Ku" }); setTimeout(() => { window.location.href = "https://t.me/' + tg + '"; }, 150); };\n';
         }
         if(btn === 'ig') {
             btnHtml += '    <a id="ig-btn" class="link instagram ' + shineClass + '"><i class="fab fa-instagram"></i> ئینستاگرام ' + hasHand + '</a>\n';
-            btnJs += '    document.getElementById("ig-btn").onclick = function() { hideEffects(this); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Insta_Ku" }); let url = "' + ig + '".includes("instagram.com") ? "' + ig + '" : "https://instagram.com/' + ig + '"; setTimeout(() => { window.location.href = url; }, 150); };\n';
+            btnJs += '    document.getElementById("ig-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Insta_Ku" }); let url = "' + ig + '".includes("instagram.com") ? "' + ig + '" : "https://instagram.com/' + ig + '"; setTimeout(() => { window.location.href = url; }, 150); };\n';
         }
         if(btn === 'vi') {
             btnHtml += '    <a id="vb-btn" class="link viber ' + shineClass + '"><i class="fab fa-viber"></i> ڤایبەر ' + hasHand + '</a>\n';
-            btnJs += '    document.getElementById("vb-btn").onclick = function() { hideEffects(this); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Viber_Ku" }); setTimeout(() => { window.location.href = "viber://chat?number=' + vi + '"; }, 150); };\n';
+            btnJs += '    document.getElementById("vb-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Viber_Ku" }); setTimeout(() => { window.location.href = "viber://chat?number=' + vi + '"; }, 150); };\n';
         }
         if(btn === 'ph') {
             btnHtml += '    <a id="ph-btn" class="link phone ' + shineClass + '"><i class="fas fa-phone"></i> کۆڕەک ' + hasHand + '</a>\n';
-            btnJs += '    document.getElementById("ph-btn").onclick = function() { hideEffects(this); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Korek_Ku" }); setTimeout(() => { window.location.href = "tel:' + ph + '"; }, 150); };\n';
+            btnJs += '    document.getElementById("ph-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Korek_Ku" }); setTimeout(() => { window.location.href = "tel:' + ph + '"; }, 150); };\n';
         }
         if(btn === 'as') {
             btnHtml += '    <a id="as-btn" class="link asiacell ' + shineClass + '"><i class="fas fa-phone"></i> ئاسیاسێڵ ' + hasHand + '</a>\n';
-            btnJs += '    document.getElementById("as-btn").onclick = function() { hideEffects(this); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Asia_Ku" }); setTimeout(() => { window.location.href = "tel:' + as + '"; }, 150); };\n';
+            btnJs += '    document.getElementById("as-btn").onclick = function() { hideEffects(); if(window.ttq) ttq.track("Contact", { content_id: "contact_button", content_name: "Asia_Ku" }); setTimeout(() => { window.location.href = "tel:' + as + '"; }, 150); };\n';
         }
     });
 
@@ -147,10 +147,10 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 .profile{padding:18px 8px 10px; margin-bottom:24px;}
 .profile img { width: 92px; height: 92px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; box-shadow: 0 6px 18px rgba(0,0,0,.12); padding: 1px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
 .profile h1{ margin:6px 0 6px; font-size:18px; color:#000; }
-.profile p{ margin:10px 8px 0; font-size:14px; color:#000; line-height:1.7; }
+.profile p{ margin:10px 8px 0; font-size:14px; color:#373737; line-height:1.7; }
 .links{ display:flex; flex-direction:column; gap:14px; margin:28px 0; }
-.link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; cursor: pointer; }
-.link:active{ transform: scale(0.95); opacity: 0.9; }
+.link{ position:relative; display:flex; align-items:center; justify-content:center; padding:14px 18px 14px 48px; border-radius:999px; font-size:16px; font-weight:700; color:#fff; text-decoration:none; min-height:48px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; cursor: pointer; }
+.link:active{ transform: scale(0.92); }
 .link i{ position:absolute; left:18px; font-size:22px; text-align:center; width:26px; text-shadow: none !important; }
 .whatsapp{background:#25D366;}
 .telegram{background:#26A5E4;}
@@ -161,7 +161,7 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
 .shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }
 @keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }
 .no-shine::after { animation: none !important; display: none !important; }
-.hand-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; z-index: 10; pointer-events: none; display: flex; align-items: center; justify-content: center; transition: opacity 0.4s ease-out; opacity: 1; }
+.hand-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; z-index: 10; pointer-events: none; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease-out; opacity: 1; }
 .hand-container.hidden { opacity: 0 !important; }
 .finger-emoji { font-size: 25px; position: relative; z-index: 2; animation: clickAnim 1s infinite; margin-left: 10px; margin-top: 15px; }
 .click-circle { position: absolute; width: 25px; height: 25px; border: 3px solid rgba(255, 255, 255, 0.8); border-radius: 50%; animation: pulse 1s infinite; z-index: 1; }
@@ -193,10 +193,10 @@ body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background
   </div>
 </div>
 <script>
-function hideEffects(el) {
+function hideEffects() {
     const hand = document.getElementById('click-hand');
-    if(hand) hand.classList.add('hidden');
     const shineBtns = document.querySelectorAll('.shine-active');
+    if(hand) hand.classList.add('hidden');
     shineBtns.forEach(btn => btn.classList.add('no-shine'));
 }
 
