@@ -11,7 +11,7 @@
     
     <style>
         :root { --primary: #22c55e; --soft-bg: #e2e8f0; --card-white: #ffffff; --text-dark: #0f172a; --text-gray: #64748b; --border: #cbd5e1; --red: #ef4444; }
-        body { background-color: var(--soft-bg); color: var(--text-dark); font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--soft-bg); color: var(--text-dark); font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
 
         .main-header { background: white; padding: 15px 5%; border-bottom: 2px dashed var(--border); position: sticky; top: 0; z-index: 100; }
         .header-content { max-width: 500px; margin: auto; display: flex; justify-content: space-between; align-items: center; }
@@ -32,7 +32,7 @@
         .spinning { animation: spin 0.8s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        .container { padding: 20px 5%; max-width: 500px; margin: auto; }
+        .container { padding: 20px 5%; max-width: 500px; margin: auto; flex: 1; }
 
         .filter-wrapper { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 25px; }
         .filter-btn { white-space: nowrap; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: white; font-size: 11px; font-weight: 700; cursor: pointer; color: var(--text-gray); }
@@ -87,6 +87,8 @@
 
         .sponsored-footer { margin-top: 25px; text-align: center; font-size: 9px; color: #94a3b8; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; border-top: 1px solid #f8fafc; padding-top: 10px; }
         .download-btn { background: #27272a; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; margin-top: 10px; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .main-footer { text-align: center; padding: 15px; color: #94a3b8; font-size: 9.5px; font-weight: 500; opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -115,6 +117,10 @@
         </div>
         <div id="live-ads-container"></div>
     </div>
+
+    <footer class="main-footer">
+       .All Rights Reserved. Proxo Team © 2026
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
