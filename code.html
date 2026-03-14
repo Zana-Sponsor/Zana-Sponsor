@@ -108,7 +108,7 @@ function generate() {
 
         if(btn === 'wa') {
             btnHtml += '    <a id="wa-btn" class="link whatsapp ' + shineClass + '">\n        <i class="fab fa-whatsapp" style="font-size: 24px;"></i> \n        واتسئاپ ' + hasHand + '\n    </a>\n';
-            btnJs += '    document.getElementById("wa-btn").onclick = function() { handleTrack("WhatsApp_Ku", "whatsapp://send?phone=' + wa + '&text=" + encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + "' + videoParam + '")); };\n';
+            btnJs += '    document.getElementById("wa-btn").onclick = function() { const urlParams = new URLSearchParams(window.location.search); const v = urlParams.get("v") || "' + videoParam + '"; handleTrack("WhatsApp_Ku", "whatsapp://send?phone=' + wa + '&text=" + encodeURIComponent("سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + v)); };\n';
         }
         if(btn === 'tg') {
             btnHtml += '    <a id="tg-btn" class="link telegram ' + shineClass + '">\n        <i class="fab fa-telegram"></i> \n        تێلیگرام ' + hasHand + '\n    </a>\n';
