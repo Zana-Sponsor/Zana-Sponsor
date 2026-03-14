@@ -2,13 +2,16 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Optimized Smoothness V17</title>
+    <title>Proxo Builder - Optimized Smoothness V21</title>
     <style>
         @font-face {
             font-family: 'Rudaw';
             src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.woff2');
             font-display: swap;
         }
+        /* لێرەدا سکڕۆڵەکە نەرم کراوە */
+        html { scroll-behavior: smooth; }
+        
         body { font-family: 'Rudaw', sans-serif; background: #0b1120; color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .setup-container { background: #1e293b; padding: 25px; border-radius: 15px; border: 1px solid #3b82f6; width: 100%; max-width: 1000px; display: grid; grid-template-columns: 320px 1fr; gap: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
         .inputs { display: flex; flex-direction: column; gap: 10px; }
@@ -142,6 +145,7 @@ function generate() {
 <style>
 @font-face { font-family: 'Rudaw'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/new_rudaw_bold.woff2') format('woff2'); font-weight: bold; font-style: normal; font-display: swap; }
 *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+html { scroll-behavior: smooth; }
 body{ margin:0; min-height:100vh; font-family:Rudaw,Arial,sans-serif; background:#ffffff; display:flex; align-items:center; justify-content:center; overflow-x: hidden;}
 .container{ width:100%; max-width:380px; padding:36px 16px 40px; text-align:center; background:#fff; }
 .profile{padding:18px 8px 10px; margin-bottom:24px;}
