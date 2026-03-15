@@ -112,7 +112,7 @@
         .download-btn { background: #27272a; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 10px; display: inline-flex; align-items: center; gap: 4px; }
         .main-footer { text-align: center; padding: 15px; color: #94a3b8; font-size: 9.5px; font-weight: 500; opacity: 0.8; }
 
-        /* ستایلی ئاگادارییە نوێیەکە */
+        /* Notification Style */
         #ad-notification {
             position: fixed; bottom: -120px; left: 50%; transform: translateX(-50%);
             background: white; color: var(--text-dark); padding: 10px;
@@ -133,14 +133,14 @@
 </head>
 <body>
 
-    <a id="ad-notification" href="#">
+    <div id="ad-notification">
         <img src="" class="notif-img" id="notif-img-src">
         <div class="notif-content">
             <span class="notif-title"><i class="fas fa-bolt"></i> ئێستا چالاکە</span>
             <span class="notif-name" id="notif-customer-name">---</span>
             <span class="notif-action">کلیک لێرە بکە بۆ بینین</span>
         </div>
-    </a>
+    </div>
 
     <header class="main-header">
         <div class="header-content">
@@ -185,12 +185,7 @@
             const btnContainer = card.querySelector('.download-container');
             if(btnContainer) btnContainer.style.display = 'none';
 
-            html2canvas(card, { 
-                useCORS: true, 
-                scale: 4, 
-                backgroundColor: "#ffffff",
-                logging: false,
-                dpi: 300
+            html2canvas(card, { useCORS: true, scale: 4, backgroundColor: "#ffffff", logging: false, dpi: 300
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `Proxo-Receipt-${name}.png`;
@@ -219,7 +214,16 @@
             return `${month}/${day} - ${hours}:${minutes} ${period}`;
         }
 
-        // فەنکشنی پیشاندانی ئاگادارییەکە بە زانیارییەکانەوە
+        // فەنکشنی پیشاندانی یەک ڕیکلامی دیاریکراو
+        function showOnlyThisAd(adId) {
+            const filtered = allAdsData.filter(ad => ad.id == adId);
+            renderAds(filtered);
+            document.getElementById('ad-notification').classList.remove('show');
+            // گۆڕینی فیلتەرەکان بۆ ئەوەی چالاک نەبن
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function showAdNotification(ad) {
             const storageKey = `notified_ad_${ad.id}`;
             if (localStorage.getItem(storageKey)) return;
@@ -228,10 +232,11 @@
             const img = document.getElementById('notif-img-src');
             const name = document.getElementById('notif-customer-name');
             
-            // دانانی زانیارییەکان
             img.src = ad.thumbnail_url || 'https://via.placeholder.com/80';
             name.innerText = ad.customer_name;
-            notification.href = `#card-${ad.id}`; // لینک بۆ سەر کارتەکە
+            
+            // کاتێک کلیک کرا، تەنها ئەو ڕیکلامە پیشان بدە
+            notification.onclick = () => showOnlyThisAd(ad.id);
 
             notification.classList.add('show');
             localStorage.setItem(storageKey, 'true');
@@ -270,7 +275,7 @@
                 } else {
                     s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
                     prog = ((now - start) / (end - start)) * 100;
-                    if (!firstActiveAd) firstActiveAd = ad; // یەکەم ڕیکلامی چالاک هەڵدەگرین
+                    if (!firstActiveAd) firstActiveAd = ad;
                 }
                 return { ...ad, statusInfo: s, currentProgress: Math.min(Math.max(prog, 0), 100) };
             }).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
@@ -278,7 +283,6 @@
             renderAds(allAdsData);
             applyCurrentFilter();
 
-            // ئەگەر ڕیکلامی چالاک هەبوو، پیشانی بدە
             if (firstActiveAd) {
                 showAdNotification(firstActiveAd);
             }
@@ -310,11 +314,7 @@
                 const isIQD = ad.currency === 'IQD';
                 const s = ad.statusInfo;
                 const cpm = ad.impressions > 0 ? ((ad.spend / ad.impressions) * 1000).toFixed(2) : "0.00";
-                
-                let barColor = "#f59e0b";
-                if (ad.statusInfo.text === "تەواوبوو" || ad.currentProgress >= 50) {
-                    barColor = "#22c55e";
-                }
+                let barColor = (ad.statusInfo.text === "تەواوبوو" || ad.currentProgress >= 50) ? "#22c55e" : "#f59e0b";
 
                 return `
                     <div class="ad-card" id="card-${ad.id}">
@@ -322,7 +322,6 @@
                             <div class="id-badge"><i class="fas fa-barcode"></i> #${ad.ad_id || '0000'}</div>
                             <div class="platform-chip">${getPlatIcon(ad.platform)}</div>
                         </div>
-                        
                         <div class="middle-section">
                             <div class="thumb-wrapper">
                                 <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb" crossOrigin="anonymous">
@@ -330,20 +329,12 @@
                             </div>
                             <div class="customer-info">
                                 <div class="budget-status-row">
-                                    <span class="budget-tag"><i class="fas fa-coins" style="font-size: 11px;"></i> بودجە: ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</span>
-                                    <div class="status-badge ${s.class}">
-                                        <i class="fas ${s.icon}"></i> ${s.text}
-                                    </div>
+                                    <span class="budget-tag"><i class="fas fa-coins"></i> بودجە: ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</span>
+                                    <div class="status-badge ${s.class}"><i class="fas ${s.icon}"></i> ${s.text}</div>
                                 </div>
                             </div>
-                            ${s.text === "تەواوبوو" ? `
-                                <div class="download-container">
-                                    <button class="download-btn" onclick="downloadReceipt('${ad.id}', '${ad.customer_name}')">
-                                        <i class="fas fa-download"></i>
-                                    </button>
-                                </div>` : ''}
+                            ${s.text === "تەواوبوو" ? `<div class="download-container"><button class="download-btn" onclick="downloadReceipt('${ad.id}', '${ad.customer_name}')"><i class="fas fa-download"></i></button></div>` : ''}
                         </div>
-
                         <div class="time-info">
                             <div class="time-block">
                                 <span class="time-label"><i class="far fa-calendar-check"></i> دەستپێکردن</span>
@@ -354,7 +345,6 @@
                                 <span class="time-val">${formatArabicDateTime(ad.end_date)}</span>
                             </div>
                         </div>
-
                         <div class="progress-section">
                             <div class="progress-info">
                                 <span><i class="fas fa-spinner"></i> بەڕێوەچوون</span>
@@ -364,26 +354,12 @@
                                 <div id="bar-${ad.id}" class="progress-bar-fill ${ad.status === 'ڕەتکرایەوە' ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%; background: ${barColor}"></div>
                             </div>
                         </div>
-
                         <div class="stats-grid">
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="fas fa-eye"></i> بینین</span>
-                                <span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="fas fa-hand-pointer"></i> کلیک</span>
-                                <span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="fas fa-money-bill-wave"></i> خەرجی</span>
-                                <span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="fas fa-chart-line"></i> CPM</span>
-                                <span class="stat-value">${isIQD ? (parseFloat(cpm)).toLocaleString() : '$'+cpm}</span>
-                            </div>
+                            <div class="stat-box"><span class="stat-label"><i class="fas fa-eye"></i> بینین</span><span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span></div>
+                            <div class="stat-box"><span class="stat-label"><i class="fas fa-hand-pointer"></i> کلیک</span><span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span></div>
+                            <div class="stat-box"><span class="stat-label"><i class="fas fa-money-bill-wave"></i> خەرجی</span><span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span></div>
+                            <div class="stat-box"><span class="stat-label"><i class="fas fa-chart-line"></i> CPM</span><span class="stat-value">${isIQD ? (parseFloat(cpm)).toLocaleString() : '$'+cpm}</span></div>
                         </div>
-
                         <div class="sponsored-footer"><i class="fas fa-shield-halved"></i> سپۆنسەرکراوە لەلایەن تیمی پڕۆکسۆ</div>
                     </div>`;
             }).join('');
