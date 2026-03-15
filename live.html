@@ -185,7 +185,7 @@
             const btnContainer = card.querySelector('.download-container');
             if(btnContainer) btnContainer.style.display = 'none';
 
-            html2canvas(card, { useCORS: true, scale: 4, backgroundColor: "#ffffff", logging: false, dpi: 300
+            html2canvas(card, { useCORS: true, scale: 3, backgroundColor: "#ffffff", logging: false, dpi: 300
             }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `Proxo-Receipt-${name}.png`;
