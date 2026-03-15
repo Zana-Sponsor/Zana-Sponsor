@@ -71,7 +71,7 @@
         }
 
         .customer-info { flex: 1; }
-        .budget-status-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 5px; }
+        .budget-status-row { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 5px; }
         
         .budget-tag { 
             font-size: 10px; 
@@ -83,9 +83,10 @@
             background: #f1f5f9; 
             padding: 4px 10px; 
             border-radius: 6px;
+            width: fit-content;
         }
         
-        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid currentColor; }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid currentColor; width: fit-content; }
         .active-bg { color: #16a34a; background: #f0fdf4; }
         .completed-bg { color: #64748b; background: #f1f5f9; }
         .rejected-bg { color: #dc2626; background: #fef2f2; }
@@ -213,7 +214,7 @@
                     prog = 0;
                 } else if (ad.status === 'تەواوبوو' || now > end) {
                     s = { text: "تەواوبوو", icon: "fa-check-double", class: "completed-bg", order: 3 };
-                    prog = 100; // یەکسەر دەبێتە 100% ئەگەر تەواو بوو بێت
+                    prog = 100;
                 } else if (now < start) {
                     s = { text: "کات بۆ دانراو", icon: "fa-calendar-check", class: "pending-bg", order: 2 };
                     prog = 0;
@@ -255,10 +256,9 @@
                 const s = ad.statusInfo;
                 const cpm = ad.impressions > 0 ? ((ad.spend / ad.impressions) * 1000).toFixed(2) : "0.00";
                 
-                // لۆژیکی دیاریکردنی ڕەنگی پڕۆگرێس باڕ
-                let barColor = "#f59e0b"; // زەرد (بۆ 0-50)
+                let barColor = "#f59e0b";
                 if (ad.statusInfo.text === "تەواوبوو" || ad.currentProgress >= 50) {
-                    barColor = "#22c55e"; // سەوز
+                    barColor = "#22c55e";
                 }
 
                 return `
