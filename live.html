@@ -87,6 +87,10 @@
         .rejected-bg { color: #dc2626; background: #fef2f2; }
         .pending-bg { color: #f59e0b; background: #fffbeb; }
 
+        .card-actions { display: flex; gap: 8px; }
+        .action-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; color: var(--text-dark); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; transition: all 0.2s; }
+        .action-btn:active { transform: scale(0.9); background: #f8fafc; }
+
         .time-info { border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; padding: 12px 0; margin: 15px 0; display: flex; justify-content: space-between; }
         .time-block { text-align: right; }
         .time-label { display: flex; align-items: center; gap: 4px; font-size: 9px; color: var(--text-gray); text-transform: uppercase; margin-bottom: 2px; }
@@ -95,8 +99,7 @@
         .progress-section { margin-bottom: 20px; }
         .progress-info { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; margin-bottom: 6px; color: #94a3b8; }
         .progress-bar-bg { background: #f8fafc; height: 6px; border: 1px solid #f1f5f9; border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { background: #27272a; height: 100%; transition: width 0.5s linear; }
-        .bg-red { background: var(--red) !important; }
+        .progress-bar-fill { height: 100%; transition: width 0.5s linear, background-color 0.3s ease; }
 
         .stats-grid { border-top: 1px dashed #e2e8f0; padding-top: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .stat-box { text-align: center; }
@@ -104,25 +107,35 @@
         .stat-value { font-size: 11px; font-weight: 900; }
 
         .sponsored-footer { margin-top: 25px; text-align: center; font-size: 9px; color: #94a3b8; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; border-top: 1px solid #f8fafc; padding-top: 10px; }
-        .download-btn { background: #27272a; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; margin-top: 10px; display: inline-flex; align-items: center; gap: 4px; }
         .main-footer { text-align: center; padding: 15px; color: #94a3b8; font-size: 9.5px; font-weight: 500; opacity: 0.8; }
 
-        /* --- ئاگادارکەرەوەی نوێ --- */
         .ad-notification {
             position: fixed; bottom: -120px; left: 50%; transform: translateX(-50%);
             background: white; width: 85%; max-width: 380px; padding: 12px;
             border-radius: 16px; box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
             display: flex; align-items: center; gap: 12px; z-index: 2000;
             transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid #e2e8f0; cursor: pointer; text-decoration: none;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
         }
         .ad-notification.show { bottom: 30px; }
         .notif-img { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; }
-        .notif-content { flex: 1; text-align: right; }
+        .notif-content { flex: 1; text-align: right; cursor: pointer; }
         .notif-top { font-size: 10px; color: var(--text-gray); margin-bottom: 2px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
         .notif-name { font-size: 13px; font-weight: 800; color: var(--text-dark); margin: 0; }
         .notif-badge { background: #f0fdf4; color: #16a34a; font-size: 8px; padding: 1px 5px; border-radius: 4px; font-weight: 900; }
         .click-hint { font-size: 8px; color: var(--text-gray); display: block; margin-top: 2px; }
+        
+        .close-notif {
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; background: #f1f5f9; color: var(--text-gray); cursor: pointer;
+            font-size: 12px; transition: background 0.2s;
+        }
+        .close-notif:hover { background: #e2e8f0; color: var(--text-dark); }
+        
+        #toastProgress {
+            position: absolute; bottom: 0; right: 0; height: 3px; background: var(--primary); width: 100%; transition: width linear;
+        }
     </style>
 </head>
 <body>
@@ -152,13 +165,15 @@
         <div id="live-ads-container"></div>
     </div>
 
-    <div id="adToast" class="ad-notification" onclick="showOnlyThisAd()">
-        <img id="notifImg" src="" class="notif-img">
-        <div class="notif-content">
+    <div id="adToast" class="ad-notification">
+        <div id="toastProgress"></div>
+        <div class="close-notif" onclick="closeToast()"><i class="fas fa-times"></i></div>
+        <div class="notif-content" onclick="showOnlyThisAd()">
             <div class="notif-top">ئێستا ئەم ڕیکلامە چالاکە <span class="notif-badge">LIVE</span></div>
             <div id="notifCustomer" class="notif-name"></div>
             <span class="click-hint">بۆ بینین کلیک لێرە بکە</span>
         </div>
+        <img id="notifImg" src="" class="notif-img">
     </div>
 
     <footer class="main-footer">
@@ -175,36 +190,45 @@
         let currentFilter = 'all';
         let currentNotifAdId = null;
 
-        // فانکشنەکە گۆڕدرا بۆ ئەوەی تەنها ئەو ڕیکلامە فلتەر بکات کە نۆتیفیکەیشنەکەی بۆ هاتووە
+        function closeToast() {
+            document.getElementById('adToast').classList.remove('show');
+        }
+
         function showOnlyThisAd() {
             if (!currentNotifAdId) return;
             const specificAd = allAdsData.filter(ad => ad.id === currentNotifAdId);
             renderAds(specificAd);
-            // لادانی ئەکتیڤ لەسەر دوگمەکانی تری فلتەر
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            // شارینەوەی نۆتیفیکەیشنەکە
-            document.getElementById('adToast').classList.remove('show');
-            // گەڕانەوە بۆ سەرەوەی پەیج
+            closeToast();
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function shareAd(id, customerName) {
+            const shareData = {
+                title: 'ڕاپۆرتی ڕیکلام - Proxo',
+                text: `بینەری ڕاپۆرتی ڕیکلامی (${customerName}) بە شێوەی ڕاستەوخۆ بن:`,
+                url: window.location.origin + window.location.pathname + '?id=' + id
+            };
+            try {
+                if (navigator.share) await navigator.share(shareData);
+                else {
+                    await navigator.clipboard.writeText(shareData.url);
+                    alert('لینکەکە کۆپی کرا');
+                }
+            } catch (err) { console.error(err); }
         }
 
         async function downloadReceipt(id, name) {
             const card = document.getElementById(`card-${id}`);
-            const btn = card.querySelector('.download-btn');
-            if(btn) btn.style.display = 'none';
+            const actions = card.querySelector('.card-actions');
+            if(actions) actions.style.display = 'none';
 
-            html2canvas(card, { 
-                useCORS: true, 
-                scale: 4, 
-                backgroundColor: "#ffffff",
-                logging: false,
-                dpi: 300
-            }).then(canvas => {
+            html2canvas(card, { useCORS: true, scale: 4, backgroundColor: "#ffffff" }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `Proxo-Receipt-${name}.png`;
                 link.href = canvas.toDataURL("image/png", 1.0);
                 link.click();
-                if(btn) btn.style.display = 'inline-flex';
+                if(actions) actions.style.display = 'flex';
             });
         }
 
@@ -238,11 +262,17 @@
             return ((now - startTime) / (endTime - startTime)) * 100;
         }
 
+        function getProgressBarColor(progress, status) {
+            if (status === 'ڕەتکرایەوە') return '#ef4444';
+            if (progress < 30) return '#3b82f6'; 
+            if (progress < 80) return '#f59e0b'; 
+            return '#22c55e'; 
+        }
+
         async function fetchLiveAds() {
             const urlParams = new URLSearchParams(window.location.search);
             const specificId = urlParams.get('id');
-            let query = supabaseClient.from('tiktok_report2').select('*');
-            query = query.neq('customer_name', 'Proxo Final Test');
+            let query = supabaseClient.from('tiktok_report2').select('*').neq('customer_name', 'Proxo Final Test');
             if (specificId) query = query.eq('id', specificId);
 
             const { data, error } = await query;
@@ -257,42 +287,58 @@
                 else if (now < start) s = { text: "کات بۆ دانراو", icon: "fa-calendar-check", class: "pending-bg", order: 2 };
                 else if (now > end || ad.status === 'تەواوبوو') s = { text: "تەواوبوو", icon: "fa-check-double", class: "completed-bg", order: 3 };
                 else s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
-                return { ...ad, statusInfo: s, currentProgress: calculateProgress(ad.start_date, ad.end_date, ad.status) };
+                
+                const progress = calculateProgress(ad.start_date, ad.end_date, ad.status);
+                return { 
+                    ...ad, 
+                    statusInfo: s, 
+                    currentProgress: progress,
+                    progressColor: getProgressBarColor(progress, ad.status)
+                };
             }).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
 
             renderAds(allAdsData);
             applyCurrentFilter();
-            
             showActiveAdNotif(allAdsData);
         }
 
         function showActiveAdNotif(ads) {
-            const activeAds = ads
-                .filter(ad => ad.statusInfo.text === "چالاکە")
-                .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-
+            const activeAds = ads.filter(ad => ad.statusInfo.text === "چالاکە");
             if (activeAds.length > 0) {
                 let index = 0;
                 const toast = document.getElementById('adToast');
+                const prog = document.getElementById('toastProgress');
+                const duration = 4000; // کاتی مانەوە
                 
                 function displayNext() {
-                    if (index >= activeAds.length) return;
+                    if (index >= activeAds.length) {
+                        index = 0;
+                        setTimeout(displayNext, 10000);
+                        return;
+                    }
                     
                     const ad = activeAds[index];
-                    currentNotifAdId = ad.id; // پاشەکەوتکردنی ئایدی ڕیکلامەکە
+                    currentNotifAdId = ad.id;
                     document.getElementById('notifImg').src = ad.thumbnail_url || 'https://via.placeholder.com/80';
                     document.getElementById('notifCustomer').innerText = ad.customer_name;
                     
+                    // Reset progress and show
+                    prog.style.transition = 'none';
+                    prog.style.width = '100%';
+                    toast.classList.add('show');
+                    
+                    // Start progress bar animation
                     setTimeout(() => {
-                        toast.classList.add('show');
-                        setTimeout(() => {
-                            toast.classList.remove('show');
-                            index++;
-                            setTimeout(displayNext, 1000); 
-                        }, 6000);
-                    }, 1000);
+                        prog.style.transition = `width ${duration}ms linear`;
+                        prog.style.width = '0%';
+                    }, 50);
+                    
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                        index++;
+                        setTimeout(displayNext, 1500);
+                    }, duration);
                 }
-                
                 displayNext();
             }
         }
@@ -324,28 +370,24 @@
                 const isIQD = ad.currency === 'IQD';
                 const s = ad.statusInfo;
                 const cpm = ad.impressions > 0 ? ((ad.spend / ad.impressions) * 1000).toFixed(2) : "0.00";
-
                 return `
                     <div class="ad-card" id="card-${ad.id}">
                         <div class="id-container">
                             <div class="id-badge"><i class="fas fa-barcode"></i> #${ad.ad_id || '0000'}</div>
                             <div class="platform-chip">${getPlatIcon(ad.platform)}</div>
                         </div>
-                        
                         <div class="middle-section">
                             <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb" crossOrigin="anonymous">
                             <div class="customer-info">
                                 <h3 class="customer-title"><i class="fas fa-user-check" style="font-size: 13px;"></i> ${ad.customer_name || 'بەکارهێنەر'}</h3>
-                                <div class="budget-row">
-                                    <span class="budget-tag"><i class="fas fa-coins" style="font-size: 11px;"></i> بوجە: ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</span>
-                                </div>
-                                <div class="status-badge ${s.class}">
-                                    <i class="fas ${s.icon}"></i> ${s.text}
-                                </div>
+                                <div class="budget-row"><span class="budget-tag"><i class="fas fa-coins" style="font-size: 11px;"></i> بوجە: ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</span></div>
+                                <div class="status-badge ${s.class}"><i class="fas ${s.icon}"></i> ${s.text}</div>
                             </div>
-                            ${s.text === "تەواوبوو" ? `<button class="download-btn" onclick="downloadReceipt('${ad.id}', '${ad.customer_name}')"><i class="fas fa-download"></i></button>` : ''}
+                            <div class="card-actions">
+                                <button class="action-btn" onclick="shareAd('${ad.id}', '${ad.customer_name}')"><i class="fas fa-share-alt"></i></button>
+                                ${s.text === "تەواوبوو" ? `<button class="action-btn" onclick="downloadReceipt('${ad.id}', '${ad.customer_name}')"><i class="fas fa-download"></i></button>` : ''}
+                            </div>
                         </div>
-
                         <div class="time-info">
                             <div class="time-block">
                                 <span class="time-label"><i class="far fa-calendar-check"></i> دەستپێکردن</span>
@@ -356,40 +398,20 @@
                                 <span class="time-val">${formatArabicDateTime(ad.end_date)}</span>
                             </div>
                         </div>
-
                         <div class="progress-section">
-                            <div class="progress-info">
-                                <span><i class="fas fa-spinner"></i> بەڕێوەچوون</span>
-                                <span id="text-${ad.id}">${ad.currentProgress.toFixed(2)}%</span>
-                            </div>
-                            <div class="progress-bar-bg">
-                                <div id="bar-${ad.id}" class="progress-bar-fill ${ad.status === 'ڕەتکرایەوە' ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%"></div>
-                            </div>
+                            <div class="progress-info"><span><i class="fas fa-spinner"></i> بەڕێوەچوون</span><span id="text-${ad.id}">${ad.currentProgress.toFixed(2)}%</span></div>
+                            <div class="progress-bar-bg"><div id="bar-${ad.id}" class="progress-bar-fill" style="width: ${ad.currentProgress}%; background-color: ${ad.progressColor}"></div></div>
                         </div>
-
                         <div class="stats-grid">
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="fas fa-eye"></i> بینین</span>
-                                <span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="fas fa-hand-pointer"></i> کلیک</span>
-                                <span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="fas fa-money-bill-wave"></i> خەرجی</span>
-                                <span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span>
-                            </div>
-                            <div class="stat-box">
-                                <span class="stat-label"><i class="fas fa-chart-line"></i> CPM</span>
-                                <span class="stat-value">${isIQD ? (parseFloat(cpm)).toLocaleString() : '$'+cpm}</span>
-                            </div>
+                            <div class="stat-box"><span class="stat-label"><i class="fas fa-eye"></i> بینین</span><span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span></div>
+                            <div class="stat-box"><span class="stat-label"><i class="fas fa-hand-pointer"></i> کلیک</span><span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span></div>
+                            <div class="stat-box"><span class="stat-label"><i class="fas fa-money-bill-wave"></i> خەرجی</span><span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span></div>
+                            <div class="stat-box"><span class="stat-label"><i class="fas fa-chart-line"></i> CPM</span><span class="stat-value">${isIQD ? (parseFloat(cpm)).toLocaleString() : '$'+cpm}</span></div>
                         </div>
                         <div class="sponsored-footer"><i class="fas fa-shield-halved"></i> سپۆنسەرکراوە لەلایەن تیمی پڕۆکسۆ</div>
                     </div>`;
             }).join('');
         }
-
         window.onload = fetchLiveAds;
     </script>
 </body>
