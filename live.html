@@ -111,9 +111,36 @@
         .sponsored-footer { margin-top: 25px; text-align: center; font-size: 9px; color: #94a3b8; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; border-top: 1px solid #f8fafc; padding-top: 10px; }
         .download-btn { background: #27272a; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 10px; display: inline-flex; align-items: center; gap: 4px; }
         .main-footer { text-align: center; padding: 15px; color: #94a3b8; font-size: 9.5px; font-weight: 500; opacity: 0.8; }
+
+        /* ستایلی ئاگادارییە نوێیەکە */
+        #ad-notification {
+            position: fixed; bottom: -120px; left: 50%; transform: translateX(-50%);
+            background: white; color: var(--text-dark); padding: 10px;
+            border-radius: 15px; z-index: 2000;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            display: flex; align-items: center; gap: 12px;
+            transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 90%; max-width: 350px; border: 1px solid #e2e8f0;
+            text-decoration: none; cursor: pointer;
+        }
+        #ad-notification.show { bottom: 30px; }
+        .notif-img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; }
+        .notif-content { display: flex; flex-direction: column; }
+        .notif-title { font-size: 11px; font-weight: 900; color: #16a34a; margin-bottom: 2px; }
+        .notif-name { font-size: 12px; font-weight: 700; color: var(--text-dark); }
+        .notif-action { font-size: 10px; font-weight: 500; color: var(--text-gray); }
     </style>
 </head>
 <body>
+
+    <a id="ad-notification" href="#">
+        <img src="" class="notif-img" id="notif-img-src">
+        <div class="notif-content">
+            <span class="notif-title"><i class="fas fa-bolt"></i> ئێستا چالاکە</span>
+            <span class="notif-name" id="notif-customer-name">---</span>
+            <span class="notif-action">کلیک لێرە بکە بۆ بینین</span>
+        </div>
+    </a>
 
     <header class="main-header">
         <div class="header-content">
@@ -192,6 +219,28 @@
             return `${month}/${day} - ${hours}:${minutes} ${period}`;
         }
 
+        // فەنکشنی پیشاندانی ئاگادارییەکە بە زانیارییەکانەوە
+        function showAdNotification(ad) {
+            const storageKey = `notified_ad_${ad.id}`;
+            if (localStorage.getItem(storageKey)) return;
+
+            const notification = document.getElementById('ad-notification');
+            const img = document.getElementById('notif-img-src');
+            const name = document.getElementById('notif-customer-name');
+            
+            // دانانی زانیارییەکان
+            img.src = ad.thumbnail_url || 'https://via.placeholder.com/80';
+            name.innerText = ad.customer_name;
+            notification.href = `#card-${ad.id}`; // لینک بۆ سەر کارتەکە
+
+            notification.classList.add('show');
+            localStorage.setItem(storageKey, 'true');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 6000);
+        }
+
         async function fetchLiveAds() {
             const urlParams = new URLSearchParams(window.location.search);
             const specificId = urlParams.get('id');
@@ -202,6 +251,8 @@
             const { data, error } = await query;
             if (error) return;
 
+            let firstActiveAd = null;
+
             allAdsData = data.map(ad => {
                 const now = new Date();
                 const start = new Date(ad.start_date);
@@ -211,22 +262,26 @@
 
                 if (ad.status === 'ڕەتکرایەوە') {
                     s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
-                    prog = 0;
                 } else if (ad.status === 'تەواوبوو' || now > end) {
                     s = { text: "تەواوبوو", icon: "fa-check-double", class: "completed-bg", order: 3 };
                     prog = 100;
                 } else if (now < start) {
                     s = { text: "کات بۆ دانراو", icon: "fa-calendar-check", class: "pending-bg", order: 2 };
-                    prog = 0;
                 } else {
                     s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
                     prog = ((now - start) / (end - start)) * 100;
+                    if (!firstActiveAd) firstActiveAd = ad; // یەکەم ڕیکلامی چالاک هەڵدەگرین
                 }
                 return { ...ad, statusInfo: s, currentProgress: Math.min(Math.max(prog, 0), 100) };
             }).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
 
             renderAds(allAdsData);
             applyCurrentFilter();
+
+            // ئەگەر ڕیکلامی چالاک هەبوو، پیشانی بدە
+            if (firstActiveAd) {
+                showAdNotification(firstActiveAd);
+            }
         }
 
         function filterAds(status, btn) {
