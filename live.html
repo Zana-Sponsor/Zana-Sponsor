@@ -12,7 +12,6 @@
     <style>
         :root { --primary: #22c55e; --soft-bg: #e2e8f0; --card-white: #ffffff; --text-dark: #0f172a; --text-gray: #64748b; --border: #cbd5e1; --red: #ef4444; }
         
-        /* دەستکاری کراوە بۆ سکڕۆڵی نەرم */
         body { 
             background-color: var(--soft-bg); 
             color: var(--text-dark); 
@@ -44,7 +43,6 @@
 
         .container { padding: 20px 5%; max-width: 500px; margin: auto; }
 
-        /* دەستکاری کراوە بۆ سکڕۆڵی نەرمی فلتەرەکان */
         .filter-wrapper { 
             display: flex; 
             gap: 8px; 
@@ -70,9 +68,7 @@
             );
         }
 
-        .ad-card::before {
-            content: ""; position: absolute; top: 60px; left: 20px; right: 20px; border-top: 1px dashed #e2e8f0;
-        }
+        .ad-card::before { content: ""; position: absolute; top: 60px; left: 20px; right: 20px; border-top: 1px dashed #e2e8f0; }
         
         .id-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .id-badge { color: #94a3b8; font-size: 10px; font-weight: 700; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 4px; display: flex; align-items: center; gap: 5px; }
@@ -81,7 +77,6 @@
         .middle-section { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; text-align: right; }
         .ad-thumb { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 2px solid #f1f5f9; }
         .customer-info { flex: 1; }
-        
         .customer-title { font-size: 15px; font-weight: 800; margin: 0; color: var(--text-dark); display: flex; align-items: center; gap: 6px; opacity: 0.9; }
         .budget-row { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
         .budget-tag { font-size: 13px; font-weight: 700; color: var(--text-gray); display: flex; align-items: center; gap: 5px; }
@@ -111,6 +106,23 @@
         .sponsored-footer { margin-top: 25px; text-align: center; font-size: 9px; color: #94a3b8; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; border-top: 1px solid #f8fafc; padding-top: 10px; }
         .download-btn { background: #27272a; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; margin-top: 10px; display: inline-flex; align-items: center; gap: 4px; }
         .main-footer { text-align: center; padding: 15px; color: #94a3b8; font-size: 9.5px; font-weight: 500; opacity: 0.8; }
+
+        /* --- ئاگادارکەرەوەی نوێ --- */
+        .ad-notification {
+            position: fixed; bottom: -120px; left: 50%; transform: translateX(-50%);
+            background: white; width: 85%; max-width: 380px; padding: 12px;
+            border-radius: 16px; box-shadow: 0 -8px 30px rgba(0,0,0,0.15);
+            display: flex; align-items: center; gap: 12px; z-index: 2000;
+            transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #e2e8f0; cursor: pointer; text-decoration: none;
+        }
+        .ad-notification.show { bottom: 30px; }
+        .notif-img { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; }
+        .notif-content { flex: 1; text-align: right; }
+        .notif-top { font-size: 10px; color: var(--text-gray); margin-bottom: 2px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .notif-name { font-size: 13px; font-weight: 800; color: var(--text-dark); margin: 0; }
+        .notif-badge { background: #f0fdf4; color: #16a34a; font-size: 8px; padding: 1px 5px; border-radius: 4px; font-weight: 900; }
+        .click-hint { font-size: 8px; color: var(--text-gray); display: block; margin-top: 2px; }
     </style>
 </head>
 <body>
@@ -132,12 +144,21 @@
 
     <div class="container">
         <div class="filter-wrapper">
-            <button class="filter-btn active" onclick="filterAds('all', this)"><i class="fas fa-list-ul"></i> هەمووی</button>
+            <button class="filter-btn active" id="btn-all" onclick="filterAds('all', this)"><i class="fas fa-list-ul"></i> هەمووی</button>
             <button class="filter-btn" onclick="filterAds('چالاکە', this)"><i class="fas fa-bolt"></i> چالاک</button>
             <button class="filter-btn" onclick="filterAds('تەواوبوو', this)"><i class="fas fa-check"></i> کۆتایی</button>
             <button class="filter-btn" onclick="filterAds('ڕەتکرایەوە', this)"><i class="fas fa-times"></i> ڕەتکراوە</button>
         </div>
         <div id="live-ads-container"></div>
+    </div>
+
+    <div id="adToast" class="ad-notification" onclick="showOnlyThisAd()">
+        <img id="notifImg" src="" class="notif-img">
+        <div class="notif-content">
+            <div class="notif-top">ئێستا ئەم ڕیکلامە چالاکە <span class="notif-badge">LIVE</span></div>
+            <div id="notifCustomer" class="notif-name"></div>
+            <span class="click-hint">بۆ بینین کلیک لێرە بکە</span>
+        </div>
     </div>
 
     <footer class="main-footer">
@@ -152,6 +173,20 @@
 
         let allAdsData = [];
         let currentFilter = 'all';
+        let currentNotifAdId = null;
+
+        // فانکشنەکە گۆڕدرا بۆ ئەوەی تەنها ئەو ڕیکلامە فلتەر بکات کە نۆتیفیکەیشنەکەی بۆ هاتووە
+        function showOnlyThisAd() {
+            if (!currentNotifAdId) return;
+            const specificAd = allAdsData.filter(ad => ad.id === currentNotifAdId);
+            renderAds(specificAd);
+            // لادانی ئەکتیڤ لەسەر دوگمەکانی تری فلتەر
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            // شارینەوەی نۆتیفیکەیشنەکە
+            document.getElementById('adToast').classList.remove('show');
+            // گەڕانەوە بۆ سەرەوەی پەیج
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         async function downloadReceipt(id, name) {
             const card = document.getElementById(`card-${id}`);
@@ -227,6 +262,39 @@
 
             renderAds(allAdsData);
             applyCurrentFilter();
+            
+            showActiveAdNotif(allAdsData);
+        }
+
+        function showActiveAdNotif(ads) {
+            const activeAds = ads
+                .filter(ad => ad.statusInfo.text === "چالاکە")
+                .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+            if (activeAds.length > 0) {
+                let index = 0;
+                const toast = document.getElementById('adToast');
+                
+                function displayNext() {
+                    if (index >= activeAds.length) return;
+                    
+                    const ad = activeAds[index];
+                    currentNotifAdId = ad.id; // پاشەکەوتکردنی ئایدی ڕیکلامەکە
+                    document.getElementById('notifImg').src = ad.thumbnail_url || 'https://via.placeholder.com/80';
+                    document.getElementById('notifCustomer').innerText = ad.customer_name;
+                    
+                    setTimeout(() => {
+                        toast.classList.add('show');
+                        setTimeout(() => {
+                            toast.classList.remove('show');
+                            index++;
+                            setTimeout(displayNext, 1000); 
+                        }, 6000);
+                    }, 1000);
+                }
+                
+                displayNext();
+            }
         }
 
         function filterAds(status, btn) {
@@ -237,11 +305,8 @@
         }
 
         function applyCurrentFilter() {
-            if (currentFilter === 'all') {
-                renderAds(allAdsData);
-            } else {
-                renderAds(allAdsData.filter(ad => ad.statusInfo.text === currentFilter));
-            }
+            if (currentFilter === 'all') renderAds(allAdsData);
+            else renderAds(allAdsData.filter(ad => ad.statusInfo.text === currentFilter));
         }
 
         function getPlatIcon(p) {
