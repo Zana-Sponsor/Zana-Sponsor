@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxo Admin - Best Seller Edition</title>
+    <title>Proxo Admin - Business Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,76 +22,79 @@
         }
 
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.6; }
-        .container { max-width: 1400px; margin: 0 auto; }
+        .container { max-width: 1550px; margin: 0 auto; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: var(--card); padding: 25px; border-radius: 16px; border: 1px solid var(--border); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
-        .stat-card i { position: absolute; left: -10px; bottom: -15px; font-size: 80px; opacity: 0.15; color: var(--primary); transform: rotate(-15px); }
-        .stat-card h3 { margin: 0; font-size: 14px; color: #94a3b8; z-index: 1; }
-        .stat-card p { margin: 10px 0 0; font-size: 26px; font-weight: 800; color: var(--text); z-index: 1; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+        .stat-card i { position: absolute; left: -10px; bottom: -15px; font-size: 60px; opacity: 0.1; color: var(--primary); }
+        .stat-card h3 { margin: 0; font-size: 13px; color: #94a3b8; z-index: 1; }
+        .stat-card p { margin: 8px 0 0; font-size: 22px; font-weight: 800; color: var(--text); z-index: 1; }
 
         .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 30px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; align-items: end; }
-        input, select { background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: white; font-family: inherit; width: 100%; box-sizing: border-box; outline: none; }
-        input:focus, select:focus { border-color: var(--primary); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; align-items: end; }
+        
+        label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 5px; }
+        input, select { background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: white; font-family: inherit; width: 100%; box-sizing: border-box; outline: none; font-size: 13px; }
+        input:focus { border-color: var(--primary); }
 
-        .table-wrap { background: var(--card); border-radius: 20px; overflow-x: auto; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 1000px; }
-        th { background: rgba(15, 23, 42, 0.5); padding: 18px; font-size: 13px; color: #94a3b8; border-bottom: 2px solid var(--border); }
-        td { padding: 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        .table-wrap { background: var(--card); border-radius: 20px; overflow-x: auto; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 1200px; }
+        th { background: rgba(15, 23, 42, 0.5); padding: 15px; font-size: 12px; color: #94a3b8; border-bottom: 2px solid var(--border); }
+        td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 
-        .inline-edit-input { background: #0f172a; border: 1px solid var(--border); color: var(--primary); font-weight: 800; padding: 5px; border-radius: 5px; width: 95px; text-align: center; }
-        .budget-input { color: #10b981 !important; border-color: #10b98144; }
+        .inline-input { background: #0f172a; border: 1px solid var(--border); color: var(--primary); font-weight: 800; padding: 5px; border-radius: 5px; width: 85px; text-align: center; font-family: inherit; }
+        .spend-today-input { color: #fbbf24 !important; border-color: #fbbf2444; }
+        
+        .id-badge { background: rgba(59, 130, 246, 0.2); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-right: 5px; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .date-display { font-size: 11px; color: #94a3b8; margin-top: 4px; line-height: 1.4; }
+        .date-display b { color: #e2e8f0; }
 
-        .btn-circle { width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: white; transition: 0.3s; margin: 0 2px; }
+        .btn-circle { width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: white; transition: 0.3s; }
         .btn-link { background: var(--accent); }
         .btn-del { background: var(--danger); }
-        .btn-add { background: var(--primary); font-weight: 800; width: 100% !important; height: 45px; cursor: pointer; border-radius: 10px; border: none; color: white; font-family: inherit; }
+        .btn-add { background: var(--primary); font-weight: 800; height: 42px; cursor: pointer; border-radius: 10px; border: none; color: white; font-family: inherit; width: 100%; }
         
-        .thumb { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; }
-        .saving-effect { animation: blink 0.5s ease-in-out; }
-        @keyframes blink { 50% { background: #10b98133; } }
-        
-        .plat-tiktok { color: #fff; }
-        .plat-facebook { color: #1877F2; }
-        .plat-instagram { color: #E4405F; }
-        .plat-snapchat { color: #FFFC00; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .thumb { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; }
+        .saving-effect { animation: blink 0.5s ease; }
+        @keyframes blink { 50% { background: #10b98122; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h1 style="background: linear-gradient(to left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">PROXO TEAM</h1>
+    <div style="margin-bottom:25px;">
+        <h1 style="background: linear-gradient(to left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; margin:0;">PROXO ADMIN</h1>
     </div>
 
     <div class="stats-grid">
         <div class="stat-card"><h3>کۆی بینین</h3><p id="total-imp">0</p><i class="fas fa-eye"></i></div>
         <div class="stat-card"><h3>کۆی کلیک</h3><p id="total-clicks">0</p><i class="fas fa-mouse-pointer"></i></div>
-        <div class="stat-card"><h3>کۆی خەرجی (USD)</h3><p id="total-spend">$0</p><i class="fas fa-dollar-sign"></i></div>
+        <div class="stat-card"><h3>کۆی خەرجی (USD)</h3><p id="total-all-spend">$0</p><i class="fas fa-wallet"></i></div>
+        <div class="stat-card" style="border-color: var(--gold);"><h3>کۆی خەرجی ئەمڕۆ</h3><p id="total-spend-today" style="color: var(--gold);">$0</p><i class="fas fa-coins"></i></div>
         <div class="stat-card"><h3>ڕیکلامە چالاکەکان</h3><p id="active-ads">0</p><i class="fas fa-bolt"></i></div>
     </div>
 
     <div class="glass-panel">
-        <div class="form-grid" id="adForm">
-            <input type="text" id="custName" placeholder="ناوی کڕیار" onkeypress="handleEnter(event)">
-            <input type="text" id="adId" placeholder="Ad ID (بێ هێمای #)" onkeypress="handleEnter(event)">
-            <select id="adPlatform">
-                <option value="tiktok">TikTok</option>
-                <option value="facebook">Facebook</option>
-                <option value="instagram">Instagram</option>
-                <option value="snapchat">Snapchat</option>
-            </select>
-            <div style="display: flex; gap: 5px;">
-                <input type="number" id="adBudget" placeholder="بڕی پارە" onkeypress="handleEnter(event)">
-                <select id="adCurrency" style="width: 85px;">
-                    <option value="USD">USD ($)</option>
-                    <option value="IQD">IQD (د.ع)</option>
+        <div class="form-grid">
+            <div><label>ناوی کڕیار</label><input type="text" id="custName" placeholder="ناو بنووسە"></div>
+            <div><label>Ad ID</label><input type="text" id="adId" placeholder="ID"></div>
+            <div><label>پلاتفۆرم</label>
+                <select id="adPlatform">
+                    <option value="tiktok">TikTok</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="snapchat">Snapchat</option>
                 </select>
             </div>
-            <input type="text" id="imgUrl" placeholder="لینکی وێنە" onkeypress="handleEnter(event)">
-            <input type="datetime-local" id="startDate" onkeypress="handleEnter(event)">
-            <input type="datetime-local" id="endDate" onkeypress="handleEnter(event)">
+            <div><label>بودجە و دراو</label>
+                <div style="display: flex; gap: 4px;">
+                    <input type="number" id="adBudget" placeholder="0.00">
+                    <select id="adCurrency" style="width: 75px;"><option value="USD">USD</option><option value="IQD">IQD</option></select>
+                </div>
+            </div>
+            <div><label>دەستپێکردن</label><input type="datetime-local" id="startDate"></div>
+            <div><label>کۆتایی</label><input type="datetime-local" id="endDate"></div>
+            <div><label>وێنە</label><input type="text" id="imgUrl" placeholder="Link"></div>
             <button onclick="addNewAd()" class="btn-add">زیادکردن</button>
         </div>
     </div>
@@ -101,13 +104,12 @@
             <thead>
                 <tr>
                     <th>وێنە</th>
-                    <th>کڕیار / ID</th>
+                    <th>کڕیار و کاتی ڕیکلام</th>
                     <th>پلاتفۆرم</th>
-                    <th>دراو</th>
                     <th>💰 بودجە</th>
+                    <th>💵 خەرجی ئەمڕۆ</th>
                     <th>👁️ بینین</th>
                     <th>🖱️ کلیک</th>
-                    <th>💵 خەرجکراو</th>
                     <th>دۆخ</th>
                     <th>کردارەکان</th>
                 </tr>
@@ -122,8 +124,6 @@
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-    function handleEnter(event) { if (event.key === "Enter") { event.preventDefault(); addNewAd(); } }
-
     async function fetchAds() {
         const { data, error } = await supabaseClient.from('tiktok_report2').select('*').order('id', { ascending: false });
         if (!error) { renderAds(data); updateStats(data); }
@@ -133,124 +133,112 @@
         document.getElementById('total-imp').innerText = ads.reduce((a, b) => a + (Number(b.impressions) || 0), 0).toLocaleString();
         document.getElementById('total-clicks').innerText = ads.reduce((a, b) => a + (Number(b.clicks) || 0), 0).toLocaleString();
         
-        const totalDollarSpend = ads.filter(a => a.currency !== 'IQD').reduce((a, b) => a + (Number(b.spend) || 0), 0);
-        document.getElementById('total-spend').innerText = '$' + totalDollarSpend.toFixed(2);
+        // کۆی گشتی هەموو خەرجییەکان لە هەموو کاتێکدا (بۆ USD)
+        const totalAllSpend = ads.filter(a => a.currency !== 'IQD').reduce((a, b) => a + (Number(b.spend) || 0), 0);
+        document.getElementById('total-all-spend').innerText = '$' + totalAllSpend.toFixed(2);
+        
+        // فلتەرکردنی خەرجی تەنها بۆ بەرواری ئەمڕۆ
+        const todayStr = new Date().toISOString().split('T')[0];
+        const totalSpendToday = ads
+            .filter(a => a.currency !== 'IQD' && a.start_date && a.start_date.includes(todayStr))
+            .reduce((a, b) => a + (Number(b.spend) || 0), 0);
+            
+        document.getElementById('total-spend-today').innerText = '$' + totalSpendToday.toFixed(2);
         
         document.getElementById('active-ads').innerText = ads.filter(a => a.status === 'active' || a.status === 'چالاکە').length;
     }
 
-    function getPlatIcon(p) {
-        switch(p) {
-            case 'facebook': return '<i class="fab fa-facebook plat-facebook"></i>';
-            case 'instagram': return '<i class="fab fa-instagram plat-instagram"></i>';
-            case 'snapchat': return '<i class="fab fa-snapchat plat-snapchat"></i>';
-            default: return '<i class="fab fa-tiktok plat-tiktok"></i>';
-        }
+    function formatDT(dt) {
+        if(!dt) return 'دیاری نەکراوە';
+        return dt.replace('T', ' ');
     }
 
     function renderAds(ads) {
         const list = document.getElementById('ads-list');
         list.innerHTML = ads.map(ad => {
-            const isIQD = (ad.currency === 'IQD' || ad.currency === 'دینار');
-            const suffix = isIQD ? ' د.ع' : ' $';
+            const isIQD = ad.currency === 'IQD';
+            const cur = isIQD ? ' د.ع' : ' $';
             
             return `
             <tr id="row-${ad.id}">
                 <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/45'}" class="thumb"></td>
                 <td>
-                    <div style="font-weight:800; color:white;">${ad.customer_name || 'بێ ناو'}</div>
-                    <small style="color:#64748b;">ID: ${ad.ad_id || '---'}</small>
-                </td>
-                <td>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        ${getPlatIcon(ad.platform)}
-                        <select onchange="fastUpdate('${ad.id}', 'platform', this.value, this)" style="width:90px; padding:4px; font-size:11px;">
-                            <option value="tiktok" ${ad.platform === 'tiktok' ? 'selected' : ''}>TikTok</option>
-                            <option value="facebook" ${ad.platform === 'facebook' ? 'selected' : ''}>Facebook</option>
-                            <option value="instagram" ${ad.platform === 'instagram' ? 'selected' : ''}>Instagram</option>
-                            <option value="snapchat" ${ad.platform === 'snapchat' ? 'selected' : ''}>Snapchat</option>
-                        </select>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <input type="text" class="inline-input" style="width:140px; text-align:right; color:white; border:none; background:none; font-weight: 800;" value="${ad.customer_name || ''}" onchange="fastUpdate('${ad.id}', 'customer_name', this.value)">
+                        <span class="id-badge">ID: ${ad.ad_id || 'N/A'}</span>
+                    </div>
+                    <div class="date-display">
+                        دەستپێکردن: <b>${formatDT(ad.start_date)}</b><br>
+                        کۆتایی: <b>${formatDT(ad.end_date)}</b>
                     </div>
                 </td>
                 <td>
-                    <select onchange="fastUpdate('${ad.id}', 'currency', this.value, this)" style="width:75px; padding:4px; font-size:11px;">
-                        <option value="USD" ${ad.currency === 'USD' ? 'selected' : ''}>USD</option>
-                        <option value="IQD" ${ad.currency === 'IQD' ? 'selected' : ''}>IQD</option>
+                    <select onchange="fastUpdate('${ad.id}', 'platform', this.value)" style="width:90px; padding:3px; font-size:11px;">
+                        <option value="tiktok" ${ad.platform === 'tiktok' ? 'selected' : ''}>TikTok</option>
+                        <option value="facebook" ${ad.platform === 'facebook' ? 'selected' : ''}>Facebook</option>
+                        <option value="instagram" ${ad.platform === 'instagram' ? 'selected' : ''}>Instagram</option>
+                        <option value="snapchat" ${ad.platform === 'snapchat' ? 'selected' : ''}>Snapchat</option>
                     </select>
                 </td>
                 <td>
-                    <div style="display:flex; align-items:center; gap:4px;">
-                        <input type="number" class="inline-edit-input budget-input" value="${ad.budget || 0}" onchange="fastUpdate('${ad.id}', 'budget', this.value, this)">
-                        <span style="font-size:10px; color:#10b981;">${suffix}</span>
-                    </div>
+                    <input type="number" class="inline-input" style="color:#10b981;" value="${ad.budget || 0}" onchange="fastUpdate('${ad.id}', 'budget', this.value)">
+                    <span style="font-size:10px;">${cur}</span>
+                </td>
+                <td>
+                    <input type="number" class="inline-input spend-today-input" value="${ad.spend || 0}" onchange="fastUpdate('${ad.id}', 'spend', this.value)">
+                    <span style="font-size:10px;">${cur}</span>
                 </td>
                 <td>${(Number(ad.impressions) || 0).toLocaleString()}</td>
                 <td>${(Number(ad.clicks) || 0).toLocaleString()}</td>
-                <td>${isIQD ? (Number(ad.spend) || 0).toLocaleString() : '$' + (Number(ad.spend) || 0)}</td>
                 <td>
-                    <select onchange="fastUpdate('${ad.id}', 'status', this.value, this)" style="padding:4px; font-size:11px;">
+                    <select onchange="fastUpdate('${ad.id}', 'status', this.value)" style="padding:4px; font-size:11px;">
                         <option value="active" ${ad.status === 'active' || ad.status === 'چالاکە' ? 'selected' : ''}>چالاک</option>
-                        <option value="تەواوبوو" ${ad.status === 'completed' || ad.status === 'تەواوبوو' ? 'selected' : ''}>تەواوبوو</option>
-                        <option value="rejected" ${ad.status === 'rejected' || ad.status === 'ڕەتکرایەوە' ? 'selected' : ''}>ڕەتکراوە</option>
+                        <option value="completed" ${ad.status === 'completed' || ad.status === 'تەواوبوو' ? 'selected' : ''}>تەواوبوو</option>
                     </select>
                 </td>
                 <td>
                     <button onclick="deleteAd('${ad.id}')" class="btn-circle btn-del"><i class="fas fa-trash"></i></button>
-                    <a href="https://proxopages.com/live?id=${ad.id}" target="_blank" class="btn-circle btn-link"><i class="fas fa-external-link-alt"></i></a>
+                    <a href="https://proxopages.com/live?id=${ad.id}" target="_blank" class="btn-circle btn-link" style="margin-right:4px;"><i class="fas fa-link"></i></a>
                 </td>
             </tr>`;
         }).join('');
     }
 
-    async function fastUpdate(id, field, value, element) {
+    async function fastUpdate(id, field, value) {
         const { error } = await supabaseClient.from('tiktok_report2').update({ [field]: value }).eq('id', id);
         if (!error) {
-            const row = document.getElementById(`row-${id}`);
-            row.classList.add('saving-effect');
-            setTimeout(() => row.classList.remove('saving-effect'), 500);
+            document.getElementById(`row-${id}`).classList.add('saving-effect');
+            setTimeout(() => document.getElementById(`row-${id}`).classList.remove('saving-effect'), 500);
             updateStatsAfterChange();
         }
     }
 
     async function addNewAd() {
-        const nameInput = document.getElementById('custName');
-        const idInput = document.getElementById('adId');
-        
-        // پاککردنەوەی ئایدی لە نیشانەی # ئەگەر کڕیار بە هەڵە داینابوو
-        let cleanAdId = idInput.value.replace('#', '').trim();
-
-        if (!nameInput.value || !cleanAdId) {
-            alert('تکایە ناوی کڕیار و Ad ID بنووسە');
-            return;
-        }
+        const name = document.getElementById('custName').value;
+        const ad_id = document.getElementById('adId').value.replace('#', '').trim();
+        if (!name || !ad_id) return alert('ناو و ئایدی پێویستن');
 
         const newAd = {
-            customer_name: nameInput.value,
-            ad_id: cleanAdId,
+            customer_name: name,
+            ad_id: ad_id,
             platform: document.getElementById('adPlatform').value,
             budget: parseFloat(document.getElementById('adBudget').value) || 0,
             currency: document.getElementById('adCurrency').value,
-            thumbnail_url: document.getElementById('imgUrl').value || 'https://via.placeholder.com/45',
             start_date: document.getElementById('startDate').value || null,
             end_date: document.getElementById('endDate').value || null,
-            status: 'active',
-            spend: 0,
-            impressions: 0,
-            clicks: 0
+            thumbnail_url: document.getElementById('imgUrl').value || 'https://via.placeholder.com/45',
+            status: 'active', spend: 0, impressions: 0, clicks: 0
         };
 
         const { error } = await supabaseClient.from('tiktok_report2').insert([newAd]);
-        
         if (!error) {
-            document.querySelectorAll('#adForm input').forEach(i => i.value = '');
-            setTimeout(() => { fetchAds(); }, 500);
-        } else {
-            alert('هەڵە: ' + error.message);
+            document.querySelectorAll('input').forEach(i => i.value = '');
+            fetchAds();
         }
     }
 
     async function deleteAd(id) {
-        if (confirm('دڵنیای لە سڕینەوەی ئەم ڕیکلامەی Proxo؟')) {
+        if (confirm('دڵنیای؟')) {
             const { error } = await supabaseClient.from('tiktok_report2').delete().eq('id', id);
             if (!error) fetchAds();
         }
@@ -263,6 +251,5 @@
 
     window.onload = fetchAds;
 </script>
-
 </body>
 </html>
