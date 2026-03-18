@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Precision V31</title>
+    <title>Proxo Builder - Precision V33</title>
     <style>
         @font-face {
             font-family: 'NRT-Bd';
@@ -12,12 +12,13 @@
         body { font-family: 'NRT-Bd', sans-serif; background: #0b1120; color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .setup-container { background: #1e293b; padding: 25px; border-radius: 15px; border: 1px solid #3b82f6; width: 100%; max-width: 1100px; display: grid; grid-template-columns: 350px 1fr; gap: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
         .inputs { display: flex; flex-direction: column; gap: 10px; }
-        input[type="text"], select { background: #0f172a; border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; font-family: 'Rudaw'; outline: none; width: 100%; box-sizing: border-box; }
+        input[type="text"], select { background: #0f172a; border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; font-family: 'NRT-Bd'; outline: none; width: 100%; box-sizing: border-box; }
         label { font-size: 12px; color: #94a3b8; margin-bottom: -5px; }
         .toggle-box { background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; margin-top: 5px; }
         .toggle-item { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-top: 8px; cursor: pointer; color: #e2e8f0; }
         textarea { background: #000; color: #10b981; padding: 15px; border-radius: 10px; border: 1px solid #10b981; font-family: monospace; height: 580px; resize: none; font-size: 11px; width: 100%; box-sizing: border-box; }
-        .copy-btn { background: #3b82f6; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-family: 'Rudaw'; margin-top: 10px; font-size: 16px; }
+        .copy-btn { background: #3b82f6; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-family: 'NRT-Bd'; margin-top: 10px; font-size: 16px; transition: 0.2s; }
+        .copy-btn:active { transform: scale(0.95); }
         .hidden-input { display: none; margin-top: 5px; margin-bottom: 10px; padding-right: 15px; }
     </style>
 </head>
@@ -25,7 +26,7 @@
 
 <div class="setup-container">
     <div class="inputs">
-        <h3 style="margin:0 0 10px 0; color:#3b82f6; text-align:center;">Proxo Generator V31</h3>
+        <h3 style="margin:0 0 10px 0; color:#3b82f6; text-align:center;">Proxo Generator V33</h3>
         
         <label>ستایلی لاپەڕە (Theme)</label>
         <select id="themeSelect" onchange="generate()">
@@ -42,8 +43,8 @@
         <label>دەقی P (وەسف)</label>
         <input type="text" id="pText" placeholder="بۆ زانیاری زیاتر، پەیوەندی بکە..." oninput="generate()">
 
-        <label style="color:#10b981;">ڤیدیۆی سەرەکی (ئەگەر لە لینکەکەدا نەبوو)</label>
-        <input type="text" id="videoUrl" placeholder="https://vt.tiktok.com/ZSmedYSB8/" oninput="generate()">
+        <label style="color:#10b981;">لینکی ڤیدیۆی TikTok (بۆ ناو نامەکە)</label>
+        <input type="text" id="videoUrl" placeholder="https://vt.tiktok.com/ZSxxx/" oninput="generate()">
 
         <div class="toggle-box">
             <label style="display:block; margin-bottom:8px; color:#3b82f6;">دوگمەکان:</label>
@@ -99,7 +100,7 @@ function generate() {
         { id: 'cWa', btnId: 'wa-btn', icon: 'fab fa-whatsapp', label: 'واتسئاپ', track: 'WhatsApp', urlBase: `https://wa.me/${wa}?text=` },
         { id: 'cTg', btnId: 'tg-btn', icon: 'fab fa-telegram', label: 'تێلیگرام', track: 'Telegram', urlBase: `https://t.me/${tg}?text=` },
         { id: 'cIg', btnId: 'ig-btn', icon: 'fab fa-instagram', label: 'ئینستاگرام', track: 'Instagram', urlBase: `https://instagram.com/${ig}` },
-        { id: 'cVi', btnId: 'vb-btn', icon: 'fab fa-viber', label: 'ڤایبەر', track: 'Viber', urlBase: `viber://chat?number=${vi}&draft=` },
+        { id: 'cVi', btnId: 'vb-btn', icon: 'fab fa-viber', label: 'ڤایبەر', track: 'Viber', urlBase: `viber://chat?number=${vi}&text=` },
         { id: 'cPh', btnId: 'ph-btn', icon: 'fas fa-phone', label: 'پەیوەندی', track: 'Phone', urlBase: `tel:${ph}` }
     ];
 
@@ -114,7 +115,7 @@ function generate() {
                 btnJs += `document.getElementById("${b.btnId}").onclick = function() { handleTrack("${b.track}", "${b.urlBase}"); };\n    `;
             } else {
                 btnJs += `document.getElementById("${b.btnId}").onclick = function() { 
-                    const vUrl = urlParams.get('v') || "${videoUrl}";
+                    const vUrl = decodeURIComponent(urlParams.get('v') || "${videoUrl}");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + vUrl;
                     handleTrack("${b.track}", "${b.urlBase}" + encodeURIComponent(msg)); 
                 };\n    `;
@@ -129,6 +130,7 @@ body { background: #FFFFFF; }
 .profile h1 { color: #000000; }
 .profile p { color: #323232; margin: 20px 13px 0; }
 .link { border-radius: 30px; font-weight: bold; font-size: 16px; color: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); min-height: 58px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.link:active { transform: scale(0.95); opacity: 0.9; }
 #wa-btn { background-color: #25D366; }
 #tg-btn { background-color: #26A5E4; }
 #ig-btn { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
@@ -136,17 +138,15 @@ body { background: #FFFFFF; }
 #ph-btn { background-color: #0062AD; }
 .link i { position: absolute; left: 65px; top: 50%; transform: translateY(-50%); width: 50px; display: flex; align-items: center; justify-content: center; }
 .fa-whatsapp { font-size: 28px; } .fa-viber { font-size: 25px; } .fa-phone { font-size: 22px; } .fa-telegram { font-size: 25px; } .fa-instagram { font-size: 25px; }
-.shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }
-.footer small, .legal { color: #424242; }` : `
+.shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }` : `
 body { background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%); }
 .profile img { border: 2px solid rgba(255, 255, 255, 0.2); }
 .profile h1 { color: #fff; font-weight: bold; }
 .profile p { color: #E3E3E3; margin: 30px 13px 0; }
 .link { border-radius: 14px; font-size: 17px; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; transition: all 0.2s ease; min-height: 58px; }
+.link:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.12); }
 .link i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 30px; display: flex; align-items: center; justify-content: center; }
-.fa-whatsapp { font-size: 28px; } .fa-viber { font-size: 25px; } .fa-phone { font-size: 22px; } .fa-telegram { font-size: 25px; } .fa-instagram { font-size: 25px; }
-.link:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.12); }
-.footer small, .legal { color: #8b8b8b; } .footer { margin-top: 95px; }`;
+.fa-whatsapp { font-size: 28px; } .fa-viber { font-size: 25px; } .fa-phone { font-size: 22px; } .fa-telegram { font-size: 25px; } .fa-instagram { font-size: 25px; }`;
 
     const template = `<!DOCTYPE html>
 <html dir="rtl" lang="ku">
@@ -165,7 +165,7 @@ body { margin: 0; min-height: 100vh; font-family: 'NRT-Bd'; display: flex; justi
 .profile h1 { margin: 0 0 8px; font-size: 16px; }
 .profile p { font-size: 13px; line-height: 1.6; }
 .links { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
-.link { position: relative; display: flex; align-items: center; justify-content: center; padding: 12px 18px; text-decoration: none; cursor: pointer; overflow: hidden; }
+.link { position: relative; display: flex; align-items: center; justify-content: center; padding: 12px 18px; text-decoration: none; cursor: pointer; overflow: hidden; transition: all 0.2s ease; }
 ${cssPart}
 @keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }
 .no-shine::after { animation: none !important; display: none !important; }
@@ -176,9 +176,9 @@ ${cssPart}
 @keyframes clickAnim { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.9); } }
 @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.5); opacity: 0; } }
 .footer { margin-top: auto; padding: 50px 0 20px; }
-.footer small { display: block; font-size: 9px; margin-bottom: 8px; }
+.footer small { display: block; font-size: 9px; margin-bottom: 8px; color: #8b8b8b; }
 .footer img { height: 14px; margin: 0 auto 10px; display: block; }
-.legal { font-size: 9px; margin-top: 8px; padding-bottom: 10px; }
+.legal { font-size: 9px; margin-top: 8px; padding-bottom: 10px; color: #8b8b8b; }
 .legal a { color: inherit; text-decoration: none; margin: 0 6px; }
 </style>
 </head>
