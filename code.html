@@ -2,14 +2,14 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Precision V28</title>
+    <title>Proxo Builder - Precision V31</title>
     <style>
         @font-face {
-            font-family: 'Rudaw';
-            src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.woff2');
+            font-family: 'NRT-Bd';
+            src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/NRT-Bd (1).woff2');
             font-display: swap;
         }
-        body { font-family: 'Rudaw', sans-serif; background: #0b1120; color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: 'NRT-Bd', sans-serif; background: #0b1120; color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .setup-container { background: #1e293b; padding: 25px; border-radius: 15px; border: 1px solid #3b82f6; width: 100%; max-width: 1100px; display: grid; grid-template-columns: 350px 1fr; gap: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
         .inputs { display: flex; flex-direction: column; gap: 10px; }
         input[type="text"], select { background: #0f172a; border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; font-family: 'Rudaw'; outline: none; width: 100%; box-sizing: border-box; }
@@ -25,7 +25,7 @@
 
 <div class="setup-container">
     <div class="inputs">
-        <h3 style="margin:0 0 10px 0; color:#3b82f6; text-align:center;">Proxo Generator V28</h3>
+        <h3 style="margin:0 0 10px 0; color:#3b82f6; text-align:center;">Proxo Generator V31</h3>
         
         <label>ستایلی لاپەڕە (Theme)</label>
         <select id="themeSelect" onchange="generate()">
@@ -39,8 +39,11 @@
         <label>لینکی لۆگۆ</label>
         <input type="text" id="logoUrl" placeholder="https://..." oninput="generate()">
         
-        <label>دەقی P</label>
+        <label>دەقی P (وەسف)</label>
         <input type="text" id="pText" placeholder="بۆ زانیاری زیاتر، پەیوەندی بکە..." oninput="generate()">
+
+        <label style="color:#10b981;">ڤیدیۆی سەرەکی (ئەگەر لە لینکەکەدا نەبوو)</label>
+        <input type="text" id="videoUrl" placeholder="https://vt.tiktok.com/ZSmedYSB8/" oninput="generate()">
 
         <div class="toggle-box">
             <label style="display:block; margin-bottom:8px; color:#3b82f6;">دوگمەکان:</label>
@@ -78,6 +81,7 @@ function generate() {
     const brand = document.getElementById('brand').value || "عقارات شکۆی نەورۆز";
     const logoUrl = document.getElementById('logoUrl').value.trim() || "https://image2url.com/r2/default/images/1772756949098-d6d76b46-8ea1-4475-a900-a41c4bec7bc4.webp";
     const pText = document.getElementById('pText').value || "بۆ زانیاری زیاتر، پەیوەندی بکە لەڕێگەی دوگمەکانەوە. تیمەکەمان ئامادەن بۆ وەڵام دانەوەت.";
+    const videoUrl = document.getElementById('videoUrl').value.trim() || "https://vt.tiktok.com/ZSmedYSB8/";
 
     const wa = document.getElementById('waVal').value || "9647507252570";
     const tg = document.getElementById('tgVal').value || "Proxo";
@@ -92,11 +96,11 @@ function generate() {
         : '<span id="click-hand" class="hand-container"><span class="finger-emoji">👆</span></span>';
 
     const buttons = [
-        { id: 'cWa', btnId: 'wa-btn', icon: 'fab fa-whatsapp', label: 'واتسئاپ', track: 'WhatsApp', url: `https://wa.me/${wa}` },
-        { id: 'cTg', btnId: 'tg-btn', icon: 'fab fa-telegram', label: 'تێلیگرام', track: 'Telegram', url: `https://t.me/${tg}` },
-        { id: 'cIg', btnId: 'ig-btn', icon: 'fab fa-instagram', label: 'ئینستاگرام', track: 'Instagram', url: `https://instagram.com/${ig}` },
-        { id: 'cVi', btnId: 'vb-btn', icon: 'fab fa-viber', label: 'ڤایبەر', track: 'Viber', url: `viber://chat?number=${vi}` },
-        { id: 'cPh', btnId: 'ph-btn', icon: 'fas fa-phone', label: 'پەیوەندی', track: 'Phone', url: `tel:${ph}` }
+        { id: 'cWa', btnId: 'wa-btn', icon: 'fab fa-whatsapp', label: 'واتسئاپ', track: 'WhatsApp', urlBase: `https://wa.me/${wa}?text=` },
+        { id: 'cTg', btnId: 'tg-btn', icon: 'fab fa-telegram', label: 'تێلیگرام', track: 'Telegram', urlBase: `https://t.me/${tg}?text=` },
+        { id: 'cIg', btnId: 'ig-btn', icon: 'fab fa-instagram', label: 'ئینستاگرام', track: 'Instagram', urlBase: `https://instagram.com/${ig}` },
+        { id: 'cVi', btnId: 'vb-btn', icon: 'fab fa-viber', label: 'ڤایبەر', track: 'Viber', urlBase: `viber://chat?number=${vi}&draft=` },
+        { id: 'cPh', btnId: 'ph-btn', icon: 'fas fa-phone', label: 'پەیوەندی', track: 'Phone', urlBase: `tel:${ph}` }
     ];
 
     let firstActive = true;
@@ -105,14 +109,21 @@ function generate() {
             let shineClass = (firstActive && theme === 'light') ? 'shine-active' : '';
             let hand = firstActive ? handHtml : '';
             btnHtml += `<a id="${b.btnId}" class="link ${shineClass}"><i class="${b.icon}"></i> ${b.label} ${hand}</a>\n    `;
-            btnJs += `document.getElementById("${b.btnId}").onclick = function() { handleTrack("${b.track}", "${b.url}"); };\n    `;
+            
+            if(b.track === "Instagram" || b.track === "Phone") {
+                btnJs += `document.getElementById("${b.btnId}").onclick = function() { handleTrack("${b.track}", "${b.urlBase}"); };\n    `;
+            } else {
+                btnJs += `document.getElementById("${b.btnId}").onclick = function() { 
+                    const vUrl = urlParams.get('v') || "${videoUrl}";
+                    const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + vUrl;
+                    handleTrack("${b.track}", "${b.urlBase}" + encodeURIComponent(msg)); 
+                };\n    `;
+            }
             firstActive = false;
         }
     });
 
-    let cssPart = "";
-    if(theme === "light") {
-        cssPart = `
+    let cssPart = theme === "light" ? `
 body { background: #FFFFFF; }
 .profile img { border: 3px solid rgba(0,0,0,0.1); }
 .profile h1 { color: #000000; }
@@ -126,9 +137,7 @@ body { background: #FFFFFF; }
 .link i { position: absolute; left: 65px; top: 50%; transform: translateY(-50%); width: 50px; display: flex; align-items: center; justify-content: center; }
 .fa-whatsapp { font-size: 28px; } .fa-viber { font-size: 25px; } .fa-phone { font-size: 22px; } .fa-telegram { font-size: 25px; } .fa-instagram { font-size: 25px; }
 .shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }
-.footer small, .legal { color: #424242; }`;
-    } else {
-        cssPart = `
+.footer small, .legal { color: #424242; }` : `
 body { background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%); }
 .profile img { border: 2px solid rgba(255, 255, 255, 0.2); }
 .profile h1 { color: #fff; font-weight: bold; }
@@ -138,7 +147,6 @@ body { background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%); 
 .fa-whatsapp { font-size: 28px; } .fa-viber { font-size: 25px; } .fa-phone { font-size: 22px; } .fa-telegram { font-size: 25px; } .fa-instagram { font-size: 25px; }
 .link:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.12); }
 .footer small, .legal { color: #8b8b8b; } .footer { margin-top: 95px; }`;
-    }
 
     const template = `<!DOCTYPE html>
 <html dir="rtl" lang="ku">
@@ -192,13 +200,16 @@ ${cssPart}
   </div>
 </div>
 <script>
+const urlParams = new URLSearchParams(window.location.search);
 let isTracked = false;
+
 function hideEffects() {
     const hand = document.getElementById('click-hand');
     const shineBtn = document.querySelector('.shine-active');
     if(hand) hand.classList.add('hidden');
     if(shineBtn) shineBtn.classList.add('no-shine');
 }
+
 function handleTrack(name, url) {
     hideEffects();
     if(window.ttq && !isTracked) {
@@ -207,10 +218,12 @@ function handleTrack(name, url) {
     }
     setTimeout(() => { window.location.href = url; }, 150);
 }
+
 !function (w, d, t) {
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script");s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(s,e)};
   ttq.load('D6BIIA3C77U1CE9DCUMG'); ttq.page();
 }(window, document, 'ttq');
+
 document.addEventListener("DOMContentLoaded", function() {
     ${btnJs}
     setTimeout(hideEffects, 6000);
