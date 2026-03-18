@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("vb-btn").onclick = function() { 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSu4ffvMP/");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
-                    handleTrack("Viber", "viber://chat?number=9647507252873&text=" + encodeURIComponent(msg)); 
+                    handleTrack("Viber", "viber://chat?number=9647507252873&draft=" + encodeURIComponent(msg)); 
                 };
     document.getElementById("ph-btn").onclick = function() { handleTrack("Phone", "tel:9647507252873"); };
     
