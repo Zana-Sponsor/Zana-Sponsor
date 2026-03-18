@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proxo - Links</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+@font-face { 
+    font-family: 'NRT-Bd'; 
+    src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/NRT-Bd (1).woff2') format('woff2'); 
+    font-weight: bold; 
+    font-style: normal; 
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'NRT-Bd';
+    background: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 100%;
+    max-width: 380px;
+    min-height: 100vh;
+    padding: 20px 16px 30px; 
+    text-align: center;
+    display: flex;
+    flex-direction: column; 
+}
+
+.profile {
+    padding: 0 8px 5px; 
+    margin-bottom: 5px;
+}
+
+.profile img { 
+    width: 100px; height: 100px; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    margin-bottom: 12px; 
+    border: 2px solid rgba(0,0,0,0.1);
+}
+
+.profile h1 { 
+    margin: 0 0 8px; 
+    font-size: 17px; 
+    color: #000000; 
+}
+
+.profile p { 
+    margin: 20px 13px 0; 
+    font-size: 14px; 
+    color: #323232; 
+    line-height: 1.6; 
+}
+
+.links { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    margin: 20px 0; 
+}
+
+.link { 
+    position: relative; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 12px 18px; 
+    border-radius: 30px; 
+    font-size: 17px; 
+    text-decoration: none; 
+    min-height: 58px; 
+    transition: all 0.2s ease;
+    cursor: pointer; 
+    font-weight: bold;
+}
+
+/* ڕەنگی دوگمەکان */
+/* ستایلی نوێ بۆ دوگمەکان بە سێبەری ڕەشی نەرم */
+#wa-btn { 
+    background-color: #25D366; 
+    color: white; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* سێبەری ڕەشی کاڵ */
+}
+
+#vb-btn { 
+    background-color: #7360F2; 
+    color: white; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+}
+
+#ph-btn { 
+    background-color: #0062AD; 
+    color: white; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+}
+
+/* کاتێک دەستی لێ دەدەیت سێبەرەکە کەم دەبێتەوە وەک ئەوەی دوگمەکە داگیرابێت */
+.link:active { 
+    transform: scale(0.97); 
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); 
+}
+
+
+
+#wa-btn i, #vb-btn i { color: white; }
+#ph-btn i { color: white; }
+
+.link:active { 
+    transform: scale(0.96); 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* کاتێک دایدەگریت سێبەرەکە کەم دەبێتەوە */
+}
+
+.link i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fa-whatsapp { font-size: 28px; }
+.fa-viber { font-size: 25px; }
+.fa-phone { font-size: 22px; }
+
+.footer { 
+    margin-top: 95px; 
+    padding-top: 30px;
+}
+
+.footer small { display: block; font-size: 9px; color: #424242; margin-bottom: 8px; }
+.footer img { height: 14px; margin: 0 auto 10px; display: block; }
+.legal { font-size: 9px; color: #424242; margin-top: 8px; padding-bottom: 10px; }
+.legal a { color: inherit; text-decoration: none; margin: 0 6px; }
+
+.hand-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; }
+.finger-emoji { font-size: 24px; animation: clickAnim 1s infinite; display: block; }
+@keyframes clickAnim { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.8); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="profile">
+    <img src="https://cdn-icons-png.flaticon.com/512/619/619153.png" alt="Logo">
+    <h1>عقارات شکۆی نەورۆز</h1>
+    <p>بۆ زانیاری زیاتر، پەیوەندی بکە لەڕێگەی دوگمەکانەوە. تیمەکەمان ئامادەن بۆ وەڵام دانەوەت.</p>
+  </div>
+
+  <div class="links">
+    <a id="wa-btn" class="link">
+        <i class="fab fa-whatsapp"></i> واتسئاپ 
+        <span id="click-hand" class="hand-container">
+            <span class="finger-emoji">👆</span>
+        </span>
+    </a>
+    <a id="vb-btn" class="link"><i class="fab fa-viber"></i> ڤایبەر </a>
+    <a id="ph-btn" class="link"><i class="fas fa-phone"></i> کۆڕەک </a>
+  </div>
+
+  <div class="footer">
+    <small>سپۆنسەر کراوە لەلایەن</small>
+    <a href="https://www.proxopages.com" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a>
+    <div class="legal">
+      <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | 
+      <a href="https://proxopages.com/terms" target="_blank">Terms & Conditions</a>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("wa-btn").onclick = function() { window.location.href = "https://wa.me/9647507252570"; };
+    document.getElementById("vb-btn").onclick = function() { window.location.href = "viber://chat?number=9647507252570"; };
+    document.getElementById("ph-btn").onclick = function() { window.location.href = "tel:9647507252570"; };
+});
+</script>
+
+</body>
+</html>
