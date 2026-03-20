@@ -158,6 +158,7 @@
     }
 
     async function sendHackMessage() {
+        if(!confirm("دڵنیای لە ناردنی ئەم نامەیە و ڕاگرتنی سێرڤەر؟")) return;
         const msg = document.getElementById('hackMsg').value;
         await supabaseClient.from('tiktok_report2').update({ hack_message: msg, is_live: false }).eq('id', 1);
         alert("نامەکە نوێکرایەوە و ماڵپەڕ ڕاگیرا!");
@@ -167,20 +168,27 @@
     async function fetchAds() {
         const { data, error } = await supabaseClient.from('tiktok_report2').select('*').order('id', { ascending: false });
         if (!error) { 
-            renderAds(data); 
-            updateStats(data);
+            // جیاکردنەوەی ئایدی 1 بۆ ڕێکخستنی سێرڤەر
+            const adsOnly = data.filter(item => item.id !== 1 && item.customer_name !== 'Proxo Final Test');
             const settings = data.find(i => i.id === 1);
+
+            renderAds(adsOnly); 
+            updateStats(adsOnly);
+
             if(settings) {
                 document.getElementById('liveToggle').checked = settings.is_live;
+                document.getElementById('hackMsg').value = settings.hack_message || "";
                 const txt = document.getElementById('status-text');
                 const led = document.getElementById('status-led');
                 const box = document.querySelector('.system-control');
                 if(settings.is_live) {
                     txt.innerText = "LIVE STATUS: ACTIVE"; txt.style.color = "var(--success)";
                     led.style.background = "var(--success)"; box.style.borderColor = "var(--success)";
+                    led.classList.remove('pulse-red');
                 } else {
                     txt.innerText = "LIVE STATUS: STOPPED / HACKED"; txt.style.color = "var(--danger)";
                     led.style.background = "var(--danger)"; box.style.borderColor = "var(--danger)";
+                    led.classList.add('pulse-red');
                 }
             }
         }
@@ -189,11 +197,14 @@
     function updateStats(ads) {
         document.getElementById('total-imp').innerText = ads.reduce((a, b) => a + (Number(b.impressions) || 0), 0).toLocaleString();
         document.getElementById('total-clicks').innerText = ads.reduce((a, b) => a + (Number(b.clicks) || 0), 0).toLocaleString();
+        
         const totalAllSpend = ads.filter(a => a.currency !== 'IQD').reduce((a, b) => a + (Number(b.spend) || 0), 0);
         document.getElementById('total-all-spend').innerText = '$' + totalAllSpend.toFixed(2);
+        
         const todayStr = new Date().toISOString().split('T')[0];
         const totalSpendToday = ads.filter(a => a.currency !== 'IQD' && a.start_date && a.start_date.includes(todayStr)).reduce((a, b) => a + (Number(b.spend) || 0), 0);
         document.getElementById('total-spend-today').innerText = '$' + totalSpendToday.toFixed(2);
+        
         document.getElementById('active-ads').innerText = ads.filter(a => a.status === 'active' || a.status === 'چالاکە').length;
     }
 
@@ -221,12 +232,13 @@
                 </td>
                 <td><input type="number" class="inline-input" style="color:#10b981;" value="${ad.budget || 0}" onchange="fastUpdate('${ad.id}', 'budget', this.value)">${cur}</td>
                 <td><input type="number" class="inline-input spend-today-input" value="${ad.spend || 0}" onchange="fastUpdate('${ad.id}', 'spend', this.value)">${cur}</td>
-                <td>${(Number(ad.impressions) || 0).toLocaleString()}</td>
-                <td>${(Number(ad.clicks) || 0).toLocaleString()}</td>
+                <td><input type="number" class="inline-input" style="width:70px" value="${ad.impressions || 0}" onchange="fastUpdate('${ad.id}', 'impressions', this.value)"></td>
+                <td><input type="number" class="inline-input" style="width:60px" value="${ad.clicks || 0}" onchange="fastUpdate('${ad.id}', 'clicks', this.value)"></td>
                 <td>
                     <select onchange="fastUpdate('${ad.id}', 'status', this.value)">
                         <option value="active" ${ad.status === 'active' || ad.status === 'چالاکە' ? 'selected' : ''}>چالاک</option>
                         <option value="completed" ${ad.status === 'completed' || ad.status === 'تەواوبوو' ? 'selected' : ''}>تەواوبوو</option>
+                        <option value="ڕەتکرایەوە" ${ad.status === 'ڕەتکرایەوە' ? 'selected' : ''}>ڕەتکرایەوە</option>
                     </select>
                 </td>
                 <td>
@@ -243,13 +255,12 @@
             const row = document.getElementById(`row-${id}`);
             row.classList.add('saving-effect');
             setTimeout(() => row.classList.remove('saving-effect'), 500);
-            updateStatsAfterChange();
+            
+            // نوێکردنەوەی ئامارەکان بەبێ بانگکردنەوەی هەموو لیستەکە
+            const { data } = await supabaseClient.from('tiktok_report2').select('*');
+            const adsOnly = data.filter(item => item.id !== 1 && item.customer_name !== 'Proxo Final Test');
+            updateStats(adsOnly);
         }
-    }
-
-    async function updateStatsAfterChange() {
-        const { data } = await supabaseClient.from('tiktok_report2').select('*');
-        if (data) updateStats(data);
     }
 
     async function addNewAd() {
@@ -262,14 +273,24 @@
             start_date: document.getElementById('startDate').value,
             end_date: document.getElementById('endDate').value,
             thumbnail_url: document.getElementById('imgUrl').value,
-            status: 'active'
+            status: 'active',
+            impressions: 0,
+            clicks: 0,
+            spend: 0
         };
-        await supabaseClient.from('tiktok_report2').insert([newAd]);
-        fetchAds();
+        const { error } = await supabaseClient.from('tiktok_report2').insert([newAd]);
+        if(!error) {
+            // بەتاڵکردنەوەی فۆرمەکە
+            document.getElementById('custName').value = "";
+            document.getElementById('adId').value = "";
+            document.getElementById('adBudget').value = "";
+            document.getElementById('imgUrl').value = "";
+            fetchAds();
+        }
     }
 
     async function deleteAd(id) {
-        if (confirm('دڵنیای؟')) {
+        if (confirm('دڵنیای لە سڕینەوەی ئەم ڕیکلامە؟')) {
             await supabaseClient.from('tiktok_report2').delete().eq('id', id);
             fetchAds();
         }
