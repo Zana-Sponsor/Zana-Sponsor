@@ -10,20 +10,36 @@
     
     <style>
         :root {
-            --primary: #3b82f6;
-            --accent: #8b5cf6;
-            --success: #10b981;
-            --danger: #ef4444;
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #f8fafc;
-            --border: #334155;
-            --gold: #fbbf24;
+            --primary: #3b82f6; --accent: #8b5cf6; --success: #10b981;
+            --danger: #ef4444; --bg: #0f172a; --card: #1e293b;
+            --text: #f8fafc; --border: #334155; --gold: #fbbf24;
         }
 
         body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.6; }
         .container { max-width: 1550px; margin: 0 auto; }
 
+        /* بەشی کۆنترۆڵی لایڤ */
+        .system-control {
+            background: linear-gradient(45deg, #1e293b, #0f172a); border: 2px solid var(--danger);
+            border-radius: 15px; padding: 20px; margin-bottom: 25px; box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+        .control-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .status-tag { display: flex; align-items: center; gap: 10px; font-weight: 800; text-transform: uppercase; }
+        .pulse-red { width: 12px; height: 12px; background: var(--danger); border-radius: 50%; box-shadow: 0 0 10px var(--danger); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        .toggle-switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--danger); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .hack-group { display: flex; gap: 10px; }
+        .hack-input { background: #000; border: 1px solid var(--danger); color: var(--danger); padding: 10px; border-radius: 8px; flex-grow: 1; font-family: monospace; outline: none; }
+        .btn-hack { background: var(--danger); color: white; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        /* ستایلە ئەسڵییەکان */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .stat-card { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
         .stat-card i { position: absolute; left: -10px; bottom: -15px; font-size: 60px; opacity: 0.1; color: var(--primary); }
@@ -32,28 +48,23 @@
 
         .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 30px; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; align-items: end; }
-        
         label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 5px; }
-        input, select { background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: white; font-family: inherit; width: 100%; box-sizing: border-box; outline: none; font-size: 13px; }
-        input:focus { border-color: var(--primary); }
+        input, select { background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: white; font-family: inherit; width: 100%; outline: none; font-size: 13px; }
 
         .table-wrap { background: var(--card); border-radius: 20px; overflow-x: auto; border: 1px solid var(--border); }
         table { width: 100%; border-collapse: collapse; text-align: right; min-width: 1200px; }
         th { background: rgba(15, 23, 42, 0.5); padding: 15px; font-size: 12px; color: #94a3b8; border-bottom: 2px solid var(--border); }
         td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 
-        .inline-input { background: #0f172a; border: 1px solid var(--border); color: var(--primary); font-weight: 800; padding: 5px; border-radius: 5px; width: 85px; text-align: center; font-family: inherit; }
+        .inline-input { background: #0f172a; border: 1px solid var(--border); color: var(--primary); font-weight: 800; padding: 5px; border-radius: 5px; width: 85px; text-align: center; }
         .spend-today-input { color: #fbbf24 !important; border-color: #fbbf2444; }
-        
         .id-badge { background: rgba(59, 130, 246, 0.2); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-right: 5px; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .date-display { font-size: 11px; color: #94a3b8; margin-top: 4px; line-height: 1.4; }
+        .date-display { font-size: 11px; color: #94a3b8; margin-top: 4px; }
         .date-display b { color: #e2e8f0; }
-
-        .btn-circle { width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: white; transition: 0.3s; }
-        .btn-link { background: var(--accent); }
-        .btn-del { background: var(--danger); }
-        .btn-add { background: var(--primary); font-weight: 800; height: 42px; cursor: pointer; border-radius: 10px; border: none; color: white; font-family: inherit; width: 100%; }
         
+        .btn-circle { width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: white; transition: 0.3s; }
+        .btn-link { background: var(--accent); } .btn-del { background: var(--danger); }
+        .btn-add { background: var(--primary); font-weight: 800; height: 42px; cursor: pointer; border-radius: 10px; border: none; color: white; width: 100%; }
         .thumb { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; }
         .saving-effect { animation: blink 0.5s ease; }
         @keyframes blink { 50% { background: #10b98122; } }
@@ -64,6 +75,23 @@
 <div class="container">
     <div style="margin-bottom:25px;">
         <h1 style="background: linear-gradient(to left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; margin:0;">PROXO ADMIN</h1>
+    </div>
+
+    <div class="system-control">
+        <div class="control-header">
+            <div class="status-tag">
+                <div id="status-led" class="pulse-red"></div>
+                <span id="status-text" style="color: var(--danger);">LIVE STATUS: STOPPED / HACKED</span>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" id="liveToggle" onchange="updateLiveStatus(this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="hack-group">
+            <input type="text" id="hackMsg" class="hack-input" placeholder="نامەی هاککردن بە ئینگلیزی لێرە بنووسە...">
+            <button onclick="sendHackMessage()" class="btn-hack">ناردنی نامە</button>
+        </div>
     </div>
 
     <div class="stats-grid">
@@ -124,41 +152,55 @@
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
+    async function updateLiveStatus(isActive) {
+        await supabaseClient.from('tiktok_report2').update({ is_live: isActive }).eq('id', 1);
+        fetchAds(); 
+    }
+
+    async function sendHackMessage() {
+        const msg = document.getElementById('hackMsg').value;
+        await supabaseClient.from('tiktok_report2').update({ hack_message: msg, is_live: false }).eq('id', 1);
+        alert("نامەکە نوێکرایەوە و ماڵپەڕ ڕاگیرا!");
+        fetchAds();
+    }
+
     async function fetchAds() {
         const { data, error } = await supabaseClient.from('tiktok_report2').select('*').order('id', { ascending: false });
-        if (!error) { renderAds(data); updateStats(data); }
+        if (!error) { 
+            renderAds(data); 
+            updateStats(data);
+            const settings = data.find(i => i.id === 1);
+            if(settings) {
+                document.getElementById('liveToggle').checked = settings.is_live;
+                const txt = document.getElementById('status-text');
+                const led = document.getElementById('status-led');
+                const box = document.querySelector('.system-control');
+                if(settings.is_live) {
+                    txt.innerText = "LIVE STATUS: ACTIVE"; txt.style.color = "var(--success)";
+                    led.style.background = "var(--success)"; box.style.borderColor = "var(--success)";
+                } else {
+                    txt.innerText = "LIVE STATUS: STOPPED / HACKED"; txt.style.color = "var(--danger)";
+                    led.style.background = "var(--danger)"; box.style.borderColor = "var(--danger)";
+                }
+            }
+        }
     }
 
     function updateStats(ads) {
         document.getElementById('total-imp').innerText = ads.reduce((a, b) => a + (Number(b.impressions) || 0), 0).toLocaleString();
         document.getElementById('total-clicks').innerText = ads.reduce((a, b) => a + (Number(b.clicks) || 0), 0).toLocaleString();
-        
-        // کۆی گشتی هەموو خەرجییەکان لە هەموو کاتێکدا (بۆ USD)
         const totalAllSpend = ads.filter(a => a.currency !== 'IQD').reduce((a, b) => a + (Number(b.spend) || 0), 0);
         document.getElementById('total-all-spend').innerText = '$' + totalAllSpend.toFixed(2);
-        
-        // فلتەرکردنی خەرجی تەنها بۆ بەرواری ئەمڕۆ
         const todayStr = new Date().toISOString().split('T')[0];
-        const totalSpendToday = ads
-            .filter(a => a.currency !== 'IQD' && a.start_date && a.start_date.includes(todayStr))
-            .reduce((a, b) => a + (Number(b.spend) || 0), 0);
-            
+        const totalSpendToday = ads.filter(a => a.currency !== 'IQD' && a.start_date && a.start_date.includes(todayStr)).reduce((a, b) => a + (Number(b.spend) || 0), 0);
         document.getElementById('total-spend-today').innerText = '$' + totalSpendToday.toFixed(2);
-        
         document.getElementById('active-ads').innerText = ads.filter(a => a.status === 'active' || a.status === 'چالاکە').length;
-    }
-
-    function formatDT(dt) {
-        if(!dt) return 'دیاری نەکراوە';
-        return dt.replace('T', ' ');
     }
 
     function renderAds(ads) {
         const list = document.getElementById('ads-list');
         list.innerHTML = ads.map(ad => {
-            const isIQD = ad.currency === 'IQD';
-            const cur = isIQD ? ' د.ع' : ' $';
-            
+            const cur = ad.currency === 'IQD' ? ' د.ع' : ' $';
             return `
             <tr id="row-${ad.id}">
                 <td><img src="${ad.thumbnail_url || 'https://via.placeholder.com/45'}" class="thumb"></td>
@@ -167,10 +209,7 @@
                         <input type="text" class="inline-input" style="width:140px; text-align:right; color:white; border:none; background:none; font-weight: 800;" value="${ad.customer_name || ''}" onchange="fastUpdate('${ad.id}', 'customer_name', this.value)">
                         <span class="id-badge">ID: ${ad.ad_id || 'N/A'}</span>
                     </div>
-                    <div class="date-display">
-                        دەستپێکردن: <b>${formatDT(ad.start_date)}</b><br>
-                        کۆتایی: <b>${formatDT(ad.end_date)}</b>
-                    </div>
+                    <div class="date-display">دەستپێکردن: <b>${ad.start_date?.replace('T',' ') || '---'}</b><br>کۆتایی: <b>${ad.end_date?.replace('T',' ') || '---'}</b></div>
                 </td>
                 <td>
                     <select onchange="fastUpdate('${ad.id}', 'platform', this.value)" style="width:90px; padding:3px; font-size:11px;">
@@ -180,25 +219,19 @@
                         <option value="snapchat" ${ad.platform === 'snapchat' ? 'selected' : ''}>Snapchat</option>
                     </select>
                 </td>
-                <td>
-                    <input type="number" class="inline-input" style="color:#10b981;" value="${ad.budget || 0}" onchange="fastUpdate('${ad.id}', 'budget', this.value)">
-                    <span style="font-size:10px;">${cur}</span>
-                </td>
-                <td>
-                    <input type="number" class="inline-input spend-today-input" value="${ad.spend || 0}" onchange="fastUpdate('${ad.id}', 'spend', this.value)">
-                    <span style="font-size:10px;">${cur}</span>
-                </td>
+                <td><input type="number" class="inline-input" style="color:#10b981;" value="${ad.budget || 0}" onchange="fastUpdate('${ad.id}', 'budget', this.value)">${cur}</td>
+                <td><input type="number" class="inline-input spend-today-input" value="${ad.spend || 0}" onchange="fastUpdate('${ad.id}', 'spend', this.value)">${cur}</td>
                 <td>${(Number(ad.impressions) || 0).toLocaleString()}</td>
                 <td>${(Number(ad.clicks) || 0).toLocaleString()}</td>
                 <td>
-                    <select onchange="fastUpdate('${ad.id}', 'status', this.value)" style="padding:4px; font-size:11px;">
+                    <select onchange="fastUpdate('${ad.id}', 'status', this.value)">
                         <option value="active" ${ad.status === 'active' || ad.status === 'چالاکە' ? 'selected' : ''}>چالاک</option>
                         <option value="completed" ${ad.status === 'completed' || ad.status === 'تەواوبوو' ? 'selected' : ''}>تەواوبوو</option>
                     </select>
                 </td>
                 <td>
                     <button onclick="deleteAd('${ad.id}')" class="btn-circle btn-del"><i class="fas fa-trash"></i></button>
-                    <a href="https://proxopages.com/live?id=${ad.id}" target="_blank" class="btn-circle btn-link" style="margin-right:4px;"><i class="fas fa-link"></i></a>
+                    <a href="https://proxopages.com/live?id=${ad.id}" target="_blank" class="btn-circle btn-link"><i class="fas fa-link"></i></a>
                 </td>
             </tr>`;
         }).join('');
@@ -207,46 +240,39 @@
     async function fastUpdate(id, field, value) {
         const { error } = await supabaseClient.from('tiktok_report2').update({ [field]: value }).eq('id', id);
         if (!error) {
-            document.getElementById(`row-${id}`).classList.add('saving-effect');
-            setTimeout(() => document.getElementById(`row-${id}`).classList.remove('saving-effect'), 500);
+            const row = document.getElementById(`row-${id}`);
+            row.classList.add('saving-effect');
+            setTimeout(() => row.classList.remove('saving-effect'), 500);
             updateStatsAfterChange();
-        }
-    }
-
-    async function addNewAd() {
-        const name = document.getElementById('custName').value;
-        const ad_id = document.getElementById('adId').value.replace('#', '').trim();
-        if (!name || !ad_id) return alert('ناو و ئایدی پێویستن');
-
-        const newAd = {
-            customer_name: name,
-            ad_id: ad_id,
-            platform: document.getElementById('adPlatform').value,
-            budget: parseFloat(document.getElementById('adBudget').value) || 0,
-            currency: document.getElementById('adCurrency').value,
-            start_date: document.getElementById('startDate').value || null,
-            end_date: document.getElementById('endDate').value || null,
-            thumbnail_url: document.getElementById('imgUrl').value || 'https://via.placeholder.com/45',
-            status: 'active', spend: 0, impressions: 0, clicks: 0
-        };
-
-        const { error } = await supabaseClient.from('tiktok_report2').insert([newAd]);
-        if (!error) {
-            document.querySelectorAll('input').forEach(i => i.value = '');
-            fetchAds();
-        }
-    }
-
-    async function deleteAd(id) {
-        if (confirm('دڵنیای؟')) {
-            const { error } = await supabaseClient.from('tiktok_report2').delete().eq('id', id);
-            if (!error) fetchAds();
         }
     }
 
     async function updateStatsAfterChange() {
         const { data } = await supabaseClient.from('tiktok_report2').select('*');
         if (data) updateStats(data);
+    }
+
+    async function addNewAd() {
+        const newAd = {
+            customer_name: document.getElementById('custName').value,
+            ad_id: document.getElementById('adId').value,
+            platform: document.getElementById('adPlatform').value,
+            budget: document.getElementById('adBudget').value,
+            currency: document.getElementById('adCurrency').value,
+            start_date: document.getElementById('startDate').value,
+            end_date: document.getElementById('endDate').value,
+            thumbnail_url: document.getElementById('imgUrl').value,
+            status: 'active'
+        };
+        await supabaseClient.from('tiktok_report2').insert([newAd]);
+        fetchAds();
+    }
+
+    async function deleteAd(id) {
+        if (confirm('دڵنیای؟')) {
+            await supabaseClient.from('tiktok_report2').delete().eq('id', id);
+            fetchAds();
+        }
     }
 
     window.onload = fetchAds;
