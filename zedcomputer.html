@@ -91,18 +91,21 @@ function handleTrack(name, url) {
   ttq.load('D6BIIA3C77U1CE9DCUMG'); ttq.page();
 }(window, document, 'ttq');
 
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("wa-btn").onclick = function() { 
+document.addEventListener("DOMContentLoaded", function();
+    document.getElementById("wa-btn").onclick = function(e) { 
+        e.preventDefault(); 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSu4ffvMP/");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
                     handleTrack("WhatsApp", "https://wa.me/9647507252873?text=" + encodeURIComponent(msg)); 
                 };
-    document.getElementById("vb-btn").onclick = function() { 
+    document.getElementById("vb-btn").onclick = function(e) { 
+        e.preventDefault();
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSu4ffvMP/");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
                     handleTrack("Viber", "viber://chat?number=9647507252873&draft=" + encodeURIComponent(msg)); 
                 };
-    document.getElementById("ph-btn").onclick = function() { handleTrack("Phone", "tel:9647507252873"); };
+    document.getElementById("ph-btn").onclick = function(e) { 
+        e.preventDefault(); handleTrack("Phone", "tel:9647507252873"); };
     
     setTimeout(hideEffects, 6000);
 });
