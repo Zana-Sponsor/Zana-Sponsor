@@ -91,24 +91,31 @@ function handleTrack(name, url) {
   ttq.load('D6BIIA3C77U1CE9DCUMG'); ttq.page();
 }(window, document, 'ttq');
 
-document.addEventListener("DOMContentLoaded", function();
+document.addEventListener("DOMContentLoaded", function() {
+    // WhatsApp
     document.getElementById("wa-btn").onclick = function(e) { 
-        e.preventDefault(); 
-                    const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSu4ffvMP/");
-                    const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
-                    handleTrack("WhatsApp", "https://wa.me/9647507252873?text=" + encodeURIComponent(msg)); 
-                };
+        e.preventDefault();
+        const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSu4ffvMP/");
+        const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
+        handleTrack("WhatsApp", "https://wa.me/9647507252873?text=" + encodeURIComponent(msg)); 
+    };
+
+    // Viber
     document.getElementById("vb-btn").onclick = function(e) { 
         e.preventDefault();
-                    const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSu4ffvMP/");
-                    const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
-                    handleTrack("Viber", "viber://chat?number=9647507252873&draft=" + encodeURIComponent(msg)); 
-                };
+        const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSu4ffvMP/");
+        const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
+        handleTrack("Viber", "viber://chat?number=9647507252873&draft=" + encodeURIComponent(msg)); 
+    };
+
+    // Phone - ڕاستکراوەتەوە لێرەدا
     document.getElementById("ph-btn").onclick = function(e) { 
-        e.preventDefault(); handleTrack("Phone", "tel:9647507252873"); };
+        e.preventDefault(); 
+        handleTrack("Phone", "tel:9647507252873"); 
+    };
     
     setTimeout(hideEffects, 6000);
-});
+}); // لێرەدا کۆتایی بە هەموو فەنکشنەکان دێت بە دروستی
 </script>
 </body>
 </html>
