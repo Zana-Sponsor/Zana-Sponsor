@@ -46,6 +46,49 @@
         @keyframes fade-text { from { opacity: 0.4; } to { opacity: 1; } }
         /* ---------------------------- */
 
+        /* Countdown Timer Styles */
+        .countdown-container {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .countdown-label {
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .timer-segment {
+            background: var(--soft-bg);
+            padding: 8px;
+            border-radius: 10px;
+            min-width: 55px;
+        }
+        .timer-num {
+            display: block;
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+        .timer-text {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-gray);
+        }
+
         .main-header { background: white; padding: 15px 5%; border-bottom: 2px dashed var(--border); position: sticky; top: 0; z-index: 100; }
         .header-content { max-width: 500px; margin: auto; display: flex; justify-content: space-between; align-items: center; }
         .logo-img { height: 22px; }
@@ -199,6 +242,30 @@
     </header>
 
     <div class="container">
+        <div class="countdown-container" id="proxo-countdown">
+            <div class="countdown-label">
+                <i class="fas fa-clock"></i> گەڕانەوەی خزمەتگوزارییەکان
+            </div>
+            <div class="timer-display">
+                <div class="timer-segment">
+                    <span class="timer-num" id="days">00</span>
+                    <span class="timer-text">ڕۆژ</span>
+                </div>
+                <div class="timer-segment">
+                    <span class="timer-num" id="hours">00</span>
+                    <span class="timer-text">کاتژمێر</span>
+                </div>
+                <div class="timer-segment">
+                    <span class="timer-num" id="minutes">00</span>
+                    <span class="timer-text">خولەک</span>
+                </div>
+                <div class="timer-segment">
+                    <span class="timer-num" id="seconds">00</span>
+                    <span class="timer-text">چرکە</span>
+                </div>
+            </div>
+        </div>
+
         <div class="filter-wrapper">
             <button class="filter-btn active" onclick="filterAds('all', this)"><i class="fas fa-list-ul"></i> هەمووی</button>
             <button class="filter-btn" onclick="filterAds('چالاکە', this)"><i class="fas fa-bolt"></i> چالاک</button>
@@ -220,6 +287,29 @@
 
         let allAdsData = [];
         let currentFilter = 'all';
+
+        // --- Countdown Timer Logic ---
+        const targetDate = new Date("March 30, 2026 00:00:00").getTime();
+
+        const timerInterval = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+
+            if (distance < 0) {
+                clearInterval(timerInterval);
+                document.getElementById("proxo-countdown").style.display = "none";
+            }
+        }, 1000);
 
         async function downloadReceipt(id, name) {
             const card = document.getElementById(`card-${id}`);
