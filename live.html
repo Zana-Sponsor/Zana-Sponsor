@@ -3,509 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxo Live - پسوولەی ڕیکلامەکان</title>
+    <title>Proxo - Maintenance Mode</title>
     <link rel="icon" type="image/jpeg" href="https://image2url.com/r2/default/images/1772248056478-a5a04d98-be5f-4ee9-8f08-09db2be8fd1a.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        :root { --primary: #22c55e; --soft-bg: #e2e8f0; --card-white: #ffffff; --text-dark: #0f172a; --text-gray: #64748b; --border: #cbd5e1; --red: #ef4444; }
-        body { background-color: var(--soft-bg); color: var(--text-dark); font-family: 'Vazirmatn', sans-serif; margin: 0; padding: 0; }
-
-        /* --- New Modern Loading Screen --- */
-        #loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 9999;
-            transition: opacity 0.6s ease, visibility 0.6s;
-        }
-        .loader-box {
-            position: relative; width: 100px; height: 100px;
+        :root { --primary: #22c55e; --bg: #f3f4f6; }
+        
+        body, html { 
+            margin: 0; padding: 0; height: 100%; width: 100%;
+            font-family: 'Vazirmatn', sans-serif;
+            background: radial-gradient(circle at center, #ffffff 0%, #f3f4f6 100%);
             display: flex; align-items: center; justify-content: center;
+            color: #1e293b;
         }
-        .loader-circle {
-            position: absolute; width: 100%; height: 100%;
-            border: 4px solid transparent; border-top-color: #22c55e;
-            border-bottom-color: #22c55e; border-radius: 50%;
-            animation: spin-custom 1.5s linear infinite;
-        }
-        .loader-circle::before {
-            content: ""; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
-            border: 4px solid transparent; border-left-color: #0f172a;
-            border-right-color: #0f172a; border-radius: 50%;
-            animation: spin-custom 2s linear infinite reverse;
-        }
-        .loader-img { width: 50px; height: 50px; object-fit: contain; border-radius: 10px; }
-        .loading-text { 
-            margin-top: 25px; font-weight: 900; color: #0f172a; 
-            font-size: 14px; letter-spacing: 1px;
-            animation: fade-text 1s infinite alternate;
-        }
-        @keyframes spin-custom { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes fade-text { from { opacity: 0.4; } to { opacity: 1; } }
-        /* ---------------------------- */
 
-        /* Countdown Timer Styles */
-        .countdown-container {
-            background: #ffffff;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
+        .container {
             text-align: center;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            width: 95%;
+            max-width: 480px;
+            padding: 20px;
         }
-        .countdown-label {
-            font-size: 12px;
-            font-weight: 900;
-            color: var(--text-dark);
-            margin-bottom: 10px;
+
+        .logo {
+            width: 80px; height: 80px; border-radius: 24px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            border: 2px solid white;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 50px;
+            padding: 45px 25px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.03);
+        }
+
+        .maint-icon {
+            font-size: 30px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.2));
+        }
+
+        h1 { font-size: 22px; font-weight: 900; margin: 0 0 12px; color: #0f172a; }
+        p { font-size: 14px; color: #64748b; line-height: 1.8; margin-bottom: 40px; }
+
+        /* --- New Neumorphic Timer Design --- */
+        .timer-grid {
             display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 45px;
+        }
+        .timer-item {
+            flex: 1;
+            background: #f3f4f6;
+            padding: 18px 5px;
+            border-radius: 24px;
+            box-shadow: inset 6px 6px 12px #e5e7eb, inset -6px -6px 12px #ffffff;
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: transform 0.3s ease;
+        }
+        .timer-item:hover { transform: scale(1.05); }
+        
+        .t-num {
+            font-size: 26px;
+            font-weight: 900;
+            color: #0f172a;
+            display: block;
+            line-height: 1;
+        }
+        .t-label {
+            font-size: 10px;
+            color: #94a3b8;
+            font-weight: 700;
+            margin-top: 6px;
+            display: block;
+        }
+
+        /* Highlight Seconds */
+        .timer-item.active {
+            box-shadow: inset 4px 4px 8px rgba(34, 197, 94, 0.1), inset -4px -4px 8px #ffffff;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+        .timer-item.active .t-num { color: var(--primary); }
+
+        /* Modern WA Button */
+        .wa-btn {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 12px;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 22px;
+            font-size: 15px;
+            font-weight: 800;
+            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .timer-display {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        .timer-segment {
-            background: var(--soft-bg);
-            padding: 8px;
-            border-radius: 10px;
-            min-width: 55px;
-        }
-        .timer-num {
-            display: block;
-            font-size: 18px;
-            font-weight: 900;
-            color: var(--primary);
-        }
-        .timer-text {
-            font-size: 9px;
-            font-weight: 700;
-            color: var(--text-gray);
+        .wa-btn:hover { 
+            background: #1eb956; 
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(37, 211, 102, 0.3);
         }
 
-        .main-header { background: white; padding: 15px 5%; border-bottom: 2px dashed var(--border); position: sticky; top: 0; z-index: 100; }
-        .header-content { max-width: 500px; margin: auto; display: flex; justify-content: space-between; align-items: center; }
-        .logo-img { height: 22px; }
-        
-        .live-indicator {
-            display: flex; align-items: center; gap: 6px; background: #f0fdf4;
-            padding: 4px 12px; border-radius: 50px; color: #16a34a; font-size: 11px; font-weight: 900; border: 1px solid #dcfce7;
-        }
-        .live-dot { width: 7px; height: 7px; background-color: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-        }
-
-        .refresh-btn { cursor: pointer; width: 35px; height: 35px; background: var(--soft-bg); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-dark); border: none; }
-        .spinning { animation: spin 0.8s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .container { padding: 20px 5%; max-width: 500px; margin: auto; }
-
-        .filter-wrapper { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 25px; }
-        .filter-btn { white-space: nowrap; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: white; font-size: 11px; font-weight: 700; cursor: pointer; color: var(--text-gray); }
-        .filter-btn.active { background: var(--text-dark); color: white; border-color: var(--text-dark); }
-
-        .ad-card { 
-            background: var(--card-white); 
-            padding: 25px 20px 40px 20px; 
-            margin-bottom: 30px; 
-            position: relative; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
-            clip-path: polygon(
-                0% 0%, 100% 0%, 100% 97%, 
-                99% 100%, 98% 97%, 97% 100%, 96% 97%, 95% 100%, 94% 97%, 93% 100%, 92% 97%, 91% 100%, 90% 97%, 89% 100%, 88% 97%, 87% 100%, 86% 97%, 85% 100%, 84% 97%, 83% 100%, 82% 97%, 81% 100%, 80% 97%, 79% 100%, 78% 97%, 77% 100%, 76% 97%, 75% 100%, 74% 97%, 73% 100%, 72% 97%, 71% 100%, 70% 97%, 69% 100%, 68% 97%, 67% 100%, 66% 97%, 65% 100%, 64% 97%, 63% 100%, 62% 97%, 61% 100%, 60% 97%, 59% 100%, 58% 97%, 57% 100%, 56% 97%, 55% 100%, 54% 97%, 53% 100%, 52% 97%, 51% 100%, 50% 97%, 49% 100%, 48% 97%, 47% 100%, 46% 97%, 45% 100%, 44% 97%, 43% 100%, 42% 97%, 41% 100%, 40% 97%, 39% 100%, 38% 97%, 37% 100%, 36% 97%, 35% 100%, 34% 97%, 33% 100%, 32% 97%, 31% 100%, 30% 97%, 29% 100%, 28% 97%, 27% 100%, 26% 97%, 25% 100%, 24% 97%, 23% 100%, 22% 97%, 21% 100%, 20% 97%, 19% 100%, 18% 97%, 17% 100%, 16% 97%, 15% 100%, 14% 97%, 13% 100%, 12% 97%, 11% 100%, 10% 97%, 9% 100%, 8% 97%, 7% 100%, 6% 97%, 5% 100%, 4% 97%, 3% 100%, 2% 97%, 1% 100%, 0% 97%
-            );
-        }
-
-        .ad-card::before {
-            content: ""; position: absolute; top: 60px; left: 20px; right: 20px; border-top: 1px dashed #e2e8f0;
-        }
-        
-        .id-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .id-badge { color: #94a3b8; font-size: 10px; font-weight: 700; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 4px; display: flex; align-items: center; gap: 5px; }
-        .platform-chip { font-size: 10px; font-weight: 900; color: var(--text-gray); display: flex; align-items: center; gap: 5px; }
-        
-        .middle-section { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; text-align: right; }
-        
-        .thumb-wrapper { position: relative; width: 75px; height: 75px; flex-shrink: 0; }
-        .ad-thumb { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; border: 2px solid #f1f5f9; }
-        .customer-overlay-name { 
-            position: absolute; bottom: 0; left: 0; right: 0; 
-            background: rgba(0,0,0,0.6); color: white; 
-            font-size: 9px; font-weight: 700; text-align: center; 
-            padding: 2px 0; border-radius: 0 0 10px 10px;
-            backdrop-filter: blur(2px);
-        }
-
-        .customer-info { flex: 1; }
-        .budget-status-row { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 5px; }
-        
-        .budget-tag { 
-            font-size: 10px; 
-            font-weight: 700; 
-            color: var(--text-dark); 
-            display: flex; 
-            align-items: center; 
-            gap: 5px; 
-            background: #f1f5f9; 
-            padding: 4px 10px; 
-            border-radius: 6px;
-            width: fit-content;
-        }
-        
-        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid currentColor; width: fit-content; }
-        .active-bg { color: #16a34a; background: #f0fdf4; }
-        .completed-bg { color: #64748b; background: #f1f5f9; }
-        .rejected-bg { color: #dc2626; background: #fef2f2; }
-        .pending-bg { color: #f59e0b; background: #fffbeb; }
-
-        .time-info { border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; padding: 12px 0; margin: 15px 0; display: flex; justify-content: space-between; }
-        .time-block { text-align: right; }
-        .time-label { display: flex; align-items: center; gap: 4px; font-size: 9px; color: var(--text-gray); text-transform: uppercase; margin-bottom: 2px; }
-        .time-val { display: block; font-size: 11px; font-weight: 700; }
-
-        .progress-section { margin-bottom: 20px; }
-        .progress-info { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; margin-bottom: 6px; color: #94a3b8; }
-        .progress-bar-bg { background: #f8fafc; height: 6px; border: 1px solid #f1f5f9; border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; transition: width 0.5s linear; }
-        .bg-red { background: var(--red) !important; }
-
-        .stats-grid { border-top: 1px dashed #e2e8f0; padding-top: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .stat-box { text-align: center; }
-        .stat-label { font-size: 9px; color: var(--text-gray); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 3px; }
-        .stat-value { font-size: 11px; font-weight: 900; }
-
-        .sponsored-footer { margin-top: 25px; text-align: center; font-size: 9px; color: #94a3b8; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; border-top: 1px solid #f8fafc; padding-top: 10px; }
-        .download-btn { background: #27272a; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 10px; display: inline-flex; align-items: center; gap: 4px; }
-        .main-footer { text-align: center; padding: 15px; color: #94a3b8; font-size: 9.5px; font-weight: 500; opacity: 0.8; }
-
-        /* Notification Style */
-        #ad-notification {
-            position: fixed; bottom: -120px; left: 50%; transform: translateX(-50%);
-            background: white; color: var(--text-dark); padding: 10px;
-            border-radius: 15px; z-index: 2000;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            display: flex; align-items: center; gap: 12px;
-            transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            width: 90%; max-width: 350px; border: 1px solid #e2e8f0;
-            text-decoration: none; cursor: pointer;
-        }
-        #ad-notification.show { bottom: 30px; }
-        .notif-img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; }
-        .notif-content { display: flex; flex-direction: column; }
-        .notif-title { font-size: 11px; font-weight: 900; color: #16a34a; margin-bottom: 2px; }
-        .notif-name { font-size: 12px; font-weight: 700; color: var(--text-dark); }
-        .notif-action { font-size: 10px; font-weight: 500; color: var(--text-gray); }
+        .footer-brand { margin-top: 50px; font-size: 10px; color: #cbd5e1; font-weight: 800; letter-spacing: 4px; }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <div class="loader-box">
-            <div class="loader-circle"></div>
-            <img src="https://image2url.com/r2/default/images/1772248056478-a5a04d98-be5f-4ee9-8f08-09db2be8fd1a.jpg" class="loader-img" alt="Proxo">
-        </div>
-        <div class="loading-text">خەریکی گەڕانین...</div>
-    </div>
-
-    <div id="ad-notification">
-        <img src="" class="notif-img" id="notif-img-src">
-        <div class="notif-content">
-            <span class="notif-title"><i class="fas fa-bolt"></i> ئێستا چالاکە</span>
-            <span class="notif-name" id="notif-customer-name">---</span>
-            <span class="notif-action">کلیک لێرە بکە بۆ بینین</span>
-        </div>
-    </div>
-
-    <header class="main-header">
-        <div class="header-content">
-            <a href="https://www.proxopages.com">
-                <img src="https://image2url.com/r2/default/images/1771403050640-6d5e5c5e-a1dc-45de-a7f4-b5f386e82668.png" class="logo-img">
-            </a>
-            <div class="live-indicator">
-                <div class="live-dot"></div>
-                <span>ڕاستەوخۆ</span>
-            </div>
-            <button class="refresh-btn" onclick="refreshData()">
-                <i class="fas fa-sync-alt" id="refreshIcon"></i>
-            </button>
-        </div>
-    </header>
-
     <div class="container">
-        <div class="countdown-container" id="proxo-countdown">
-            <div class="countdown-label">
-                <i class="fas fa-clock"></i> گەڕانەوەی خزمەتگوزارییەکان
+        <img src="https://image2url.com/r2/default/images/1772248056478-a5a04d98-be5f-4ee9-8f08-09db2be8fd1a.jpg" class="logo">
+
+        <div class="glass-panel">
+            <i class="fas fa-screwdriver-wrench maint-icon"></i>
+            
+            <h1>سیستەم لە چاککردنەوەدایە</h1>
+            <p>پڕۆکسۆ هەوڵدەدات بۆ پێشکەشکردنی باشترین خزمەتگوزاری بە ئێوەی ئازیز، کەمێکی تر چاوەڕوان بن.</p>
+
+            <div class="timer-grid">
+                <div class="timer-item">
+                    <span class="t-num" id="d">00</span>
+                    <span class="t-label">ڕۆژ</span>
+                </div>
+                <div class="timer-item">
+                    <span class="t-num" id="h">00</span>
+                    <span class="t-label">کاژێر</span>
+                </div>
+                <div class="timer-item">
+                    <span class="t-num" id="m">00</span>
+                    <span class="t-label">خولەک</span>
+                </div>
+                <div class="timer-item active">
+                    <span class="t-num" id="s">00</span>
+                    <span class="t-label">چرکە</span>
+                </div>
             </div>
-            <div class="timer-display">
-                <div class="timer-segment">
-                    <span class="timer-num" id="days">00</span>
-                    <span class="timer-text">ڕۆژ</span>
-                </div>
-                <div class="timer-segment">
-                    <span class="timer-num" id="hours">00</span>
-                    <span class="timer-text">کاتژمێر</span>
-                </div>
-                <div class="timer-segment">
-                    <span class="timer-num" id="minutes">00</span>
-                    <span class="timer-text">خولەک</span>
-                </div>
-                <div class="timer-segment">
-                    <span class="timer-num" id="seconds">00</span>
-                    <span class="timer-text">چرکە</span>
-                </div>
-            </div>
+
+            <a href="https://wa.me/9647758887488" class="wa-btn">
+                <i class="fab fa-whatsapp fa-lg"></i>
+                پەیوەندی بۆ هاوکاری
+            </a>
         </div>
 
-        <div class="filter-wrapper">
-            <button class="filter-btn active" onclick="filterAds('all', this)"><i class="fas fa-list-ul"></i> هەمووی</button>
-            <button class="filter-btn" onclick="filterAds('چالاکە', this)"><i class="fas fa-bolt"></i> چالاک</button>
-            <button class="filter-btn" onclick="filterAds('تەواوبوو', this)"><i class="fas fa-check"></i> کۆتایی</button>
-            <button class="filter-btn" onclick="filterAds('ڕەتکرایەوە', this)"><i class="fas fa-times"></i> ڕەتکراوە</button>
-        </div>
-        <div id="live-ads-container"></div>
+        <div class="footer-brand">PROXO TEAM</div>
     </div>
 
-    <footer class="main-footer">
-        .All Rights Reserved. Proxo Team © 2026
-    </footer>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
-        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
-        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
-
-        let allAdsData = [];
-        let currentFilter = 'all';
-
-        // --- Countdown Timer Logic ---
         const targetDate = new Date("March 30, 2026 00:00:00").getTime();
 
-        const timerInterval = setInterval(function() {
+        function updateCountdown() {
             const now = new Date().getTime();
             const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.querySelectorAll(".t-num").forEach(el => el.innerText = "00");
+                return;
+            }
 
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById("days").innerText = days.toString().padStart(2, '0');
-            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-
-            if (distance < 0) {
-                clearInterval(timerInterval);
-                document.getElementById("proxo-countdown").style.display = "none";
-            }
-        }, 1000);
-
-        async function downloadReceipt(id, name) {
-            const card = document.getElementById(`card-${id}`);
-            const btnContainer = card.querySelector('.download-container');
-            if(btnContainer) btnContainer.style.display = 'none';
-
-            html2canvas(card, { useCORS: true, scale: 4, backgroundColor: "#ffffff", logging: false, dpi: 300
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Proxo-Receipt-${name}.png`;
-                link.href = canvas.toDataURL("image/png", 1.0);
-                link.click();
-                if(btnContainer) btnContainer.style.display = 'block';
-            });
+            document.getElementById("d").innerText = days.toString().padStart(2, '0');
+            document.getElementById("h").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("m").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("s").innerText = seconds.toString().padStart(2, '0');
         }
 
-        async function refreshData() {
-            document.getElementById('refreshIcon').classList.add('spinning');
-            await fetchLiveAds();
-            applyCurrentFilter();
-            setTimeout(() => document.getElementById('refreshIcon').classList.remove('spinning'), 800);
-        }
-
-        function formatArabicDateTime(dateString) {
-            if (!dateString) return "--/-- --:--";
-            const date = new Date(dateString);
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            let hours = date.getHours();
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            let period = hours >= 12 ? (hours >= 16 ? (hours >= 20 ? "شەو" : "ئێوارە") : "نیوەڕۆ") : "بەیانی";
-            hours = hours % 12 || 12; 
-            return `${month}/${day} - ${hours}:${minutes} ${period}`;
-        }
-
-        function showOnlyThisAd(adId) {
-            const filtered = allAdsData.filter(ad => ad.id == adId);
-            renderAds(filtered);
-            document.getElementById('ad-notification').classList.remove('show');
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function showAdNotification(ad) {
-            const storageKey = `notified_ad_${ad.id}`;
-            if (localStorage.getItem(storageKey)) return;
-
-            const notification = document.getElementById('ad-notification');
-            const img = document.getElementById('notif-img-src');
-            const name = document.getElementById('notif-customer-name');
-            
-            img.src = ad.thumbnail_url || 'https://via.placeholder.com/80';
-            name.innerText = ad.customer_name;
-            
-            notification.onclick = () => showOnlyThisAd(ad.id);
-            notification.classList.add('show');
-            localStorage.setItem(storageKey, 'true');
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 6000);
-        }
-
-        async function fetchLiveAds() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const specificId = urlParams.get('id');
-            let query = supabaseClient.from('tiktok_report2').select('*');
-            query = query.neq('customer_name', 'Proxo Final Test');
-            if (specificId) query = query.eq('id', specificId);
-
-            const { data, error } = await query;
-            if (error) {
-                hideLoading();
-                return;
-            }
-
-            let firstActiveAd = null;
-
-            allAdsData = data.map(ad => {
-                const now = new Date();
-                const start = new Date(ad.start_date);
-                const end = new Date(ad.end_date);
-                let s = {};
-                let prog = 0;
-
-                if (ad.status === 'ڕەتکرایەوە') {
-                    s = { text: "ڕەتکرایەوە", icon: "fa-circle-xmark", class: "rejected-bg", order: 4 };
-                } else if (ad.status === 'تەواوبوو' || now > end) {
-                    s = { text: "تەواوبوو", icon: "fa-check-double", class: "completed-bg", order: 3 };
-                    prog = 100;
-                } else if (now < start) {
-                    s = { text: "کات بۆ دانراو", icon: "fa-calendar-check", class: "pending-bg", order: 2 };
-                } else {
-                    s = { text: "چالاکە", icon: "fa-clock", class: "active-bg", order: 1 };
-                    prog = ((now - start) / (end - start)) * 100;
-                    if (!firstActiveAd) firstActiveAd = ad;
-                }
-                return { ...ad, statusInfo: s, currentProgress: Math.min(Math.max(prog, 0), 100) };
-            }).sort((a, b) => a.statusInfo.order - b.statusInfo.order);
-
-            renderAds(allAdsData);
-            applyCurrentFilter();
-
-            if (firstActiveAd) {
-                showAdNotification(firstActiveAd);
-            }
-            
-            hideLoading();
-        }
-
-        function hideLoading() {
-            const loader = document.getElementById('loading-screen');
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.style.visibility = 'hidden';
-            }, 600);
-        }
-
-        function filterAds(status, btn) {
-            currentFilter = status;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderAds(status === 'all' ? allAdsData : allAdsData.filter(ad => ad.statusInfo.text === status));
-        }
-
-        function applyCurrentFilter() {
-            renderAds(currentFilter === 'all' ? allAdsData : allAdsData.filter(ad => ad.statusInfo.text === currentFilter));
-        }
-
-        function getPlatIcon(p) {
-            const platforms = { facebook: 'fa-facebook', instagram: 'fa-instagram', snapchat: 'fa-snapchat' };
-            return `<i class="fab ${platforms[p] || 'fa-tiktok'}"></i> ڕیکلامی ${p.toUpperCase()}`;
-        }
-
-        function renderAds(adsList) {
-            const container = document.getElementById('live-ads-container');
-            if (adsList.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding: 40px; color: #94a3b8; font-weight: 700; font-size: 14px;">هیچ ڕیکلامێک بوونی نییە</div>';
-                return;
-            }
-            container.innerHTML = adsList.map(ad => {
-                const isIQD = ad.currency === 'IQD';
-                const s = ad.statusInfo;
-                const cpm = ad.impressions > 0 ? ((ad.spend / ad.impressions) * 1000).toFixed(2) : "0.00";
-                let barColor = (ad.statusInfo.text === "تەواوبوو" || ad.currentProgress >= 50) ? "#22c55e" : "#f59e0b";
-
-                return `
-                    <div class="ad-card" id="card-${ad.id}">
-                        <div class="id-container">
-                            <div class="id-badge"><i class="fas fa-barcode"></i> #${ad.ad_id || '0000'}</div>
-                            <div class="platform-chip">${getPlatIcon(ad.platform)}</div>
-                        </div>
-                        <div class="middle-section">
-                            <div class="thumb-wrapper">
-                                <img src="${ad.thumbnail_url || 'https://via.placeholder.com/80'}" class="ad-thumb" crossOrigin="anonymous">
-                                <div class="customer-overlay-name">${ad.customer_name}</div>
-                            </div>
-                            <div class="customer-info">
-                                <div class="budget-status-row">
-                                    <span class="budget-tag"><i class="fas fa-coins"></i> بودجە: ${isIQD ? (ad.budget || 0).toLocaleString() + ' IQD' : '$' + (ad.budget || 0)}</span>
-                                    <div class="status-badge ${s.class}"><i class="fas ${s.icon}"></i> ${s.text}</div>
-                                </div>
-                            </div>
-                            ${s.text === "تەواوبوو" ? `<div class="download-container"><button class="download-btn" onclick="downloadReceipt('${ad.id}', '${ad.customer_name}')"><i class="fas fa-download"></i></button></div>` : ''}
-                        </div>
-                        <div class="time-info">
-                            <div class="time-block">
-                                <span class="time-label"><i class="far fa-calendar-check"></i> دەستپێکردن</span>
-                                <span class="time-val">${formatArabicDateTime(ad.start_date)}</span>
-                            </div>
-                            <div class="time-block" style="text-align:left">
-                                <span class="time-label" style="justify-content:flex-end">کۆتایی <i class="far fa-calendar-times"></i></span>
-                                <span class="time-val">${formatArabicDateTime(ad.end_date)}</span>
-                            </div>
-                        </div>
-                        <div class="progress-section">
-                            <div class="progress-info">
-                                <span><i class="fas fa-spinner"></i> بەڕێوەچوون</span>
-                                <span id="text-${ad.id}">${ad.currentProgress.toFixed(2)}%</span>
-                            </div>
-                            <div class="progress-bar-bg">
-                                <div id="bar-${ad.id}" class="progress-bar-fill ${ad.status === 'ڕەتکرایەوە' ? 'bg-red' : ''}" style="width: ${ad.currentProgress}%; background: ${barColor}"></div>
-                            </div>
-                        </div>
-                        <div class="stats-grid">
-                            <div class="stat-box"><span class="stat-label"><i class="fas fa-eye"></i> بینین</span><span class="stat-value">${(ad.impressions || 0).toLocaleString()}</span></div>
-                            <div class="stat-box"><span class="stat-label"><i class="fas fa-hand-pointer"></i> کلیک</span><span class="stat-value">${(ad.clicks || 0).toLocaleString()}</span></div>
-                            <div class="stat-box"><span class="stat-label"><i class="fas fa-money-bill-wave"></i> خەرجی</span><span class="stat-value">${isIQD ? (ad.spend || 0).toLocaleString() : '$'+(ad.spend || 0)}</span></div>
-                            <div class="stat-box"><span class="stat-label"><i class="fas fa-chart-line"></i> CPM</span><span class="stat-value">${isIQD ? (parseFloat(cpm)).toLocaleString() : '$'+cpm}</span></div>
-                        </div>
-                        <div class="sponsored-footer"><i class="fas fa-shield-halved"></i> سپۆنسەرکراوە لەلایەن تیمی پڕۆکسۆ</div>
-                    </div>`;
-            }).join('');
-        }
-
-        window.onload = fetchLiveAds;
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
     </script>
 </body>
 </html>
