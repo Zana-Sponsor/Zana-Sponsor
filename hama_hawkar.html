@@ -90,7 +90,8 @@ function handleTrack(name, url) {
 }(window, document, 'ttq');
 
 document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("tg-btn").onclick = function() { 
+    document.getElementById("tg-btn").onclick = function(e) { 
+        e.preventDefault(); 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://t.me/HaMa_Hawkar_Pubg");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
                     handleTrack("Telegram", "https://t.me/HaMa_Hawkar_Pubg?text=" + encodeURIComponent(msg)); 
