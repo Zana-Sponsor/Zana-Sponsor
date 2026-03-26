@@ -96,11 +96,11 @@ function generate() {
     const handHtml = '<span id="click-hand" class="hand-container"><span class="click-circle"></span><span class="finger-emoji">👆</span></span>';
 
     const buttons = [
-        { id: 'cWa', btnId: 'wa-btn', icon: 'fab fa-whatsapp', label: 'WhatsApp', track: 'WhatsApp', urlBase: `https://wa.me/${wa}?text=` },
-        { id: 'cTg', btnId: 'tg-btn', icon: 'fab fa-telegram', label: 'Telegram', track: 'Telegram', urlBase: `https://t.me/${tg}?text=` },
-        { id: 'cIg', btnId: 'ig-btn', icon: 'fab fa-instagram', label: 'Instagram', track: 'Instagram', urlBase: `https://instagram.com/${ig}` },
-        { id: 'cVi', btnId: 'vb-btn', icon: 'fab fa-viber', label: 'Viber', track: 'Viber', urlBase: `viber://chat?number=${vi}&draft=` },
-        { id: 'cPh', btnId: 'ph-btn', icon: 'fas fa-phone', label: 'Phone', track: 'Phone', urlBase: `tel:${ph}` }
+        { id: 'cWa', btnId: 'wa-btn', icon: 'fab fa-whatsapp', label: 'واتسئاپ', track: 'WhatsApp', urlBase: `https://wa.me/${wa}?text=` },
+        { id: 'cTg', btnId: 'tg-btn', icon: 'fab fa-telegram', label: 'تێلیگرام', track: 'Telegram', urlBase: `https://t.me/${tg}?text=` },
+        { id: 'cIg', btnId: 'ig-btn', icon: 'fab fa-instagram', label: 'ئینستاگرام', track: 'Instagram', urlBase: `https://instagram.com/${ig}` },
+        { id: 'cVi', btnId: 'vb-btn', icon: 'fab fa-viber', label: 'ڤایبەر', track: 'Viber', urlBase: `viber://chat?number=${vi}&draft=` },
+        { id: 'cPh', btnId: 'ph-btn', icon: 'fas fa-phone', label: 'پەیوەندی', track: 'Call', urlBase: `tel:${ph}` }
     ];
 
     let firstActive = true;
@@ -110,13 +110,13 @@ function generate() {
             let hand = firstActive ? handHtml : '';
             btnHtml += `<a id="${b.btnId}" class="link ${shineClass}"><i class="${b.icon}"></i> ${b.label} ${hand}</a>\n    `;
             
-            if(b.track === "Instagram" || b.track === "Phone") {
-                btnJs += `document.getElementById("${b.btnId}").onclick = function() { askConfirm("${b.label}", "${b.urlBase}"); };\n    `;
+            if(b.track === "Instagram" || b.track === "Call") {
+                btnJs += `document.getElementById("${b.btnId}").onclick = function() { askConfirm("${b.track}", "${b.urlBase}", "${b.label}"); };\n    `;
             } else {
                 btnJs += `document.getElementById("${b.btnId}").onclick = function() { 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "${videoUrl}");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n" + vUrl;
-                    askConfirm("${b.label}", "${b.urlBase}" + encodeURIComponent(msg)); 
+                    askConfirm("${b.track}", "${b.urlBase}" + encodeURIComponent(msg), "${b.label}"); 
                 };\n    `;
             }
             firstActive = false;
@@ -245,12 +245,12 @@ function hideEffects() {
     if(shineBtn) shineBtn.classList.add('no-shine');
 }
 
-function askConfirm(name, url) {
+function askConfirm(name, url, kurdishName) {
     selectedApp = name;
     selectedUrl = url;
     const btn = document.getElementById('main-confirm-btn');
     const title = document.getElementById('modal-title');
-    title.innerText = name; 
+    title.innerText = kurdishName; 
     btn.className = "btn-confirm confirm-" + name.toLowerCase().substring(0, 2);
     document.getElementById('confirm-modal').classList.add('active');
     if (navigator.vibrate) navigator.vibrate(25);
