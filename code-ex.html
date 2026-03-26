@@ -96,11 +96,11 @@ function generate() {
     const handHtml = '<span id="click-hand" class="hand-container"><span class="click-circle"></span><span class="finger-emoji">👆</span></span>';
 
     const buttons = [
-        { id: 'cWa', btnId: 'wa-btn', icon: 'fab fa-whatsapp', label: 'واتسئاپ', track: 'WhatsApp', urlBase: `https://wa.me/${wa}?text=` },
-        { id: 'cTg', btnId: 'tg-btn', icon: 'fab fa-telegram', label: 'تێلیگرام', track: 'Telegram', urlBase: `https://t.me/${tg}?text=` },
-        { id: 'cIg', btnId: 'ig-btn', icon: 'fab fa-instagram', label: 'ئینستاگرام', track: 'Instagram', urlBase: `https://instagram.com/${ig}` },
-        { id: 'cVi', btnId: 'vb-btn', icon: 'fab fa-viber', label: 'ڤایبەر', track: 'Viber', urlBase: `viber://chat?number=${vi}&draft=` },
-        { id: 'cPh', btnId: 'ph-btn', icon: 'fas fa-phone', label: 'پەیوەندی', track: 'Phone', urlBase: `tel:${ph}` }
+        { id: 'cWa', btnId: 'wa-btn', icon: 'fab fa-whatsapp', label: 'WhatsApp', track: 'WhatsApp', urlBase: `https://wa.me/${wa}?text=` },
+        { id: 'cTg', btnId: 'tg-btn', icon: 'fab fa-telegram', label: 'Telegram', track: 'Telegram', urlBase: `https://t.me/${tg}?text=` },
+        { id: 'cIg', btnId: 'ig-btn', icon: 'fab fa-instagram', label: 'Instagram', track: 'Instagram', urlBase: `https://instagram.com/${ig}` },
+        { id: 'cVi', btnId: 'vb-btn', icon: 'fab fa-viber', label: 'Viber', track: 'Viber', urlBase: `viber://chat?number=${vi}&draft=` },
+        { id: 'cPh', btnId: 'ph-btn', icon: 'fas fa-phone', label: 'Phone', track: 'Phone', urlBase: `tel:${ph}` }
     ];
 
     let firstActive = true;
@@ -210,7 +210,7 @@ ${cssPart}
 <div class="modal-overlay" id="confirm-modal">
     <div class="modal-content">
         <h3 id="modal-title">...</h3>
-        <p>دڵنیای دەتەوێت پەیوەندی پێوە بکەی؟</p>
+        <p>ئایا، دڵنیای دەتەوێت پەیوەندیمان پێوە بکەی؟</p>
         <button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button>
         <div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div>
     </div>
