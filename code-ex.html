@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Precision V35</title>
+    <title>Proxo Builder - Precision V36</title>
     <style>
         @font-face {
             font-family: 'NRT-Bd';
@@ -31,7 +31,7 @@
         <label>ستایلی لاپەڕە (Theme)</label>
         <select id="themeSelect" onchange="generate()">
             <option value="light">LIGHT (Pill Style)</option>
-            <option value="dark">DARK (Glass Style)</option>
+            <option value="dark" selected>DARK (Glass Style)</option>
         </select>
 
         <label>ناوی بازرگانی</label>
@@ -106,7 +106,7 @@ function generate() {
     let firstActive = true;
     buttons.forEach(b => {
         if(document.getElementById(b.id).checked) {
-            let shineClass = (firstActive && theme === 'light') ? 'shine-active' : '';
+            let shineClass = firstActive ? 'shine-active' : '';
             let hand = firstActive ? handHtml : '';
             btnHtml += `<a id="${b.btnId}" class="link ${shineClass}"><i class="${b.icon}"></i> ${b.label} ${hand}</a>\n    `;
             
@@ -144,8 +144,7 @@ body { background: #FFFFFF; }
 .btn-confirm.confirm-vi { background: #7360f2; color: #fff; }
 .btn-confirm.confirm-te { background: #26A5E4; color: #fff; }
 .btn-confirm.confirm-ph { background: #0062AD; color: #fff; }
-.btn-confirm.confirm-in { background: #dc2743; color: #fff; }
-.shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }` 
+.btn-confirm.confirm-in { background: #dc2743; color: #fff; }` 
 : `
 body { background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%); }
 .profile img { width: 105px; height: 105px; border-radius: 50%; object-fit: cover; margin-bottom: 0px; border: 3px solid rgba(255,255,255,0.1); }
@@ -189,8 +188,9 @@ body { margin: 0; min-height: 100vh; font-family: 'NRT-Bd'; display: flex; justi
 .btn-cancel { color: #888; font-size: 14px; cursor: pointer; display: inline-block; padding: 5px; }
 
 ${cssPart}
+.shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }
 @keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }
-.no-shine::after { animation: none !important; display: none !important; }
+.no-shine::after { display: none !important; animation: none !important; }
 .hand-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; z-index: 10; pointer-events: none; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease-out; opacity: 1; }
 .hand-container.hidden { opacity: 0; }
 .finger-emoji { font-size: 25px; position: relative; z-index: 2; animation: clickAnim 1s infinite; margin-left: 10px; margin-top: 15px; }
@@ -276,7 +276,7 @@ function goLink() {
 document.addEventListener("DOMContentLoaded", function() {
     ${btnJs}
     window.onclick = function(e) { if (e.target.id == 'confirm-modal') closeModal(); }
-    setTimeout(hideEffects, 6000);
+    setTimeout(hideEffects, 5000);
 });
 <\/script>
 </body>
