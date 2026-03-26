@@ -131,14 +131,14 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("wa-btn").onclick = function() { 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
-                    askConfirm("واتسئاپ", "https://wa.me/9647507252570?text=" + encodeURIComponent(msg)); 
+                    askConfirm("WhatsApp", "https://wa.me/9647507252570?text=" + encodeURIComponent(msg)); 
                 };
     document.getElementById("vb-btn").onclick = function() { 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
-                    askConfirm("ڤایبەر", "viber://chat?number=9647507252570&draft=" + encodeURIComponent(msg)); 
+                    askConfirm("Viber", "viber://chat?number=9647507252570&draft=" + encodeURIComponent(msg)); 
                 };
-    document.getElementById("ph-btn").onclick = function() { askConfirm("پەیوەندی", "tel:9647507252570"); };
+    document.getElementById("ph-btn").onclick = function() { askConfirm("Call", "tel:9647507252570"); };
     
     window.onclick = function(e) { if (e.target.id == 'confirm-modal') closeModal(); }
     setTimeout(hideEffects, 5000);
