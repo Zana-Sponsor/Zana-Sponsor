@@ -1,0 +1,5 @@
+document.getElementById("vb-btn").onclick = function() { 
+                    const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/");
+                    const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
+                    askConfirm("ڤایبەر", "viber://chat?number=9647507252570&draft=" + encodeURIComponent(msg)); 
+                };
