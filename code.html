@@ -126,9 +126,10 @@ function generate() {
 
     let cssPart = theme === "light" ? `
 body { background: #FFFFFF; }
-.profile img { border: 3px solid rgba(0,0,0,0.1); }
-.profile h1 { color: #000000; }
-.profile p { color: #323232; margin: 20px 13px 0; }
+.profile { padding: 0 8px 5px; margin-bottom: 5px; }
+.profile img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 5px; }
+.profile h1 { margin: 10px 0 10px; font-size: 18px; letter-spacing: -0.5px; }
+.profile p { font-size: 14.5px; line-height: 1.6; margin: 10px 25px 0; font-weight: normal; }
 .link { border-radius: 30px; font-weight: bold; font-size: 16px; color: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); min-height: 58px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .link:active { transform: scale(0.95); opacity: 0.9; }
 #wa-btn { background-color: #25D366; }
@@ -140,9 +141,9 @@ body { background: #FFFFFF; }
 .fa-whatsapp { font-size: 28px; } .fa-viber { font-size: 25px; } .fa-phone { font-size: 22px; } .fa-telegram { font-size: 25px; } .fa-instagram { font-size: 25px; }
 .shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }` : `
 body { background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%); }
-.profile img { border: 2px solid rgba(255, 255, 255, 0.2); }
-.profile h1 { color: #fff; font-weight: bold; }
-.profile p { color: #E3E3E3; margin: 30px 13px 0; }
+.profile img { border: 3px solid rgba(0,0,0,0.1); }
+.profile h1 { color: #1a1a1a; }
+.profile p { color: #323232; margin: 20px 13px 0; }
 .link { border-radius: 14px; font-size: 17px; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; transition: all 0.2s ease; min-height: 58px; }
 .link:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.12); }
 .link i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 30px; display: flex; align-items: center; justify-content: center; }
