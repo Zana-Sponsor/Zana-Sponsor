@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Proxo - Links</title>
+<link rel="icon" type="image/jpeg" href="https://image2url.com/r2/default/images/1772248056478-a5a04d98-be5f-4ee9-8f08-09db2be8fd1a.jpg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 @font-face { font-family: 'NRT-Bd'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/NRT-Bd (1).woff2') format('woff2'); font-weight: bold; font-style: normal; }
@@ -18,7 +19,7 @@ body { margin: 0; min-height: 100vh; font-family: 'NRT-Bd'; display: flex; justi
 .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000; }
 .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
 .modal-content { width: 85%; max-width: 320px; padding: 35px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-.modal-content h3 { margin: 0 0 12px; font-size: 20px; }
+.modal-content h3 { margin: 0 0 16px; font-size: 20px; }
 .modal-content p { font-size: 14px; opacity: 0.7; margin-bottom: 25px; line-height: 1.6; }
 .btn-confirm { width: 100%; padding: 16px; border-radius: 16px; border: none; font-family: 'NRT-Bd'; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 12px; }
 .btn-cancel { color: #888; font-size: 14px; cursor: pointer; display: inline-block; padding: 5px; }
@@ -34,7 +35,7 @@ body { background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%); 
 .link i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 30px; display: flex; align-items: center; justify-content: center; }
 .fa-whatsapp { font-size: 28px; } .fa-viber { font-size: 25px; } .fa-phone { font-size: 22px; } .fa-telegram { font-size: 25px; } .fa-instagram { font-size: 25px; }
 .modal-content { background: #16181d; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-.btn-confirm.confirm-wh { background: #25D366; color: #000; }
+.btn-confirm.confirm-wh { background: #28E16D; color: #000; }
 .btn-confirm.confirm-vi { background: #7360f2; color: #fff; }
 .btn-confirm.confirm-te { background: #26A5E4; color: #fff; }
 .btn-confirm.confirm-ph { background: #fff; color: #000; }
@@ -61,7 +62,7 @@ body { background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%); 
 <div class="modal-overlay" id="confirm-modal">
     <div class="modal-content">
         <h3 id="modal-title">...</h3>
-        <p>دڵنیای دەتەوێت پەیوەندی پێوە بکەی؟</p>
+        <p>دڵنیای دەتەوێت پەیوەندیمان پێوە بکەی؟</p>
         <button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button>
         <div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div>
     </div>
@@ -99,12 +100,12 @@ function hideEffects() {
     if(shineBtn) shineBtn.classList.add('no-shine');
 }
 
-function askConfirm(name, url) {
+function askConfirm(name, url, kurdishName) {
     selectedApp = name;
     selectedUrl = url;
     const btn = document.getElementById('main-confirm-btn');
     const title = document.getElementById('modal-title');
-    title.innerText = name; 
+    title.innerText = kurdishName; 
     btn.className = "btn-confirm confirm-" + name.toLowerCase().substring(0, 2);
     document.getElementById('confirm-modal').classList.add('active');
     if (navigator.vibrate) navigator.vibrate(25);
@@ -119,7 +120,7 @@ function goLink() {
         isTracked = true;
     }
     closeModal();
-    setTimeout(() => { window.location.href = selectedUrl; }, 300);
+    setTimeout(() => { window.location.href = selectedUrl; }, 400);
 }
 
 !function (w, d, t) {
@@ -131,17 +132,17 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("wa-btn").onclick = function() { 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
-                    askConfirm("WhatsApp", "https://wa.me/9647507252570?text=" + encodeURIComponent(msg)); 
+                    askConfirm("WhatsApp", "https://wa.me/9647507252570?text=" + encodeURIComponent(msg), "واتسئاپ"); 
                 };
     document.getElementById("vb-btn").onclick = function() { 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
-                    askConfirm("Viber", "viber://chat?number=9647507252570&draft=" + encodeURIComponent(msg)); 
+                    askConfirm("Viber", "viber://chat?number=9647507252570&draft=" + encodeURIComponent(msg), "ڤایبەر"); 
                 };
-    document.getElementById("ph-btn").onclick = function() { askConfirm("Call", "tel:9647507252570"); };
+    document.getElementById("ph-btn").onclick = function() { askConfirm("Call", "tel:9647507252570", "پەیوەندی تەلەفۆنی"); };
     
     window.onclick = function(e) { if (e.target.id == 'confirm-modal') closeModal(); }
-    setTimeout(hideEffects, 5000);
+    setTimeout(hideEffects, 10000);
 });
 </script>
 </body>
