@@ -62,7 +62,7 @@ body { background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%); 
 <div class="modal-overlay" id="confirm-modal">
     <div class="modal-content">
         <h3 id="modal-title">...</h3>
-        <p>دڵنیای دەتەوێت پەیوەندیمان پێوە بکەی؟</p>
+        <p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p>
         <button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button>
         <div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div>
     </div>
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("wa-btn").onclick = function() { 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
-                    askConfirm("WhatsApp", "https://wa.me/9647507252570?text=" + encodeURIComponent(msg), "واتسئاپ"); 
+                    askConfirm("WhatsApp", "whatsapp://send?phone=9647507252570&text=" + encodeURIComponent(msg), "واتسئاپ"); 
                 };
     document.getElementById("vb-btn").onclick = function() { 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSmedYSB8/");
