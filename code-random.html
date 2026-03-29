@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Generator Pro - Dark Mode</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%);
+            font-family: sans-serif;
+            color: white;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            width: 340px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        h3 { margin-top: 0; font-size: 18px; color: #38bdf8; margin-bottom: 20px; }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: #38bdf8; background: rgba(0, 0, 0, 0.5); }
+
+        .output-box {
+            background: rgba(56, 189, 248, 0.05);
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px dashed rgba(56, 189, 248, 0.5);
+            position: relative;
+        }
+
+        #result {
+            font-weight: bold;
+            color: #fff;
+            font-size: 19px;
+            display: block;
+            letter-spacing: 1px;
+        }
+
+        .button-group { display: flex; gap: 10px; }
+
+        .btn {
+            flex: 2;
+            padding: 14px;
+            background: #38bdf8;
+            color: #0f111a;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 15px;
+        }
+
+        .btn:hover { background: #7dd3fc; transform: translateY(-2px); }
+
+        .btn-copy {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-copy.copied {
+            background: #22c55e;
+            color: white;
+            border-color: #22c55e;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h3>دروستکەری ناسنامە</h3>
+    
+    <input type="text" id="userName" placeholder="ناو لێرە بنووسە..." maxlength="20">
+    
+    <div class="output-box">
+        <span id="result">---</span>
+    </div>
+
+    <div class="button-group">
+        <button class="btn" onclick="generate()">دروستکردن</button>
+        <button id="copyBtn" class="btn btn-copy" onclick="copyToClipboard()">کۆپی</button>
+    </div>
+</div>
+
+<script>
+    function generate() {
+        let name = document.getElementById('userName').value.trim();
+        
+        if (name === "") {
+            alert("تکایە سەرەتا ناوێک بنووسە!");
+            return;
+        }
+
+        // دروستکردنی 9 ژمارەی بێ دووبارەبوونەوە
+        let digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        for (let i = digits.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [digits[i], digits[j]] = [digits[j], digits[i]];
+        }
+        
+        let randomPart = digits.slice(0, 9).join('');
+        document.getElementById('result').innerText = name + "-" + randomPart;
+        
+        // گەڕاندنەوەی دووگمەی کۆپی بۆ دۆخی ئاسایی
+        const copyBtn = document.getElementById('copyBtn');
+        copyBtn.innerText = "کۆپی";
+        copyBtn.classList.remove('copied');
+    }
+
+    function copyToClipboard() {
+        const text = document.getElementById('result').innerText;
+        if (text === "---") return;
+
+        navigator.clipboard.writeText(text).then(() => {
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.innerText = "کۆپی کرا!";
+            copyBtn.classList.add('copied');
+            
+            // ڤایبرەیشنێکی کورت بۆ مۆبایل
+            if (navigator.vibrate) navigator.vibrate(40);
+        });
+    }
+</script>
+
+</body>
+</html>
