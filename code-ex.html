@@ -96,7 +96,7 @@ function generate() {
     const handHtml = '<span id="click-hand" class="hand-container"><span class="click-circle"></span><span class="finger-emoji">👆</span></span>';
 
     const buttons = [
-        { id: 'cWa', btnId: 'wa-btn', icon: 'fab fa-whatsapp', label: 'واتسئاپ', track: 'WhatsApp', urlBase: `https://wa.me/${wa}?text=` },
+        { id: 'cWa', btnId: 'wa-btn', icon: 'fab fa-whatsapp', label: 'واتسئاپ', track: 'WhatsApp', urlBase: `whatsapp://send?phone=${wa}&text=` },
         { id: 'cTg', btnId: 'tg-btn', icon: 'fab fa-telegram', label: 'تێلیگرام', track: 'Telegram', urlBase: `https://t.me/${tg}?text=` },
         { id: 'cIg', btnId: 'ig-btn', icon: 'fab fa-instagram', label: 'ئینستاگرام', track: 'Instagram', urlBase: `https://instagram.com/${ig}` },
         { id: 'cVi', btnId: 'vb-btn', icon: 'fab fa-viber', label: 'ڤایبەر', track: 'Viber', urlBase: `viber://chat?number=${vi}&draft=` },
@@ -277,7 +277,7 @@ function goLink() {
 document.addEventListener("DOMContentLoaded", function() {
     ${btnJs}
     window.onclick = function(e) { if (e.target.id == 'confirm-modal') closeModal(); }
-    setTimeout(hideEffects, 5000);
+    setTimeout(hideEffects, 10000);
 });
 <\/script>
 </body>
