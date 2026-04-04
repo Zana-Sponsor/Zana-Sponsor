@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>های کواڵێتی کاڕس</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+@font-face { font-family: 'NRT-Bd'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/NRT-Bd (1).woff2') format('woff2'); font-weight: bold; font-style: normal; }
+*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+body { margin: 0; min-height: 100vh; font-family: 'NRT-Bd'; display: flex; justify-content: center; overflow-x: hidden; }
+.container { width: 100%; max-width: 380px; min-height: 100vh; padding: 20px 16px 30px; text-align: center; display: flex; flex-direction: column; }
+.profile { padding: 0 8px 5px; margin-bottom: 5px; }
+.links { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+.link { position: relative; display: flex; align-items: center; justify-content: center; padding: 12px 18px; text-decoration: none; cursor: pointer; overflow: hidden; transition: all 0.2s ease; }
+
+/* Modal Styles */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000; }
+.modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+.modal-content { width: 85%; max-width: 320px; padding: 35px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+.modal-content h3 { margin: 0 0 16px; font-size: 20px; }
+.modal-content p { font-size: 14px; opacity: 0.7; margin-bottom: 25px; line-height: 1.6; }
+.btn-confirm { width: 100%; padding: 16px; border-radius: 16px; border: none; font-family: 'NRT-Bd'; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 12px; }
+.btn-cancel { color: #888; font-size: 14px; cursor: pointer; display: inline-block; padding: 5px; }
+
+
+body { background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%); }
+.profile img { width: 105px; height: 105px; border-radius: 50%; object-fit: cover; margin-bottom: 0px; border: 4px solid rgba(255,255,255,0.1); }
+.profile h1 { color: #ffffff; margin: 8px 0 0; font-size: 15px; letter-spacing: -0.5px; }
+.profile h1 i { color: #38bdf8; font-size: 15px; }
+.profile p { color: #EBEBEB; font-size: 14px; line-height: 1.7; margin: 25px 0 0; font-weight: normal; }
+.link { border-radius: 15px; font-size: 17px; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; transition: all 0.2s ease; min-height: 58px; font-weight: bold; }
+.link:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.12); }
+.link i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 30px; display: flex; align-items: center; justify-content: center; }
+.fa-whatsapp { font-size: 28px; } .fa-viber { font-size: 25px; } .fa-phone { font-size: 22px; } .fa-telegram { font-size: 25px; } .fa-instagram { font-size: 25px; }
+.modal-content { background: #16181d; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+.btn-confirm.confirm-wh { background: #28E16D; color: #000; }
+.btn-confirm.confirm-vi { background: #7360f2; color: #fff; }
+.btn-confirm.confirm-te { background: #26A5E4; color: #fff; }
+.btn-confirm.confirm-ph { background: #fff; color: #000; }
+.btn-confirm.confirm-in { background: #dc2743; color: #fff; }
+.shine-active::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 2s infinite; }
+@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }
+.no-shine::after { display: none !important; animation: none !important; }
+.hand-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; z-index: 10; pointer-events: none; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease-out; opacity: 1; }
+.hand-container.hidden { opacity: 0; }
+.finger-emoji { font-size: 25px; position: relative; z-index: 2; animation: clickAnim 1s infinite; margin-left: 10px; margin-top: 15px; }
+.click-circle { position: absolute; width: 25px; height: 25px; border: 3px solid rgba(255, 255, 255, 0.8); border-radius: 50%; animation: pulse 1s infinite; z-index: 1; }
+@keyframes clickAnim { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.9); } }
+@keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.5); opacity: 0; } }
+.footer { margin-top: 85px; padding: 30px 0 0; }
+.footer small { display: block; font-size: 9px; margin-bottom: 8px; color: #8b8b8b; }
+.footer img { height: 14px; margin: 0 auto 10px; display: block; }
+.legal { font-size: 9px; margin-top: 8px; padding-bottom: 10px; color: #8b8b8b; }
+.legal a { color: inherit; text-decoration: none; margin: 0 6px; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="confirm-modal">
+    <div class="modal-content">
+        <h3 id="modal-title">...</h3>
+        <p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p>
+        <button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button>
+        <div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div>
+    </div>
+</div>
+
+<div class="container">
+  <div class="profile">
+    <img src="https://image2url.com/r2/default/images/1774809042851-126722f3-518c-475f-a480-f6337914f685.webp" alt="Logo">
+    <h1>های کوالێتی کارس <i class="fas fa-check-circle"></i></h1>
+    <p>بۆ زانیاری زیاتر، پەیوەندیمان پێوە بکە لەڕێگەی ئەم دووگمانەی خوارەوە. تیمەکانمان ئامادەن بۆ وەڵامدانەوەت.</p>
+  </div>
+  <div class="links"><a id="wa-btn" class="link shine-active"><i class="fab fa-whatsapp"></i> واتسئاپ <span id="click-hand" class="hand-container"><span class="click-circle"></span><span class="finger-emoji">👆</span></span></a>
+    <a id="vb-btn" class="link "><i class="fab fa-viber"></i> ڤایبەر </a>
+    <a id="ph-btn" class="link "><i class="fas fa-phone"></i> پەیوەندی </a>
+    </div>
+  <div class="footer">
+    <small>سپۆنسەر کراوە لەلایەن</small>
+    <a href="https://www.proxopages.com" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a>
+    <div class="legal">
+      <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | 
+      <a href="https://proxopages.com/terms" target="_blank">Terms & Conditions</a>
+    </div>
+  </div>
+</div>
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+let selectedApp = "";
+let selectedUrl = "";
+
+function hideEffects() {
+    const hand = document.getElementById('click-hand');
+    const shineBtn = document.querySelector('.shine-active');
+    if(hand) hand.classList.add('hidden');
+    if(shineBtn) shineBtn.classList.add('no-shine');
+}
+
+function askConfirm(name, url, kurdishName) {
+    selectedApp = name;
+    selectedUrl = url;
+    const btn = document.getElementById('main-confirm-btn');
+    const title = document.getElementById('modal-title');
+    title.innerText = kurdishName; 
+    btn.className = "btn-confirm confirm-" + name.toLowerCase().substring(0, 2);
+    document.getElementById('confirm-modal').classList.add('active');
+    if (navigator.vibrate) navigator.vibrate(25);
+}
+
+function closeModal() { document.getElementById('confirm-modal').classList.remove('active'); }
+
+function goLink() {
+    hideEffects();
+    
+    // لۆژیکی نوێ بۆ پشکنینی ٢٤ کاتژمێر
+    const lastTrackTime = localStorage.getItem('tt_contact_timestamp');
+    const currentTime = new Date().getTime();
+    const twentyFourHours = 24 * 60 * 60 * 1000; // ٢٤ کاتژمێر بە میلی چرکە
+
+    if(window.ttq) {
+        if (!lastTrackTime || (currentTime - lastTrackTime > twentyFourHours)) {
+            ttq.track("Contact", { content_id: "contact_button", content_name: selectedApp });
+            localStorage.setItem('tt_contact_timestamp', currentTime);
+        }
+    }
+
+    closeModal();
+    setTimeout(() => { window.location.href = selectedUrl; }, 700);
+}
+
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script");s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(s,e)};
+  ttq.load('D6BIIA3C77U1CE9DCUMG'); ttq.page();
+}(window, document, 'ttq');
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("wa-btn").onclick = function() { 
+                    const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSHRmbyX3/");
+                    const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
+                    askConfirm("WhatsApp", "whatsapp://send?phone=9647502238449&text=" + encodeURIComponent(msg), "واتسئاپ"); 
+                };
+    document.getElementById("vb-btn").onclick = function() { 
+                    const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSHRmbyX3/");
+                    const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
+                    askConfirm("Viber", "viber://chat?number=9647502238449&draft=" + encodeURIComponent(msg), "ڤایبەر"); 
+                };
+    document.getElementById("ph-btn").onclick = function() { 
+                    const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSHRmbyX3/");
+                    const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
+                    askConfirm("Phone", "tel:9647502238449" + encodeURIComponent(msg), "پەیوەندی"); 
+                };
+    
+    window.onclick = function(e) { if (e.target.id == 'confirm-modal') closeModal(); }
+    setTimeout(hideEffects, 10000);
+});
+</script>
+</body>
+</html>
