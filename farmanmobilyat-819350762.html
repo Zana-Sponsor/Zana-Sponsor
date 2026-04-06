@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("ph-btn").onclick = function() { 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSHfxgWDp/");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
-                    askConfirm("Phone", "tel:9647507813039" + encodeURIComponent(msg), "پەیوەندی"); 
+                    askConfirm("Phone", "tel:9647507813039", "پەیوەندی"); 
                 };
     
     window.onclick = function(e) { if (e.target.id == 'confirm-modal') closeModal(); }
