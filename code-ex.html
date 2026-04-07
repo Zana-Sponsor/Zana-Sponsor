@@ -38,7 +38,7 @@
         <input type="text" id="brand" placeholder="عقارات شکۆی نەورۆز" oninput="generate()">
         
         <label>لینکی لۆگۆ</label>
-        <input type="text" id="logoUrl" placeholder="https://..." oninput="generate()">
+        <input type="text" id="logoUrl" placeholder="https://image2url.com/r2/default/images/1775515544529-fd6ca7b4-5713-44d1-b36c-a27d824fd837.webp" oninput="generate()">
         
         <label>دەقی P (وەسف)</label>
         <input type="text" id="pText" placeholder="بۆ زانیاری زیاتر، پەیوەندی بکە..." oninput="generate()">
@@ -126,10 +126,10 @@ function generate() {
     let cssPart = theme === "light" ? `
 body { background: #FFFFFF; }
 .profile { padding: 0 8px 5px; margin-bottom: 5px; }
-.profile img { border: 3px solid rgba(0,0,0,0.1); width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin-bottom: 5px; }
-.profile h1 { color: #1a1a1a; margin: 10px 0 0; font-size: 19px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.profile h1 i { color: #38bdf8; font-size: 17px; }
-.profile p { color: #323232; margin: 15px 25px 0; font-size: 14.5px; line-height: 1.7; font-weight: normal; }
+.profile img { width: 105px; height: 105px; border-radius: 50%; object-fit: contain; margin-bottom: 0px; border: 1px solid #5E94FF; }
+.profile h1 { color: #ffffff; margin: 16px 0 0; font-size: 16px; letter-spacing: -0.5px; }
+.profile h1 i { color: #5E94FF; font-size: 16px; }
+.profile p { color: #EBEBEB; font-size: 14px; line-height: 1.7; margin: 25px 0 0; font-weight: normal; }
 .link { border-radius: 30px; font-weight: bold; font-size: 16px; color: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); min-height: 58px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .link:active { transform: scale(0.95); opacity: 0.9; }
 #wa-btn { background-color: #25D366; }
