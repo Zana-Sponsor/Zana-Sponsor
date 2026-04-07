@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ku">
 <head>
     <meta charset="UTF-8">
-    <title>Proxo Builder - Precision V37.6</title>
+    <title>Proxo Builder - Precision V37.7</title>
     <style>
         @font-face {
             font-family: 'NRT-Bd';
@@ -38,7 +38,7 @@
         <input type="text" id="brand" placeholder="عقارات شکۆی نەورۆز" oninput="generate()">
         
         <label>لینکی لۆگۆ</label>
-        <input type="text" id="logoUrl" placeholder="https://image2url.com/r2/default/images/1775515544529-fd6ca7b4-5713-44d1-b36c-a27d824fd837.webp" oninput="generate()">
+        <input type="text" id="logoUrl" placeholder="https://image2url.com/r2/default/" oninput="generate()">
         
         <label>دەقی P (وەسف)</label>
         <input type="text" id="pText" placeholder="بۆ زانیاری زیاتر، پەیوەندی بکە..." oninput="generate()">
@@ -80,7 +80,7 @@ function toggleExtra(checkId, extraId) {
 function generate() {
     const theme = document.getElementById('themeSelect').value;
     const brand = document.getElementById('brand').value || "Brand Name";
-    const logoUrl = document.getElementById('logoUrl').value.trim() || "https://image2url.com/r2/default/images/1772756949098-d6d76b46-8ea1-4475-a900-a41c4bec7bc4.webp";
+    const logoUrl = document.getElementById('logoUrl').value.trim() || "https://image2url.com/r2/default/images/1775515544529-fd6ca7b4-5713-44d1-b36c-a27d824fd837.webp";
     const pText = document.getElementById('pText').value || "Bio";
     const videoUrl = document.getElementById('videoUrl').value.trim() || "https://vt.tiktok.com/....";
 
