@@ -26,7 +26,7 @@ body { margin: 0; min-height: 100vh; font-family: 'NRT-Bd'; display: flex; justi
 
 
 body { background: radial-gradient(circle at center, #1e223a 0%, #0f111a 100%); }
-.profile img { width: 105px; height: 105px; border-radius: 50%; object-fit: contain; margin-bottom: 0px; border: 2px solid #49ADF4; }
+.profile img { width: 105px; height: 105px; border-radius: 50%; object-fit: contain; margin-bottom: 0px; }
 .profile h1 { color: #ffffff; margin: 16px 0 0; font-size: 15px; letter-spacing: -0.5px; }
 .profile h1 i { color: #49ADF4; font-size: 15px; }
 .profile p { color: #EBEBEB; font-size: 14px; line-height: 1.7; margin: 25px 0 0; font-weight: normal; }
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("ph-btn").onclick = function() { 
                     const vUrl = decodeURIComponent(urlParams.get('v') || "https://vt.tiktok.com/ZSHPa7Hd2/");
                     const msg = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
-                    askConfirm("Phone", "tel:9647502238449" + encodeURIComponent(msg), "پەیوەندی"); 
+                    askConfirm("Phone", "tel:9647502238449", "پەیوەندی"); 
                 };
     
     window.onclick = function(e) { if (e.target.id == 'confirm-modal') closeModal(); }
