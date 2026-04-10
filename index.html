@@ -5,11 +5,6 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proxo</title>
-    <meta property="og:site_name" content="ProxoTeam">
-    <meta property="og:title" content="ProxoTeam">
-    <meta name="description" content="Proxo is the #1 TikTok sponsorship agency in Iraq and Kurdistan. We help businesses scale through targeted TikTok ads and professional account management.">
-    <meta name="keywords" content="TikTok Iraq, TikTok Sponsorship Iraq, سپۆنسەری تیکتۆک, ڕیکلامی تیکتۆک, Proxo, TikTok Ads Kurdistan, تیکتۆک عێراق">
-    <meta name="robots" content="index, follow">
     <link rel="icon" type="image/jpeg" href="https://image2url.com/r2/default/images/1772248056478-a5a04d98-be5f-4ee9-8f08-09db2be8fd1a.jpg">
     
     <script>
@@ -20,29 +15,24 @@
 
       ttq.load('D6BIIA3C77U1CE9DCUMG');
       ttq.page();
-    
     }(window, document, 'ttq');
 
     function trackAndRedirect(url) {
       if (window.ttq) {
-        window.ttq.track('Contact', {
-          content_id: 'contact_button',
-          content_name: 'WhatsApp'
-        });
+        window.ttq.track('Contact');
       }
       setTimeout(function() {
         window.open(url, '_blank');
-      }, 800); 
+      }, 700); 
     }
     </script>
-
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         @font-face {
-            font-family: 'new_rudaw_bold';
-            src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/new_rudaw_bold.woff2') format('woff2');
+            font-family: 'Rudaw';
+            src: url('https://cdn.jsdelivr.net/gh/Zana-Sponsor/Zana-Sponsor@main/new_rudaw_bold.ttf') format('truetype');
             font-weight: bold; font-style: normal; font-display: swap;
         }
         :root {
@@ -57,7 +47,7 @@
             --star-gold: #ffb400;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; scroll-behavior: smooth; }
-        .rtl * { font-family: 'new_rudaw_bold', sans-serif !important; }
+        .rtl * { font-family: 'Rudaw', sans-serif !important; }
         .rtl .fas, .rtl .fab, .rtl .fa, .rtl [class^="fa-"] { font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important; font-weight: 900 !important; }
         body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; line-height: 1.7; }
         nav { padding: 8px 6%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); z-index: 2000; border-bottom: 1px solid #f1f5f9; }
@@ -65,104 +55,13 @@
         .menu-trigger { font-size: 24px; cursor: pointer; color: var(--text-dark); }
         .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(255, 255, 255, 0.98); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; transform: translateY(-100%); transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1); z-index: 1500; }
         .menu-overlay.active { transform: translateY(0); }
-        .menu-overlay a { text-decoration: none; color: var(--text-dark); font-size: 22px; font-weight: 800; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 100%; }
+        .menu-overlay a { text-decoration: none; color: var(--text-dark); font-size: 22px; font-weight: 800; transition: 0.3s; }
         .lang-switch { margin-bottom: 30px; display: flex; gap: 10px; }
         .lang-switch button { padding: 8px 20px; border-radius: 50px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: 700; }
-        
         #home { padding: 120px 6% 60px; text-align: center; background: radial-gradient(circle at top right, #eff6ff 0%, #ffffff 70%); }
         #home h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 900; margin-bottom: 20px; color: var(--text-dark); }
         #home p { max-width: 650px; margin: 0 auto 30px; font-size: 18px; color: var(--text-gray); }
-        
-        .btn-main { 
-            background: var(--accent); 
-            color: white !important; 
-            padding: 16px 40px; 
-            border-radius: 50px; 
-            font-weight: 700; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 10px; 
-            transition: 0.4s; 
-            text-decoration: none; 
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); 
-            cursor: pointer; 
-            border: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* --- بریقەکە لێرە لادرا بۆ بەشەکانی تر --- */
-
-        #live-ads-notify {
-            position: fixed;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #22c55e; /* ڕەنگی سەوز */
-            color: white;
-            padding: 8px 24px; /* قەبارەی 8px */
-            border-radius: 12px;
-            z-index: 3000;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-family: 'Rudaw', sans-serif !important;
-            font-weight: bold;
-            direction: rtl;
-            white-space: nowrap;
-            overflow: hidden; 
-            animation: slideInFromTop 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-
-        #live-ads-notify::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-20deg);
-            animation: softSweep 3.5s infinite ease-in-out;
-        }
-
-        @keyframes slideInFromTop {
-            from { top: -80px; opacity: 0; }
-            to { top: 15px; opacity: 1; }
-        }
-
-        @keyframes softSweep {
-            0% { left: -150%; }
-            30% { left: 150%; }
-            100% { left: 150%; }
-        }
-
-        /* --- ستایلی Open Badge --- */
-        .open-badge {
-            font-family: 'Vazirmatn', sans-serif !important;
-            font-size: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 6px;
-            margin: 0 8px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            font-weight: 900;
-            text-transform: uppercase;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .menu-overlay .open-badge {
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--accent);
-            border-color: rgba(37, 99, 235, 0.2);
-        }
-
+        .btn-main { background: var(--accent); color: white !important; padding: 16px 40px; border-radius: 50px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; transition: 0.4s; text-decoration: none; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); cursor: pointer; border: none; }
         .integration-section { margin-top: 60px; padding: 25px 0; border-top: 1px solid #eee; }
         .integration-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
         .integration-logos { display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; }
@@ -186,7 +85,6 @@
         .rtl { direction: rtl; text-align: right; }
         .ltr { direction: ltr; text-align: left; }
         .rtl .wa-float { right: auto; left: 30px; }
-        .rtl #live-ads-notify { flex-direction: row-reverse; }
     </style>
 </head>
 <body class="ltr">
@@ -203,7 +101,6 @@
         </div>
         <a href="#home" class="menu-link" data-key="nav_home">Home</a>
         <a href="#services" class="menu-link" data-key="nav_services">Services</a>
-        <a href="live.html" class="menu-link" data-key="nav_live_html">Live Ads <span class="open-badge">OPEN ↗</span></a>
         <a href="#feedback" class="menu-link" data-key="nav_feedback">Testimonials</a>
     </div>
 
@@ -243,6 +140,8 @@
         <div class="grid-layout" id="feedback-container"></div>
         <div style="text-align: center; margin-top: 40px;">
             <a id="feedbackLink" href="feedback.html?lang=en" class="btn-main" style="background: transparent; color: var(--text-dark) !important; border: 2px solid var(--accent); box-shadow: none;" data-key="write_feedback">
+                <i class="fas fa-pen-nib"></i> Write a Feedback
+            </a>
         </div>
     </section>
 
@@ -253,10 +152,18 @@
                 <p data-key="footer_about">The leading agency for TikTok sponsorship and digital growth in Iraq and Kurdistan.</p>
                 <div class="email-info"><i class="fas fa-envelope"></i> <span>info@proxopages.com</span></div>
                 <div class="social-icons">
-                    <a onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی؟')"><i class="fab fa-whatsapp"></i></a>
+                    <a onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو')"><i class="fab fa-whatsapp"></i></a>
                     <a onclick="trackAndRedirect('https://instagram.com/proxo.krd')"><i class="fab fa-instagram"></i></a>
                     <a onclick="trackAndRedirect('https://tiktok.com/@proxo.krd')"><i class="fab fa-tiktok"></i></a>
                 </div>
+            </div>
+            <div class="footer-col">
+                <h3 data-key="footer_links" style="margin-bottom:20px">Quick Links</h3>
+                <ul style="list-style:none; color:#94a3b8">
+                    <li style="margin-bottom:12px"><a href="#home" style="color:inherit; text-decoration:none">Home</a></li>
+                    <li style="margin-bottom:12px"><a href="policy.html" style="color:inherit; text-decoration:none">Privacy & Terms</a></li>
+                    <li style="margin-bottom:12px"><a href="#feedback" style="color:inherit; text-decoration:none">Testimonials</a></li>
+                </ul>
             </div>
         </div>
         <div class="legal-section">
@@ -264,84 +171,8 @@
                 <a href="terms.html" data-key="legal_terms">مەرج و یاساکان</a>
                 <a href="policy.html" data-key="legal_privacy">سیاسەتی پاراستنی نهێنی</a>
             </div>
-            <div style="color: #64748b; font-size: 13px;">© 2026 PROXO TEAM. All Rights Reserved.</div>
+            <div style="color: #64748b; font-size: 13px;">© 2026 PROXO KRD. All Rights Reserved.</div>
         </div>
     </footer>
 
     <button onclick="trackAndRedirect('https://wa.me/9647758887488?text=سڵاو، ئایا دەتوانی زانیاری زیاترم پێبدەی!')" class="wa-float"><i class="fab fa-whatsapp"></i></button>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co'; 
-        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTM4MjA0NywiZXhwIjoyMDg2OTU4MDQ3fQ.Qxbg0FbFu6MIwT1R5Hbm6jP4JI4j_0RWMvQOc3deUnE';
-        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
-        
-        let allFeedbacks = [];
-
-        setTimeout(function() {
-            const notify = document.getElementById('live-ads-notify');
-            if (notify) {
-                notify.style.opacity = '0';
-                notify.style.transform = 'translateX(-50%) translateY(-20px)';
-                setTimeout(() => notify.style.display = 'none', 500);
-            }
-        }, 15000);
-
-        async function loadFeedbacks(lang = 'en') {
-            const container = document.getElementById('feedback-container');
-            if (allFeedbacks.length === 0) {
-                const { data } = await supabaseClient.from('feedback').select('*').eq('is_approved', true).order('created_at', { ascending: false });
-                if (data) allFeedbacks = data;
-            }
-            if (container) {
-                container.innerHTML = '';
-                allFeedbacks.forEach(fb => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `<div class="rev-avatar" style="width:50px; height:50px; border-radius:50%; background:var(--accent); color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-weight:900;">${fb.name.charAt(0)}</div><div class="feedback-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="feedback-text">"${fb.comment}"</p><p class="client-name" style="margin-top: 15px;"><b>- ${fb.name}</b></p>`;
-                    container.appendChild(card);
-                });
-            }
-        }
-        window.addEventListener('DOMContentLoaded', () => loadFeedbacks('en'));
-
-        const toggleBtn = document.getElementById('toggleBtn');
-        const menuMenu = document.getElementById('menuMenu');
-        const menuLinks = document.querySelectorAll('.menu-link');
-
-        function toggleMenu() {
-            menuMenu.classList.toggle('active');
-            toggleBtn.innerHTML = menuMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-        }
-        toggleBtn.addEventListener('click', toggleMenu);
-        menuLinks.forEach(link => { link.addEventListener('click', () => { if (menuMenu.classList.contains('active')) toggleMenu(); }); });
-
-        const translations = {
-            en: { nav_home: "Home", nav_services: "Services", nav_feedback: "Testimonials", hero_title: "Scale Your Brand with TikTok Ads", hero_desc: "The ultimate agency for TikTok sponsorship in Iraq. We connect your products to millions of potential customers with precision.", btn_start: "Launch Campaign", supported_by: "Officially Supported By", services_title: "Targeted Advertising Solutions", ser1_t: "Ad Management", ser1_d: "Full management of your TikTok Business Center.", ser2_t: "ROI Optimization", ser2_d: "We track and optimize every dollar spent.", feedback_title: "Trusted by Business Owners", footer_about: "The leading agency for TikTok growth in Iraq.", footer_links: "Quick Links", write_feedback: "Write a Feedback", legal_terms: "Terms", legal_privacy: "Privacy" },
-            ku: { nav_home: "سەرەتا", nav_services: "خزمەتگوزارییەکان", nav_feedback: "فیدباکەکان", hero_title: "کارەکەت گەورە بکە بە سپۆنسەری تیکتۆک", hero_desc: "باشترین ئاژانس بۆ سپۆنسەری تیکتۆک لە عێراق. کاڵاکانت دەگەیەنین بە ملیۆنان کڕیار.", btn_start: "دەستپێبکە", supported_by: "پشتیوانی کراوە لەلایەن", services_title: "چارەسەری سپۆنسەری ئامانجدار", ser1_t: "بەڕێوەبردنی سپۆنسەر", ser1_d: "بەڕێوەبردنی تەواوی Business Centerی تیکتۆک.", ser2_t: "زیادکردنی قازانج", ser2_d: "چاودێری و زیادکردنی سوود لە پارە خەرجکراوەکان.", feedback_title: "خاوەنکارەکان متمانەمان پێ دەکەن", footer_about: "ئاژانسی پێشەنگ بۆ گەشەکردنی تیکتۆک لە عێراق.", footer_links: "لینکە خێراکان",", legal_terms: "مەرج و یاساکان", legal_privacy: "سیاسەتی پاراستنی نهێنی" }
-        };
-
-        function changeLang(lang) {
-            document.body.className = (lang === 'ku') ? 'rtl' : 'ltr';
-            document.querySelectorAll('[data-key]').forEach(el => {
-                const key = el.getAttribute('data-key');
-                if (translations[lang][key]) el.innerText = translations[lang][key];
-            });
-            
-            const liveLink = document.querySelector('[data-key="nav_live_html"]');
-            if(liveLink) {
-                liveLink.innerHTML = (lang === 'ku' ? 'ڕیکلامە چالاکەکان' : 'Live Ads') + ' <span class="open-badge">OPEN ↗</span>';
-            }
-            
-            const notifySpan = document.querySelector('#live-ads-notify span');
-            if(notifySpan) {
-                notifySpan.innerHTML = (lang === 'ku' ? 'ڕیکلامە چالاکەکان' : 'Active Live Ads') + ' <span class="open-badge">OPEN ↗</span>';
-            }
-
-            document.getElementById('feedbackLink').href = `feedback.html?lang=${lang}`;
-            loadFeedbacks(lang);
-            if (menuMenu.classList.contains('active')) toggleMenu();
-        }
-    </script>
-</body>
-</html>
