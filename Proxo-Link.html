@@ -725,11 +725,17 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push('  text-decoration: none; overflow: hidden; transition: transform .13s;');
   p.push('  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); }');
   p.push('.btn:active { transform: scale(.96); background: rgba(255,255,255,.12); }');
-  p.push('.btn i { font-size: 25px; }');
+  p.push('.btn i { font-size: 28px; }');
+  p.push('#wa i { font-size: 25px; }');
+  p.push('#vb i { font-size: 21px; }');
+  p.push('#tg i { font-size: 22px; }');
+  p.push('#ig i { font-size: 21px; }');
+  p.push('#ph i { font-size: 20px; }');
+  p.push('#as i { font-size: 20px; }');
   p.push('.three-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 10px; align-items: center; }');
 
   // ── TikTok Badge ──
-  p.push(".tt-pill { display: inline-flex; flex-direction: row-reverse; align-items: center;");
+  p.push(".tt-pill { display: inline-flex; flex-direction: row; align-items: center;");
   p.push("  justify-content: center; gap: 7px; padding: 9px 16px; border-radius: 90px;");
   p.push("  background: rgba(255,255,255,0.03); backdrop-filter: blur(5px); color: #fff;");
   p.push("  text-decoration: none; font-family: 'Rabar_021', sans-serif; font-size: 13.5px;");
@@ -947,10 +953,16 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push('#ph { background: #e03030; } #as { background: #e03030; }');
   p.push('.btn:active { transform: scale(.96); }');
   p.push('.btn i { font-size: 28px; }');
+  p.push('#wa i { font-size: 25px; }');
+  p.push('#vb i { font-size: 21px; }');
+  p.push('#tg i { font-size: 22px; }');
+  p.push('#ig i { font-size: 21px; }');
+  p.push('#ph i { font-size: 20px; }');
+  p.push('#as i { font-size: 20px; }');
   p.push('.three-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 10px; align-items: center; }');
 
   // ── TikTok Badge ──
-  p.push(".tt-pill { display: inline-flex; flex-direction: row-reverse; align-items: center;");
+  p.push(".tt-pill { display: inline-flex; flex-direction: row; align-items: center;");
   p.push("  justify-content: center; gap: 7px; padding: 9px 16px; border-radius: 90px;");
   p.push("  background: rgba(255,255,255,0.06); color: #111; text-decoration: none;");
   p.push("  font-family: 'Rabar_021', sans-serif; font-size: 13.5px; font-weight: 600;");
@@ -961,7 +973,7 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push('.tt-pill:active { transform: scale(.95); }');
   p.push('.tt-wrap { display: flex; justify-content: center; width: 100%; }');
   p.push(".tt-badge { background: rgba(0,0,0,0.04); color: #111; text-decoration: none;");
-  p.push("  display: flex; flex-direction: row-reverse; align-items: center; gap: 8px;");
+  p.push("  display: flex; flex-direction: row; align-items: center; gap: 8px;");
   p.push("  padding: 7px 18px; border-radius: 90px; border: 1px solid rgba(0,0,0,0.1);");
   p.push("  position: relative; margin-top: 14px; font-family: 'Rabar_021', sans-serif; font-size: 14.5px; font-weight: 600; }");
   p.push(".tt-badge::before { content: ''; position: absolute; inset: -1px; border-radius: 50px; padding: 1.2px; background: linear-gradient(45deg, #69c9d0, #ee1d52); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: .6; }");
@@ -1167,6 +1179,12 @@ function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   parts.push("  background: #111; color: #fff; text-decoration: none;");
   parts.push("  font-family: 'Rabar_021', sans-serif; font-size: 13px; font-weight: 600; transition: transform .12s; }");
   parts.push('.tt-classic i { font-size: 18px; }');
+  parts.push('#wa i { font-size: 25px; }');
+  parts.push('#vb i { font-size: 21px; }');
+  parts.push('#tg i { font-size: 22px; }');
+  parts.push('#ig i { font-size: 21px; }');
+  parts.push('#ph i { font-size: 20px; }');
+  parts.push('#as i { font-size: 20px; }');
   parts.push('.tt-classic:active { transform: scale(.96); }');
 
   // ── Footer ──
