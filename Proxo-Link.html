@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ProxoLink – دروستکردنی پەیجی پەیوەندی</title>
+<title>ProxoLink – دروستکردنی کەرەستەی پەیوەندی</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 @font-face {
@@ -577,12 +577,19 @@ function buildLayout(activeBtns, tt, ttUrl, btnFn){
       <a href="${ttUrl}" target="_blank" class="tt-pill"><i class="fab fa-tiktok"></i><span>${tt}</span></a>
       ${btnFn(activeBtns[4])}
     </div>`;
+  } else if(count === 1){
+    // ١ دووگمە: tt-pill لە ڕاست، دووگمە لە چەپ — هەردوو لە یەک ڕیز
+    gridHTML = '';
+    belowGrid = `<div class="three-bottom-row">
+      <a href="${ttUrl}" target="_blank" class="tt-pill"><i class="fab fa-tiktok"></i><span>${tt}</span></a>
+      ${btnFn(activeBtns[0])}
+    </div>`;
   } else {
     gridHTML = activeBtns.map(b=>btnFn(b)).join('');
     belowGrid = `<div class="tt-wrap"><a href="${ttUrl}" target="_blank" class="tt-badge"><i class="fab fa-tiktok"></i><span>${tt}</span></a></div>`;
   }
 
-  return { gridHTML, belowGrid, cols: count===1?'1fr':'1fr 1fr' };
+  return { gridHTML, belowGrid, cols: '1fr 1fr' };
 }
 
 function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
