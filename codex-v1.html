@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>کۆددروستکەر - ProxoPages v1</title>
+<title>کۆددروستکەر - ProxoPages v2</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 @font-face {
@@ -94,25 +94,109 @@ body {
   margin-top: 4px;
 }
 
-/* Button toggle group */
-.btn-count-group { display: flex; gap: 8px; }
-.btn-count-opt {
-  flex: 1;
-  padding: 9px 4px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.04);
-  color: #aaa;
-  font-family: 'Rabar_021', sans-serif;
-  font-size: 13px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.15s;
+/* ── Checkbox Button Selector ── */
+.btn-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
-.btn-count-opt.active {
-  background: rgba(200,85,224,0.2);
+
+.btn-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.btn-checkbox-item:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(200,85,224,0.3);
+}
+.btn-checkbox-item.checked {
+  background: rgba(200,85,224,0.1);
+  border-color: rgba(200,85,224,0.5);
+}
+
+/* custom checkbox */
+.custom-cb {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border-radius: 5px;
+  border: 2px solid rgba(255,255,255,0.2);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.btn-checkbox-item.checked .custom-cb {
+  background: #c855e0;
   border-color: #c855e0;
+}
+.custom-cb i {
+  font-size: 10px;
   color: #fff;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.btn-checkbox-item.checked .custom-cb i { opacity: 1; }
+
+.cb-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.cb-icon-vb { background: rgba(115,96,242,0.2); color: #7360F2; }
+.cb-icon-wa { background: rgba(40,225,109,0.15); color: #28E16D; }
+.cb-icon-ig { background: rgba(220,39,67,0.15); color: #dc2743; }
+.cb-icon-ph { background: rgba(255,255,255,0.1); color: #fff; }
+
+.cb-label {
+  flex: 1;
+  font-size: 13px;
+  color: #ccc;
+}
+.btn-checkbox-item.checked .cb-label { color: #fff; }
+
+.cb-hint {
+  font-size: 10px;
+  color: #555;
+  margin-top: 1px;
+}
+.btn-checkbox-item.checked .cb-hint { color: #a87cc8; }
+
+/* btn fields area */
+#btnFields { display: flex; flex-direction: column; gap: 10px; }
+
+.btn-field-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.07);
+  animation: slideIn 0.2s ease;
+}
+@keyframes slideIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+.btn-field-card-header {
+  font-size: 12px;
+  color: #c855e0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .generate-btn {
@@ -239,19 +323,14 @@ iframe#preview {
       <textarea id="f_desc" oninput="livePreview()">پێویستت بە زانیاری زیاترە؟ پەیوەندیمان پێوە بکە لە ڕێگەی دووگمەکانی خوارەوە. تیمەکەمان بە خێرایی وەڵامت دەداتەوە.</textarea>
     </div>
 
-    <!-- Buttons -->
-    <div class="section-title">دووگمەکان</div>
+    <!-- Buttons Checkbox Selector -->
+    <div class="section-title">دووگمەکان — دیاریبکە کامەیان پیشان بدرێت</div>
 
-    <div class="field-group">
-      <label>چەند دووگمە پیشان بدرێت؟</label>
-      <div class="btn-count-group">
-        <div class="btn-count-opt" onclick="setBtnCount(1)">١</div>
-        <div class="btn-count-opt" onclick="setBtnCount(2)">٢</div>
-        <div class="btn-count-opt active" onclick="setBtnCount(3)">٣</div>
-        <div class="btn-count-opt" onclick="setBtnCount(4)">٤</div>
-      </div>
+    <div class="btn-checkbox-group" id="btnCheckboxGroup">
+      <!-- rendered by JS -->
     </div>
 
+    <!-- Dynamic fields for checked buttons -->
     <div id="btnFields"></div>
 
     <!-- Social -->
@@ -307,82 +386,105 @@ iframe#preview {
 </div>
 
 <script>
-// ─── Button config ───────────────────────────────────────────
+// ─── Button definitions ───────────────────────────────────────
 const BTN_DEFS = [
-  { id: 'vb', label: 'ڤایبەر',      icon: 'fab fa-viber',     cls: 'btn-vb', type: 'viber',     phoneField: true },
-  { id: 'wa', label: 'واتسئاپ',     icon: 'fab fa-whatsapp',  cls: 'btn-wa', type: 'whatsapp',  phoneField: true, shine: true },
-  { id: 'ig', label: 'ئینستاگرام',  icon: 'fab fa-instagram', cls: 'btn-ig', type: 'instagram', phoneField: false },
-  { id: 'ph', label: 'کۆرەک',       icon: 'fas fa-phone',     cls: 'btn-ph', type: 'phone',     phoneField: true },
+  { id: 'vb', label: 'ڤایبەر',     icon: 'fab fa-viber',     cls: 'btn-vb', type: 'viber',     phoneField: true,  cbCls: 'cb-icon-vb', defaultOn: true  },
+  { id: 'wa', label: 'واتسئاپ',    icon: 'fab fa-whatsapp',  cls: 'btn-wa', type: 'whatsapp',  phoneField: true,  cbCls: 'cb-icon-wa', defaultOn: true, shine: true },
+  { id: 'ig', label: 'ئینستاگرام', icon: 'fab fa-instagram', cls: 'btn-ig', type: 'instagram', phoneField: false, cbCls: 'cb-icon-ig', defaultOn: true  },
+  { id: 'ph', label: 'کۆرەک',      icon: 'fas fa-phone',     cls: 'btn-ph', type: 'phone',     phoneField: true,  cbCls: 'cb-icon-ph', defaultOn: false },
 ];
 
-let btnCount = 3;
+// Track which buttons are checked
+let checked = BTN_DEFS.map(b => b.defaultOn);
 
-function setBtnCount(n) {
-  btnCount = n;
-  document.querySelectorAll('.btn-count-opt').forEach((el, i) => {
-    el.classList.toggle('active', i + 1 === n);
+// ─── Render checkbox group ────────────────────────────────────
+function renderCheckboxes() {
+  const group = document.getElementById('btnCheckboxGroup');
+  group.innerHTML = '';
+  BTN_DEFS.forEach((def, i) => {
+    const item = document.createElement('div');
+    item.className = 'btn-checkbox-item' + (checked[i] ? ' checked' : '');
+    item.innerHTML = `
+      <div class="custom-cb"><i class="fas fa-check"></i></div>
+      <div class="cb-icon ${def.cbCls}"><i class="${def.icon}"></i></div>
+      <div>
+        <div class="cb-label">${def.label}</div>
+        <div class="cb-hint">${def.type}</div>
+      </div>
+    `;
+    item.addEventListener('click', () => {
+      checked[i] = !checked[i];
+      renderCheckboxes();
+      renderBtnFields();
+      livePreview();
+    });
+    group.appendChild(item);
   });
-  renderBtnFields();
-  livePreview();
 }
 
+// ─── Render input fields for checked buttons ──────────────────
 function renderBtnFields() {
   const container = document.getElementById('btnFields');
+  // Save current values before re-render
+  BTN_DEFS.forEach((def, i) => {
+    const lEl = document.getElementById(`bl_${i}`);
+    const cEl = document.getElementById(`bc_${i}`);
+    if (lEl) def._savedLabel   = lEl.value;
+    if (cEl) def._savedContact = cEl.value;
+  });
+
   container.innerHTML = '';
-  for (let i = 0; i < btnCount; i++) {
-    const def = BTN_DEFS[i];
-    const saved = window._btnData && window._btnData[i];
-    const label = saved ? saved.label : def.label;
-    const contact = saved ? saved.contact : '';
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding:12px;background:rgba(255,255,255,0.03);border-radius:12px;border:1px solid rgba(255,255,255,0.07)';
-    wrap.innerHTML = `
-      <div style="font-size:12px;color:#c855e0;font-weight:600"><i class="${def.icon}" style="margin-left:6px"></i> دووگمەی ${i+1}</div>
+  BTN_DEFS.forEach((def, i) => {
+    if (!checked[i]) return;
+    const label   = def._savedLabel   !== undefined ? def._savedLabel   : def.label;
+    const contact = def._savedContact !== undefined ? def._savedContact : '';
+
+    const card = document.createElement('div');
+    card.className = 'btn-field-card';
+    card.innerHTML = `
+      <div class="btn-field-card-header">
+        <i class="${def.icon}"></i> ${def.label}
+      </div>
       <div class="field-group">
         <label>ناوی دووگمە</label>
         <input type="text" id="bl_${i}" value="${label}" oninput="livePreview()">
       </div>
       <div class="field-group">
         <label>${def.phoneField ? 'ژمارە / لینک' : 'لینک (instagram.com/...)'}</label>
-        <input type="text" id="bc_${i}" value="${contact}" oninput="livePreview()" placeholder="${def.phoneField ? (def.type==='instagram' ? 'instagram.com/username' : '+9647XXXXXXXXX') : ''}">
+        <input type="text" id="bc_${i}" value="${contact}" oninput="livePreview()"
+          placeholder="${def.type === 'instagram' ? 'instagram.com/username' : (def.phoneField ? '+9647XXXXXXXXX' : '')}">
       </div>
     `;
-    container.appendChild(wrap);
-  }
+    container.appendChild(card);
+  });
 }
 
-function getBtnData() {
-  const data = [];
-  for (let i = 0; i < btnCount; i++) {
-    const def = BTN_DEFS[i];
-    const labelEl = document.getElementById(`bl_${i}`);
+// ─── Collect checked button data ─────────────────────────────
+function getActiveBtns() {
+  return BTN_DEFS.filter((_, i) => checked[i]).map((def, _idx, _arr) => {
+    const i = BTN_DEFS.indexOf(def);
+    const labelEl   = document.getElementById(`bl_${i}`);
     const contactEl = document.getElementById(`bc_${i}`);
-    data.push({
+    return {
       ...def,
-      label: labelEl ? labelEl.value : def.label,
+      label:   labelEl   ? labelEl.value   : def.label,
       contact: contactEl ? contactEl.value : '',
-    });
-  }
-  return data;
+    };
+  });
 }
 
-// ─── Template builder ────────────────────────────────────────
-function buildHTML(preview = false) {
-  const name      = document.getElementById('f_name').value || 'Tahina Barzan';
-  const avatar    = document.getElementById('f_avatar').value;
-  const desc      = document.getElementById('f_desc').value;
-  const tt        = document.getElementById('f_tt').value;
-  const ttUrl     = document.getElementById('f_tt_url').value;
-  const pixel     = document.getElementById('f_pixel').value || 'YOUR_PIXEL_ID';
+// ─── Template builder ─────────────────────────────────────────
+function buildHTML() {
+  const name       = document.getElementById('f_name').value || 'Tahina Barzan';
+  const avatar     = document.getElementById('f_avatar').value;
+  const desc       = document.getElementById('f_desc').value;
+  const tt         = document.getElementById('f_tt').value;
+  const ttUrl      = document.getElementById('f_tt_url').value;
+  const pixel      = document.getElementById('f_pixel').value || 'YOUR_PIXEL_ID';
   const sponsorUrl  = document.getElementById('f_sponsor_url').value;
   const sponsorLogo = document.getElementById('f_sponsor_logo').value;
 
-  const buttons = getBtnData();
-
-  // ── Grid buttons HTML ────────────────────────────────────
-  // All buttons same style (.btn only, no individual color class)
-  // 3-btn mode: row1=[btn1,btn2], row2=[btn3(left col), tt-badge(right col)]
-  // Other counts: normal 2-col grid, tt-badge below as usual
+  const buttons = getActiveBtns();
 
   const btnHTML = (b) => `
       <a id="${b.id}" class="btn">
@@ -399,7 +501,7 @@ function buildHTML(preview = false) {
   let gridHTML = '';
   let ttAfterGrid = '';
 
-  if (btnCount === 3) {
+  if (buttons.length === 3) {
     gridHTML = `
       ${btnHTML(buttons[0])}
       ${btnHTML(buttons[1])}
@@ -411,18 +513,16 @@ function buildHTML(preview = false) {
     ttAfterGrid = ttBadge;
   }
 
-  // ── JS onclick handlers ──────────────────────────────────
   const handlerLines = buttons.map(b => {
     const msg = `'سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n' + vUrl`;
     let url = '';
-    if (b.type === 'whatsapp') url = `'whatsapp://send?phone=${b.contact || 'YOUR_NUMBER'}&text=' + encodeURIComponent(msg)`;
+    if (b.type === 'whatsapp')  url = `'whatsapp://send?phone=${b.contact || 'YOUR_NUMBER'}&text=' + encodeURIComponent(msg)`;
     else if (b.type === 'viber') url = `'viber://chat?number=${b.contact || 'YOUR_NUMBER'}&draft=' + encodeURIComponent(msg)`;
     else if (b.type === 'phone') url = `'tel:${b.contact || 'YOUR_NUMBER'}'`;
     else if (b.type === 'instagram') url = `'https://${b.contact || 'instagram.com/username'}'`;
-    const kurdishName = b.label;
     const mCls = `m-${b.type === 'instagram' ? 'ig' : b.type === 'whatsapp' ? 'wa' : b.type === 'viber' ? 'vb' : 'ph'}`;
     return `  document.getElementById('${b.id}').onclick = () =>
-    ask('${b.type}', ${url}, '${kurdishName}', '${mCls}');`;
+    ask('${b.type}', ${url}, '${b.label}', '${mCls}');`;
   }).join('\n');
 
   return `<!DOCTYPE html>
@@ -439,234 +539,53 @@ function buildHTML(preview = false) {
   src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-body {
-  font-family: 'Rabar_021', sans-serif;
-  background: #0d1021;
-  display: flex;
-  justify-content: center;
-  min-height: 100vh;
-}
-
-.page {
-  width: 100%;
-  max-width: 430px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #0d1021;
-}
-
-.top-section {
-  width: 100%;
-  position: relative;
-  margin-bottom: 0;
-}
-
-.gradient-bg {
-  width: 100%;
-  height: 190px;
-  background: linear-gradient(to right, #5b1fa8 0%, #8b2fc9 40%, #b044d8 70%, #c855e0 100%);
-  position: relative;
-}
-
-.gradient-bg::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0;
-  width: 100%;
-  height: 55px;
-  background: #0d1021;
-  border-radius: 50% 50% 0 0 / 55px 55px 0 0;
-}
-
-.avatar {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 4px solid #fff;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.3);
-  z-index: 10;
-}
+body { font-family: 'Rabar_021', sans-serif; background: #0d1021; display: flex; justify-content: center; min-height: 100vh; }
+.page { width: 100%; max-width: 430px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; background: #0d1021; }
+.top-section { width: 100%; position: relative; margin-bottom: 0; }
+.gradient-bg { width: 100%; height: 190px; background: linear-gradient(to right, #5b1fa8 0%, #8b2fc9 40%, #b044d8 70%, #c855e0 100%); position: relative; }
+.gradient-bg::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: #0d1021; border-radius: 50% 50% 0 0 / 55px 55px 0 0; }
+.avatar { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); width: 100px; height: 100px; border-radius: 50%; border: 4px solid #fff; overflow: hidden; background: #fff; box-shadow: 0 4px 18px rgba(0,0,0,0.3); z-index: 10; }
 .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-.content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 16px 50px;
-  background: #0d1021;
-}
-
-.name {
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  text-align: center;
-  position: relative;
-  top: -25px;
-  margin-bottom: -10px;
-}
-
-.desc {
-  font-size: 14px;
-  color: #E0E0E0;
-  line-height: 2;
-  text-align: center;
-  margin-top: 18px;
-  padding: 0 6px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  width: 100%;
-  margin-top: 40px;
-}
-
-.btn {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 18px 8px 15px;
-  border-radius: 18px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #fff;
-  min-height: 88px;
-  cursor: pointer;
-  text-decoration: none;
-  overflow: hidden;
-  transition: transform 0.13s;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.15);
-}
+.content { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 16px 50px; background: #0d1021; }
+.name { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 700; color: #fff; text-align: center; position: relative; top: -25px; margin-bottom: -10px; }
+.desc { font-size: 14px; color: #E0E0E0; line-height: 2; text-align: center; margin-top: 18px; padding: 0 6px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 40px; }
+.btn { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 18px 8px 15px; border-radius: 18px; font-size: 14px; font-weight: bold; color: #fff; min-height: 88px; cursor: pointer; text-decoration: none; overflow: hidden; transition: transform 0.13s; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); }
 .btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
-
 .btn i { font-size: 25px; }
-
-.btn-wa::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 50%; height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,0.32), transparent);
-  transform: skewX(-22deg);
-  animation: shine 2.4s infinite;
-}
+.btn-wa::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.32), transparent); transform: skewX(-22deg); animation: shine 2.4s infinite; }
 .no-shine::after { display: none !important; }
 @keyframes shine { 0%{left:-100%} 100%{left:160%} }
-
-.hand {
-  position: absolute; bottom: 6px; right: 9px;
-  pointer-events: none;
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.8s;
-}
+.hand { position: absolute; bottom: 6px; right: 9px; pointer-events: none; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s; }
 .hand.hide { opacity: 0; }
 .hand-emoji { font-size: 17px; animation: tap 1s infinite; position: relative; z-index: 2; }
-.hand-ring  { position: absolute; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.85); border-radius: 50%; animation: ring 1s infinite; }
+.hand-ring { position: absolute; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.85); border-radius: 50%; animation: ring 1s infinite; }
 @keyframes tap  { 0%,100%{transform:scale(1)} 50%{transform:scale(0.87)} }
 @keyframes ring { 0%{transform:scale(1);opacity:.8} 100%{transform:scale(2.2);opacity:0} }
-
-.tt-badge {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(5px);
-  color: #fff;
-  text-decoration: none;
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 18px;
-  border-radius: 90px;
-  border: 1px solid rgba(255,255,255,0.1);
-  position: relative;
-  margin-top: 14px;
-  margin-right: 2px;
-  margin-right: auto;
-  transition: 0.3s cubic-bezier(0.4,0,0.2,1);
-  font-family: 'Rabar_021', sans-serif;
-  font-size: 14.5px;
-  font-weight: 600;
-  align-self: center;
-}
-.tt-badge::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: 50px;
-  padding: 1.2px;
-  background: linear-gradient(45deg, #69c9d0, #ee1d52);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  opacity: 0.6;
-}
+.tt-badge { background: rgba(255,255,255,0.03); backdrop-filter: blur(5px); color: #fff; text-decoration: none; display: flex; flex-direction: row-reverse; align-items: center; gap: 8px; padding: 7px 18px; border-radius: 90px; border: 1px solid rgba(255,255,255,0.1); position: relative; margin-top: 14px; margin-right: auto; transition: 0.3s cubic-bezier(0.4,0,0.2,1); font-family: 'Rabar_021', sans-serif; font-size: 14.5px; font-weight: 600; align-self: center; }
+.tt-badge::before { content: ""; position: absolute; inset: -1px; border-radius: 50px; padding: 1.2px; background: linear-gradient(45deg, #69c9d0, #ee1d52); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: 0.6; }
 .tt-badge:active { transform: scale(0.95); }
 .tt-badge i { font-size: 17px; }
-
-.modal-bg {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(8px);
-  display: none; justify-content: center; align-items: center;
-  z-index: 9999;
-}
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 9999; }
 .modal-bg.show { display: flex; animation: fadeIn 0.2s ease; }
-.modal-box {
-  width: 85%; max-width: 320px;
-  background: #16181d;
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 24px;
-  padding: 35px 25px;
-  text-align: center;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-}
+.modal-box { width: 85%; max-width: 320px; background: #16181d; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 35px 25px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
 .modal-box h3 { font-size: 20px; margin-bottom: 10px; }
 .modal-box p  { font-size: 14px; color: #aaa; line-height: 1.7; margin-bottom: 25px; }
-.m-btn {
-  display: block; width: 100%;
-  padding: 16px; border: none;
-  border-radius: 16px;
-  font-family: 'Rabar_021'; font-size: 15px; font-weight: bold;
-  cursor: pointer; margin-bottom: 12px; color: #fff;
-}
+.m-btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 16px; font-family: 'Rabar_021'; font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 12px; color: #fff; }
 .m-cancel { font-size: 13px; color: #888; cursor: pointer; padding: 5px; display: inline-block; }
 .m-wa { background: #28E16D; color: #000; }
 .m-vb { background: #7360F2; }
 .m-ph { background: #fff; color: #000; }
 .m-ig { background: #dc2743; }
-
-.footer {
-  width: 100%;
-  margin-top: 90px;
-  padding-bottom: 28px;
-  text-align: center;
-}
+.footer { width: 100%; margin-top: 90px; padding-bottom: 28px; text-align: center; }
 .footer small { display: block; font-size: 11px; color: #8b8b8b; margin-bottom: 8px; }
 .footer img   { height: 13px; display: block; margin: 0 auto 10px; }
 .legal { font-size: 10px; color: #8b8b8b; }
 .legal a { color: inherit; text-decoration: none; margin: 0 5px; }
-
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 </style>
 </head>
 <body>
-
 <div class="modal-bg" id="modal">
   <div class="modal-box">
     <h3 id="m-title">...</h3>
@@ -675,28 +594,18 @@ body {
     <span class="m-cancel" onclick="closeModal()">پاشگەزبوونەوە</span>
   </div>
 </div>
-
 <div class="page">
-
   <div class="top-section">
     <div class="gradient-bg"></div>
-    <div class="avatar">
-      <img src="${avatar}" alt="${name}">
-    </div>
+    <div class="avatar"><img src="${avatar}" alt="${name}"></div>
   </div>
-
   <div class="content">
-
     <h1 class="name">${name}</h1>
-
     <p class="desc">${desc}</p>
-
     <div class="grid">
       ${gridHTML}
     </div>
-
     ${ttAfterGrid}
-
     <div class="footer">
       <small>سپۆنسەر کراوە لەلایەن</small>
       <a href="${sponsorUrl}" target="_blank">
@@ -707,33 +616,26 @@ body {
         <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a>
       </div>
     </div>
-
   </div>
 </div>
-
 <script>
 const urlParams = new URLSearchParams(window.location.search);
 let selectedApp = '';
 let selectedUrl = '';
-
 function hideEffects() {
   const hand = document.getElementById('hand');
   const wa   = document.getElementById('wa');
   if (hand) hand.classList.add('hide');
   if (wa)   wa.classList.add('no-shine');
 }
-
 function ask(name, url, kurdishName, cls) {
-  selectedApp = name;
-  selectedUrl = url;
+  selectedApp = name; selectedUrl = url;
   document.getElementById('m-title').innerText = kurdishName;
   document.getElementById('m-ok').className = 'm-btn ' + cls;
   document.getElementById('modal').classList.add('show');
   if (navigator.vibrate) navigator.vibrate(25);
 }
-
 function closeModal() { document.getElementById('modal').classList.remove('show'); }
-
 function goLink() {
   hideEffects();
   const lastTrackTime = localStorage.getItem('tt_contact_timestamp');
@@ -748,19 +650,15 @@ function goLink() {
   closeModal();
   setTimeout(() => { window.location.href = selectedUrl; }, 700);
 }
-
 !function (w, d, t) {
   w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.n;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script");s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(s,e)};
   ttq.load('${pixel}');
   ttq.page();
 }(window, document, 'ttq');
-
 document.addEventListener('DOMContentLoaded', () => {
   const vUrl = decodeURIComponent(urlParams.get('v') || '${ttUrl}');
   const msg  = 'سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n' + vUrl;
-
 ${handlerLines}
-
   window.onclick = e => { if (e.target.id === 'modal') closeModal(); };
   setTimeout(hideEffects, 10000);
 });
@@ -771,17 +669,16 @@ ${handlerLines}
 
 // ─── Live preview ─────────────────────────────────────────────
 function livePreview() {
-  const html = buildHTML(true);
+  const html = buildHTML();
   const iframe = document.getElementById('preview');
   const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  iframe.src = url;
+  iframe.src = URL.createObjectURL(blob);
 }
 
 function generateAndPreview() { livePreview(); }
 
 function exportHTML() {
-  const html = buildHTML(false);
+  const html = buildHTML();
   const blob = new Blob([html], { type: 'text/html' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -790,8 +687,7 @@ function exportHTML() {
 }
 
 function copyHTML(btn) {
-  const html = buildHTML(false);
-  navigator.clipboard.writeText(html).then(() => {
+  navigator.clipboard.writeText(buildHTML()).then(() => {
     const orig = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-check"></i> کۆپی کرا!';
     btn.style.color = '#a3f5a3';
@@ -802,6 +698,7 @@ function copyHTML(btn) {
 function onTemplateChange() { livePreview(); }
 
 // ─── Init ─────────────────────────────────────────────────────
+renderCheckboxes();
 renderBtnFields();
 livePreview();
 </script>
