@@ -228,15 +228,256 @@ iframe#resultFrame { width:100%; height:680px; border:none; display:block; borde
 .tg-status { display:none; margin-top:10px; width:100%; max-width:390px; padding:12px 16px; border-radius:12px; font-size:12.5px; text-align:center; animation:fadeUp 0.2s ease; }
 .tg-status.ok { background:rgba(37,211,102,0.12); border:1px solid rgba(37,211,102,0.25); color:#25d366; }
 .tg-status.err { background:rgba(255,80,80,0.12); border:1px solid rgba(255,80,80,0.25); color:#ff6060; }
+
+/* ── AUTH ── */
+.auth-wrap {
+  display:none; width:100%; max-width:400px;
+  flex-direction:column; align-items:center; gap:0;
+}
+.auth-card {
+  width:100%; background:#131629;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:24px; padding:30px 24px 28px;
+  display:flex; flex-direction:column; gap:16px;
+}
+.auth-logo { text-align:center; margin-bottom:4px; }
+.auth-logo h2 { font-size:18px; font-weight:800; color:#c855e0; }
+.auth-logo p { font-size:12px; color:#555; margin-top:4px; }
+.auth-tabs { display:flex; gap:0; background:rgba(255,255,255,0.04); border-radius:12px; padding:3px; }
+.auth-tab {
+  flex:1; padding:9px; text-align:center; font-size:13px;
+  border-radius:10px; cursor:pointer; transition:all 0.2s;
+  font-family:'Rabar_021',sans-serif; border:none; background:transparent; color:#666;
+}
+.auth-tab.active { background:#c855e0; color:#fff; font-weight:700; }
+.auth-input {
+  width:100%; padding:12px 14px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.09);
+  border-radius:12px; color:#fff;
+  font-family:'Rabar_021',sans-serif; font-size:13px;
+  outline:none; transition:border-color 0.2s;
+}
+.auth-input:focus { border-color:#c855e0; background:rgba(200,85,224,0.05); }
+.auth-input::placeholder { color:#444; }
+.auth-btn {
+  width:100%; padding:14px;
+  background:linear-gradient(135deg,#7b2fd4,#c855e0);
+  color:#fff; border:none; border-radius:13px;
+  font-family:'Rabar_021',sans-serif; font-size:14px; font-weight:700;
+  cursor:pointer; transition:opacity 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.auth-btn:hover { opacity:0.9; }
+.auth-btn:disabled { opacity:0.6; pointer-events:none; }
+.auth-msg { font-size:12px; text-align:center; padding:10px 14px; border-radius:10px; display:none; }
+.auth-msg.ok  { background:rgba(37,211,102,0.1); border:1px solid rgba(37,211,102,0.2); color:#25d366; }
+.auth-msg.err { background:rgba(255,80,80,0.1);  border:1px solid rgba(255,80,80,0.2);  color:#ff6060; }
+
+/* ── DASHBOARD ── */
+.dash-wrap {
+  display:none; width:100%; max-width:480px;
+  flex-direction:column; gap:16px; padding-bottom:40px;
+}
+.dash-header {
+  width:100%; background:#131629;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px; padding:18px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.dash-header-left h2 { font-size:16px; font-weight:800; color:#c855e0; }
+.dash-header-left p { font-size:11px; color:#555; margin-top:2px; }
+.dash-logout {
+  padding:8px 14px; background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08); border-radius:10px;
+  color:#888; font-size:12px; cursor:pointer;
+  font-family:'Rabar_021',sans-serif; transition:all 0.2s;
+  display:flex; align-items:center; gap:6px;
+}
+.dash-logout:hover { color:#fff; border-color:rgba(255,255,255,0.2); }
+.dash-new-btn {
+  width:100%; padding:14px;
+  background:linear-gradient(135deg,#7b2fd4,#c855e0);
+  color:#fff; border:none; border-radius:14px;
+  font-family:'Rabar_021',sans-serif; font-size:14px; font-weight:700;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:opacity 0.2s;
+}
+.dash-new-btn:hover { opacity:0.9; }
+.dash-cards-list { display:flex; flex-direction:column; gap:12px; }
+.dash-card {
+  background:#131629; border:1px solid rgba(255,255,255,0.08);
+  border-radius:18px; padding:16px 18px;
+  display:flex; flex-direction:column; gap:12px;
+  animation:fadeUp 0.2s ease;
+}
+.dash-card-top { display:flex; align-items:center; gap:12px; }
+.dash-card-avatar {
+  width:46px; height:46px; border-radius:50%;
+  border:2px solid rgba(200,85,224,0.3);
+  object-fit:cover; background:#1e2040; flex-shrink:0;
+}
+.dash-card-info { flex:1; min-width:0; }
+.dash-card-name { font-size:14px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dash-card-meta { font-size:11px; color:#555; margin-top:3px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.dash-card-style {
+  font-size:10px; padding:2px 8px; border-radius:20px;
+  background:rgba(200,85,224,0.12); color:#c870e8; border:1px solid rgba(200,85,224,0.2);
+}
+.dash-card-actions { display:flex; gap:7px; }
+.dca-btn {
+  flex:1; padding:9px 6px; border-radius:11px;
+  font-family:'Rabar_021',sans-serif; font-size:12px;
+  cursor:pointer; border:none; transition:all 0.15s;
+  display:flex; align-items:center; justify-content:center; gap:5px;
+}
+.dca-preview { background:rgba(255,255,255,0.06); color:#aaa; border:1px solid rgba(255,255,255,0.08); }
+.dca-preview:hover { color:#fff; background:rgba(255,255,255,0.1); }
+.dca-send { background:rgba(0,136,204,0.15); color:#29a8eb; border:1px solid rgba(0,136,204,0.2); }
+.dca-send:hover { background:rgba(0,136,204,0.25); }
+.dca-send.sending { opacity:0.6; pointer-events:none; }
+.dca-delete { background:rgba(255,80,80,0.1); color:#ff6060; border:1px solid rgba(255,80,80,0.15); }
+.dca-delete:hover { background:rgba(255,80,80,0.2); }
+.dash-empty {
+  text-align:center; padding:40px 20px;
+  background:#131629; border:1px dashed rgba(255,255,255,0.08);
+  border-radius:18px; color:#444;
+}
+.dash-empty i { font-size:32px; margin-bottom:12px; display:block; }
+.dash-empty p { font-size:13px; line-height:1.8; }
+.dash-loading { text-align:center; padding:30px; color:#555; font-size:13px; }
+
+/* ── NAV BAR ── */
+.top-nav {
+  width:100%; max-width:480px;
+  display:none; align-items:center; justify-content:center;
+  gap:8px; margin-bottom:8px;
+}
+.nav-btn {
+  flex:1; padding:11px 8px;
+  background:rgba(255,255,255,0.04); color:#666;
+  border:1px solid rgba(255,255,255,0.07); border-radius:13px;
+  font-family:'Rabar_021',sans-serif; font-size:12.5px;
+  cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.nav-btn:hover { color:#fff; border-color:rgba(255,255,255,0.15); }
+.nav-btn.active { background:rgba(200,85,224,0.1); color:#c870e8; border-color:rgba(200,85,224,0.3); }
+
+/* Preview Modal */
+.prev-modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(10px); display:none;
+  justify-content:center; align-items:center; z-index:9999;
+}
+.prev-modal-overlay.active { display:flex; animation:fadeUp 0.2s ease; }
+.prev-modal-inner {
+  width:92%; max-width:400px;
+  background:#0d1021; border-radius:32px;
+  border:1px solid rgba(255,255,255,0.1);
+  overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.8);
+}
+.prev-modal-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 18px; background:#131629;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.prev-modal-bar span { font-size:13px; color:#aaa; }
+.prev-modal-close {
+  width:30px; height:30px; border-radius:50%;
+  background:rgba(255,255,255,0.08); border:none;
+  color:#aaa; cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+}
+.prev-modal-close:hover { background:rgba(255,80,80,0.2); color:#ff6060; }
+iframe#dashPreviewFrame { width:100%; height:560px; border:none; display:block; }
 </style>
 </head>
 <body>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// دڵنیابوون لە بارکردنی SDK پێش هەموو شتێک
+window.__sbReady = false;
+</script>
+
+<!-- ── ناڤبار ── -->
+<div class="top-nav" id="topNav">
+  <button class="nav-btn" id="navForm" onclick="showPage('form')">
+    <i class="fas fa-plus"></i> دروستکردن
+  </button>
+  <button class="nav-btn" id="navDash" onclick="showPage('dash')">
+    <i class="fas fa-folder-open"></i> ئەرشیڤەکانم
+  </button>
+</div>
+
+<!-- ── Auth ── -->
+<div class="auth-wrap" id="authWrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h2>🔐 ProxoLink</h2>
+      <p>چوونەژوورەوە یان دروستکردنی هەژمار</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">چوونەژوورەوە</button>
+      <button class="auth-tab" id="tabSignup" onclick="switchTab('signup')">تۆمارکردن</button>
+    </div>
+    <div class="field" id="signupNameField" style="display:none">
+      <label style="font-size:12px;color:#8890b0">ناوت</label>
+      <input type="text" class="auth-input" id="authName" placeholder="ناوی تەواوت بنووسە">
+    </div>
+    <div class="field">
+      <label style="font-size:12px;color:#8890b0">ئیمەیل</label>
+      <input type="email" class="auth-input" id="authEmail" placeholder="email@example.com" style="direction:ltr;text-align:left">
+    </div>
+    <div class="field">
+      <label style="font-size:12px;color:#8890b0">پاسۆرد</label>
+      <input type="password" class="auth-input" id="authPass" placeholder="•••••••• (کەمترین ٦ پیت)" style="direction:ltr;text-align:left">
+    </div>
+    <div class="auth-msg" id="authMsg"></div>
+    <button class="auth-btn" id="authSubmitBtn" onclick="handleAuth()">
+      <i class="fas fa-sign-in-alt"></i>
+      <span id="authBtnText">چوونەژوورەوە</span>
+    </button>
+  </div>
+</div>
+
+<!-- ── داشبۆرد ── -->
+<div class="dash-wrap" id="dashWrap">
+  <div class="dash-header">
+    <div class="dash-header-left">
+      <h2>📁 ئەرشیڤەکانم</h2>
+      <p id="dashUserEmail"></p>
+    </div>
+    <button class="dash-logout" onclick="doLogout()">
+      <i class="fas fa-sign-out-alt"></i> دەرچوون
+    </button>
+  </div>
+  <button class="dash-new-btn" onclick="showPage('form')">
+    <i class="fas fa-plus"></i> کەرەستەی نوێ دروست بکە
+  </button>
+  <div class="dash-cards-list" id="dashCardsList">
+    <div class="dash-loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>
+  </div>
+</div>
+
+<!-- ── Preview Modal ── -->
+<div class="prev-modal-overlay" id="prevModalOverlay">
+  <div class="prev-modal-inner">
+    <div class="prev-modal-bar">
+      <span id="prevModalTitle">پێشبینی</span>
+      <button class="prev-modal-close" onclick="closePrevModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <iframe id="dashPreviewFrame" title="preview"></iframe>
+  </div>
+</div>
 
 <div class="card" id="formCard">
   <div class="logo">
     <h1>ProxoLink</h1>
     <p>کەرەستەی پەیوەندی خۆت دروست بکە</p>
-    <div class="app-version">ProxoLink v9.0</div>
+    <div class="app-version">ProxoLink v9.1</div>
   </div>
 
   <div class="field">
@@ -1401,6 +1642,335 @@ renderContacts();
 renderBioChips();
 renderColorThemes();
 updatePreviews();
+
+// ══════════════════════════════════════════════
+// SUPABASE CONFIG
+// ══════════════════════════════════════════════
+const SB_URL  = 'https://rtbsblgaewmfiynhwgkv.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
+let sb = null;
+
+let currentUser = null;
+let authMode    = 'login'; // 'login' | 'signup'
+
+// ── بەڕێوەبردنی ئەم پەڕانە ──
+function showPage(page) {
+  // شاردنەوەی هەموو شتێک
+  document.getElementById('authWrap').style.display    = 'none';
+  document.getElementById('dashWrap').style.display    = 'none';
+  document.getElementById('formCard').style.display    = 'none';
+  document.getElementById('resultWrap').style.display  = 'none';
+  document.getElementById('topNav').style.display      = 'none';
+
+  const navForm = document.getElementById('navForm');
+  const navDash = document.getElementById('navDash');
+
+  if (page === 'auth') {
+    document.getElementById('authWrap').style.display = 'flex';
+  } else if (page === 'form') {
+    document.getElementById('topNav').style.display = 'flex';
+    document.getElementById('formCard').style.display = 'flex';
+    navForm.classList.add('active'); navDash.classList.remove('active');
+  } else if (page === 'dash') {
+    document.getElementById('topNav').style.display = 'flex';
+    document.getElementById('dashWrap').style.display = 'flex';
+    navDash.classList.add('active'); navForm.classList.remove('active');
+    loadDashCards();
+  }
+}
+
+// ── Auth: گۆڕینی تاب ──
+function switchTab(mode) {
+  authMode = mode;
+  document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+  document.getElementById('tabSignup').classList.toggle('active', mode === 'signup');
+  document.getElementById('signupNameField').style.display = mode === 'signup' ? 'flex' : 'none';
+  document.getElementById('authBtnText').textContent = mode === 'login' ? 'چوونەژوورەوە' : 'تۆمارکردن';
+  document.getElementById('authMsg').style.display = 'none';
+}
+
+function setAuthMsg(text, type) {
+  const el = document.getElementById('authMsg');
+  el.textContent = text;
+  el.className = 'auth-msg ' + type;
+  el.style.display = 'block';
+}
+
+// ── Auth: چوونەژوورەوە / تۆمارکردن ──
+async function handleAuth() {
+  const email = document.getElementById('authEmail').value.trim();
+  const pass  = document.getElementById('authPass').value;
+  const btn   = document.getElementById('authSubmitBtn');
+
+  if (!email || !pass) { setAuthMsg('تکایە هەموو خانەکان پڕ بکەرەوە', 'err'); return; }
+  if (pass.length < 6) { setAuthMsg('پاسۆردەکە کەمترین ٦ پیت دەبێت', 'err'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> چاوەڕوان بە...';
+  document.getElementById('authMsg').style.display = 'none';
+
+  try {
+    if (authMode === 'login') {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+      if (error) throw error;
+      currentUser = data.user;
+      onLoggedIn();
+
+    } else {
+      // تۆمارکردن
+      const name = document.getElementById('authName').value.trim() || email.split('@')[0];
+      const { data, error } = await sb.auth.signUp({
+        email,
+        password: pass,
+        options: { data: { full_name: name } }
+      });
+      if (error) throw error;
+
+      if (data.user && data.session) {
+        // یەکسەر چوو ژوورەوە (email confirm off)
+        currentUser = data.user;
+        onLoggedIn();
+      } else if (data.user && !data.session) {
+        // پێویستی بە پشتڕاستکردنی ئیمەیل هەیە
+        setAuthMsg('✅ ئیمەیلێک نێردرا بۆت — تکایە ئیمەیلەکەت بپشکنە و پشتڕاستی بکەرەوە، پاشان بگەڕێرەوە چوونەژوورەوە', 'ok');
+      } else {
+        throw new Error('Unknown signup error');
+      }
+    }
+  } catch (err) {
+    const errMap = {
+      'Invalid login credentials':        'ئیمەیل یان پاسۆرد هەڵەیە',
+      'Email already registered':         'ئەم ئیمەیلە پێشتر تۆمارکراوە — چوونەژوورەوە هەوڵ بدە',
+      'User already registered':          'ئەم ئیمەیلە پێشتر تۆمارکراوە — چوونەژوورەوە هەوڵ بدە',
+      'Email not confirmed':              'ئیمەیلەکەت پشتڕاست نەکراوەتەوە — تکایە ئیمەیلەکەت بپشکنە',
+      'Password should be at least 6 characters': 'پاسۆردەکە کەمترین ٦ پیت دەبێت',
+      'Unable to validate email address: invalid format': 'فۆرماتی ئیمەیل هەڵەیە',
+    };
+    const msg = errMap[err.message] || ('هەڵەیەک ڕوویدا: ' + err.message);
+    setAuthMsg(msg, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> ' + (authMode === 'login' ? 'چوونەژوورەوە' : 'تۆمارکردن');
+  }
+}
+
+function onLoggedIn() {
+  if (!currentUser) return;
+  document.getElementById('dashUserEmail').textContent = currentUser.email;
+  showPage('form');
+}
+
+// ── دەرچوون ──
+async function doLogout() {
+  await sb.auth.signOut();
+  currentUser = null;
+  showPage('auth');
+}
+
+// ══════════════════════════════════════════════
+// DASHBOARD – بارکردنی کارتەکان
+// ══════════════════════════════════════════════
+async function loadDashCards() {
+  if (!currentUser) return;
+  const list = document.getElementById('dashCardsList');
+  list.innerHTML = '<div class="dash-loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>';
+
+  const { data, error } = await sb
+    .from('proxolink_cards')
+    .select('id, name, bio, tiktok_username, style, color_theme, avatar_b64, created_at, html_content, video_url')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    list.innerHTML = '<div class="dash-empty"><i class="fas fa-exclamation-circle"></i><p>هەڵەیەک ڕوویدا لە بارکردندا</p></div>';
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    list.innerHTML = '<div class="dash-empty"><i class="fas fa-folder-open"></i><p>هێشتا هیچ کەرەستەیەکت نییە<br>کرتەی دووگمەی سەرەوە بکە تا یەکی دروست بکەی</p></div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  data.forEach(card => {
+    const date = new Date(card.created_at);
+    const dateStr = date.toLocaleDateString('ku', { year:'numeric', month:'short', day:'numeric' });
+    const timeStr = date.toLocaleTimeString('ku', { hour:'2-digit', minute:'2-digit' });
+    const styleEmoji = card.style === 'dark' ? '🌑' : card.style === 'light' ? '☀️' : '📋';
+    const avatar = card.avatar_b64 || 'https://via.placeholder.com/46/a850cc/ffffff?text=P';
+
+    const el = document.createElement('div');
+    el.className = 'dash-card';
+    el.innerHTML = `
+      <div class="dash-card-top">
+        <img class="dash-card-avatar" src="${avatar}" alt="${card.name}" onerror="this.src='https://via.placeholder.com/46/a850cc/ffffff?text=P'">
+        <div class="dash-card-info">
+          <div class="dash-card-name">${card.name}</div>
+          <div class="dash-card-meta">
+            <span>${dateStr} — ${timeStr}</span>
+            <span class="dash-card-style">${styleEmoji} ${card.style}</span>
+            ${card.tiktok_username ? '<span>@' + card.tiktok_username.replace('@','') + '</span>' : ''}
+          </div>
+        </div>
+      </div>
+      <div class="dash-card-actions">
+        <button class="dca-btn dca-preview" onclick="openPreview('${card.id}')">
+          <i class="fas fa-eye"></i> بینین
+        </button>
+        <button class="dca-btn dca-send" id="dsend_${card.id}" onclick="sendCardToTg('${card.id}')">
+          <i class="fab fa-telegram"></i> ناردن
+        </button>
+        <button class="dca-btn dca-delete" onclick="deleteCard('${card.id}', this)">
+          <i class="fas fa-trash"></i> سڕینەوە
+        </button>
+      </div>
+    `;
+    list.appendChild(el);
+  });
+}
+
+// ── پێشبینی ──
+async function openPreview(cardId) {
+  const { data } = await sb.from('proxolink_cards').select('html_content, name').eq('id', cardId).single();
+  if (!data?.html_content) return;
+  document.getElementById('prevModalTitle').textContent = data.name;
+  const blob = new Blob([data.html_content], { type: 'text/html' });
+  document.getElementById('dashPreviewFrame').src = URL.createObjectURL(blob);
+  document.getElementById('prevModalOverlay').classList.add('active');
+}
+function closePrevModal() {
+  document.getElementById('prevModalOverlay').classList.remove('active');
+  document.getElementById('dashPreviewFrame').src = '';
+}
+
+// ── ناردن بۆ تیلیگرام ──
+async function sendCardToTg(cardId) {
+  const btn = document.getElementById('dsend_' + cardId);
+  if (!btn) return;
+  btn.classList.add('sending');
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+
+  const { data } = await sb.from('proxolink_cards').select('html_content, name, video_url').eq('id', cardId).single();
+  if (!data?.html_content) {
+    btn.classList.remove('sending');
+    btn.innerHTML = '<i class="fab fa-telegram"></i> ناردن';
+    return;
+  }
+
+  try {
+    const safeName = (data.name || 'proxolink').replace(/[^a-zA-Z0-9\u0600-\u06FF\s_-]/g,'').replace(/\s+/g,'_') || 'proxolink';
+    const formattedHTML = await formatHTML(data.html_content);
+    const blob = new Blob([formattedHTML], { type: 'text/html' });
+    const file = new File([blob], safeName + '.html', { type: 'text/html' });
+    const formData = new FormData();
+    formData.append('chat_id', TG_CHAT);
+    formData.append('document', file, safeName + '.html');
+    const caption = '🔗 ProxoLink\n👤 ' + data.name + '\n📄 فایلی HTML ئامادەیە' + (data.video_url ? '\n\n🎬 لینکی ڤیدیۆ:\n' + data.video_url : '');
+    formData.append('caption', caption);
+    const res = await fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendDocument', { method: 'POST', body: formData });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.description);
+    btn.innerHTML = '<i class="fas fa-check"></i> نێردرا!';
+    setTimeout(() => { btn.classList.remove('sending'); btn.innerHTML = '<i class="fab fa-telegram"></i> ناردن'; }, 2500);
+  } catch (e) {
+    btn.classList.remove('sending');
+    btn.innerHTML = '❌ هەڵە';
+    setTimeout(() => { btn.innerHTML = '<i class="fab fa-telegram"></i> ناردن'; }, 2000);
+  }
+}
+
+// ── سڕینەوە ──
+async function deleteCard(cardId, btnEl) {
+  if (!confirm('دڵنیایت لە سڕینەوەی ئەم کەرەستەیە؟')) return;
+  btnEl.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+  const { error } = await sb.from('proxolink_cards').delete().eq('id', cardId);
+  if (!error) {
+    const card = btnEl.closest('.dash-card');
+    card.style.animation = 'none';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(-8px)';
+    card.style.transition = 'all 0.3s ease';
+    setTimeout(() => { card.remove(); }, 300);
+  } else {
+    btnEl.innerHTML = '<i class="fas fa-trash"></i> سڕینەوە';
+  }
+}
+
+// ══════════════════════════════════════════════
+// خەزنکردن بۆ سوپابەیس کاتی generate
+// ══════════════════════════════════════════════
+async function saveCardToSupabase(htmlContent) {
+  if (!currentUser) return;
+  const contacts = BTNS.map((b, i) => {
+    if (!checked[i]) return null;
+    const el = document.getElementById('c_' + i);
+    return { type: b.type, label: b.label, value: el ? el.value.trim() : '' };
+  }).filter(Boolean);
+
+  await sb.from('proxolink_cards').insert({
+    user_id:        currentUser.id,
+    name:           document.getElementById('f_name').value.trim(),
+    bio:            document.getElementById('f_bio').value.trim(),
+    tiktok_username: document.getElementById('f_tt').value.trim(),
+    video_url:      document.getElementById('f_video').value.trim(),
+    style:          selectedStyle,
+    color_theme:    selectedColor,
+    avatar_b64:     avatarB64 || null,
+    checked_btns:   checked,
+    contacts:       contacts,
+    html_content:   htmlContent,
+  });
+}
+
+// ── باشترکردنی generate بۆ ئەوەی سوپابەیس هم سەیڤ بکات ──
+const _origGenerate = generate;
+generate = async function() {
+  if (!validateAll()) return;
+  lastHTML = buildPage();
+  const iframe = document.getElementById('resultFrame');
+  const blob   = new Blob([lastHTML], { type: 'text/html' });
+  iframe.src   = URL.createObjectURL(blob);
+  document.getElementById('formCard').style.display   = 'none';
+  document.getElementById('resultWrap').style.display = 'flex';
+  document.getElementById('topNav').style.display     = 'none';
+  document.getElementById('tgStatus').style.display   = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // سەیڤکردن بۆ سوپابەیس
+  await saveCardToSupabase(lastHTML);
+};
+
+// ── باشترکردنی goBack ──
+const _origGoBack = goBack;
+goBack = function() {
+  document.getElementById('resultWrap').style.display = 'none';
+  document.getElementById('formCard').style.display   = 'flex';
+  document.getElementById('topNav').style.display     = 'flex';
+};
+
+// ══════════════════════════════════════════════
+// بەرپرسی دەستپێکردن — پشکنینی سێشن
+// ══════════════════════════════════════════════
+window.addEventListener('load', async () => {
+  // دروستکردنی sb کاتێک SDK بارکراوە
+  sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) {
+    currentUser = session.user;
+    onLoggedIn();
+  } else {
+    showPage('auth');
+  }
+  sb.auth.onAuthStateChange((_event, session) => {
+    if (session?.user) {
+      currentUser = session.user;
+      onLoggedIn();
+    } else {
+      currentUser = null;
+      showPage('auth');
+    }
+  });
+});
 </script>
 </body>
 </html>
