@@ -601,12 +601,13 @@ function validateAll(){
 }
 
 function buildPage(){
-  const name   = document.getElementById('f_name').value.trim()||'ناوی تۆ';
-  const bio    = document.getElementById('f_bio').value.trim();
-  const tt     = getFullTt()||'@username';
-  const ttUrl  = getTtUrl();
-  const avatar = avatarB64||'https://via.placeholder.com/100/a850cc/ffffff?text=P';
-  const theme  = getTheme();
+  const name     = document.getElementById('f_name').value.trim()||'ناوی تۆ';
+  const bio      = document.getElementById('f_bio').value.trim();
+  const tt       = getFullTt()||'@username';
+  const ttUrl    = getTtUrl();
+  const videoUrl = document.getElementById('f_video').value.trim() || ttUrl;
+  const avatar   = avatarB64||'https://via.placeholder.com/100/a850cc/ffffff?text=P';
+  const theme    = getTheme();
   lastName = name;
 
   const activeBtns = BTNS.map((b,i)=>{
@@ -625,8 +626,8 @@ function buildPage(){
     lines.push('    document.getElementById("' + b.id + '").onclick = function() {');
 
     if (needsMsg) {
-      // واتسئاپ و ڤایبەر — vUrl و msg پێویستن
-      lines.push('        const vUrl = decodeURIComponent(urlParams.get(\'v\') || \"' + ttUrl + '\");');
+      // واتسئاپ و ڤایبەر — vUrl و msg پ 
+      lines.push('        const vUrl = decodeURIComponent(urlParams.get(\'v\') || \"' + videoUrl + '\");');
       lines.push('        const msg  = \"سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n\" + vUrl;');
     }
 
