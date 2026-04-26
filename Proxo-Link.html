@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProxoLink – دروستکردنی پەیجی پەیوەندی</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+@font-face {
+  font-family: 'Rabar_021';
+  src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Rabar_021', sans-serif;
+  background: #0d1021;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 16px 50px;
+}
+
+.card {
+  width: 100%;
+  max-width: 440px;
+  background: #131629;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 30px 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.logo { text-align: center; margin-bottom: 4px; }
+.logo h1 { font-size: 20px; font-weight: 800; color: #c855e0; letter-spacing: 0.5px; }
+.logo p { font-size: 12.5px; color: #666; margin-top: 4px; }
+
+.section-lbl {
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.5px;
+  color: #555; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;
+}
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 12px; color: #8890b0; }
+.field input, .field textarea {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: #fff; padding: 11px 13px; border-radius: 11px;
+  font-family: 'Rabar_021', sans-serif; font-size: 13px;
+  outline: none; width: 100%; transition: border-color 0.2s;
+}
+.field textarea { resize: vertical; min-height: 90px; line-height: 1.9; }
+.field input:focus, .field textarea:focus { border-color: #c855e0; background: rgba(200,85,224,0.05); }
+.field input::placeholder, .field textarea::placeholder { color: #444; }
+
+.bio-suggestions { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
+.bio-chip {
+  padding: 9px 13px;
+  background: rgba(200,85,224,0.07); border: 1px solid rgba(200,85,224,0.18);
+  border-radius: 11px; font-size: 12px; color: #c870e8;
+  cursor: pointer; font-family: 'Rabar_021', sans-serif;
+  transition: all 0.15s; line-height: 1.7; text-align: right; width: 100%;
+}
+.bio-chip:hover { background: rgba(200,85,224,0.16); border-color: #c855e0; color: #fff; }
+.bio-chip:active { transform: scale(0.98); }
+.bio-chip-more {
+  background: transparent; border: 1px dashed rgba(255,255,255,0.1);
+  color: #555; font-size: 11.5px; text-align: center; padding: 7px 13px;
+}
+.bio-chip-more:hover { background: rgba(255,255,255,0.04); color: #888; border-color: rgba(255,255,255,0.2); }
+
+.bio-meta { display: flex; justify-content: space-between; align-items: center; margin-top: -10px; }
+.bio-meta small { font-size: 10.5px; color: #444; }
+.bio-meta span { font-size: 10.5px; color: #666; }
+.bio-meta span.warn { color: #e07d30; }
+.bio-meta span.over { color: #e05555; }
+
+.field input.err, .field textarea.err {
+  border-color: rgba(230,70,70,0.7) !important;
+  background: rgba(230,70,70,0.06) !important;
+  animation: shake 0.35s ease;
+}
+@keyframes shake {
+  0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)}
+  40%{transform:translateX(5px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
+}
+.field-err { font-size: 11px; color: #e06060; display: flex; align-items: center; gap: 5px; animation: fadeUp 0.2s ease; margin-top: -2px; }
+.field-err i { font-size: 10px; }
+
+.avatar-row { display: flex; align-items: center; gap: 14px; }
+.avatar-circle {
+  width: 64px; height: 64px; min-width: 64px; border-radius: 50%;
+  border: 2px dashed rgba(200,85,224,0.4); background: rgba(200,85,224,0.07);
+  overflow: hidden; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; transition: border-color 0.2s;
+}
+.avatar-circle:hover { border-color: #c855e0; }
+.avatar-circle img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 50%; }
+.avatar-circle i { font-size: 22px; color: #555; pointer-events: none; }
+.avatar-circle input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; padding: 0; border: none; background: none; }
+.avatar-hint { font-size: 11.5px; color: #666; line-height: 1.7; }
+
+.cb-list { display: flex; flex-direction: column; gap: 7px; }
+.cb-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.025);
+  cursor: pointer; user-select: none; transition: all 0.18s;
+}
+.cb-row:hover { border-color: rgba(200,85,224,0.3); }
+.cb-row.on { border-color: rgba(200,85,224,0.45); background: rgba(200,85,224,0.07); }
+.cb-box { width: 17px; height: 17px; min-width: 17px; border-radius: 5px; border: 2px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
+.cb-row.on .cb-box { background: #c855e0; border-color: #c855e0; }
+.cb-box i { font-size: 9px; color: #fff; opacity: 0; transition: opacity 0.15s; }
+.cb-row.on .cb-box i { opacity: 1; }
+.cb-app-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.ic-vb { background: rgba(115,96,242,0.18); color: #8b7cf8; }
+.ic-wa { background: rgba(37,211,102,0.15); color: #25d366; }
+.ic-ig { background: rgba(220,39,67,0.15); color: #e1306c; }
+.ic-ph { background: rgba(255,255,255,0.09); color: #ccc; }
+.cb-name { flex: 1; font-size: 13px; color: #bbb; }
+.cb-row.on .cb-name { color: #fff; }
+
+.contact-fields { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.contact-card {
+  padding: 11px 13px; background: rgba(255,255,255,0.03);
+  border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);
+  display: flex; flex-direction: column; gap: 7px; animation: fadeUp 0.2s ease;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+.contact-card-hdr { font-size: 11px; color: #c855e0; display: flex; align-items: center; gap: 5px; }
+
+/* Style selector */
+.style-selector { display: flex; gap: 8px; width: 100%; }
+.style-opt {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 12px 8px; border-radius: 14px;
+  border: 2px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);
+  cursor: pointer; user-select: none; transition: all 0.2s; position: relative;
+}
+.style-opt:hover { border-color: rgba(200,85,224,0.35); }
+.style-opt.sel { border-color: #c855e0; background: rgba(200,85,224,0.08); }
+.style-opt.sel::after { content:''; position:absolute; top:8px; left:10px; width:8px; height:8px; border-radius:50%; background:#c855e0; box-shadow:0 0 6px #c855e0; }
+.style-preview { width:100%; height:68px; border-radius:9px; overflow:hidden; position:relative; flex-shrink:0; }
+.prev-dark { background:#0d1021; border:1px solid rgba(255,255,255,0.08); }
+.prev-dark .prev-grad { height:38px; border-radius:6px 6px 0 0; position:relative; }
+.prev-dark .prev-grad::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:14px; background:#0d1021; border-radius:50% 50% 0 0/14px 14px 0 0; }
+.prev-dark .prev-circle { width:24px;height:24px;border-radius:50%;background:#a860d0;border:2px solid #0d1021;position:absolute;top:26px;left:50%;transform:translateX(-50%); }
+.prev-dark .prev-lines { padding:28px 8px 6px; display:flex;flex-direction:column;gap:3px; }
+.prev-dark .prev-line { height:4px;border-radius:3px;background:rgba(255,255,255,0.12); }
+.prev-light { background:#fff; border:1px solid rgba(0,0,0,0.08); }
+.prev-light .prev-grad { height:38px; border-radius:6px 6px 0 0; position:relative; }
+.prev-light .prev-grad::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:14px; background:#fff; border-radius:50% 50% 0 0/14px 14px 0 0; }
+.prev-light .prev-circle { width:24px;height:24px;border-radius:50%;background:#a860d0;border:2px solid #fff;position:absolute;top:26px;left:50%;transform:translateX(-50%); }
+.prev-light .prev-lines { padding:28px 8px 6px; display:flex;flex-direction:column;gap:3px; }
+.prev-light .prev-line { height:4px;border-radius:3px;background:rgba(0,0,0,0.1); }
+.style-name { font-size:12px; color:#aaa; }
+.style-opt.sel .style-name { color:#e0aaff; }
+
+/* Color themes */
+.color-theme-label { font-size:10.5px; color:#555; margin-top:2px; margin-bottom:-6px; }
+.color-themes { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; width:100%; }
+.color-opt {
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  padding:7px 5px 9px; border-radius:11px;
+  border:2px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02);
+  cursor:pointer; user-select:none; transition:all 0.2s; position:relative;
+}
+.color-opt:hover { border-color:rgba(255,255,255,0.2); }
+.color-opt.sel { border-color:#fff; }
+.color-opt.sel::after { content:''; position:absolute; top:6px; left:8px; width:6px; height:6px; border-radius:50%; background:#fff; box-shadow:0 0 5px rgba(255,255,255,0.8); }
+.color-swatch { width:100%; height:22px; border-radius:7px; }
+.color-opt-name { font-size:10px; color:#777; text-align:center; line-height:1.3; }
+.color-opt.sel .color-opt-name { color:#ddd; }
+
+.gen-btn {
+  width:100%; padding:15px;
+  background:linear-gradient(135deg,#7b2fd4,#c855e0);
+  color:#fff; border:none; border-radius:14px;
+  font-family:'Rabar_021',sans-serif; font-size:15px; font-weight:700;
+  cursor:pointer; transition:opacity 0.2s,transform 0.1s;
+  display:flex; align-items:center; justify-content:center; gap:8px; margin-top:4px;
+}
+.gen-btn:hover { opacity:0.9; }
+.gen-btn:active { transform:scale(0.98); }
+
+/* Result */
+.result-wrap { display:none; width:100%; max-width:440px; flex-direction:column; align-items:center; gap:0; }
+.phone-shell { width:100%; max-width:390px; background:#0d1021; border-radius:38px; border:2px solid rgba(255,255,255,0.1); overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.7); }
+.phone-pill { width:100px; height:24px; background:#080b18; border-radius:0 0 14px 14px; margin:0 auto; }
+iframe#resultFrame { width:100%; height:680px; border:none; display:block; border-radius:0 0 36px 36px; }
+.action-row { display:flex; gap:10px; margin-top:20px; width:100%; max-width:390px; }
+.back-btn {
+  flex:1; padding:13px 18px;
+  background:rgba(255,255,255,0.06); color:#aaa;
+  border:1px solid rgba(255,255,255,0.1); border-radius:14px;
+  font-family:'Rabar_021',sans-serif; font-size:13px; cursor:pointer; transition:all 0.18s;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+}
+.back-btn:hover { color:#fff; background:rgba(255,255,255,0.1); }
+.tg-btn {
+  flex:1.4; padding:13px 18px;
+  background:linear-gradient(135deg,#0088cc,#00aaff);
+  color:#fff; border:none; border-radius:14px;
+  font-family:'Rabar_021',sans-serif; font-size:13px; font-weight:700;
+  cursor:pointer; transition:all 0.18s;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+}
+.tg-btn:hover { opacity:0.9; transform:translateY(-1px); }
+.tg-btn:active { transform:scale(0.97); }
+.tg-btn.sending { opacity:0.7; pointer-events:none; }
+.tg-status { display:none; margin-top:10px; width:100%; max-width:390px; padding:12px 16px; border-radius:12px; font-size:12.5px; text-align:center; animation:fadeUp 0.2s ease; }
+.tg-status.ok { background:rgba(37,211,102,0.12); border:1px solid rgba(37,211,102,0.25); color:#25d366; }
+.tg-status.err { background:rgba(255,80,80,0.12); border:1px solid rgba(255,80,80,0.25); color:#ff6060; }
+</style>
+</head>
+<body>
+
+<!-- STEP 1: FORM -->
+<div class="card" id="formCard">
+  <div class="logo">
+    <h1>ProxoLink</h1>
+    <p>کەرەستەی پەیوەندی خۆت دروست بکە</p>
+  </div>
+
+  <div class="field">
+    <label>ناوت</label>
+    <input type="text" id="f_name" placeholder="بۆ نموونە: Tahina Barzan" onfocus="clearErr('f_name')">
+    <div class="field-err" id="err_f_name" style="display:none"><i class="fas fa-circle-exclamation"></i><span></span></div>
+  </div>
+
+  <div class="section-lbl">بیۆ / دەربارەت</div>
+  <div class="field">
+    <label>دەقی بیۆ بنووسە <span style="color:#555;font-size:10px">(زیاتر لە ١٥٠ پیت نەبێت)</span></label>
+    <textarea id="f_bio" maxlength="150" placeholder="بۆ نموونە: پەیوەندیمان پێوە بکەن 👋" oninput="updateBioCount()" onfocus="clearBioErr()"></textarea>
+    <div class="field-err" id="bioErr" style="display:none"><i class="fas fa-circle-exclamation"></i><span id="bioErrMsg"></span></div>
+  </div>
+  <div class="bio-meta">
+    <small>یەکێک هەڵبژێرە یان خۆت بنووسە</small>
+    <span id="bioCount">0 / 150</span>
+  </div>
+  <div class="bio-suggestions" id="bioChips"></div>
+
+  <div class="section-lbl">وێنەی پرۆفایل</div>
+  <div class="avatar-row">
+    <div class="avatar-circle">
+      <input type="file" id="avatarFile" accept="image/*" onchange="loadAvatar(this)">
+      <img id="avatarPreview" alt="">
+      <i class="fas fa-camera" id="avatarIcon"></i>
+    </div>
+    <span class="avatar-hint">کرتەی سەر وێنەکە بکە<br>تا وێنەی خۆت ئەپڵۆد بکەی</span>
+  </div>
+
+  <div class="section-lbl">ستایلی پەیج</div>
+  <div class="style-selector">
+    <div class="style-opt sel" id="opt_dark" onclick="selectStyle('dark')">
+      <div class="style-preview prev-dark">
+        <div class="prev-grad" id="prev_dark_grad" style="background:linear-gradient(to right,#5b1fa8,#c855e0)"></div>
+        <div class="prev-circle"></div>
+        <div class="prev-lines">
+          <div class="prev-line" style="width:55%;margin:0 auto"></div>
+          <div class="prev-line" style="width:80%;margin:0 auto"></div>
+        </div>
+      </div>
+      <span class="style-name">🌑 شەو (تاریک)</span>
+    </div>
+    <div class="style-opt" id="opt_light" onclick="selectStyle('light')">
+      <div class="style-preview prev-light">
+        <div class="prev-grad" id="prev_light_grad" style="background:linear-gradient(to right,#5b1fa8,#c855e0)"></div>
+        <div class="prev-circle"></div>
+        <div class="prev-lines">
+          <div class="prev-line" style="width:55%;margin:0 auto"></div>
+          <div class="prev-line" style="width:80%;margin:0 auto"></div>
+        </div>
+      </div>
+      <span class="style-name">☀️ ڕۆژ (ڕووناک)</span>
+    </div>
+  </div>
+
+  <div class="color-theme-label">🎨 ڕەنگی گرادیەنت هەڵبژێرە</div>
+  <div class="color-themes" id="colorThemes"></div>
+
+  <div class="section-lbl">دووگمەکانت هەڵبژێرە</div>
+  <div class="cb-list" id="cbList"></div>
+  <div class="contact-fields" id="contactFields"></div>
+
+  <div class="section-lbl">تیکتۆک</div>
+  <div class="field">
+    <label>ناوی ئەکاونت — لینک بە خۆی دروست دەبێت</label>
+    <div style="position:relative;display:flex;align-items:center">
+      <span style="position:absolute;right:13px;color:#666;font-size:13px;pointer-events:none">@</span>
+      <input type="text" id="f_tt" placeholder="username" onfocus="clearErr('f_tt')" oninput="autoAt(this)" style="padding-right:28px">
+    </div>
+    <div class="field-err" id="err_f_tt" style="display:none"><i class="fas fa-circle-exclamation"></i><span></span></div>
+    <div id="tt_link_preview" style="font-size:10.5px;color:#555;margin-top:3px;direction:ltr;text-align:left;display:none">
+      🔗 <span id="tt_link_text"></span>
+    </div>
+  </div>
+
+  <div class="section-lbl">لینکی ڤیدیۆ</div>
+  <div class="field">
+    <label>لینکی ڤیدیۆی تیکتۆک — دەنێردرێت بۆ تیلیگرام</label>
+    <input type="text" id="f_video" placeholder="https://www.tiktok.com/@username/video/..." style="direction:ltr;text-align:left">
+  </div>
+
+  <button class="gen-btn" onclick="generate()">
+    <i class="fas fa-bolt"></i>
+    دروستکردنی کەرەستەی پەیوەندی
+  </button>
+</div>
+
+<!-- STEP 2: RESULT -->
+<div class="result-wrap" id="resultWrap">
+  <div class="phone-shell">
+    <div class="phone-pill"></div>
+    <iframe id="resultFrame" title="result"></iframe>
+  </div>
+  <div class="action-row">
+    <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-right"></i> گەڕانەوە</button>
+    <button class="tg-btn" id="tgBtn" onclick="sendToTelegram()"><i class="fab fa-telegram"></i> ناردن بۆ تیلیگرام</button>
+  </div>
+  <div class="tg-status" id="tgStatus"></div>
+</div>
+
+<script>
+const TG_TOKEN = '8568040530:AAHu_j_ALXtPZxYuE-6A-mQJ3gP4gXrwtEo';
+const TG_CHAT  = '6259019006';
+
+const COLOR_THEMES = [
+  { id:'purple', name:'مۆر',      grad:'linear-gradient(to right,#5b1fa8,#c855e0)', from:'#5b1fa8', to:'#c855e0' },
+  { id:'navy',   name:'شەوبەحر',  grad:'linear-gradient(to right,#0f172a,#334155)', from:'#0f172a', to:'#334155' },
+  { id:'slate',  name:'خاکەستری', grad:'linear-gradient(to right,#1e293b,#475569)', from:'#1e293b', to:'#475569' },
+  { id:'coal',   name:'کۆمری',    grad:'linear-gradient(to right,#18181b,#3f3f46)', from:'#18181b', to:'#3f3f46' },
+  { id:'indigo', name:'ئینجری',   grad:'linear-gradient(to right,#1e1b4b,#4338ca)', from:'#1e1b4b', to:'#4338ca' },
+  { id:'night',  name:'شەو',      grad:'linear-gradient(to right,#0d1021,#1e2a45)', from:'#0d1021', to:'#1e2a45' },
+  { id:'ember',  name:'ئاگر',     grad:'linear-gradient(to right,#7c1d1d,#c2410c)', from:'#7c1d1d', to:'#c2410c' },
+  { id:'amber',  name:'زێرین',    grad:'linear-gradient(to right,#78350f,#b45309)', from:'#78350f', to:'#b45309' },
+  { id:'wine',   name:'شەرابی',   grad:'linear-gradient(to right,#4c0519,#9f1239)', from:'#4c0519', to:'#9f1239' },
+  { id:'copper', name:'میس',      grad:'linear-gradient(to right,#431407,#9a3412)', from:'#431407', to:'#9a3412' },
+  { id:'sienna', name:'خاکی',     grad:'linear-gradient(to right,#292524,#57534e)', from:'#292524', to:'#57534e' },
+  { id:'bronze', name:'برینز',    grad:'linear-gradient(to right,#1c1008,#6b4c1e)', from:'#1c1008', to:'#6b4c1e' },
+];
+let selectedColor = 'purple';
+
+function renderColorThemes() {
+  const wrap = document.getElementById('colorThemes'); wrap.innerHTML = '';
+  COLOR_THEMES.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'color-opt' + (t.id === selectedColor ? ' sel' : '');
+    el.innerHTML = `<div class="color-swatch" style="background:${t.grad}"></div><div class="color-opt-name">${t.name}</div>`;
+    el.onclick = () => { selectedColor = t.id; renderColorThemes(); updatePreviews(); };
+    wrap.appendChild(el);
+  });
+}
+function getTheme() { return COLOR_THEMES.find(t => t.id === selectedColor) || COLOR_THEMES[0]; }
+function updatePreviews() {
+  const t = getTheme();
+  document.getElementById('prev_dark_grad').style.background = t.grad;
+  document.getElementById('prev_light_grad').style.background = t.grad;
+}
+
+let selectedStyle = 'dark';
+function selectStyle(s) {
+  selectedStyle = s;
+  document.getElementById('opt_dark').classList.toggle('sel', s === 'dark');
+  document.getElementById('opt_light').classList.toggle('sel', s === 'light');
+}
+
+const BTNS = [
+  { id:'vb', label:'ڤایبەر',     icon:'fab fa-viber',     icCls:'ic-vb', type:'viber',     ph:true  },
+  { id:'wa', label:'واتسئاپ',    icon:'fab fa-whatsapp',  icCls:'ic-wa', type:'whatsapp',  ph:true, shine:true },
+  { id:'ig', label:'ئینستاگرام', icon:'fab fa-instagram', icCls:'ic-ig', type:'instagram', ph:false },
+  { id:'ph', label:'کۆرەک',      icon:'fas fa-phone',     icCls:'ic-ph', type:'phone',     ph:true  },
+];
+let checked = [true, true, true, false];
+let avatarB64 = '';
+let lastHTML = '';
+let lastName = '';
+
+const BIO_CHIPS = [
+  'لەڕێگەی دووگمەکانەوە پەیوەندیمان پێوە بکەن.',
+  'ئۆفەری ناوازەمان داناوە بۆ کڕیارەکانمان، هەرئێستا پەیوەندیمان پێوە بکە.',
+  'زانیاری زیاترت دەوێت؟ کلیک لەم دووگمانەی خوارەوە بکە، کارمەندەکانمان ئامادەن بۆ یارمەتیدانت.',
+  'پەیوەندیمان پێوە بکەن بۆ زانیاری زیاتر، تیمەکەمان بە خێرایی وەڵامتان دەداتەوە.',
+  'تەنها یەک کلیک دوورین. پەیوەندیمان پێوە بکە و وەڵامت دەدەینەوە.',
+  'بۆ هەر پرسیارێک، ئێمە لێرەین. لەم دووگمانەی خوارەوە کلیک بکە.',
+  'کڕیارەکانمان بۆمان گرنگن. پەیوەندیمان پێوە بکە و یارمەتیت دەدەین.',
+  'ئەگەر دەتەوێت زیاتر بزانیت، پەیوەندیمان پێوە بکە، خێرا وەڵامت دەدەینەوە.',
+  'خزمەتگوزاریمان بۆ ئێوە ئامادەیە، تەنها پەیوەندیمان پێوە بکەن.',
+  'هەرئێستا ئامادەین بۆ گوێگرتن و یارمەتیدان. پەیوەندیمان پێوە بکە.',
+];
+function renderBioChips(showAll) {
+  const wrap = document.getElementById('bioChips'); wrap.innerHTML = '';
+  const visible = showAll ? BIO_CHIPS : BIO_CHIPS.slice(0,3);
+  visible.forEach(text => {
+    const chip = document.createElement('button');
+    chip.type='button'; chip.className='bio-chip'; chip.textContent=text;
+    chip.onclick=()=>{ document.getElementById('f_bio').value=text; updateBioCount(); clearBioErr(); };
+    wrap.appendChild(chip);
+  });
+  if (!showAll && BIO_CHIPS.length > 3) {
+    const more = document.createElement('button');
+    more.type='button'; more.className='bio-chip bio-chip-more';
+    more.innerHTML='بینینی زیاتر <i class="fas fa-chevron-down" style="font-size:9px;margin-right:3px"></i>';
+    more.onclick=()=>renderBioChips(true);
+    wrap.appendChild(more);
+  }
+}
+function updateBioCount() {
+  const v = document.getElementById('f_bio').value.length;
+  const cnt = document.getElementById('bioCount');
+  cnt.textContent = v+' / 150';
+  cnt.className = v>=135?'over':v>=110?'warn':'';
+}
+function clearBioErr() { document.getElementById('f_bio').classList.remove('err'); document.getElementById('bioErr').style.display='none'; }
+function showBioErr(msg) {
+  const ta=document.getElementById('f_bio'); ta.classList.add('err');
+  document.getElementById('bioErrMsg').textContent=msg;
+  document.getElementById('bioErr').style.display='flex';
+  ta.focus(); ta.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function validateBio() {
+  const val=document.getElementById('f_bio').value.trim();
+  if(!val){showBioErr('تکایە دەقێک بنووسە بۆ بیۆی خۆت — بەتاڵ نەبێت');return false;}
+  if(val.length>150){showBioErr('دەقەکە زیاتر لە ١٥٠ پیتە — کێمی بکەرەوە');return false;}
+  clearBioErr(); return true;
+}
+
+function loadAvatar(input) {
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    avatarB64=e.target.result;
+    const img=document.getElementById('avatarPreview');
+    img.src=avatarB64; img.style.display='block';
+    document.getElementById('avatarIcon').style.display='none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderCb() {
+  const list=document.getElementById('cbList'); list.innerHTML='';
+  BTNS.forEach((b,i)=>{
+    const row=document.createElement('div');
+    row.className='cb-row'+(checked[i]?' on':'');
+    row.innerHTML=`<div class="cb-box"><i class="fas fa-check"></i></div><div class="cb-app-icon ${b.icCls}"><i class="${b.icon}"></i></div><div class="cb-name">${b.label}</div>`;
+    row.onclick=()=>{ checked[i]=!checked[i]; renderCb(); renderContacts(); };
+    list.appendChild(row);
+  });
+}
+function renderContacts() {
+  BTNS.forEach((b,i)=>{ const el=document.getElementById(`c_${i}`); if(el) b._val=el.value; });
+  const container=document.getElementById('contactFields'); container.innerHTML='';
+  if(!checked.some(Boolean)) return;
+  BTNS.forEach((b,i)=>{
+    if(!checked[i]) return;
+    const card=document.createElement('div'); card.className='contact-card';
+    card.innerHTML=`<div class="contact-card-hdr"><i class="${b.icon}"></i>${b.label}</div>
+      <div class="field">
+        <input type="text" id="c_${i}" value="${b._val||''}" onfocus="clearErr('c_${i}')"
+          placeholder="${b.type==='instagram'?'instagram.com/username':'9647XXXXXXXXX'}">
+        <div class="field-err" id="err_c_${i}" style="display:none"><i class="fas fa-circle-exclamation"></i><span></span></div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function autoAt(el) {
+  let v=el.value.replace(/^@+/,''); el.value=v;
+  const preview=document.getElementById('tt_link_preview');
+  const linkText=document.getElementById('tt_link_text');
+  if(v.trim()){linkText.textContent='www.tiktok.com/@'+v.trim();preview.style.display='block';}
+  else{preview.style.display='none';}
+}
+function getFullTt(){const v=document.getElementById('f_tt').value.trim().replace(/^@+/,'');return v?'@'+v:'';}
+function getTtUrl(){const v=document.getElementById('f_tt').value.trim().replace(/^@+/,'');return v?'https://www.tiktok.com/@'+v:'https://www.tiktok.com/';}
+
+function showErr(id,msg){
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.add('err');
+  const errDiv=document.getElementById('err_'+id);
+  if(errDiv){errDiv.querySelector('span').textContent=msg;errDiv.style.display='flex';}
+  el.scrollIntoView({behavior:'smooth',block:'center'}); el.focus();
+}
+function clearErr(id){
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.remove('err');
+  const errDiv=document.getElementById('err_'+id);
+  if(errDiv) errDiv.style.display='none';
+}
+function clearAllErr(){
+  ['f_name','f_bio','f_tt'].forEach(clearErr);
+  for(let i=0;i<4;i++) clearErr('c_'+i);
+}
+function validateAll(){
+  clearAllErr();
+  const name=document.getElementById('f_name').value.trim();
+  if(!name){showErr('f_name','تکایە ناوت بنووسە — بەتاڵ نەبێت');return false;}
+  if(!validateBio()) return false;
+  for(let i=0;i<BTNS.length;i++){
+    if(!checked[i]) continue;
+    const el=document.getElementById('c_'+i); if(!el) continue;
+    const v=el.value.trim();
+    if(!v){showErr('c_'+i,BTNS[i].label+' — تکایە زانیاری پەیوەندی بنووسە');return false;}
+    if(BTNS[i].ph&&BTNS[i].type!=='instagram'&&!v.startsWith('964')){
+      showErr('c_'+i,BTNS[i].label+' — ژمارەکە دەبێت بە 964 دەستپێبکات');return false;
+    }
+  }
+  const tt=document.getElementById('f_tt').value.trim();
+  if(!tt){showErr('f_tt','تکایە ناوی ئەکاونتی تیکتۆکت بنووسە — بەتاڵ نەبێت');return false;}
+  return true;
+}
+
+function buildPage(){
+  const name   = document.getElementById('f_name').value.trim()||'ناوی تۆ';
+  const bio    = document.getElementById('f_bio').value.trim();
+  const tt     = getFullTt()||'@username';
+  const ttUrl  = getTtUrl();
+  const avatar = avatarB64||'https://via.placeholder.com/100/a850cc/ffffff?text=P';
+  const theme  = getTheme();
+  lastName = name;
+
+  const activeBtns = BTNS.map((b,i)=>{
+    if(!checked[i]) return null;
+    const el=document.getElementById(`c_${i}`);
+    return {...b, contact:el?el.value.trim():''};
+  }).filter(Boolean);
+
+  const handlers = activeBtns.map(b=>{
+    let url='';
+    const c=b.contact||'YOUR_NUMBER';
+    if(b.type==='whatsapp')   url=`'whatsapp://send?phone=${c}&text='+encodeURIComponent(msg)`;
+    else if(b.type==='viber') url=`'viber://chat?number=${c}&draft='+encodeURIComponent(msg)`;
+    else if(b.type==='phone') url=`'tel:${c}'`;
+    else                      url=`'https://${c}'`;
+    const mc=b.type==='whatsapp'?'m-wa':b.type==='viber'?'m-vb':b.type==='phone'?'m-ph':'m-ig';
+    return `  document.getElementById('${b.id}').onclick=()=>ask('${b.type}',${url},'${b.label}','${mc}');`;
+  }).join('\n');
+
+  if(selectedStyle==='light') return buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme);
+  return buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme);
+}
+
+function makeBtnInner(b){
+  return `<i class="${b.icon}"></i><span>${b.label}</span>${b.shine?`<span id="hand" class="hand"><span class="hand-ring"></span><span class="hand-emoji">👆</span></span>`:''}`;
+}
+function makeBtnDark(b){ return `<a id="${b.id}" class="btn">${makeBtnInner(b)}</a>`; }
+function makeBtnLight(b){ return `<a id="${b.id}" class="btn">${makeBtnInner(b)}</a>`; }
+
+function buildLayout(activeBtns, tt, ttUrl, btnFn){
+  const count = activeBtns.length;
+  let gridHTML = '';
+  let belowGrid = '';
+
+  if(count === 3){
+    gridHTML = btnFn(activeBtns[0]) + btnFn(activeBtns[1]);
+    belowGrid = `<div class="three-bottom-row">
+      <a href="${ttUrl}" target="_blank" class="tt-pill"><i class="fab fa-tiktok"></i><span>${tt}</span></a>
+      ${btnFn(activeBtns[2])}
+    </div>`;
+  } else {
+    gridHTML = activeBtns.map(b=>btnFn(b)).join('');
+    belowGrid = `<div class="tt-wrap"><a href="${ttUrl}" target="_blank" class="tt-badge"><i class="fab fa-tiktok"></i><span>${tt}</span></a></div>`;
+  }
+
+  return { gridHTML, belowGrid, cols: count===1?'1fr':'1fr 1fr' };
+}
+
+function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
+  const { gridHTML, belowGrid, cols } = buildLayout(activeBtns,tt,ttUrl,makeBtnDark);
+
+  return `<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${name}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Rabar_021';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2')}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Rabar_021',sans-serif;background:#0d1021;display:flex;justify-content:center;min-height:100vh}
+.page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;align-items:center;background:#0d1021}
+.top-section{width:100%;position:relative}
+.gradient-bg{width:100%;height:190px;background:${theme.grad};position:relative}
+.gradient-bg::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:55px;background:#0d1021;border-radius:50% 50% 0 0/55px 55px 0 0}
+.avatar{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:100px;height:100px;border-radius:50%;border:4px solid #fff;overflow:hidden;background:#fff;box-shadow:0 4px 18px rgba(0,0,0,.3);z-index:10}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.content{width:100%;display:flex;flex-direction:column;align-items:center;padding:0 16px 50px;background:#0d1021}
+.name{font-family:'Inter',sans-serif;font-size:18px;font-weight:700;color:#fff;text-align:center;position:relative;top:-25px;margin-bottom:-10px}
+.desc{font-size:14px;color:#E0E0E0;line-height:2;text-align:center;margin-top:18px;padding:0 6px;white-space:pre-line}
+.grid{display:grid;grid-template-columns:${cols};gap:10px;width:100%;margin-top:40px}
+.btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 8px 15px;border-radius:18px;font-size:14px;font-weight:bold;color:#fff;min-height:88px;cursor:pointer;text-decoration:none;overflow:hidden;transition:transform .13s;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15)}
+.btn:active{transform:scale(.96);background:rgba(255,255,255,.12)}
+.btn i{font-size:25px}
+.three-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:10px;align-items:center}
+.tt-pill{display:inline-flex;flex-direction:row-reverse;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:90px;background:rgba(255,255,255,0.03);backdrop-filter:blur(5px);color:#fff;text-decoration:none;font-family:'Rabar_021',sans-serif;font-size:13.5px;font-weight:600;position:relative;transition:.3s cubic-bezier(.4,0,.2,1);border:1px solid rgba(255,255,255,0.1);width:100%;box-sizing:border-box}
+.tt-pill::before{content:"";position:absolute;inset:-1px;border-radius:90px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.7}
+.tt-pill i{font-size:18px;position:relative;z-index:1}
+.tt-pill span{position:relative;z-index:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tt-pill:active{transform:scale(.95)}
+.tt-wrap{display:flex;justify-content:center;width:100%}
+.tt-badge{background:rgba(255,255,255,0.03);backdrop-filter:blur(5px);color:#fff;text-decoration:none;display:flex;flex-direction:row-reverse;align-items:center;gap:8px;padding:7px 18px;border-radius:90px;border:1px solid rgba(255,255,255,0.1);position:relative;margin-top:14px;transition:0.3s cubic-bezier(0.4,0,0.2,1);font-family:'Rabar_021',sans-serif;font-size:14.5px;font-weight:600;align-self:center}
+.tt-badge::before{content:"";position:absolute;inset:-1px;border-radius:50px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.6}
+.tt-badge i{font-size:17px;position:relative;z-index:1}
+.tt-badge span{position:relative;z-index:1}
+.tt-badge:active{transform:scale(.95)}
+#wa::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(to right,transparent,rgba(255,255,255,.32),transparent);transform:skewX(-22deg);animation:shine 2.4s infinite}
+.no-shine::after{display:none!important}
+@keyframes shine{0%{left:-100%}100%{left:160%}}
+.hand{position:absolute;bottom:6px;right:9px;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity .8s}
+.hand.hide{opacity:0}
+.hand-emoji{font-size:17px;animation:tap 1s infinite;position:relative;z-index:2}
+.hand-ring{position:absolute;width:18px;height:18px;border:2px solid rgba(255,255,255,.85);border-radius:50%;animation:ring 1s infinite}
+@keyframes tap{0%,100%{transform:scale(1)}50%{transform:scale(.87)}}
+@keyframes ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.2);opacity:0}}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:9999}
+.modal-bg.show{display:flex;animation:fadeIn .2s ease}
+.modal-box{width:85%;max-width:320px;background:#16181d;color:#fff;border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:35px 25px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.modal-box h3{font-size:20px;margin-bottom:10px}
+.modal-box p{font-size:14px;color:#aaa;line-height:1.7;margin-bottom:25px}
+.m-btn{display:block;width:100%;padding:16px;border:none;border-radius:16px;font-family:'Rabar_021';font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:12px;color:#fff}
+.m-cancel{font-size:13px;color:#888;cursor:pointer;padding:5px;display:inline-block}
+.m-wa{background:#28E16D;color:#000}.m-vb{background:#7360F2}.m-ph{background:#fff;color:#000}.m-ig{background:#dc2743}
+.footer{width:100%;margin-top:90px;padding-bottom:28px;text-align:center}
+.footer small{display:block;font-size:11px;color:#8b8b8b;margin-bottom:8px}
+.footer img{height:13px;display:block;margin:0 auto 10px}
+.legal{font-size:10px;color:#8b8b8b}
+.legal a{color:inherit;text-decoration:none;margin:0 5px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <h3 id="m-title">...</h3>
+    <p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p>
+    <button id="m-ok" class="m-btn" onclick="goLink()">بەڵێ، بەردەوام بە</button>
+    <span class="m-cancel" onclick="closeModal()">پاشگەزبوونەوە</span>
+  </div>
+</div>
+<div class="page">
+  <div class="top-section">
+    <div class="gradient-bg"></div>
+    <div class="avatar"><img src="${avatar}" alt="${name}"></div>
+  </div>
+  <div class="content">
+    <h1 class="name">${name}</h1>
+    <p class="desc">${bio.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>
+    <div class="grid">${gridHTML}</div>
+    ${belowGrid}
+    <div class="footer">
+      <small>سپۆنسەر کراوە لەلایەن</small>
+      <a href="https://www.tiktok.com/@proxo_iq" target="_blank">
+        <img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Sponsor">
+      </a>
+      <div class="legal">
+        <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> |
+        <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const urlParams=new URLSearchParams(window.location.search);
+let selectedApp='',selectedUrl='';
+function hideEffects(){const h=document.getElementById('hand'),w=document.getElementById('wa');if(h)h.classList.add('hide');if(w)w.classList.add('no-shine')}
+function ask(name,url,kName,cls){selectedApp=name;selectedUrl=url;document.getElementById('m-title').innerText=kName;document.getElementById('m-ok').className='m-btn '+cls;document.getElementById('modal').classList.add('show');if(navigator.vibrate)navigator.vibrate(25)}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function goLink(){hideEffects();closeModal();setTimeout(()=>{window.location.href=selectedUrl},700)}
+document.addEventListener('DOMContentLoaded',()=>{
+  const vUrl=decodeURIComponent(urlParams.get('v')||'${ttUrl}');
+  const msg='سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n'+vUrl;
+${handlers}
+  window.onclick=e=>{if(e.target.id==='modal')closeModal()};
+  setTimeout(hideEffects,10000);
+});
+<\/script>
+</body>
+</html>`;
+}
+
+function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
+  const { gridHTML, belowGrid, cols } = buildLayout(activeBtns,tt,ttUrl,makeBtnLight);
+
+  return `<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${name}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Rabar_021';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2')}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Rabar_021',sans-serif;background:#fff;display:flex;justify-content:center;min-height:100vh}
+.page{width:100%;max-width:430px;background:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.top-section{width:100%;position:relative}
+.gradient-bg{width:100%;height:190px;background:${theme.grad};position:relative}
+.gradient-bg::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:55px;background:#fff;border-radius:50% 50% 0 0/55px 55px 0 0}
+.avatar{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:100px;height:100px;border-radius:50%;border:4px solid #fff;overflow:hidden;background:#ddd;box-shadow:0 4px 18px rgba(0,0,0,.2);z-index:10}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.content{width:100%;display:flex;flex-direction:column;align-items:center;padding:0 16px 50px;background:#fff}
+.name{font-family:'Inter',sans-serif;font-size:18px;font-weight:700;color:#111;text-align:center;position:relative;top:-25px;margin-bottom:-10px}
+.desc{font-size:14px;color:#333;line-height:2;text-align:center;margin-top:18px;padding:0 6px;white-space:pre-line}
+.grid{display:grid;grid-template-columns:${cols};gap:10px;width:100%;margin-top:40px}
+.btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 8px 15px;border-radius:18px;font-family:'Rabar_021',sans-serif;font-size:14px;font-weight:bold;color:#fff;min-height:88px;cursor:pointer;text-decoration:none;overflow:hidden;transition:transform .13s;background:#888;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+#vb{background:linear-gradient(135deg,#5b40e8,#7b65f2)}
+#wa{background:linear-gradient(135deg,#1aad4e,#25d366)}
+#ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)}
+#ph{background:linear-gradient(135deg,#1aad4e,#25d366)}
+.btn:active{transform:scale(.96)}
+.btn i{font-size:28px}
+.three-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:10px;align-items:center}
+.tt-pill{display:inline-flex;flex-direction:row-reverse;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:90px;background:rgba(0,0,0,0.06);color:#111;text-decoration:none;font-family:'Rabar_021',sans-serif;font-size:13.5px;font-weight:600;position:relative;transition:.3s cubic-bezier(.4,0,.2,1);border:1px solid rgba(0,0,0,0.12);width:100%;box-sizing:border-box}
+.tt-pill::before{content:"";position:absolute;inset:-1px;border-radius:90px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.65}
+.tt-pill i{font-size:18px;position:relative;z-index:1}
+.tt-pill span{position:relative;z-index:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tt-pill:active{transform:scale(.95)}
+.tt-wrap{display:flex;justify-content:center;width:100%}
+.tt-badge{background:rgba(0,0,0,0.04);color:#111;text-decoration:none;display:flex;flex-direction:row-reverse;align-items:center;gap:8px;padding:7px 18px;border-radius:90px;border:1px solid rgba(0,0,0,0.1);position:relative;margin-top:14px;transition:0.3s cubic-bezier(0.4,0,0.2,1);font-family:'Rabar_021',sans-serif;font-size:14.5px;font-weight:600;align-self:center}
+.tt-badge::before{content:"";position:absolute;inset:-1px;border-radius:50px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.6}
+.tt-badge i{font-size:17px;position:relative;z-index:1}
+.tt-badge span{position:relative;z-index:1}
+.tt-badge:active{transform:scale(.95)}
+#wa::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(to right,transparent,rgba(255,255,255,.32),transparent);transform:skewX(-22deg);animation:shine 2.4s infinite}
+.no-shine::after{display:none!important}
+@keyframes shine{0%{left:-100%}100%{left:160%}}
+.hand{position:absolute;bottom:6px;right:9px;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity .8s}
+.hand.hide{opacity:0}
+.hand-emoji{font-size:17px;animation:tap 1s infinite;position:relative;z-index:2}
+.hand-ring{position:absolute;width:18px;height:18px;border:2px solid rgba(255,255,255,.85);border-radius:50%;animation:ring 1s infinite}
+@keyframes tap{0%,100%{transform:scale(1)}50%{transform:scale(.87)}}
+@keyframes ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.2);opacity:0}}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:9999}
+.modal-bg.show{display:flex;animation:fadeIn .17s ease}
+.modal-box{width:84%;max-width:308px;background:#fff;color:#111;border-radius:22px;padding:32px 22px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.22)}
+.modal-box h3{font-size:19px;margin-bottom:10px}
+.modal-box p{font-size:13px;color:#555;line-height:1.7;margin-bottom:20px}
+.m-btn{display:block;width:100%;padding:13px;border:none;border-radius:13px;font-family:'Rabar_021';font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:11px;color:#fff}
+.m-cancel{font-size:13px;color:#999;cursor:pointer;padding:4px;display:inline-block}
+.m-wa,.m-ph{background:#25D366}.m-vb{background:#7360F2}.m-ig{background:#dc2743}
+.footer{width:100%;margin-top:90px;padding-bottom:28px;text-align:center}
+.footer small{display:block;font-size:11px;color:#7A7A7A;margin-bottom:8px}
+.footer img{height:13px;display:block;margin:0 auto 10px}
+.legal{font-size:10px;color:#7A7A7A}
+.legal a{color:inherit;text-decoration:none;margin:0 5px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <h3 id="m-title">...</h3>
+    <p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p>
+    <button id="m-ok" class="m-btn" onclick="goLink()">بەڵێ، بەردەوام بە</button>
+    <span class="m-cancel" onclick="closeModal()">پاشگەزبوونەوە</span>
+  </div>
+</div>
+<div class="page">
+  <div class="top-section">
+    <div class="gradient-bg"></div>
+    <div class="avatar"><img src="${avatar}" alt="${name}"></div>
+  </div>
+  <div class="content">
+    <h1 class="name">${name}</h1>
+    <p class="desc">${bio.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>
+    <div class="grid">${gridHTML}</div>
+    ${belowGrid}
+    <div class="footer">
+      <small>سپۆنسەر کراوە لەلایەن</small>
+      <a href="https://www.tiktok.com/@proxo_iq" target="_blank">
+        <img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Sponsor">
+      </a>
+      <div class="legal">
+        <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> |
+        <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const urlParams=new URLSearchParams(window.location.search);
+let selectedApp='',selectedUrl='';
+function hideEffects(){const h=document.getElementById('hand'),w=document.getElementById('wa');if(h)h.classList.add('hide');if(w)w.classList.add('no-shine')}
+function ask(name,url,kName,cls){selectedApp=name;selectedUrl=url;document.getElementById('m-title').innerText=kName;document.getElementById('m-ok').className='m-btn '+cls;document.getElementById('modal').classList.add('show');if(navigator.vibrate)navigator.vibrate(25)}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function goLink(){hideEffects();closeModal();setTimeout(()=>{window.location.href=selectedUrl},700)}
+document.addEventListener('DOMContentLoaded',()=>{
+  const vUrl=decodeURIComponent(urlParams.get('v')||'${ttUrl}');
+  const msg='سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\\n'+vUrl;
+${handlers}
+  window.onclick=e=>{if(e.target.id==='modal')closeModal()};
+  setTimeout(hideEffects,10000);
+});
+<\/script>
+</body>
+</html>`;
+}
+
+// ── Generate ──
+function generate(){
+  if(!validateAll()) return;
+  lastHTML=buildPage();
+  const iframe=document.getElementById('resultFrame');
+  const blob=new Blob([lastHTML],{type:'text/html'});
+  iframe.src=URL.createObjectURL(blob);
+  document.getElementById('formCard').style.display='none';
+  document.getElementById('resultWrap').style.display='flex';
+  document.getElementById('tgStatus').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goBack(){
+  document.getElementById('resultWrap').style.display='none';
+  document.getElementById('formCard').style.display='flex';
+}
+
+// ── Telegram ──
+async function sendToTelegram(){
+  const btn=document.getElementById('tgBtn');
+  const status=document.getElementById('tgStatus');
+  if(!lastHTML) return;
+  btn.classList.add('sending');
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> چاوەڕوان بە...';
+  status.style.display='none';
+  try{
+    const safeName=(lastName||'proxolink').replace(/[^a-zA-Z0-9\u0600-\u06FF\s_-]/g,'').replace(/\s+/g,'_')||'proxolink';
+    const filename=safeName+'.html';
+    const blob=new Blob([lastHTML],{type:'text/html'});
+    const file=new File([blob],filename,{type:'text/html'});
+    const formData=new FormData();
+    formData.append('chat_id',TG_CHAT);
+    formData.append('document',file,filename);
+    const videoLink=document.getElementById('f_video').value.trim();
+    const captionText='🔗 ProxoLink\n👤 '+(lastName||'کڕیار')+'\n📄 فایلی HTML ئامادەیە'+(videoLink?'\n\n🎬 لینکی ڤیدیۆ:\n'+videoLink:'');
+    formData.append('caption',captionText);
+    const res=await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendDocument`,{method:'POST',body:formData});
+    const data=await res.json();
+    if(data.ok){
+      status.className='tg-status ok';
+      status.innerHTML='✅ فایلەکە بە سەرکەوتوویی بۆ تیلیگرام نێردرا!';
+      status.style.display='block';
+    }else{throw new Error(data.description||'Telegram error');}
+  }catch(err){
+    console.error(err);
+    status.className='tg-status err';
+    status.innerHTML='❌ هەڵە ڕوویدا. دووبارە هەوڵ بدەرەوە.';
+    status.style.display='block';
+  }finally{
+    btn.classList.remove('sending');
+    btn.innerHTML='<i class="fab fa-telegram"></i> ناردن بۆ تیلیگرام';
+  }
+}
+
+// ── Init ──
+renderCb();
+renderContacts();
+renderBioChips();
+renderColorThemes();
+updatePreviews();
+</script>
+</body>
+</html>
