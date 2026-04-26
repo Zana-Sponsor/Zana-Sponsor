@@ -124,6 +124,7 @@ body {
 .ic-vb { background: rgba(115,96,242,0.18); color: #8b7cf8; }
 .ic-wa { background: rgba(37,211,102,0.15); color: #25d366; }
 .ic-ig { background: rgba(220,39,67,0.15); color: #e1306c; }
+.ic-tg { background: rgba(0,136,204,0.18); color: #29a8eb; }
 .ic-ph { background: rgba(255,255,255,0.09); color: #ccc; }
 .cb-name { flex: 1; font-size: 13px; color: #bbb; }
 .cb-row.on .cb-name { color: #fff; }
@@ -376,10 +377,11 @@ function selectStyle(s) {
 const BTNS = [
   { id:'vb', label:'ڤایبەر',     icon:'fab fa-viber',     icCls:'ic-vb', type:'viber',     ph:true  },
   { id:'wa', label:'واتسئاپ',    icon:'fab fa-whatsapp',  icCls:'ic-wa', type:'whatsapp',  ph:true, shine:true },
+  { id:'tg', label:'تیلیگرام',   icon:'fab fa-telegram',  icCls:'ic-tg', type:'telegram',  ph:true  },
   { id:'ig', label:'ئینستاگرام', icon:'fab fa-instagram', icCls:'ic-ig', type:'instagram', ph:false },
   { id:'ph', label:'کۆرەک',      icon:'fas fa-phone',     icCls:'ic-ph', type:'phone',     ph:true  },
 ];
-let checked = [true, true, true, false];
+let checked = [true, true, false, true, false];
 let avatarB64 = '';
 let lastHTML = '';
 let lastName = '';
@@ -465,7 +467,7 @@ function renderContacts() {
     card.innerHTML=`<div class="contact-card-hdr"><i class="${b.icon}"></i>${b.label}</div>
       <div class="field">
         <input type="text" id="c_${i}" value="${b._val||''}" onfocus="clearErr('c_${i}')"
-          placeholder="${b.type==='instagram'?'instagram.com/username':'9647XXXXXXXXX'}">
+          placeholder="${b.type==='instagram'?'instagram.com/username':b.type==='telegram'?'username یان ژمارە':'9647XXXXXXXXX'}">
         <div class="field-err" id="err_c_${i}" style="display:none"><i class="fas fa-circle-exclamation"></i><span></span></div>
       </div>`;
     container.appendChild(card);
@@ -497,7 +499,7 @@ function clearErr(id){
 }
 function clearAllErr(){
   ['f_name','f_bio','f_tt'].forEach(clearErr);
-  for(let i=0;i<4;i++) clearErr('c_'+i);
+  for(let i=0;i<5;i++) clearErr('c_'+i);
 }
 function validateAll(){
   clearAllErr();
@@ -509,7 +511,7 @@ function validateAll(){
     const el=document.getElementById('c_'+i); if(!el) continue;
     const v=el.value.trim();
     if(!v){showErr('c_'+i,BTNS[i].label+' — تکایە زانیاری پەیوەندی بنووسە');return false;}
-    if(BTNS[i].ph&&BTNS[i].type!=='instagram'&&!v.startsWith('964')){
+    if(BTNS[i].ph&&BTNS[i].type!=='instagram'&&BTNS[i].type!=='telegram'&&!v.startsWith('964')){
       showErr('c_'+i,BTNS[i].label+' — ژمارەکە دەبێت بە 964 دەستپێبکات');return false;
     }
   }
@@ -536,11 +538,12 @@ function buildPage(){
   const handlers = activeBtns.map(b=>{
     let url='';
     const c=b.contact||'YOUR_NUMBER';
-    if(b.type==='whatsapp')   url=`'whatsapp://send?phone=${c}&text='+encodeURIComponent(msg)`;
-    else if(b.type==='viber') url=`'viber://chat?number=${c}&draft='+encodeURIComponent(msg)`;
-    else if(b.type==='phone') url=`'tel:${c}'`;
-    else                      url=`'https://${c}'`;
-    const mc=b.type==='whatsapp'?'m-wa':b.type==='viber'?'m-vb':b.type==='phone'?'m-ph':'m-ig';
+    if(b.type==='whatsapp')    url=`'whatsapp://send?phone=${c}&text='+encodeURIComponent(msg)`;
+    else if(b.type==='viber')  url=`'viber://chat?number=${c}&draft='+encodeURIComponent(msg)`;
+    else if(b.type==='telegram') url=`'https://t.me/${c}'`;
+    else if(b.type==='phone')  url=`'tel:${c}'`;
+    else                       url=`'https://${c}'`;
+    const mc=b.type==='whatsapp'?'m-wa':b.type==='viber'?'m-vb':b.type==='telegram'?'m-tg':b.type==='phone'?'m-ph':'m-ig';
     return `  document.getElementById('${b.id}').onclick=()=>ask('${b.type}',${url},'${b.label}','${mc}');`;
   }).join('\n');
 
@@ -629,7 +632,7 @@ body{font-family:'Rabar_021',sans-serif;background:#0d1021;display:flex;justify-
 .modal-box p{font-size:14px;color:#aaa;line-height:1.7;margin-bottom:25px}
 .m-btn{display:block;width:100%;padding:16px;border:none;border-radius:16px;font-family:'Rabar_021';font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:12px;color:#fff}
 .m-cancel{font-size:13px;color:#888;cursor:pointer;padding:5px;display:inline-block}
-.m-wa{background:#28E16D;color:#000}.m-vb{background:#7360F2}.m-ph{background:#fff;color:#000}.m-ig{background:#dc2743}
+.m-wa{background:#28E16D;color:#000}.m-vb{background:#7360F2}.m-tg{background:#29a8eb}.m-ph{background:#fff;color:#000}.m-ig{background:#dc2743}
 .footer{width:100%;margin-top:90px;padding-bottom:28px;text-align:center}
 .footer small{display:block;font-size:11px;color:#8b8b8b;margin-bottom:8px}
 .footer img{height:13px;display:block;margin:0 auto 10px}
@@ -717,6 +720,7 @@ body{font-family:'Rabar_021',sans-serif;background:#fff;display:flex;justify-con
 #vb{background:linear-gradient(135deg,#5b40e8,#7b65f2)}
 #wa{background:linear-gradient(135deg,#1aad4e,#25d366)}
 #ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)}
+#tg{background:linear-gradient(135deg,#0c85c2,#29a8eb)}
 #ph{background:linear-gradient(135deg,#1aad4e,#25d366)}
 .btn:active{transform:scale(.96)}
 .btn i{font-size:28px}
@@ -748,7 +752,7 @@ body{font-family:'Rabar_021',sans-serif;background:#fff;display:flex;justify-con
 .modal-box p{font-size:13px;color:#555;line-height:1.7;margin-bottom:20px}
 .m-btn{display:block;width:100%;padding:13px;border:none;border-radius:13px;font-family:'Rabar_021';font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:11px;color:#fff}
 .m-cancel{font-size:13px;color:#999;cursor:pointer;padding:4px;display:inline-block}
-.m-wa,.m-ph{background:#25D366}.m-vb{background:#7360F2}.m-ig{background:#dc2743}
+.m-wa,.m-ph{background:#25D366}.m-vb{background:#7360F2}.m-tg{background:#29a8eb}.m-ig{background:#dc2743}
 .footer{width:100%;margin-top:90px;padding-bottom:28px;text-align:center}
 .footer small{display:block;font-size:11px;color:#7A7A7A;margin-bottom:8px}
 .footer img{height:13px;display:block;margin:0 auto 10px}
