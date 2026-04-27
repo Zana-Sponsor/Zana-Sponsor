@@ -605,31 +605,39 @@ async function doConfirm() {
   if (type === 'ban') {
     const banDate = new Date();
     banDate.setFullYear(banDate.getFullYear() + 10);
-    const { error } = await sb.from('profiles')
+    const { data: banData, error } = await sb
+      .from('profiles')
       .update({ banned_until: banDate.toISOString() })
-      .eq('id', userId);
-    if (!error) {
+      .eq('id', userId)
+      .select();
+    if (!error && banData) {
       showToast('✅ بانکراو: ' + email, 'ok');
       const u = allUsers.find(x => x.id === userId);
       if (u) u.banned_until = banDate.toISOString();
+      renderTable(allUsers);
       filterUsers();
       updateStats(allUsers);
     } else {
-      showToast('❌ هەڵەیەک ڕوویدا: ' + error.message, 'err');
+      showToast('❌ هەڵە: ' + (error?.message || 'نەزانراو'), 'err');
+      console.error('Ban error:', error);
     }
 
   } else if (type === 'unban') {
-    const { error } = await sb.from('profiles')
+    const { data: unbanData, error } = await sb
+      .from('profiles')
       .update({ banned_until: null })
-      .eq('id', userId);
-    if (!error) {
+      .eq('id', userId)
+      .select();
+    if (!error && unbanData) {
       showToast('✅ بانەکە کرایەوە: ' + email, 'ok');
       const u = allUsers.find(x => x.id === userId);
       if (u) u.banned_until = null;
+      renderTable(allUsers);
       filterUsers();
       updateStats(allUsers);
     } else {
-      showToast('❌ هەڵەیەک ڕوویدا: ' + error.message, 'err');
+      showToast('❌ هەڵە: ' + (error?.message || 'نەزانراو'), 'err');
+      console.error('Unban error:', error);
     }
 
   } else if (type === 'delete') {
@@ -637,10 +645,12 @@ async function doConfirm() {
     if (!error) {
       showToast('🗑️ سڕایەوە: ' + email, 'ok');
       allUsers = allUsers.filter(x => x.id !== userId);
+      renderTable(allUsers);
       filterUsers();
       updateStats(allUsers);
     } else {
-      showToast('❌ هەڵەیەک ڕوویدا: ' + error.message, 'err');
+      showToast('❌ هەڵە: ' + (error?.message || 'نەزانراو'), 'err');
+      console.error('Delete error:', error);
     }
   }
 }
