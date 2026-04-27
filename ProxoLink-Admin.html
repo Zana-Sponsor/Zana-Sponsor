@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ProxoLink Admin v9.4</title>
+<title>ProxoLink Admin v9.5</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -139,14 +139,6 @@ tbody td{padding:12px 14px;font-size:12px;color:#94a3b8;vertical-align:middle;}
 .pstat-val{font-size:20px;font-weight:800;color:#fff;}
 .pstat-sub{font-size:10px;color:var(--muted);margin-top:3px;}
 
-.pinfo-row{display:flex;align-items:center;gap:12px;
-  background:var(--card2);border:1px solid var(--border);
-  border-radius:12px;padding:12px 14px;}
-.pinfo-ico{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.05);
-  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.pinfo-lbl-sm{font-size:10px;color:var(--muted);margin-bottom:3px;}
-.pinfo-val-sm{font-size:12.5px;color:#fff;font-weight:600;}
-
 /* پاسۆرد */
 .psec-lbl{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:8px;}
 .ppass-box{background:var(--card2);border:1px solid var(--border);border-radius:12px;
@@ -175,20 +167,6 @@ tbody td{padding:12px 14px;font-size:12px;color:#94a3b8;vertical-align:middle;}
 .pempty i{font-size:22px;display:block;margin-bottom:8px;opacity:0.5;}
 .pload{text-align:center;padding:24px;color:var(--muted);font-size:12px;}
 
-/* PREVIEW MODAL */
-.proverlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(14px);
-  display:none;justify-content:center;align-items:center;z-index:19999;padding:16px;}
-.proverlay.on{display:flex;}
-.prmodal{width:100%;max-width:400px;background:var(--card);border:1px solid var(--border);
-  border-radius:28px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.8);}
-.prmodal-bar{display:flex;align-items:center;justify-content:space-between;
-  padding:14px 18px;background:var(--card2);border-bottom:1px solid var(--border);}
-.prmodal-bar span{font-size:13px;color:#aaa;display:flex;align-items:center;gap:7px;}
-.prclose{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.07);
-  border:none;color:#aaa;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
-.prclose:hover{background:rgba(255,80,80,0.2);color:var(--red);}
-iframe#prframe{width:100%;height:580px;border:none;display:block;}
-
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
   padding:12px 20px;border-radius:12px;font-size:13px;display:none;z-index:19999;white-space:nowrap;}
@@ -206,7 +184,7 @@ iframe#prframe{width:100%;height:580px;border:none;display:block;}
     <div class="login-logo">
       <div class="login-ico"><i class="fas fa-shield-halved"></i></div>
       <h1>ProxoLink Admin</h1>
-      <p>تەنها بۆ بەڕێوەبەران — v9.4</p>
+      <p>تەنها بۆ بەڕێوەبەران — v9.2</p>
     </div>
     <input class="inp" type="password" id="adminPass" placeholder="پاسۆردی ئەدمین..."
       onkeydown="if(event.key==='Enter')checkAdmin()">
@@ -223,7 +201,7 @@ iframe#prframe{width:100%;height:580px;border:none;display:block;}
     <div class="topbar-l">
       <i class="fas fa-shield-halved t-ico"></i>
       <h1>ProxoLink Admin</h1>
-      <span class="ver">v9.4</span>
+      <span class="ver">v9.2</span>
       <span style="font-size:11px;color:var(--muted)" id="lastRef"></span>
     </div>
     <div class="topbar-r">
@@ -325,30 +303,21 @@ iframe#prframe{width:100%;height:580px;border:none;display:block;}
           <div class="pstat-val" id="pCardsCnt">—</div>
           <div class="pstat-sub">دروستکراوە</div>
         </div>
-      </div>
-
-      <!-- بەروار و ئایپی -->
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
-        <div class="pinfo-row">
-          <div class="pinfo-ico" style="color:var(--green)"><i class="fas fa-calendar-plus"></i></div>
-          <div>
-            <div class="pinfo-lbl-sm">بەرواری تۆمارکردن</div>
-            <div class="pinfo-val-sm" id="pJoined">—</div>
+        <div class="pstat">
+          <div class="pstat-lbl">
+            <i class="fas fa-calendar-plus" style="color:var(--green)"></i>
+            تۆمارکردن
           </div>
+          <div class="pstat-val" id="pJoined" style="font-size:13px">—</div>
+          <div class="pstat-sub">بەروار</div>
         </div>
-        <div class="pinfo-row">
-          <div class="pinfo-ico" style="color:var(--blue)"><i class="fas fa-clock-rotate-left"></i></div>
-          <div>
-            <div class="pinfo-lbl-sm">دوایین چوونەژوورەوە</div>
-            <div class="pinfo-val-sm" id="pLastSeen">—</div>
+        <div class="pstat">
+          <div class="pstat-lbl">
+            <i class="fas fa-clock" style="color:var(--blue)"></i>
+            دوایین چوون
           </div>
-        </div>
-        <div class="pinfo-row">
-          <div class="pinfo-ico" style="color:var(--yellow)"><i class="fas fa-location-dot"></i></div>
-          <div>
-            <div class="pinfo-lbl-sm">دوایین ئایپی</div>
-            <div class="pinfo-val-sm" id="pIpVal" style="direction:ltr;font-family:monospace">—</div>
-          </div>
+          <div class="pstat-val" id="pLastSeen" style="font-size:13px">—</div>
+          <div class="pstat-sub">بەروار</div>
         </div>
       </div>
 
@@ -375,17 +344,6 @@ iframe#prframe{width:100%;height:580px;border:none;display:block;}
         <div class="pload"><i class="fas fa-circle-notch fa-spin"></i></div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- ── PREVIEW MODAL ── -->
-<div class="proverlay" id="proverlay">
-  <div class="prmodal">
-    <div class="prmodal-bar">
-      <span><i class="fas fa-eye"></i><span id="prTitle">پێشبینی</span></span>
-      <button class="prclose" onclick="closePreview()"><i class="fas fa-xmark"></i></button>
-    </div>
-    <iframe id="prframe" title="preview"></iframe>
   </div>
 </div>
 
@@ -436,10 +394,10 @@ async function loadUsers() {
   // بارکردنی پرۆفایلەکان و کارتەکان یەکجار
   const [profRes, cardRes] = await Promise.all([
     sb.from('profiles')
-      .select('id, full_name, email, created_at, login_count, plain_password, last_seen_at, last_ip')
+      .select('id, full_name, email, created_at, login_count, plain_password')
       .order('created_at', { ascending: false }),
     sb.from('proxolink_cards')
-      .select('id, user_id, name, style, color_theme, avatar_b64, created_at, html_content')
+      .select('id, user_id, name, style, color_theme, avatar_b64, created_at')
       .order('created_at', { ascending: false })
   ]);
 
@@ -566,8 +524,9 @@ function openProfile(uid) {
   const u = usersMap[uid];
   if (!u) return;
 
+  // سەرەوەکە
   const initial = (u.full_name || u.email || '?')[0].toUpperCase();
-  document.getElementById('pavt').innerHTML    = initial;
+  document.getElementById('pavt').innerHTML   = initial;
   document.getElementById('pname').textContent  = u.full_name || '—';
   document.getElementById('pemail').textContent = u.email || '—';
 
@@ -577,36 +536,29 @@ function openProfile(uid) {
   const uCards = cardsMap[uid] || [];
   document.getElementById('pCardsCnt').textContent = uCards.length;
 
-  // بەرواری تۆمارکردن
   document.getElementById('pJoined').textContent = u.created_at
     ? new Date(u.created_at).toLocaleDateString('ku', { year:'numeric', month:'short', day:'numeric' })
-      + ' — ' + new Date(u.created_at).toLocaleTimeString('ku', { hour:'2-digit', minute:'2-digit' })
     : '—';
 
-  // دوایین چوونەژوورەوە
-  document.getElementById('pLastSeen').textContent = u.last_seen_at
-    ? new Date(u.last_seen_at).toLocaleDateString('ku', { year:'numeric', month:'short', day:'numeric' })
-      + ' — ' + new Date(u.last_seen_at).toLocaleTimeString('ku', { hour:'2-digit', minute:'2-digit' })
-    : '—';
-
-  // IP
-  document.getElementById('pIpVal').textContent = u.last_ip || '—';
+  document.getElementById('pLastSeen').textContent = '—';
 
   // پاسۆرد
   currentPPass = u.plain_password || '';
   passShown = false;
-  document.getElementById('ppassTxt').textContent        = '••••••••';
-  document.getElementById('ppassTxt').style.color        = '#64748b';
+  document.getElementById('ppassTxt').textContent     = '••••••••';
+  document.getElementById('ppassTxt').style.color     = '#64748b';
   document.getElementById('ppassTxt').style.letterSpacing = '2px';
-  document.getElementById('ppassIco').className          = 'fas fa-eye';
+  document.getElementById('ppassIco').className       = 'fas fa-eye';
   if (!currentPPass) {
-    document.getElementById('ppassTxt').textContent        = '— تۆمار نەکراوە —';
-    document.getElementById('ppassIco').style.display     = 'none';
+    document.getElementById('ppassTxt').textContent = '— تۆمار نەکراوە —';
+    document.getElementById('ppassIco').style.display = 'none';
   } else {
-    document.getElementById('ppassIco').style.display     = '';
+    document.getElementById('ppassIco').style.display = '';
   }
 
+  // کارتەکان
   renderProfileCards(uCards);
+
   document.getElementById('poverlay').classList.add('on');
   document.body.style.overflow = 'hidden';
 }
@@ -626,7 +578,6 @@ function renderProfileCards(cards) {
     const date = c.created_at
       ? new Date(c.created_at).toLocaleDateString('ku', { month:'short', day:'numeric', year:'numeric' })
       : '—';
-    const hasHtml = !!c.html_content;
     return `<div class="pcard-item">
       <div class="pcard-avt">${avatarHtml}</div>
       <div class="pcard-info">
@@ -639,12 +590,6 @@ function renderProfileCards(cards) {
           <span><i class="fas fa-calendar" style="font-size:9px;margin-left:3px"></i>${date}</span>
         </div>
       </div>
-      <button class="prev-card-btn" data-cid="${c.id}"
-        style="background:var(--pdim);border:1px solid rgba(200,85,224,0.2);
-        color:var(--purple);border-radius:9px;padding:7px 11px;cursor:pointer;
-        font-size:12px;white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0">
-        <i class="fas fa-eye"></i> بینین
-      </button>
     </div>`;
   }).join('');
 }
@@ -672,55 +617,10 @@ function togglePPass() {
   }
 }
 
-// دابخستنی پرۆفایل کاتی کلیکی دەرەوە + بینینی کەرەستە
-document.getElementById('poverlay').addEventListener('click', async function(e) {
-  // بینینی کەرەستە
-  const btn = e.target.closest('.prev-card-btn');
-  if (btn) {
-    const cardId = btn.dataset.cid;
-    if (cardId) await openPreview(cardId);
-    return;
-  }
-  // داخستنی پرۆفایل کاتی کلیکی دەرەوە
+// دابخستنی پرۆفایل کاتی کلیکی دەرەوە
+document.getElementById('poverlay').addEventListener('click', function(e) {
   if (e.target === this) closeProfile();
 });
-
-// ── Preview ──
-async function openPreview(cardId) {
-  // سەرەتا لە cardsMap بگەڕێ
-  let found = null;
-  Object.values(cardsMap).forEach(arr => {
-    arr.forEach(c => { if (c.id === cardId) found = c; });
-  });
-
-  // ئەگەر html_content نەبوو یان بەتاڵ بوو، لە سوپابەیس بخوێنەوە
-  if (!found?.html_content) {
-    const { data, error } = await sb
-      .from('proxolink_cards')
-      .select('id, name, html_content')
-      .eq('id', cardId)
-      .single();
-    if (error || !data) { showToast('کارتەکە نەدۆزرایەوە', 'terr'); return; }
-    // نوێکردنەوەی cache
-    if (found) found.html_content = data.html_content;
-    found = data;
-  }
-
-  if (!found?.html_content) {
-    showToast('ناوەڕۆکی کارتەکە بەتاڵە', 'terr');
-    return;
-  }
-
-  document.getElementById('prTitle').textContent = found.name || 'پێشبینی';
-  const blob = new Blob([found.html_content], { type: 'text/html' });
-  document.getElementById('prframe').src = URL.createObjectURL(blob);
-  document.getElementById('proverlay').classList.add('on');
-}
-
-function closePreview() {
-  document.getElementById('proverlay').classList.remove('on');
-  document.getElementById('prframe').src = '';
-}
 
 // ── Toast ──
 function showToast(msg, cls) {
