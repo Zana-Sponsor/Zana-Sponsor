@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ProxoLink V10 – دروستکردنی پەیجی پەیوەندی</title>
+<title>ProxoLink V9 – دروستکردنی پەیجی پەیوەندی</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 @font-face {
@@ -477,7 +477,7 @@ window.__sbReady = false;
   <div class="logo">
     <h1>ProxoLink</h1>
     <p>کەرەستەی پەیوەندی خۆت دروست بکە</p>
-    <div class="app-version">ProxoLink v9.7</div>
+    <div class="app-version">ProxoLink v10.2</div>
   </div>
 
   <div class="field">
@@ -1078,7 +1078,7 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push('.tt-badge:active { transform: scale(.95); }');
 
   // ── Footer ──
-  p.push('.footer { width: 100%; margin-top: 200px; padding-bottom: 28px; text-align: center; }');
+  p.push('.footer { width: 100%; margin-top: 100px; padding-bottom: 28px; text-align: center; }');
   p.push('.footer small { display: block; font-size: 11px; color: #8b8b8b; margin-bottom: 8px; }');
   p.push('.footer img { height: 13px; display: block; margin: 0 auto 10px; }');
   p.push('.legal { font-size: 10px; color: #8b8b8b; }');
@@ -1222,7 +1222,7 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push(handlers);
   p.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
   p.push("  setTimeout(hideEffects, 10000);");
-  p.push("});");
+  p.push("  // فووتەر خۆکار");p.push("  (function(){var b=document.querySelectorAll('.btn');var n=b.length;var m=n<=2?100:n<=3?120:n<=4?140:n<=5?160:180;var f=document.querySelector('.footer');if(f)f.style.marginTop=m+'px';})();");p.push("});");
   p.push('<'+'/script>');
   p.push('</body>');
   p.push('</html>');
@@ -1308,7 +1308,7 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push('.tt-badge:active { transform: scale(.95); }');
 
   // ── Footer ──
-  p.push('.footer { width: 100%; margin-top: 200px; padding-bottom: 28px; text-align: center; }');
+  p.push('.footer { width: 100%; margin-top: 100px; padding-bottom: 28px; text-align: center; }');
   p.push('.footer small { display: block; font-size: 11px; color: #7A7A7A; margin-bottom: 8px; }');
   p.push('.footer img { height: 13px; display: block; margin: 0 auto 10px; }');
   p.push('.legal { font-size: 10px; color: #7A7A7A; }');
@@ -1453,7 +1453,7 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push(handlers);
   p.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
   p.push("  setTimeout(hideEffects, 10000);");
-  p.push("});");
+  p.push("  (function(){var b=document.querySelectorAll('.btn');var n=b.length;var m=n<=2?100:n<=3?120:n<=4?140:n<=5?160:180;var f=document.querySelector('.footer');if(f)f.style.marginTop=m+'px';})();");p.push("});");
   p.push('<'+'/script>');
   p.push('</body>');
   p.push('</html>');
@@ -1520,7 +1520,7 @@ function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   parts.push('.tt-classic:active { transform: scale(.96); }');
 
   // ── Footer ──
-  parts.push('.footer { width: 100%; margin-top: 120px; padding: 0 18px 20px; text-align: center; }');
+  parts.push('.footer { width: 100%; margin-top: 80px; padding: 0 18px 20px; text-align: center; }');
   parts.push('.footer small { display: block; font-size: 11px; color: #aaa; margin-bottom: 8px; }');
   parts.push('.footer img { height: 13px; display: block; margin: 0 auto 10px; }');
   parts.push('.legal { font-size: 10px; color: #bbb; }');
@@ -1654,7 +1654,7 @@ function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   parts.push(handlers);
   parts.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
   parts.push("  setTimeout(function(){ var s=document.querySelector('.shine-active'); if(s) s.classList.add('no-shine'); }, 10000);");
-  parts.push("});");
+  parts.push("  (function(){var b=document.querySelectorAll('.btn-classic');var n=b.length;var m=n<=2?80:n<=3?100:n<=4?120:n<=5?140:160;var f=document.querySelector('.footer');if(f)f.style.marginTop=m+'px';})();");parts.push("});");
   parts.push('<'+'/script>');
   parts.push('</body>');
   parts.push('</html>');
@@ -1957,6 +1957,10 @@ async function openPreview(cardId) {
 function closePrevModal() {
   document.getElementById('prevModalOverlay').classList.remove('active');
   document.getElementById('dashPreviewFrame').src = '';
+  // گەڕانەوە بۆ داشبۆرد نەک فۆرم
+  if (document.getElementById('dashWrap').style.display === 'flex') {
+    // داشبۆرد کراوەیە، بمێنێتەوە
+  }
 }
 
 // ── ناردن بۆ تیلیگرام ──
@@ -2144,8 +2148,13 @@ window.addEventListener('load', async () => {
   }
   sb.auth.onAuthStateChange((_event, session) => {
     if (session?.user) {
-      currentUser = session.user;
-      onLoggedIn();
+      // تەنها ئەگەر هێشتا لۆگین نەبووە
+      if (!currentUser) {
+        currentUser = session.user;
+        onLoggedIn();
+      } else {
+        currentUser = session.user;
+      }
     } else {
       currentUser = null;
       showPage('auth');
