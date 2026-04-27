@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAMZA LPG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+      @font-face { font-family: 'Rabar_021'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2'); }
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
+      * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+      body { font-family: 'Inter', 'Rabar_021', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; background: #0d1021; min-height: 100vh; }
+      .page { width: 100%; max-width: 430px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; background: #0d1021; }
+      .top-section { width: 100%; position: relative; }
+      .gradient-bg { width: 100%; height: 190px; background: linear-gradient(to right,#5b1fa8,#c855e0); position: relative; }
+      .gradient-bg::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: #0d1021; border-radius: 50% 50% 0 0 / 55px 55px 0 0; }
+      .avatar { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); width: 100px; height: 100px; border-radius: 50%; border: 5px solid #fff; overflow: hidden; background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,.4); z-index: 10; }
+      .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .content { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 16px 50px; background: #0d1021; }
+      .name { font-size: 19px; font-weight: 600; color: #fff; text-align: center; position: relative; top: -25px; margin-bottom: -10px; font-family: 'Inter', 'Rabar_021', sans-serif; }
+      .desc { font-size: 14px; color: #EDEDED; line-height: 2; text-align: center; margin-top: 18px; padding: 0 6px; white-space: pre-line; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 40px; }
+      .btn { position: relative; display: flex; flex-direction: column; align-items: center;
+        justify-content: center; gap: 8px; padding: 18px 8px 15px; border-radius: 18px;
+        font-size: 14px; font-weight: bold; color: #fff; min-height: 88px; cursor: pointer;
+        text-decoration: none; overflow: hidden; transition: transform .13s;
+        background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); }
+      .btn:active { transform: scale(.96); background: rgba(255,255,255,.12); }
+      .btn i { font-size: 28px; }
+      #wa i { font-size: 25px; }
+      #vb i { font-size: 22px; }
+      #tg i { font-size: 22px; }
+      #ig i { font-size: 22px; }
+      #ph i { font-size: 20px; }
+      #as i { font-size: 20px; }
+      .three-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 10px; align-items: center; }
+      .tt-pill { display: inline-flex; flex-direction: row; align-items: center;
+        justify-content: center; gap: 7px; padding: 9px 16px; border-radius: 90px;
+        background: rgba(255,255,255,0.03); backdrop-filter: blur(5px); color: #fff;
+        text-decoration: none; font-family: 'Rabar_021', sans-serif; font-size: 13.5px;
+        font-weight: 600; position: relative; border: 1px solid rgba(255,255,255,0.1);
+        width: 100%; box-sizing: border-box; }
+      .tt-pill::before { content: ''; position: absolute; inset: -1px; border-radius: 90px; padding: 1.2px; background: linear-gradient(45deg, #69c9d0, #ee1d52); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: .7; }
+      .tt-pill i { font-size: 18px; position: relative; z-index: 1; }
+      .tt-pill span { position: relative; z-index: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: ltr; }
+      .tt-pill:active { transform: scale(.95); }
+      .tt-wrap { display: flex; justify-content: center; width: 100%; }
+      .tt-badge { background: rgba(255,255,255,0.03); backdrop-filter: blur(5px); color: #fff;
+        text-decoration: none; display: flex; flex-direction: row; align-items: center;
+        gap: 8px; padding: 7px 18px; border-radius: 90px;
+        border: 1px solid rgba(255,255,255,0.1); position: relative; margin-top: 14px;
+        font-family: 'Rabar_021', sans-serif; font-size: 14.5px; font-weight: 600; }
+      .tt-badge::before { content: ''; position: absolute; inset: -1px; border-radius: 50px; padding: 1.2px; background: linear-gradient(45deg, #69c9d0, #ee1d52); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: .6; }
+      .tt-badge i { font-size: 17px; position: relative; z-index: 1; }
+      .tt-badge span { position: relative; z-index: 1; direction: ltr; }
+      .tt-badge:active { transform: scale(.95); }
+      .footer { width: 100%; margin-top: 200px; padding-bottom: 28px; text-align: center; }
+      .footer small { display: block; font-size: 11px; color: #8b8b8b; margin-bottom: 8px; }
+      .footer img { height: 13px; display: block; margin: 0 auto 10px; }
+      .legal { font-size: 10px; color: #8b8b8b; }
+      .legal a { color: inherit; text-decoration: none; margin: 0 5px; }
+      .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000; }
+      .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+      .modal-content { width: 85%; max-width: 320px; padding: 35px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); background: #16181d; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+      .modal-content h3 { margin: 0 0 16px; font-size: 20px; }
+      .modal-content p { font-size: 14px; opacity: 0.7; margin-bottom: 25px; line-height: 1.6; }
+      .btn-confirm { width: 100%; padding: 16px; border-radius: 16px; border: none; font-family: 'Rabar_021'; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 12px; }
+      .btn-cancel { color: #888; font-size: 14px; cursor: pointer; display: inline-block; padding: 5px; }
+      .btn-confirm.confirm-wh { background: #28E16D; color: #000; }
+      .btn-confirm.confirm-vi { background: #7360f2; color: #fff; }
+      .btn-confirm.confirm-te { background: #26A5E4; color: #fff; }
+      .btn-confirm.confirm-ph { background: #fff;    color: #000; }
+      .btn-confirm.confirm-as { background: #e03030; color: #fff; }
+      .btn-confirm.confirm-in { background: #dc2743; color: #fff; }
+      @keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }
+      .shine-active { overflow: hidden; position: relative; }
+      .shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.12),transparent); transform:skewX(-25deg); animation: shine 2.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }
+      .no-shine::after { animation: none !important; display:none; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+  </head>
+
+  <body>
+    <div class="modal-overlay" id="confirm-modal">
+      <div class="modal-content">
+        <h3 id="modal-title">...</h3>
+        <p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p>
+        <button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button>
+        <div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div>
+      </div>
+    </div>
+    <div class="page">
+      <div class="top-section">
+        <div class="gradient-bg"></div>
+        <div class="avatar"><img src="https://via.placeholder.com/100/a850cc/ffffff?text=P" alt="HAMZA LPG"></div>
+      </div>
+      <div class="content">
+        <h1 class="name">HAMZA LPG</h1>
+        <p class="desc">لەڕێگەی دووگمەکانەوە پەیوەندیمان پێوە بکەن.</p>
+        <div class="grid"><a id="vb" class="btn"><i class="fab fa-viber"></i><span>ڤایبەر</span></a><a id="wa" class="btn shine-active"><i class="fab fa-whatsapp"></i><span>واتسئاپ</span></a></div>
+        <div class="three-bottom-row"><a href="https://www.tiktok.com/@hamza1lak1234" target="_blank" class="tt-pill"><span>@hamza1lak1234</span><i class="fab fa-tiktok"></i></a><a id="ig" class="btn"><i class="fab fa-instagram"></i><span>ئینستاگرام</span></a></div>
+        <div class="footer">
+          <small>سپۆنسەر کراوە لەلایەن</small>
+          <a href="https://www.tiktok.com/@proxo_iq" target="_blank">
+            <img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Sponsor">
+          </a>
+          <div class="legal">
+            <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a> | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      let selectedApp = '';
+      let selectedUrl = '';
+      
+      function hideEffects() {
+          const hand     = document.getElementById('click-hand');
+          const shineBtn = document.querySelector('.shine-active');
+          if (hand)     hand.classList.add('hidden');
+          if (shineBtn) shineBtn.classList.add('no-shine');
+      }
+      
+      function askConfirm(name, url, kurdishName) {
+          selectedApp = name;
+          selectedUrl = url;
+          const btn   = document.getElementById('main-confirm-btn');
+          const title = document.getElementById('modal-title');
+          title.innerText = kurdishName;
+          btn.className   = 'btn-confirm confirm-' + name.toLowerCase().substring(0, 2);
+          document.getElementById('confirm-modal').classList.add('active');
+          if (navigator.vibrate) navigator.vibrate(25);
+      }
+      
+      function closeModal() { document.getElementById('confirm-modal').classList.remove('active'); }
+      
+      function goLink() {
+          hideEffects();
+      
+          // لۆژیکی نوێ بۆ پشکنینی ٢٤ کاتژمێر
+          const lastTrackTime   = localStorage.getItem('tt_contact_timestamp');
+          const currentTime     = new Date().getTime();
+          const twentyFourHours = 24 * 60 * 60 * 1000; // ٢٤ کاتژمێر بە میلی چرکە
+      
+          if (window.ttq) {
+              if (!lastTrackTime || (currentTime - lastTrackTime > twentyFourHours)) {
+                  ttq.track('Contact', { content_id: 'contact_button', content_name: selectedApp });
+                  localStorage.setItem('tt_contact_timestamp', currentTime);
+              }
+          }
+      
+          closeModal();
+          setTimeout(() => { window.location.href = selectedUrl; }, 700);
+      }
+      
+      !function (w, d, t) {
+        w.TiktokAnalyticsObject = t;
+        var ttq = w[t] = w[t] || [];
+        ttq.methods = ['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie','holdConsent','revokeConsent','grantConsent'];
+        ttq.setAndDefer = function(t, e) { t[e] = function() { t.push([e].concat(Array.prototype.slice.call(arguments, 0))); }; };
+        for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
+        ttq.instance = function(t) {
+          for (var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(e, ttq.methods[n]);
+          return e;
+        };
+        ttq.load = function(e, n) {
+          var r = 'https://analytics.tiktok.com/i18n/pixel/events.js';
+          ttq._i = ttq._i || {}; ttq._i[e] = []; ttq._i[e]._u = r;
+          ttq._t = ttq._t || {}; ttq._t[e] = +new Date;
+          ttq._o = ttq._o || {}; ttq._o[e] = n || {};
+          var s = document.createElement('script');
+          s.type = 'text/javascript'; s.async = true;
+          s.src = r + '?sdkid=' + e + '&lib=' + t;
+          e = document.getElementsByTagName('script')[0];
+          e.parentNode.insertBefore(s, e);
+        };
+        ttq.load('D6BIIA3C77U1CE9DCUMG'); // ← Pixel ID دەتوانی لێرەدا بیگۆڕی
+        ttq.page();
+      }(window, document, 'ttq');
+      
+      document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById("wa").onclick = function() {
+              const vUrl = decodeURIComponent(urlParams.get('v') || "https://www.tiktok.com/@hamza1lak1234");
+              const msg  = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
+              askConfirm("whatsapp", "whatsapp://send?phone=96407506569121&text=" + encodeURIComponent(msg), "واتسئاپ");
+          };
+          document.getElementById("vb").onclick = function() {
+              const vUrl = decodeURIComponent(urlParams.get('v') || "https://www.tiktok.com/@hamza1lak1234");
+              const msg  = "سڵاو! زانیاریم دەوێت دەربارەی ئەمە:\n" + vUrl;
+              askConfirm("viber", "viber://chat?number=96407506569121&draft=" + encodeURIComponent(msg), "ڤایبەر");
+          };
+          document.getElementById("ig").onclick = function() {
+              askConfirm("instagram", "https://instagram.com/hamza1lak1234", "ئینستاگرام");
+          };
+        window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }
+        setTimeout(hideEffects, 10000);
+      });
+    </script>
+  </body>
+
+</html>
