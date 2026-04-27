@@ -9,103 +9,167 @@
 <style>
 @font-face{font-family:'Rabar_021';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');}
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{--bg:#080b18;--card:#0f1225;--card2:#131629;--border:rgba(255,255,255,0.07);--purple:#c855e0;--pdim:rgba(200,85,224,0.1);--red:#ef4444;--green:#22c55e;--yellow:#f59e0b;--text:#e2e8f0;--muted:#64748b;}
+:root{
+  --bg:#080b18;--card:#0f1225;--card2:#131629;
+  --border:rgba(255,255,255,0.07);
+  --purple:#c855e0;--pdim:rgba(200,85,224,0.1);
+  --red:#ef4444;--green:#22c55e;--yellow:#f59e0b;--blue:#3b82f6;
+  --text:#e2e8f0;--muted:#64748b;
+}
 body{font-family:'Rabar_021',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
-/* LOGIN */
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 0%,rgba(200,85,224,0.15),transparent 60%);}
-.login-card{width:100%;max-width:360px;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:36px 28px;display:flex;flex-direction:column;gap:18px;}
-.shield{width:56px;height:56px;border-radius:16px;background:var(--pdim);border:1px solid rgba(200,85,224,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;}
-.login-title{text-align:center;font-size:20px;color:var(--purple);font-weight:900;}
-.login-sub{text-align:center;font-size:12px;color:var(--muted);}
-.inp{width:100%;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'Rabar_021',sans-serif;font-size:13px;outline:none;direction:ltr;text-align:left;}
+/* ── LOGIN ── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(200,85,224,0.15),transparent 60%);}
+.login-card{width:100%;max-width:360px;background:var(--card);border:1px solid var(--border);
+  border-radius:24px;padding:36px 28px;display:flex;flex-direction:column;gap:18px;}
+.login-logo{text-align:center;}
+.login-ico{width:60px;height:60px;border-radius:18px;background:var(--pdim);
+  border:1px solid rgba(200,85,224,0.25);display:flex;align-items:center;
+  justify-content:center;margin:0 auto 14px;font-size:24px;color:var(--purple);}
+.login-logo h1{font-size:20px;color:var(--purple);font-weight:900;}
+.login-logo p{font-size:12px;color:var(--muted);margin-top:4px;}
+.inp{width:100%;padding:12px 14px;background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);border-radius:12px;color:var(--text);
+  font-family:'Rabar_021',sans-serif;font-size:13px;outline:none;direction:ltr;text-align:left;}
 .inp:focus{border-color:var(--purple);}
 .inp::placeholder{color:#374151;}
-.login-btn{width:100%;padding:14px;background:linear-gradient(135deg,#7b2fd4,var(--purple));color:#fff;border:none;border-radius:13px;font-family:'Rabar_021',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.login-btn{width:100%;padding:14px;background:linear-gradient(135deg,#7b2fd4,var(--purple));
+  color:#fff;border:none;border-radius:13px;font-family:'Rabar_021',sans-serif;
+  font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
 .login-btn:hover{opacity:0.9;}
-.login-err{font-size:12px;color:var(--red);text-align:center;padding:10px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;display:none;}
+.login-err{font-size:12px;color:var(--red);text-align:center;padding:10px;
+  background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;display:none;}
 
-/* ADMIN */
+/* ── ADMIN ── */
 .admin-wrap{display:none;flex-direction:column;min-height:100vh;}
-.topbar{padding:14px 20px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar{padding:14px 20px;background:var(--card);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .topbar-l{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.topbar-l .t-ico{font-size:16px;color:var(--purple);}
 .topbar-l h1{font-size:15px;color:var(--purple);font-weight:800;}
-.ver{font-size:10px;color:var(--purple);background:var(--pdim);border:1px solid rgba(200,85,224,0.2);padding:2px 9px;border-radius:20px;}
+.ver{font-size:10px;color:var(--purple);background:var(--pdim);
+  border:1px solid rgba(200,85,224,0.2);padding:2px 9px;border-radius:20px;}
 .topbar-r{display:flex;gap:8px;}
-.tb-btn{padding:8px 14px;border-radius:10px;font-family:'Rabar_021',sans-serif;font-size:12px;cursor:pointer;border:none;display:flex;align-items:center;gap:5px;}
+.tb-btn{padding:8px 14px;border-radius:10px;font-family:'Rabar_021',sans-serif;
+  font-size:12px;cursor:pointer;border:none;display:flex;align-items:center;gap:6px;}
 .tb-r{background:var(--pdim);color:var(--purple);border:1px solid rgba(200,85,224,0.2);}
 .tb-l{background:rgba(255,255,255,0.04);color:var(--muted);border:1px solid var(--border);}
+.tb-l:hover{color:#fff;}
 
-.main{padding:20px 16px 60px;max-width:960px;margin:0 auto;width:100%;}
+.main{padding:20px 16px 60px;max-width:980px;margin:0 auto;width:100%;}
 
-/* STATS */
+/* ── STATS ── */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
 @media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr);}}
-.sbox{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;}
-.sico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.sbox{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.sico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:16px;}
 .ip{background:var(--pdim);color:var(--purple);}
 .ig{background:rgba(34,197,94,0.1);color:var(--green);}
-.ir{background:rgba(239,68,68,0.1);color:var(--red);}
+.ib{background:rgba(59,130,246,0.1);color:var(--blue);}
 .iy{background:rgba(245,158,11,0.1);color:var(--yellow);}
-.snum{font-size:22px;font-weight:800;color:#fff;}
+.snum{font-size:24px;font-weight:800;color:#fff;}
 .slbl{font-size:10.5px;color:var(--muted);text-align:center;}
 
-/* TOOLBAR */
+/* ── TOOLBAR ── */
 .toolbar{display:flex;gap:8px;margin-bottom:14px;}
-.sinp{flex:1;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:11px;color:var(--text);font-family:'Rabar_021',sans-serif;font-size:12.5px;outline:none;direction:rtl;}
+.sinp{flex:1;padding:10px 14px;background:var(--card);border:1px solid var(--border);
+  border-radius:11px;color:var(--text);font-family:'Rabar_021',sans-serif;font-size:12.5px;outline:none;direction:rtl;}
 .sinp:focus{border-color:var(--purple);}
 .sinp::placeholder{color:#374151;}
 
-/* TABLE */
+/* ── TABLE ── */
 .tcard{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;}
 .tscroll{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;min-width:700px;}
+table{width:100%;border-collapse:collapse;min-width:620px;}
 thead tr{background:rgba(200,85,224,0.06);border-bottom:1px solid var(--border);}
 thead th{padding:12px 14px;font-size:10.5px;color:var(--purple);font-weight:700;text-align:right;white-space:nowrap;}
-tbody tr{border-bottom:1px solid rgba(255,255,255,0.03);}
+tbody tr{border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background 0.15s;}
 tbody tr:last-child{border-bottom:none;}
-tbody tr:hover{background:rgba(255,255,255,0.02);}
-tbody td{padding:11px 14px;font-size:12px;color:#94a3b8;vertical-align:middle;}
+tbody tr:hover{background:rgba(200,85,224,0.04);}
+tbody td{padding:12px 14px;font-size:12px;color:#94a3b8;vertical-align:middle;}
 
 .ucell{display:flex;align-items:center;gap:9px;}
-.avt{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#5b1fa8,var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.avt{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#5b1fa8,var(--purple));
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
 .uname{font-size:12.5px;color:#fff;font-weight:600;}
-.uid{font-size:9px;color:#374151;direction:ltr;text-align:left;font-family:monospace;}
-.eml{direction:ltr;text-align:right;color:#64748b;font-size:11.5px;}
+.uid{font-size:9px;color:#374151;direction:ltr;font-family:monospace;}
+.eml{direction:ltr;color:#64748b;font-size:11.5px;}
 .dtxt{font-size:10.5px;color:#475569;line-height:1.6;}
 
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;}
-.b-act{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:var(--green);}
-.b-ban{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--red);}
+.cnt-badge{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#fff;}
+.cnt-badge i{font-size:11px;}
 
-.pwrap{display:flex;align-items:center;gap:5px;direction:ltr;}
-.ptxt{font-family:monospace;font-size:11px;color:#64748b;letter-spacing:2px;}
-.peye{background:none;border:none;color:#64748b;cursor:pointer;font-size:11px;padding:2px 5px;border-radius:5px;}
-.peye:hover{color:#fff;background:rgba(255,255,255,0.06);}
+.view-btn{padding:7px 14px;background:var(--pdim);border:1px solid rgba(200,85,224,0.2);
+  border-radius:9px;color:var(--purple);font-family:'Rabar_021',sans-serif;font-size:11.5px;
+  cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s;}
+.view-btn:hover{background:rgba(200,85,224,0.2);}
 
-.arow{display:flex;gap:5px;}
-.abtn{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:none;}
-.a-ban{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.15);}
-.a-ban:hover{background:rgba(239,68,68,0.25);}
-.a-unban{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.15);}
-.a-unban:hover{background:rgba(34,197,94,0.25);}
-.a-del{background:rgba(239,68,68,0.06);color:#7f1d1d;border:1px solid rgba(239,68,68,0.1);}
-.a-del:hover{background:rgba(239,68,68,0.2);color:var(--red);}
+.tfooter{padding:12px 16px;border-top:1px solid var(--border);font-size:11px;
+  color:var(--muted);display:flex;justify-content:space-between;}
 
-.tfooter{padding:12px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;}
+/* ── PROFILE MODAL ── */
+.poverlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(12px);
+  display:none;justify-content:center;align-items:flex-start;z-index:9999;
+  padding:20px;overflow-y:auto;}
+.poverlay.on{display:flex;}
+.pmodal{width:100%;max-width:460px;margin:auto;background:var(--card);
+  border:1px solid var(--border);border-radius:24px;overflow:hidden;}
 
-/* MODAL */
-.moverlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:9998;}
-.moverlay.on{display:flex;}
-.mbox{width:88%;max-width:300px;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:28px 22px;text-align:center;}
-.mbox h3{font-size:16px;color:#fff;margin-bottom:10px;}
-.mbox p{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:22px;white-space:pre-line;}
-.mbtns{display:flex;gap:8px;}
-.mcancel{flex:1;padding:12px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);font-family:'Rabar_021',sans-serif;font-size:13px;cursor:pointer;}
-.mok{flex:1;padding:12px;border-radius:12px;border:none;color:#fff;font-family:'Rabar_021',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.pmodal-top{background:linear-gradient(135deg,#3b1070,var(--purple));
+  padding:30px 24px 52px;position:relative;text-align:center;}
+.pclose-btn{position:absolute;top:14px;left:14px;width:32px;height:32px;
+  border-radius:50%;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.15);
+  color:#fff;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.pclose-btn:hover{background:rgba(0,0,0,0.5);}
+.pavatar{width:76px;height:76px;border-radius:50%;border:4px solid rgba(255,255,255,0.25);
+  margin:0 auto 12px;display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:800;color:#fff;background:rgba(0,0,0,0.25);overflow:hidden;flex-shrink:0;}
+.pavatar img{width:100%;height:100%;object-fit:cover;}
+.pmodal-name{font-size:18px;font-weight:800;color:#fff;}
+.pmodal-email{font-size:11.5px;color:rgba(255,255,255,0.65);margin-top:5px;direction:ltr;}
+
+.pmodal-body{padding:20px 20px 24px;}
+
+/* ستاتیستیکەکان */
+.pstats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+.pstat{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;}
+.pstat-lbl{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:5px;margin-bottom:6px;}
+.pstat-val{font-size:20px;font-weight:800;color:#fff;}
+.pstat-sub{font-size:10px;color:var(--muted);margin-top:3px;}
+
+/* پاسۆرد */
+.psec-lbl{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.ppass-box{background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.ppass-txt{font-family:monospace;font-size:12px;color:#64748b;letter-spacing:2px;}
+.ppass-eye{background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:13px;padding:4px 8px;border-radius:6px;}
+.ppass-eye:hover{color:#fff;background:rgba(255,255,255,0.06);}
+
+/* کارتەکان */
+.pcards-list{display:flex;flex-direction:column;gap:8px;}
+.pcard-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.pcard-avt{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#5b1fa8,var(--purple));
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;
+  color:#fff;flex-shrink:0;overflow:hidden;}
+.pcard-avt img{width:100%;height:100%;object-fit:cover;}
+.pcard-info{flex:1;min-width:0;}
+.pcard-name{font-size:13px;color:#fff;font-weight:600;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pcard-meta{font-size:10.5px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:6px;}
+.pcard-style{font-size:10px;padding:2px 7px;border-radius:20px;
+  background:var(--pdim);color:var(--purple);border:1px solid rgba(200,85,224,0.2);}
+
+.pempty{text-align:center;padding:28px;color:var(--muted);}
+.pempty i{font-size:22px;display:block;margin-bottom:8px;opacity:0.5;}
+.pload{text-align:center;padding:24px;color:var(--muted);font-size:12px;}
 
 /* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 20px;border-radius:12px;font-size:13px;display:none;z-index:9999;white-space:nowrap;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  padding:12px 20px;border-radius:12px;font-size:13px;display:none;z-index:19999;white-space:nowrap;}
 .tok{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:var(--green);}
 .terr{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:var(--red);}
 .emsg{text-align:center;padding:40px;color:var(--muted);}
@@ -114,49 +178,69 @@ tbody td{padding:11px 14px;font-size:12px;color:#94a3b8;vertical-align:middle;}
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ── LOGIN ── -->
 <div class="login-wrap" id="loginWrap">
   <div class="login-card">
-    <div class="shield">🛡️</div>
-    <div class="login-title">ProxoLink Admin</div>
-    <div class="login-sub">تەنها بۆ بەڕێوەبەران — v9.2</div>
+    <div class="login-logo">
+      <div class="login-ico"><i class="fas fa-shield-halved"></i></div>
+      <h1>ProxoLink Admin</h1>
+      <p>تەنها بۆ بەڕێوەبەران — v9.2</p>
+    </div>
     <input class="inp" type="password" id="adminPass" placeholder="پاسۆردی ئەدمین..."
       onkeydown="if(event.key==='Enter')checkAdmin()">
     <div class="login-err" id="loginErr">پاسۆردەکە هەڵەیە</div>
     <button class="login-btn" onclick="checkAdmin()">
-      <i class="fas fa-sign-in-alt"></i> چوونەژوورەوە
+      <i class="fas fa-right-to-bracket"></i> چوونەژوورەوە
     </button>
   </div>
 </div>
 
-<!-- ADMIN -->
+<!-- ── ADMIN ── -->
 <div class="admin-wrap" id="adminWrap">
   <div class="topbar">
     <div class="topbar-l">
-      <h1>🛡️ ProxoLink Admin</h1>
+      <i class="fas fa-shield-halved t-ico"></i>
+      <h1>ProxoLink Admin</h1>
       <span class="ver">v9.2</span>
       <span style="font-size:11px;color:var(--muted)" id="lastRef"></span>
     </div>
     <div class="topbar-r">
       <button class="tb-btn tb-r" onclick="loadUsers()">
-        <i class="fas fa-sync-alt" id="refIco"></i> نوێکردنەوە
+        <i class="fas fa-rotate-right" id="refIco"></i> نوێکردنەوە
       </button>
       <button class="tb-btn tb-l" onclick="adminLogout()">
-        <i class="fas fa-sign-out-alt"></i>
+        <i class="fas fa-right-from-bracket"></i>
       </button>
     </div>
   </div>
 
   <div class="main">
     <div class="stats">
-      <div class="sbox"><div class="sico ip"><i class="fas fa-users"></i></div><div class="snum" id="sT">—</div><div class="slbl">کۆی بەکارهێنەر</div></div>
-      <div class="sbox"><div class="sico ig"><i class="fas fa-user-check"></i></div><div class="snum" id="sA">—</div><div class="slbl">چالاک</div></div>
-      <div class="sbox"><div class="sico ir"><i class="fas fa-user-slash"></i></div><div class="snum" id="sB">—</div><div class="slbl">بانکراو</div></div>
-      <div class="sbox"><div class="sico iy"><i class="fas fa-calendar-day"></i></div><div class="snum" id="sTd">—</div><div class="slbl">ئەمڕۆ</div></div>
+      <div class="sbox">
+        <div class="sico ip"><i class="fas fa-users"></i></div>
+        <div class="snum" id="sT">—</div>
+        <div class="slbl">کۆی بەکارهێنەر</div>
+      </div>
+      <div class="sbox">
+        <div class="sico ig"><i class="fas fa-circle-check"></i></div>
+        <div class="snum" id="sA">—</div>
+        <div class="slbl">چالاک</div>
+      </div>
+      <div class="sbox">
+        <div class="sico ib"><i class="fas fa-file-lines"></i></div>
+        <div class="snum" id="sC">—</div>
+        <div class="slbl">کۆی کەرەستەکان</div>
+      </div>
+      <div class="sbox">
+        <div class="sico iy"><i class="fas fa-calendar-day"></i></div>
+        <div class="snum" id="sTd">—</div>
+        <div class="slbl">ئەمڕۆ تۆمارکراون</div>
+      </div>
     </div>
 
     <div class="toolbar">
-      <input class="sinp" id="sinp" placeholder="🔍 گەڕان بە ناو یان ئیمەیل..." oninput="filterUsers()">
+      <input class="sinp" id="sinp"
+        placeholder="گەڕان بە ناو یان ئیمەیل..." oninput="filterUsers()">
     </div>
 
     <div class="tcard">
@@ -164,12 +248,19 @@ tbody td{padding:11px 14px;font-size:12px;color:#94a3b8;vertical-align:middle;}
         <table>
           <thead>
             <tr>
-              <th>#</th><th>بەکارهێنەر</th><th>ئیمەیل</th>
-              <th>پاسۆرد</th><th>کاتی تۆمارکردن</th><th>دۆخ</th><th>کردار</th>
+              <th>#</th>
+              <th>بەکارهێنەر</th>
+              <th>ئیمەیل</th>
+              <th><i class="fas fa-arrow-right-to-bracket" style="margin-left:4px"></i>چوونەژوورەوە</th>
+              <th><i class="fas fa-file-lines" style="margin-left:4px"></i>کەرەستەکان</th>
+              <th>کاتی تۆمارکردن</th>
+              <th>پرۆفایل</th>
             </tr>
           </thead>
           <tbody id="tbody">
-            <tr><td colspan="7" class="lmsg"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</td></tr>
+            <tr><td colspan="7" class="lmsg">
+              <i class="fas fa-circle-notch fa-spin"></i> بارکردن...
+            </td></tr>
           </tbody>
         </table>
       </div>
@@ -181,14 +272,77 @@ tbody td{padding:11px 14px;font-size:12px;color:#94a3b8;vertical-align:middle;}
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="moverlay" id="moverlay">
-  <div class="mbox">
-    <h3 id="mtitle"></h3>
-    <p id="mbody"></p>
-    <div class="mbtns">
-      <button class="mcancel" onclick="closeModal()">نەخێر</button>
-      <button class="mok" id="mokbtn" onclick="doAction()">بەڵێ</button>
+<!-- ── PROFILE MODAL ── -->
+<div class="poverlay" id="poverlay">
+  <div class="pmodal">
+    <div class="pmodal-top">
+      <button class="pclose-btn" onclick="closeProfile()">
+        <i class="fas fa-xmark"></i>
+      </button>
+      <div class="pavatar" id="pavt"></div>
+      <div class="pmodal-name" id="pname"></div>
+      <div class="pmodal-email" id="pemail"></div>
+    </div>
+
+    <div class="pmodal-body">
+      <!-- ستاتیستیکەکان -->
+      <div class="pstats">
+        <div class="pstat">
+          <div class="pstat-lbl">
+            <i class="fas fa-arrow-right-to-bracket" style="color:var(--purple)"></i>
+            چوونەژوورەوە
+          </div>
+          <div class="pstat-val" id="pLoginCnt">—</div>
+          <div class="pstat-sub">کۆی جاران</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-lbl">
+            <i class="fas fa-file-lines" style="color:var(--yellow)"></i>
+            کەرەستەکان
+          </div>
+          <div class="pstat-val" id="pCardsCnt">—</div>
+          <div class="pstat-sub">دروستکراوە</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-lbl">
+            <i class="fas fa-calendar-plus" style="color:var(--green)"></i>
+            تۆمارکردن
+          </div>
+          <div class="pstat-val" id="pJoined" style="font-size:13px">—</div>
+          <div class="pstat-sub">بەروار</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-lbl">
+            <i class="fas fa-clock" style="color:var(--blue)"></i>
+            دوایین چوون
+          </div>
+          <div class="pstat-val" id="pLastSeen" style="font-size:13px">—</div>
+          <div class="pstat-sub">بەروار</div>
+        </div>
+      </div>
+
+      <!-- پاسۆرد -->
+      <div class="psec-lbl">
+        <i class="fas fa-lock" style="color:var(--purple)"></i> پاسۆرد
+      </div>
+      <div class="ppass-box">
+        <div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px">پاسۆردی تۆمارکردن</div>
+          <span class="ppass-txt" id="ppassTxt">••••••••</span>
+        </div>
+        <button class="ppass-eye" onclick="togglePPass()">
+          <i class="fas fa-eye" id="ppassIco"></i>
+        </button>
+      </div>
+
+      <!-- کەرەستەکان -->
+      <div class="psec-lbl">
+        <i class="fas fa-folder-open" style="color:var(--yellow)"></i>
+        کەرەستەکانی دروستکردووە
+      </div>
+      <div id="pCardsList" class="pcards-list">
+        <div class="pload"><i class="fas fa-circle-notch fa-spin"></i></div>
+      </div>
     </div>
   </div>
 </div>
@@ -200,13 +354,15 @@ const PASS   = 'proxo@admin2025';
 const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
 
-let sb, allUsers = [], usersMap = {}, pending = null;
+let sb, allUsers = [], usersMap = {}, cardsMap = {};
+let currentPPass = '', passShown = false;
 
 window.addEventListener('load', () => {
   sb = window.supabase.createClient(SB_URL, SB_KEY);
   if (sessionStorage.getItem('pa') === '1') showAdmin();
 });
 
+// ── LOGIN ──
 function checkAdmin() {
   if (document.getElementById('adminPass').value === PASS) {
     sessionStorage.setItem('pa', '1');
@@ -231,17 +387,37 @@ function adminLogout() {
   document.getElementById('adminPass').value = '';
 }
 
+// ── بارکردن ──
 async function loadUsers() {
   document.getElementById('refIco').className = 'fas fa-circle-notch fa-spin';
-  const { data, error } = await sb
-    .from('profiles')
-    .select('id, full_name, email, created_at, banned_until, plain_password')
-    .order('created_at', { ascending: false });
-  document.getElementById('refIco').className = 'fas fa-sync-alt';
-  if (error) { showToast('❌ ' + error.message, 'terr'); return; }
-  allUsers = data || [];
-  renderTable(allUsers);
-  updateStats(allUsers);
+
+  // بارکردنی پرۆفایلەکان و کارتەکان یەکجار
+  const [profRes, cardRes] = await Promise.all([
+    sb.from('profiles')
+      .select('id, full_name, email, created_at, login_count, plain_password')
+      .order('created_at', { ascending: false }),
+    sb.from('proxolink_cards')
+      .select('id, user_id, name, style, color_theme, avatar_b64, created_at')
+      .order('created_at', { ascending: false })
+  ]);
+
+  document.getElementById('refIco').className = 'fas fa-rotate-right';
+
+  if (profRes.error) { showToast('هەڵە: ' + profRes.error.message, 'terr'); return; }
+
+  allUsers = profRes.data || [];
+  const cards = cardRes.data || [];
+
+  // گروپ کردنی کارتەکان بە user_id
+  cardsMap = {};
+  cards.forEach(c => {
+    if (!cardsMap[c.user_id]) cardsMap[c.user_id] = [];
+    cardsMap[c.user_id].push(c);
+  });
+
+  renderTable(allUsers, cards.length);
+  updateStats(allUsers, cards.length);
+
   const now = new Date();
   document.getElementById('lastRef').textContent =
     now.toLocaleTimeString('ku', { hour:'2-digit', minute:'2-digit' });
@@ -249,163 +425,204 @@ async function loadUsers() {
     now.toLocaleTimeString('ku', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
 }
 
-function updateStats(u) {
+// ── ئامار ──
+function updateStats(users, totalCards) {
   const now = new Date();
-  const ban = u.filter(x => x.banned_until && new Date(x.banned_until) > now);
-  const tod = u.filter(x => new Date(x.created_at).toDateString() === now.toDateString());
-  document.getElementById('sT').textContent  = u.length;
-  document.getElementById('sA').textContent  = u.length - ban.length;
-  document.getElementById('sB').textContent  = ban.length;
+  const tod = users.filter(u => new Date(u.created_at).toDateString() === now.toDateString());
+  document.getElementById('sT').textContent  = users.length;
+  document.getElementById('sA').textContent  = users.length;
+  document.getElementById('sC').textContent  = totalCards;
   document.getElementById('sTd').textContent = tod.length;
 }
 
+// ── گەڕان ──
 function filterUsers() {
   const q = document.getElementById('sinp').value.toLowerCase();
-  renderTable(q ? allUsers.filter(u =>
-    (u.full_name||'').toLowerCase().includes(q) ||
-    (u.email||'').toLowerCase().includes(q)
-  ) : allUsers);
+  renderTable(q
+    ? allUsers.filter(u =>
+        (u.full_name||'').toLowerCase().includes(q) ||
+        (u.email||'').toLowerCase().includes(q))
+    : allUsers,
+    Object.values(cardsMap).flat().length
+  );
 }
 
-function renderTable(users) {
+// ── خشتە ──
+function renderTable(users, totalCards) {
   usersMap = {};
   users.forEach(u => usersMap[u.id] = u);
   const body = document.getElementById('tbody');
   document.getElementById('fcnt').textContent = users.length + ' بەکارهێنەر';
 
   if (!users.length) {
-    body.innerHTML = '<tr><td colspan="7" class="emsg"><i class="fas fa-users-slash" style="font-size:22px;display:block;margin-bottom:8px"></i>هیچ بەکارهێنەرێک نەدۆزرایەوە</td></tr>';
+    body.innerHTML = '<tr><td colspan="7" class="emsg"><i class="fas fa-users-slash" style="font-size:22px;display:block;margin-bottom:8px;opacity:0.4"></i>هیچ بەکارهێنەرێک نەدۆزرایەوە</td></tr>';
     return;
   }
 
-  const now = new Date();
   body.innerHTML = users.map((u, i) => {
     const name    = u.full_name || '—';
-    const init    = (u.full_name || u.email || '?')[0].toUpperCase();
-    const banned  = u.banned_until && new Date(u.banned_until) > now;
-    const sid     = u.id.substring(0,8) + '…';
-    const dStr    = u.created_at
-      ? new Date(u.created_at).toLocaleDateString('ku',{year:'numeric',month:'short',day:'numeric'})
-        + '<br>' + new Date(u.created_at).toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'})
+    const initial = (u.full_name || u.email || '?')[0].toUpperCase();
+    const sid     = u.id.substring(0, 8) + '…';
+    const uCards  = (cardsMap[u.id] || []).length;
+    const logins  = u.login_count || 0;
+    const created = u.created_at
+      ? new Date(u.created_at).toLocaleDateString('ku', { year:'numeric', month:'short', day:'numeric' })
+        + '<br><span style="color:#374151">'
+        + new Date(u.created_at).toLocaleTimeString('ku', { hour:'2-digit', minute:'2-digit' })
+        + '</span>'
       : '—';
 
-    const badge = banned
-      ? '<span class="badge b-ban"><i class="fas fa-ban" style="font-size:8px"></i> بانکراو</span>'
-      : '<span class="badge b-act"><i class="fas fa-circle" style="font-size:7px"></i> چالاک</span>';
-
-    const banBtn = banned
-      ? `<button class="abtn a-unban" data-id="${u.id}" data-act="unban"><i class="fas fa-user-check"></i></button>`
-      : `<button class="abtn a-ban"   data-id="${u.id}" data-act="ban"><i class="fas fa-ban"></i></button>`;
-
-    // پاسۆرد — encode کردن بۆ ئەوەی هیچ کاراکتەرێک کێشەی نەدات
-    const pwEncoded = u.plain_password ? btoa(unescape(encodeURIComponent(u.plain_password))) : '';
-    const pwCell = u.plain_password
-      ? `<div class="pwrap">
-           <span class="ptxt" id="pt${i}">••••••••</span>
-           <button class="peye" data-idx="${i}" data-pw="${pwEncoded}">
-             <i class="fas fa-eye" id="pe${i}"></i>
-           </button>
-         </div>`
-      : '<span style="color:#374151;font-size:11px">—</span>';
-
-    return `<tr>
+    return `<tr data-id="${u.id}">
       <td style="color:#374151;font-size:11px">${i+1}</td>
-      <td><div class="ucell"><div class="avt">${init}</div><div><div class="uname">${name}</div><div class="uid">${sid}</div></div></div></td>
+      <td>
+        <div class="ucell">
+          <div class="avt">${initial}</div>
+          <div>
+            <div class="uname">${name}</div>
+            <div class="uid">${sid}</div>
+          </div>
+        </div>
+      </td>
       <td><span class="eml">${u.email||'—'}</span></td>
-      <td>${pwCell}</td>
-      <td><div class="dtxt">${dStr}</div></td>
-      <td>${badge}</td>
-      <td><div class="arow">
-        ${banBtn}
-        <button class="abtn a-del" data-id="${u.id}" data-act="delete"><i class="fas fa-trash"></i></button>
-      </div></td>
+      <td>
+        <span class="cnt-badge">
+          <i class="fas fa-arrow-right-to-bracket" style="color:var(--purple)"></i>
+          ${logins}
+        </span>
+      </td>
+      <td>
+        <span class="cnt-badge">
+          <i class="fas fa-file-lines" style="color:var(--yellow)"></i>
+          ${uCards}
+        </span>
+      </td>
+      <td><div class="dtxt">${created}</div></td>
+      <td>
+        <button class="view-btn" data-id="${u.id}">
+          <i class="fas fa-user"></i> پرۆفایل
+        </button>
+      </td>
     </tr>`;
   }).join('');
 
   // Event delegation
   body.onclick = function(e) {
-    // پاسۆرد toggle
-    const eyeBtn = e.target.closest('[data-idx]');
-    if (eyeBtn) {
-      const idx = eyeBtn.dataset.idx;
-      const pw  = decodeURIComponent(escape(atob(eyeBtn.dataset.pw)));
-      const txt = document.getElementById('pt' + idx);
-      const ico = document.getElementById('pe' + idx);
-      if (txt.textContent === '••••••••') {
-        txt.textContent = pw;
-        txt.style.color = '#e2e8f0';
-        txt.style.letterSpacing = 'normal';
-        ico.className = 'fas fa-eye-slash';
-      } else {
-        txt.textContent = '••••••••';
-        txt.style.color = '#64748b';
-        txt.style.letterSpacing = '2px';
-        ico.className = 'fas fa-eye';
-      }
+    const btn = e.target.closest('.view-btn');
+    if (btn) {
+      openProfile(btn.dataset.id);
       return;
     }
-    // کردارەکان
-    const actBtn = e.target.closest('[data-act]');
-    if (actBtn) {
-      const id  = actBtn.dataset.id;
-      const act = actBtn.dataset.act;
-      const u   = usersMap[id];
-      if (u) openModal(act, id, u.email);
+    const row = e.target.closest('tr[data-id]');
+    if (row && !e.target.closest('.view-btn')) {
+      openProfile(row.dataset.id);
     }
   };
 }
 
-function openModal(act, id, email) {
-  pending = { act, id, email };
-  const cfg = {
-    ban:    { title:'🚫 بانکردن',       body:`دڵنیایت لە بانکردنی؟\n${email}`,        color:'#ef4444', btn:'بانبکە' },
-    unban:  { title:'✅ بانەکە بکەرەوە', body:`دڵنیایت لە کردنەوەی بانی؟\n${email}`, color:'#22c55e', btn:'بانەکە بکەرەوە' },
-    delete: { title:'🗑️ سڕینەوە',       body:`گەڕانەوەی نییە!\n${email}`,             color:'#ef4444', btn:'بسڕەوە' },
-  };
-  const c = cfg[act];
-  document.getElementById('mtitle').textContent = c.title;
-  document.getElementById('mbody').textContent  = c.body;
-  document.getElementById('mokbtn').style.background = c.color;
-  document.getElementById('mokbtn').textContent = c.btn;
-  document.getElementById('moverlay').classList.add('on');
-}
+// ── پرۆفایل ──
+function openProfile(uid) {
+  const u = usersMap[uid];
+  if (!u) return;
 
-function closeModal() {
-  document.getElementById('moverlay').classList.remove('on');
-  pending = null;
-}
+  // سەرەوەکە
+  const initial = (u.full_name || u.email || '?')[0].toUpperCase();
+  document.getElementById('pavt').innerHTML   = initial;
+  document.getElementById('pname').textContent  = u.full_name || '—';
+  document.getElementById('pemail').textContent = u.email || '—';
 
-async function doAction() {
-  if (!pending) return;
-  closeModal();
-  const { act, id, email } = pending;
+  // ئامارەکان
+  document.getElementById('pLoginCnt').textContent = u.login_count || 0;
 
-  if (act === 'ban') {
-    const d = new Date(); d.setFullYear(d.getFullYear() + 10);
-    const { error } = await sb.from('profiles').update({ banned_until: d.toISOString() }).eq('id', id);
-    if (error) { showToast('❌ ' + error.message, 'terr'); return; }
-    const u = allUsers.find(x => x.id === id);
-    if (u) u.banned_until = d.toISOString();
-    showToast('✅ بانکراو: ' + email, 'tok');
+  const uCards = cardsMap[uid] || [];
+  document.getElementById('pCardsCnt').textContent = uCards.length;
 
-  } else if (act === 'unban') {
-    const { error } = await sb.from('profiles').update({ banned_until: null }).eq('id', id);
-    if (error) { showToast('❌ ' + error.message, 'terr'); return; }
-    const u = allUsers.find(x => x.id === id);
-    if (u) u.banned_until = null;
-    showToast('✅ بانەکە کرایەوە: ' + email, 'tok');
+  document.getElementById('pJoined').textContent = u.created_at
+    ? new Date(u.created_at).toLocaleDateString('ku', { year:'numeric', month:'short', day:'numeric' })
+    : '—';
 
-  } else if (act === 'delete') {
-    const { error } = await sb.from('profiles').delete().eq('id', id);
-    if (error) { showToast('❌ ' + error.message, 'terr'); return; }
-    allUsers = allUsers.filter(x => x.id !== id);
-    showToast('🗑️ سڕایەوە: ' + email, 'tok');
+  document.getElementById('pLastSeen').textContent = '—';
+
+  // پاسۆرد
+  currentPPass = u.plain_password || '';
+  passShown = false;
+  document.getElementById('ppassTxt').textContent     = '••••••••';
+  document.getElementById('ppassTxt').style.color     = '#64748b';
+  document.getElementById('ppassTxt').style.letterSpacing = '2px';
+  document.getElementById('ppassIco').className       = 'fas fa-eye';
+  if (!currentPPass) {
+    document.getElementById('ppassTxt').textContent = '— تۆمار نەکراوە —';
+    document.getElementById('ppassIco').style.display = 'none';
+  } else {
+    document.getElementById('ppassIco').style.display = '';
   }
 
-  renderTable(allUsers);
-  updateStats(allUsers);
+  // کارتەکان
+  renderProfileCards(uCards);
+
+  document.getElementById('poverlay').classList.add('on');
+  document.body.style.overflow = 'hidden';
 }
 
+function renderProfileCards(cards) {
+  const list = document.getElementById('pCardsList');
+  if (!cards.length) {
+    list.innerHTML = '<div class="pempty"><i class="fas fa-folder-open"></i>هیچ کەرەستەیەک نەدروستکراوە</div>';
+    return;
+  }
+  list.innerHTML = cards.map(c => {
+    const initial = (c.name || '?')[0].toUpperCase();
+    const avatarHtml = c.avatar_b64
+      ? `<img src="${c.avatar_b64}" alt="">`
+      : initial;
+    const styleMap = { dark:'شەو', light:'ڕۆژ', classic:'کلاسیک' };
+    const date = c.created_at
+      ? new Date(c.created_at).toLocaleDateString('ku', { month:'short', day:'numeric', year:'numeric' })
+      : '—';
+    return `<div class="pcard-item">
+      <div class="pcard-avt">${avatarHtml}</div>
+      <div class="pcard-info">
+        <div class="pcard-name">${c.name || '—'}</div>
+        <div class="pcard-meta">
+          <span class="pcard-style">
+            <i class="fas fa-${c.style==='dark'?'moon':c.style==='light'?'sun':'list'}"></i>
+            ${styleMap[c.style]||c.style}
+          </span>
+          <span><i class="fas fa-calendar" style="font-size:9px;margin-left:3px"></i>${date}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function closeProfile() {
+  document.getElementById('poverlay').classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+function togglePPass() {
+  const txt = document.getElementById('ppassTxt');
+  const ico = document.getElementById('ppassIco');
+  if (!passShown) {
+    txt.textContent = currentPPass;
+    txt.style.color = '#e2e8f0';
+    txt.style.letterSpacing = 'normal';
+    ico.className = 'fas fa-eye-slash';
+    passShown = true;
+  } else {
+    txt.textContent = '••••••••';
+    txt.style.color = '#64748b';
+    txt.style.letterSpacing = '2px';
+    ico.className = 'fas fa-eye';
+    passShown = false;
+  }
+}
+
+// دابخستنی پرۆفایل کاتی کلیکی دەرەوە
+document.getElementById('poverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeProfile();
+});
+
+// ── Toast ──
 function showToast(msg, cls) {
   const t = document.getElementById('toast');
   t.textContent = msg;
