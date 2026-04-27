@@ -911,22 +911,40 @@ function makeBtnInner(b){
 function makeBtnDark(b, isFirst){ return '<a id="'+b.id+'" class="btn'+(isFirst?' shine-active':'')+'">'+makeBtnInner(b)+'</a>'; }
 function makeBtnLight(b, isFirst){ return '<a id="'+b.id+'" class="btn'+(isFirst?' shine-active':'')+'">'+makeBtnInner(b)+'</a>'; }
 
+
 function buildLayout(activeBtns, tt, ttUrl, btnFn){
-  const count = activeBtns.length;
+  // RTL: index 0 = راست، index 1 = چەپ
+  // واتسئاپ هەموو کات لای چەپ (index 1) + بریقەکەش بۆ هەمانە
+  let btns = [...activeBtns];
+
+  const waIdx = btns.findIndex(b => b.type === 'whatsapp');
+  if (waIdx === 0 && btns.length >= 2) {
+    [btns[0], btns[1]] = [btns[1], btns[0]];
+  } else if (waIdx > 1) {
+    const wa = btns.splice(waIdx, 1)[0];
+    btns.splice(1, 0, wa);
+  }
+
+  // ئیندێکسی بریقە: واتسئاپ هەبوو = index 1 (چەپ)، نەبوو = index 1
+  const shineIdx = 1;
+
+  const count = btns.length;
   let gridHTML = '', belowGrid = '';
-  if(count===3){
-    gridHTML = btnFn(activeBtns[0],true)+btnFn(activeBtns[1],false);
-    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(activeBtns[2],false)+'</div>';
-  } else if(count===5){
-    gridHTML = btnFn(activeBtns[0],true)+btnFn(activeBtns[1],false)+btnFn(activeBtns[2],false)+btnFn(activeBtns[3],false);
-    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(activeBtns[4],false)+'</div>';
-  } else if(count===1){
+
+  if(count === 1){
     gridHTML = '';
-    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(activeBtns[0],true)+'</div>';
+    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(btns[0],true)+'</div>';
+  } else if(count === 3){
+    gridHTML = btnFn(btns[0],false)+btnFn(btns[1],true);
+    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(btns[2],false)+'</div>';
+  } else if(count === 5){
+    gridHTML = btnFn(btns[0],false)+btnFn(btns[1],true)+btnFn(btns[2],false)+btnFn(btns[3],false);
+    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(btns[4],false)+'</div>';
   } else {
-    gridHTML = activeBtns.map((b,i)=>btnFn(b,i===0)).join('');
+    gridHTML = btns.map((b,i) => btnFn(b, i===shineIdx)).join('');
     belowGrid = '<div class="tt-wrap"><a href="'+ttUrl+'" target="_blank" class="tt-badge"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a></div>';
   }
+
   return { gridHTML, belowGrid, cols:'1fr 1fr' };
 }
 
