@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProxoLink Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+@font-face {
+  font-family: 'Rabar_021';
+  src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+:root {
+  --bg: #080b18;
+  --card: #0f1225;
+  --card2: #131629;
+  --border: rgba(255,255,255,0.07);
+  --purple: #c855e0;
+  --purple-dim: rgba(200,85,224,0.1);
+  --red: #ef4444;
+  --green: #22c55e;
+  --yellow: #f59e0b;
+  --text: #e2e8f0;
+  --muted: #64748b;
+}
+
+body {
+  font-family: 'Rabar_021', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── LOGIN ── */
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(200,85,224,0.15) 0%, transparent 60%);
+}
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.login-logo {
+  text-align: center;
+  margin-bottom: 6px;
+}
+.login-logo h1 { font-size: 22px; color: var(--purple); font-weight: 900; letter-spacing: 1px; }
+.login-logo p  { font-size: 12px; color: var(--muted); margin-top: 5px; }
+.login-logo .shield {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: var(--purple-dim);
+  border: 1px solid rgba(200,85,224,0.2);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px; font-size: 22px;
+}
+.inp {
+  width: 100%; padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px; color: var(--text);
+  font-family: 'Rabar_021', sans-serif; font-size: 13px;
+  outline: none; transition: border-color 0.2s;
+  direction: ltr; text-align: left;
+}
+.inp:focus { border-color: var(--purple); background: rgba(200,85,224,0.05); }
+.inp::placeholder { color: #374151; }
+.login-btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, #7b2fd4, var(--purple));
+  color: #fff; border: none; border-radius: 13px;
+  font-family: 'Rabar_021', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: opacity 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.login-btn:hover { opacity: 0.9; }
+.login-btn:disabled { opacity: 0.6; pointer-events: none; }
+.login-err {
+  font-size: 12px; color: var(--red); text-align: center;
+  padding: 10px; background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2); border-radius: 10px;
+  display: none;
+}
+
+/* ── ADMIN LAYOUT ── */
+.admin-wrap { display: none; flex-direction: column; min-height: 100vh; }
+
+.topbar {
+  width: 100%; padding: 14px 20px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.topbar-left h1 { font-size: 15px; color: var(--purple); font-weight: 800; }
+.topbar-left span { font-size: 11px; color: var(--muted); }
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+.tb-btn {
+  padding: 8px 14px; border-radius: 10px;
+  font-family: 'Rabar_021', sans-serif; font-size: 12px;
+  cursor: pointer; border: none; transition: all 0.15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.tb-refresh { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(200,85,224,0.2); }
+.tb-refresh:hover { background: rgba(200,85,224,0.2); }
+.tb-logout { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
+.tb-logout:hover { color: #fff; }
+
+.main-content { padding: 20px 16px 60px; max-width: 900px; margin: 0 auto; width: 100%; }
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 10px; margin-bottom: 20px;
+}
+@media(max-width:600px){ .stats-grid { grid-template-columns: repeat(2,1fr); } }
+.stat-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.stat-box .ico {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.ico-purple { background: var(--purple-dim); color: var(--purple); }
+.ico-green  { background: rgba(34,197,94,0.1); color: var(--green); }
+.ico-yellow { background: rgba(245,158,11,0.1); color: var(--yellow); }
+.ico-red    { background: rgba(239,68,68,0.1); color: var(--red); }
+.stat-box .num { font-size: 22px; font-weight: 800; color: #fff; }
+.stat-box .lbl { font-size: 10.5px; color: var(--muted); text-align: center; }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.search-inp {
+  flex: 1; min-width: 180px; padding: 10px 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 11px; color: var(--text);
+  font-family: 'Rabar_021', sans-serif; font-size: 12.5px;
+  outline: none; transition: border-color 0.2s; direction: rtl;
+}
+.search-inp:focus { border-color: var(--purple); }
+.search-inp::placeholder { color: #374151; }
+
+/* ── TABLE ── */
+.table-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px; overflow: hidden;
+}
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 650px; }
+thead tr { background: rgba(200,85,224,0.06); border-bottom: 1px solid var(--border); }
+thead th {
+  padding: 12px 14px; font-size: 10.5px; color: var(--purple);
+  font-weight: 700; text-align: right; white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+tbody tr { border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.15s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,0.02); }
+tbody td { padding: 12px 14px; font-size: 12px; color: #94a3b8; vertical-align: middle; }
+
+.user-cell { display: flex; align-items: center; gap: 9px; }
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #5b1fa8, var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+}
+.user-name { font-size: 12.5px; color: #fff; font-weight: 600; }
+.user-id   { font-size: 9.5px; color: #374151; direction: ltr; text-align: left; font-family: monospace; }
+
+.email-txt { direction: ltr; text-align: right; color: #64748b; font-size: 11.5px; }
+
+.ip-txt { font-family: monospace; font-size: 11px; color: #475569; direction: ltr; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 20px; font-size: 10px; white-space: nowrap;
+}
+.badge-active  { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); color: var(--green); }
+.badge-banned  { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: var(--red); }
+.badge-noconf  { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); color: var(--yellow); }
+
+.date-cell { font-size: 10.5px; color: #475569; line-height: 1.6; }
+
+.act-row { display: flex; gap: 5px; align-items: center; }
+.act-btn {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; cursor: pointer; border: none; transition: all 0.15s;
+}
+.act-ban   { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.15); }
+.act-unban { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.15); }
+.act-ban:hover   { background: rgba(239,68,68,0.25); }
+.act-unban:hover { background: rgba(34,197,94,0.25); }
+.act-del   { background: rgba(239,68,68,0.06); color: #7f1d1d; border: 1px solid rgba(239,68,68,0.1); }
+.act-del:hover { background: rgba(239,68,68,0.18); color: var(--red); }
+
+.empty-row td { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+.loading-row td { text-align: center; padding: 30px; color: var(--muted); font-size: 13px; }
+
+.table-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--muted);
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  padding: 12px 20px; border-radius: 12px; font-size: 13px;
+  display: none; z-index: 9999; animation: fadeUp 0.25s ease;
+  white-space: nowrap;
+}
+.toast.ok  { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: var(--green); }
+.toast.err { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: var(--red); }
+
+/* ── CONFIRM MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px); display: none;
+  justify-content: center; align-items: center; z-index: 9998;
+}
+.modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+.modal-box {
+  width: 88%; max-width: 320px;
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 28px 22px; text-align: center;
+}
+.modal-box h3 { font-size: 17px; color: #fff; margin-bottom: 10px; }
+.modal-box p  { font-size: 12.5px; color: var(--muted); line-height: 1.8; margin-bottom: 22px; }
+.modal-btns { display: flex; gap: 8px; }
+.modal-cancel {
+  flex: 1; padding: 12px; border-radius: 12px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  color: var(--muted); font-family: 'Rabar_021', sans-serif; font-size: 13px;
+  cursor: pointer;
+}
+.modal-confirm {
+  flex: 1; padding: 12px; border-radius: 12px;
+  background: var(--red); border: none;
+  color: #fff; font-family: 'Rabar_021', sans-serif; font-size: 13px;
+  font-weight: 700; cursor: pointer;
+}
+
+@keyframes fadeUp { from{opacity:0;transform:translateX(-50%) translateY(8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="shield">🛡️</div>
+      <h1>ProxoLink Admin</h1>
+      <p>تەنها بۆ بەڕێوەبەران</p>
+    </div>
+    <input class="inp" type="password" id="adminPass" placeholder="پاسۆردی ئەدمین..." onkeydown="if(event.key==='Enter')checkAdmin()">
+    <div class="login-err" id="loginErr">پاسۆردەکە هەڵەیە</div>
+    <button class="login-btn" onclick="checkAdmin()">
+      <i class="fas fa-sign-in-alt"></i> چوونەژوورەوە
+    </button>
+  </div>
+</div>
+
+<!-- ── ADMIN ── -->
+<div class="admin-wrap" id="adminWrap">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>🛡️ ProxoLink Admin</h1>
+      <span id="lastRefresh"></span>
+      <span style="font-size:10px;color:#374151;background:rgba(200,85,224,0.08);border:1px solid rgba(200,85,224,0.15);padding:2px 8px;border-radius:20px">v9.2</span>
+    </div>
+    <div class="topbar-right">
+      <button class="tb-btn tb-refresh" onclick="loadUsers()">
+        <i class="fas fa-sync-alt" id="refreshIco"></i> نوێکردنەوە
+      </button>
+      <button class="tb-btn tb-logout" onclick="adminLogout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="ico ico-purple"><i class="fas fa-users"></i></div>
+        <div class="num" id="sTotal">—</div>
+        <div class="lbl">کۆی بەکارهێنەر</div>
+      </div>
+      <div class="stat-box">
+        <div class="ico ico-green"><i class="fas fa-user-check"></i></div>
+        <div class="num" id="sActive">—</div>
+        <div class="lbl">چالاک</div>
+      </div>
+      <div class="stat-box">
+        <div class="ico ico-red"><i class="fas fa-user-slash"></i></div>
+        <div class="num" id="sBanned">—</div>
+        <div class="lbl">بانکراو</div>
+      </div>
+      <div class="stat-box">
+        <div class="ico ico-yellow"><i class="fas fa-calendar-day"></i></div>
+        <div class="num" id="sToday">—</div>
+        <div class="lbl">ئەمڕۆ تۆمارکراون</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <input class="search-inp" id="searchInp" placeholder="🔍 گەڕان بە ناو یان ئیمەیل..." oninput="filterUsers()">
+    </div>
+
+    <div class="table-card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>بەکارهێنەر</th>
+              <th>ئیمەیل</th>
+              <th>پاسۆرد</th>
+              <th>دەستپێکراوە</th>
+              <th>کاتی تۆمارکردن</th>
+              <th>دۆخ</th>
+              <th>کردارەکان</th>
+            </tr>
+          </thead>
+          <tbody id="usersTable">
+            <tr class="loading-row"><td colspan="8"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span id="footerInfo">—</span>
+        <span id="footerTime"></span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── CONFIRM MODAL ── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <h3 id="modalTitle">دڵنیایت؟</h3>
+    <p id="modalBody">ئەم کردارە گەڕانەوەی نییە.</p>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">نەخێر</button>
+      <button class="modal-confirm" id="modalConfirmBtn" onclick="doConfirm()">بەڵێ، بکە</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── پاسۆردی ئەدمین ──
+const ADMIN_PASSWORD = 'proxo@admin2025';
+
+const SB_URL = 'https://rtbsblgaewmfiynhwgkv.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0YnNibGdhZXdtZml5bmh3Z2t2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzODIwNDcsImV4cCI6MjA4Njk1ODA0N30.-aEC48G8Hltu6N8y2nPhAYPdB-4PSsR78OSXSLMAGcU';
+
+let sb, allUsers = [], pendingAction = null;
+
+window.addEventListener('load', () => {
+  sb = window.supabase.createClient(SB_URL, SB_KEY);
+  // پشکنینی سێشنی ئەدمین
+  if (sessionStorage.getItem('proxo_admin') === 'yes') showAdmin();
+});
+
+// ── LOGIN ──
+function checkAdmin() {
+  const pass = document.getElementById('adminPass').value;
+  const err  = document.getElementById('loginErr');
+  if (pass === ADMIN_PASSWORD) {
+    sessionStorage.setItem('proxo_admin', 'yes');
+    err.style.display = 'none';
+    showAdmin();
+  } else {
+    err.style.display = 'block';
+    document.getElementById('adminPass').value = '';
+  }
+}
+
+function showAdmin() {
+  document.getElementById('loginWrap').style.display = 'none';
+  document.getElementById('adminWrap').style.display = 'flex';
+  loadUsers();
+}
+
+function adminLogout() {
+  sessionStorage.removeItem('proxo_admin');
+  document.getElementById('adminWrap').style.display = 'none';
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('adminPass').value = '';
+}
+
+// ── بارکردنی بەکارهێنەران ──
+async function loadUsers() {
+  const ico = document.getElementById('refreshIco');
+  ico.className = 'fas fa-circle-notch fa-spin';
+
+  const { data, error } = await sb.rpc('get_all_users_admin');
+
+  // ئەگەر RPC نەبوو، لە تەیبڵەکانی ئاسایی بخوێنەوە
+  let users = [];
+  if (error || !data) {
+    const { data: profiles } = await sb
+      .from('profiles')
+      .select('id, full_name, email, created_at, banned_until, plain_password')
+      .order('created_at', { ascending: false });
+    users = (profiles || []).map(p => ({
+      id:            p.id,
+      email:         p.email,
+      full_name:     p.full_name,
+      created_at:    p.created_at,
+      last_sign_in:  null,
+      banned_until:  p.banned_until,
+      confirmed:     true,
+      plain_password: p.plain_password,
+    }));
+  } else {
+    users = data;
+  }
+
+  allUsers = users;
+  renderTable(users);
+  updateStats(users);
+
+  ico.className = 'fas fa-sync-alt';
+  const now = new Date();
+  document.getElementById('lastRefresh').textContent =
+    now.toLocaleTimeString('ku', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('footerTime').textContent =
+    'دوایین نوێکردنەوە: ' + now.toLocaleTimeString('ku', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+// ── ئامارەکان ──
+function updateStats(users) {
+  document.getElementById('sTotal').textContent  = users.length;
+  const banned  = users.filter(u => u.banned_until && new Date(u.banned_until) > new Date());
+  const today   = users.filter(u => new Date(u.created_at).toDateString() === new Date().toDateString());
+  document.getElementById('sActive').textContent = users.length - banned.length;
+  document.getElementById('sBanned').textContent = banned.length;
+  document.getElementById('sToday').textContent  = today.length;
+}
+
+// ── گەڕان ──
+function filterUsers() {
+  const q = document.getElementById('searchInp').value.toLowerCase();
+  const filtered = q
+    ? allUsers.filter(u =>
+        (u.full_name || '').toLowerCase().includes(q) ||
+        (u.email || '').toLowerCase().includes(q)
+      )
+    : allUsers;
+  renderTable(filtered);
+}
+
+// ── خشتەکان ──
+function renderTable(users) {
+  const body = document.getElementById('usersTable');
+  document.getElementById('footerInfo').textContent = users.length + ' بەکارهێنەر';
+
+  if (!users.length) {
+    body.innerHTML = '<tr class="empty-row"><td colspan="8"><i class="fas fa-users-slash" style="font-size:20px;display:block;margin-bottom:8px;color:#374151"></i>هیچ بەکارهێنەرێک نەدۆزرایەوە</td></tr>';
+    return;
+  }
+
+  body.innerHTML = users.map((u, i) => {
+    const name     = u.full_name || '—';
+    const initial  = ((u.full_name || u.email || '?')[0]).toUpperCase();
+    const isBanned = u.banned_until && new Date(u.banned_until) > new Date();
+    const isConf   = u.confirmed !== false;
+
+    const createdDate = u.created_at
+      ? new Date(u.created_at).toLocaleDateString('ku', { year:'numeric', month:'short', day:'numeric' })
+      : '—';
+    const createdTime = u.created_at
+      ? new Date(u.created_at).toLocaleTimeString('ku', { hour:'2-digit', minute:'2-digit' })
+      : '';
+    const lastSign = u.last_sign_in
+      ? new Date(u.last_sign_in).toLocaleDateString('ku', { month:'short', day:'numeric' }) +
+        ' ' + new Date(u.last_sign_in).toLocaleTimeString('ku', { hour:'2-digit', minute:'2-digit' })
+      : '—';
+
+    const statusBadge = isBanned
+      ? '<span class="badge badge-banned"><i class="fas fa-ban" style="font-size:8px"></i> بانکراو</span>'
+      : !isConf
+      ? '<span class="badge badge-noconf"><i class="fas fa-clock" style="font-size:8px"></i> پشتڕاست نەکراو</span>'
+      : '<span class="badge badge-active"><i class="fas fa-circle" style="font-size:7px"></i> چالاک</span>';
+
+    const banBtn = isBanned
+      ? `<button class="act-btn act-unban" title="بانەکە بکەرەوە" onclick="confirmAction('unban','${u.id}','${u.email}')"><i class="fas fa-user-check"></i></button>`
+      : `<button class="act-btn act-ban"   title="بانکردن"        onclick="confirmAction('ban','${u.id}','${u.email}')"><i class="fas fa-ban"></i></button>`;
+
+    const shortId = u.id ? u.id.substring(0,8) + '...' : '—';
+
+    const safePass = (u.plain_password || '').replace(/'/g, "\\'");
+    const passCell = u.plain_password
+      ? `<div style="display:flex;align-items:center;gap:5px;direction:ltr">
+           <span id="pass_${u.id}" style="font-family:monospace;font-size:11px;color:#64748b;letter-spacing:2px">••••••••</span>
+           <button onclick="togglePass('${u.id}','${safePass}')"
+             style="background:none;border:none;color:#64748b;cursor:pointer;font-size:11px;padding:2px 4px">
+             <i class="fas fa-eye" id="eye_${u.id}"></i>
+           </button>
+         </div>`
+      : '<span style="color:#374151;font-size:11px">—</span>';
+
+    return `
+      <tr>
+        <td style="color:#374151;font-size:11px">${i + 1}</td>
+        <td>
+          <div class="user-cell">
+            <div class="avatar">${initial}</div>
+            <div>
+              <div class="user-name">${name}</div>
+              <div class="user-id">${shortId}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="email-txt">${u.email || '—'}</span></td>
+        <td>${passCell}</td>
+        <td><span class="date-cell">${lastSign}</span></td>
+        <td>
+          <div class="date-cell">${createdDate}</div>
+          <div class="date-cell">${createdTime}</div>
+        </td>
+        <td>${statusBadge}</td>
+        <td>
+          <div class="act-row">
+            ${banBtn}
+            <button class="act-btn act-del" title="سڕینەوە" onclick="confirmAction('delete','${u.id}','${u.email}')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function togglePass(id, pass) {
+  const el  = document.getElementById('pass_' + id);
+  const eye = document.getElementById('eye_' + id);
+  if (el.textContent === '••••••••') {
+    el.textContent = pass;
+    el.style.color = '#e2e8f0';
+    eye.className  = 'fas fa-eye-slash';
+  } else {
+    el.textContent = '••••••••';
+    el.style.color = '#64748b';
+    eye.className  = 'fas fa-eye';
+  }
+}
+
+// ── کردارەکان ──
+function confirmAction(type, userId, email) {
+  pendingAction = { type, userId, email };
+  const titles = { ban: '🚫 بانکردنی بەکارهێنەر', unban: '✅ بانەکە بکەرەوە', delete: '🗑️ سڕینەوەی بەکارهێنەر' };
+  const bodies  = {
+    ban:    `ئایا دەتەوێت بانی بکەی؟\n📧 ${email}`,
+    unban:  `ئایا دەتەوێت بانەکەی بکەیتەوە؟\n📧 ${email}`,
+    delete: `ئەم کردارە گەڕانەوەی نییە!\n📧 ${email}`,
+  };
+  document.getElementById('modalTitle').textContent = titles[type];
+  document.getElementById('modalBody').textContent  = bodies[type];
+  document.getElementById('modalConfirmBtn').style.background = type === 'unban' ? '#22c55e' : '#ef4444';
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  pendingAction = null;
+}
+
+async function doConfirm() {
+  if (!pendingAction) return;
+  closeModal();
+  const { type, userId, email } = pendingAction;
+
+  if (type === 'ban') {
+    // بانکردن بۆ ١٠ ساڵ
+    const banDate = new Date();
+    banDate.setFullYear(banDate.getFullYear() + 10);
+    const { error } = await sb.from('profiles').update({ banned_until: banDate.toISOString() }).eq('id', userId);
+    if (!error) {
+      showToast('✅ بانکراو: ' + email, 'ok');
+      // نوێکردنەوەی داتای لۆکەل
+      const u = allUsers.find(x => x.id === userId);
+      if (u) u.banned_until = banDate.toISOString();
+      filterUsers();
+      updateStats(allUsers);
+    } else showToast('❌ هەڵەیەک ڕوویدا', 'err');
+
+  } else if (type === 'unban') {
+    const { error } = await sb.from('profiles').update({ banned_until: null }).eq('id', userId);
+    if (!error) {
+      showToast('✅ بانەکە کرایەوە: ' + email, 'ok');
+      const u = allUsers.find(x => x.id === userId);
+      if (u) u.banned_until = null;
+      filterUsers();
+      updateStats(allUsers);
+    } else showToast('❌ هەڵەیەک ڕوویدا', 'err');
+
+  } else if (type === 'delete') {
+    const { error } = await sb.from('profiles').delete().eq('id', userId);
+    if (!error) {
+      showToast('🗑️ سڕایەوە: ' + email, 'ok');
+      allUsers = allUsers.filter(x => x.id !== userId);
+      filterUsers();
+      updateStats(allUsers);
+    } else showToast('❌ هەڵەیەک ڕوویدا', 'err');
+  }
+}
+
+// ── Toast ──
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+</script>
+</body>
+</html>
