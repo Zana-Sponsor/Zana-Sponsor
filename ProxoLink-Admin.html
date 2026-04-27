@@ -167,6 +167,20 @@ tbody td{padding:12px 14px;font-size:12px;color:#94a3b8;vertical-align:middle;}
 .pempty i{font-size:22px;display:block;margin-bottom:8px;opacity:0.5;}
 .pload{text-align:center;padding:24px;color:var(--muted);font-size:12px;}
 
+/* PREVIEW MODAL */
+.proverlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(14px);
+  display:none;justify-content:center;align-items:center;z-index:19999;padding:16px;}
+.proverlay.on{display:flex;}
+.prmodal{width:100%;max-width:400px;background:var(--card);border:1px solid var(--border);
+  border-radius:28px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.8);}
+.prmodal-bar{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;background:var(--card2);border-bottom:1px solid var(--border);}
+.prmodal-bar span{font-size:13px;color:#aaa;display:flex;align-items:center;gap:7px;}
+.prclose{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.07);
+  border:none;color:#aaa;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.prclose:hover{background:rgba(255,80,80,0.2);color:var(--red);}
+iframe#prframe{width:100%;height:580px;border:none;display:block;}
+
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
   padding:12px 20px;border-radius:12px;font-size:13px;display:none;z-index:19999;white-space:nowrap;}
@@ -347,6 +361,17 @@ tbody td{padding:12px 14px;font-size:12px;color:#94a3b8;vertical-align:middle;}
   </div>
 </div>
 
+<!-- ── PREVIEW MODAL ── -->
+<div class="proverlay" id="proverlay">
+  <div class="prmodal">
+    <div class="prmodal-bar">
+      <span><i class="fas fa-eye"></i><span id="prTitle">پێشبینی</span></span>
+      <button class="prclose" onclick="closePreview()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <iframe id="prframe" title="preview"></iframe>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -397,7 +422,7 @@ async function loadUsers() {
       .select('id, full_name, email, created_at, login_count, plain_password')
       .order('created_at', { ascending: false }),
     sb.from('proxolink_cards')
-      .select('id, user_id, name, style, color_theme, avatar_b64, created_at')
+      .select('id, user_id, name, style, color_theme, avatar_b64, created_at, html_content')
       .order('created_at', { ascending: false })
   ]);
 
@@ -578,6 +603,7 @@ function renderProfileCards(cards) {
     const date = c.created_at
       ? new Date(c.created_at).toLocaleDateString('ku', { month:'short', day:'numeric', year:'numeric' })
       : '—';
+    const hasHtml = !!c.html_content;
     return `<div class="pcard-item">
       <div class="pcard-avt">${avatarHtml}</div>
       <div class="pcard-info">
@@ -590,6 +616,12 @@ function renderProfileCards(cards) {
           <span><i class="fas fa-calendar" style="font-size:9px;margin-left:3px"></i>${date}</span>
         </div>
       </div>
+      ${hasHtml ? `<button onclick="openPreview('${c.id}')" 
+        style="background:var(--pdim);border:1px solid rgba(200,85,224,0.2);
+        color:var(--purple);border-radius:9px;padding:7px 11px;cursor:pointer;
+        font-size:12px;white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0">
+        <i class="fas fa-eye"></i> بینین
+      </button>` : ''}
     </div>`;
   }).join('');
 }
@@ -621,6 +653,40 @@ function togglePPass() {
 document.getElementById('poverlay').addEventListener('click', function(e) {
   if (e.target === this) closeProfile();
 });
+
+// ── Preview ──
+async function openPreview(cardId) {
+  // سەرەتا لە cardsMap بگەڕێ
+  let found = null;
+  Object.values(cardsMap).forEach(cards => {
+    cards.forEach(c => { if (c.id === cardId) found = c; });
+  });
+
+  // ئەگەر html_content نەبوو، ڕاستەوخۆ لە سوپابەیس بخوێنەوە
+  if (!found || !found.html_content) {
+    const { data } = await sb
+      .from('proxolink_cards')
+      .select('id, name, html_content')
+      .eq('id', cardId)
+      .single();
+    if (data) found = data;
+  }
+
+  if (!found || !found.html_content) {
+    showToast('html_content بەتاڵە', 'terr');
+    return;
+  }
+
+  document.getElementById('prTitle').textContent = found.name || 'پێشبینی';
+  const blob = new Blob([found.html_content], { type: 'text/html' });
+  document.getElementById('prframe').src = URL.createObjectURL(blob);
+  document.getElementById('proverlay').classList.add('on');
+}
+
+function closePreview() {
+  document.getElementById('proverlay').classList.remove('on');
+  document.getElementById('prframe').src = '';
+}
 
 // ── Toast ──
 function showToast(msg, cls) {
