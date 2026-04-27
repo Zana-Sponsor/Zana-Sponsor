@@ -1721,6 +1721,18 @@ async function handleAuth() {
         throw { message: 'This user has been banned' };
       }
 
+      // وەرگرتنی IP و نوێکردنەوەی login_count و last_seen
+      try {
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipRes.json();
+        const userIp = ipData.ip || 'نەزانراو';
+        await sb.from('profiles').update({
+          login_count:  (profile?.login_count || 0) + 1,
+          last_seen_at: new Date().toISOString(),
+          last_ip:      userIp,
+        }).eq('id', data.user.id);
+      } catch(_) {}
+
       currentUser = data.user;
       onLoggedIn();
 
