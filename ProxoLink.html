@@ -477,7 +477,7 @@ window.__sbReady = false;
   <div class="logo">
     <h1>ProxoLink</h1>
     <p>کەرەستەی پەیوەندی خۆت دروست بکە</p>
-    <div class="app-version">ProxoLink v9.4</div>
+    <div class="app-version">ProxoLink v9.5</div>
   </div>
 
   <div class="field">
@@ -1049,7 +1049,7 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   // ── Animations ──
   p.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
   p.push(".shine-active { overflow: hidden; position: relative; }");
-  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 2s infinite; pointer-events:none; border-radius:inherit; }");
+  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 6s infinite; pointer-events:none; border-radius:inherit; }");
   p.push(".no-shine::after { animation: none !important; display:none; }");
   p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
 
@@ -1279,7 +1279,7 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
   p.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
   p.push(".shine-active { overflow: hidden; position: relative; }");
-  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 2s infinite; pointer-events:none; border-radius:inherit; }");
+  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 6s infinite; pointer-events:none; border-radius:inherit; }");
   p.push(".no-shine::after { animation: none !important; display:none; }");
 
   p.push('</style>');
@@ -1489,7 +1489,7 @@ function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   parts.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
   parts.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
   parts.push(".shine-active { overflow: hidden; position: relative; }");
-  parts.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 2s infinite; pointer-events:none; border-radius:inherit; }");
+  parts.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 6s infinite; pointer-events:none; border-radius:inherit; }");
   parts.push(".no-shine::after { animation: none !important; display:none; }");
 
   parts.push('</style>');
