@@ -1047,9 +1047,9 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push('.btn-confirm.confirm-in { background: #dc2743; color: #fff; }');
 
   // ── Animations ──
-  p.push("@keyframes shine { 0% { left: -120%; opacity: 0; } 60% { opacity: 1; } 100% { left: 180%; opacity: 0; } }");
+  p.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
   p.push(".shine-active { overflow: hidden; position: relative; }");
-  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.04) 42%,rgba(255,255,255,0.11) 50%,rgba(255,255,255,0.04) 58%,transparent 70%); animation: shine 3.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
+  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 2s infinite; pointer-events:none; border-radius:inherit; }");
   p.push(".no-shine::after { animation: none !important; display:none; }");
   p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
 
@@ -1277,9 +1277,9 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
 
   // ── Animations ──
   p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
-  p.push("@keyframes shine { 0% { left: -120%; opacity: 0; } 60% { opacity: 1; } 100% { left: 180%; opacity: 0; } }");
+  p.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
   p.push(".shine-active { overflow: hidden; position: relative; }");
-  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.04) 42%,rgba(255,255,255,0.11) 50%,rgba(255,255,255,0.04) 58%,transparent 70%); animation: shine 3.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
+  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 2s infinite; pointer-events:none; border-radius:inherit; }");
   p.push(".no-shine::after { animation: none !important; display:none; }");
 
   p.push('</style>');
@@ -1487,9 +1487,9 @@ function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
 
   // ── Animations ──
   parts.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
-  parts.push("@keyframes shine { 0% { left: -120%; opacity: 0; } 60% { opacity: 1; } 100% { left: 180%; opacity: 0; } }");
+  parts.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
   parts.push(".shine-active { overflow: hidden; position: relative; }");
-  parts.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.04) 42%,rgba(255,255,255,0.11) 50%,rgba(255,255,255,0.04) 58%,transparent 70%); animation: shine 3.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
+  parts.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 2s infinite; pointer-events:none; border-radius:inherit; }");
   parts.push(".no-shine::after { animation: none !important; display:none; }");
 
   parts.push('</style>');
