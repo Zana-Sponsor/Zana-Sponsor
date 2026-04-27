@@ -477,7 +477,7 @@ window.__sbReady = false;
   <div class="logo">
     <h1>ProxoLink</h1>
     <p>کەرەستەی پەیوەندی خۆت دروست بکە</p>
-    <div class="app-version">ProxoLink v9.2</div>
+    <div class="app-version">ProxoLink v9.3</div>
   </div>
 
   <div class="field">
@@ -908,23 +908,23 @@ function buildPage(){
 function makeBtnInner(b){
   return '<i class="'+b.icon+'"></i><span>'+b.label+'</span>';
 }
-function makeBtnDark(b){ return '<a id="'+b.id+'" class="btn">'+makeBtnInner(b)+'</a>'; }
-function makeBtnLight(b){ return '<a id="'+b.id+'" class="btn">'+makeBtnInner(b)+'</a>'; }
+function makeBtnDark(b, isFirst){ return '<a id="'+b.id+'" class="btn'+(isFirst?' shine-active':'')+'">'+makeBtnInner(b)+'</a>'; }
+function makeBtnLight(b, isFirst){ return '<a id="'+b.id+'" class="btn'+(isFirst?' shine-active':'')+'">'+makeBtnInner(b)+'</a>'; }
 
 function buildLayout(activeBtns, tt, ttUrl, btnFn){
   const count = activeBtns.length;
   let gridHTML = '', belowGrid = '';
   if(count===3){
-    gridHTML = btnFn(activeBtns[0])+btnFn(activeBtns[1]);
-    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(activeBtns[2])+'</div>';
+    gridHTML = btnFn(activeBtns[0],true)+btnFn(activeBtns[1],false);
+    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(activeBtns[2],false)+'</div>';
   } else if(count===5){
-    gridHTML = btnFn(activeBtns[0])+btnFn(activeBtns[1])+btnFn(activeBtns[2])+btnFn(activeBtns[3]);
-    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(activeBtns[4])+'</div>';
+    gridHTML = btnFn(activeBtns[0],true)+btnFn(activeBtns[1],false)+btnFn(activeBtns[2],false)+btnFn(activeBtns[3],false);
+    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(activeBtns[4],false)+'</div>';
   } else if(count===1){
     gridHTML = '';
-    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(activeBtns[0])+'</div>';
+    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(activeBtns[0],true)+'</div>';
   } else {
-    gridHTML = activeBtns.map(b=>btnFn(b)).join('');
+    gridHTML = activeBtns.map((b,i)=>btnFn(b,i===0)).join('');
     belowGrid = '<div class="tt-wrap"><a href="'+ttUrl+'" target="_blank" class="tt-badge"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a></div>';
   }
   return { gridHTML, belowGrid, cols:'1fr 1fr' };
@@ -1030,6 +1030,9 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
 
   // ── Animations ──
   p.push("@keyframes shine { 0% { left: -100%; } 100% { left: 160%; } }");
+  p.push(".shine-active { overflow: hidden; position: relative; }");
+  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,0.25) 50%,transparent 70%); animation: shine 1.2s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
+  p.push(".no-shine::after { animation: none !important; display:none; }");
   p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
 
   p.push('</style>');
@@ -1146,7 +1149,7 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push("document.addEventListener('DOMContentLoaded', function() {");
   p.push(handlers);
   p.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
-  p.push("  setTimeout(hideEffects, 10000);");
+  p.push("  setTimeout(hideEffects, 8000);");
   p.push("});");
   p.push('<'+'/script>');
   p.push('</body>');
@@ -1256,6 +1259,10 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
 
   // ── Animations ──
   p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
+  p.push("@keyframes shine { 0% { left: -100%; } 100% { left: 160%; } }");
+  p.push(".shine-active { overflow: hidden; position: relative; }");
+  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,0.35) 50%,transparent 70%); animation: shine 1.2s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
+  p.push(".no-shine::after { animation: none !important; display:none; }");
 
   p.push('</style>');
   p.push('</head>');
@@ -1371,7 +1378,7 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push("document.addEventListener('DOMContentLoaded', function() {");
   p.push(handlers);
   p.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
-  p.push("  setTimeout(hideEffects, 10000);");
+  p.push("  setTimeout(hideEffects, 8000);");
   p.push("});");
   p.push('<'+'/script>');
   p.push('</body>');
@@ -1383,9 +1390,9 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
 function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   const bioSafe = bio.replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const btnColors = { wa:'#25d366', vb:'#7360F2', tg:'#29a8eb', ig:'linear-gradient(to right,#8a2387,#e94057,#f27121)', ph:'#e03030', as:'#e03030' };
-  const btnHTML = activeBtns.map(b => {
+  const btnHTML = activeBtns.map((b, idx) => {
     const bg = btnColors[b.id] || '#888';
-    return '<a id="' + b.id + '" class="btn-classic" style="background:' + bg + '">'
+    return '<a id="' + b.id + '" class="btn-classic' + (idx === 0 ? ' shine-active' : '') + '" style="background:' + bg + '">'
       + '<div class="ic-spacer"></div>'
       + '<span>' + b.label + '</span>'
       + '<div class="ic-wrap"><i class="' + b.icon + '"></i></div>'
@@ -1462,6 +1469,10 @@ function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
 
   // ── Animations ──
   parts.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
+  parts.push("@keyframes shine { 0% { left: -100%; } 100% { left: 160%; } }");
+  parts.push(".shine-active { overflow: hidden; position: relative; }");
+  parts.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,0.3) 50%,transparent 70%); animation: shine 1.2s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
+  parts.push(".no-shine::after { animation: none !important; display:none; }");
 
   parts.push('</style>');
   parts.push('</head>');
@@ -1568,6 +1579,7 @@ function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   parts.push("document.addEventListener('DOMContentLoaded', function() {");
   parts.push(handlers);
   parts.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
+  parts.push("  setTimeout(function(){ var s=document.querySelector('.shine-active'); if(s) s.classList.add('no-shine'); }, 8000);");
   parts.push("});");
   parts.push('<'+'/script>');
   parts.push('</body>');
@@ -1786,6 +1798,8 @@ function onLoggedIn() {
   if (!currentUser) return;
   document.getElementById('dashUserEmail').textContent = currentUser.email;
   showPage('form');
+  // نوێکردنەوەی هەموو کارتەکانی کۆن بە خۆکار
+  setTimeout(() => regenerateAllCards(), 1500);
 }
 
 // ── دەرچوون ──
@@ -1948,6 +1962,87 @@ async function saveCardToSupabase(htmlContent) {
     contacts:       contacts,
     html_content:   htmlContent,
   });
+}
+
+// ══════════════════════════════════════════════
+// نوێکردنەوەی هەموو کارتەکانی کۆن
+// ══════════════════════════════════════════════
+async function regenerateAllCards() {
+  if (!currentUser) return;
+
+  // وەرگرتنی هەموو کارتەکانی ئەم یوزەرە
+  const { data: cards, error } = await sb
+    .from('proxolink_cards')
+    .select('*')
+    .eq('user_id', currentUser.id);
+
+  if (error || !cards || cards.length === 0) return;
+
+  for (const card of cards) {
+    try {
+      // پڕکردنەوەی فۆرم بەپێی داتای کارتەکە
+      const tmpName     = card.name || '';
+      const tmpBio      = card.bio  || '';
+      const tmpTt       = card.tiktok_username || '';
+      const tmpVideo    = card.video_url || '';
+      const tmpStyle    = card.style || 'dark';
+      const tmpColor    = card.color_theme || 'purple';
+      const tmpAvatar   = card.avatar_b64 || '';
+      const tmpChecked  = card.checked_btns || [true,true,false,true,false,false];
+      const tmpContacts = card.contacts || [];
+
+      // بەکارهێنانی متغێرەکانی گلۆبەل بۆ buildPage
+      const savedName    = document.getElementById('f_name').value;
+      const savedBio     = document.getElementById('f_bio').value;
+      const savedTt      = document.getElementById('f_tt').value;
+      const savedVideo   = document.getElementById('f_video').value;
+      const savedStyle   = selectedStyle;
+      const savedColor   = selectedColor;
+      const savedAvatar  = avatarB64;
+      const savedChecked = [...checked];
+
+      // نوێکردنەوەی متغێرەکان بۆ ئەم کارتە
+      document.getElementById('f_name').value  = tmpName;
+      document.getElementById('f_bio').value   = tmpBio;
+      document.getElementById('f_tt').value    = tmpTt;
+      document.getElementById('f_video').value = tmpVideo;
+      selectedStyle  = tmpStyle;
+      selectedColor  = tmpColor;
+      avatarB64      = tmpAvatar;
+      checked        = tmpChecked;
+
+      // نوێکردنەوەی contact fieldەکان
+      renderCb();
+      renderContacts();
+      tmpContacts.forEach((c, i) => {
+        const el = document.getElementById('c_' + i);
+        if (el && c) el.value = c.value || '';
+      });
+
+      // generate کردنی HTML ی نوێ
+      const newHTML = buildPage();
+
+      // نوێکردنەوەی کارتەکە لە سوپابەیس
+      await sb.from('proxolink_cards')
+        .update({ html_content: newHTML })
+        .eq('id', card.id);
+
+      // گەڕانەوەی متغێرەکانی کۆن
+      document.getElementById('f_name').value  = savedName;
+      document.getElementById('f_bio').value   = savedBio;
+      document.getElementById('f_tt').value    = savedTt;
+      document.getElementById('f_video').value = savedVideo;
+      selectedStyle = savedStyle;
+      selectedColor = savedColor;
+      avatarB64     = savedAvatar;
+      checked       = savedChecked;
+      renderCb();
+      renderContacts();
+
+    } catch(e) {
+      console.error('هەڵە لە نوێکردنەوەی کارت:', card.id, e);
+    }
+  }
 }
 
 // ── باشترکردنی generate بۆ ئەوەی سوپابەیس هم سەیڤ بکات ──
