@@ -1049,7 +1049,7 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   // ── Animations ──
   p.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
   p.push(".shine-active { overflow: hidden; position: relative; }");
-  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 6s linear infinite; pointer-events:none; border-radius:inherit; }");
+  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 2.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
   p.push(".no-shine::after { animation: none !important; display:none; }");
   p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
 
@@ -1167,7 +1167,7 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push("document.addEventListener('DOMContentLoaded', function() {");
   p.push(handlers);
   p.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
-  p.push("  setTimeout(hideEffects, 6000);");
+  p.push("  setTimeout(hideEffects, 10000);");
   p.push("});");
   p.push('<'+'/script>');
   p.push('</body>');
@@ -1279,7 +1279,7 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
   p.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
   p.push(".shine-active { overflow: hidden; position: relative; }");
-  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 6s linear infinite; pointer-events:none; border-radius:inherit; }");
+  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 2.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
   p.push(".no-shine::after { animation: none !important; display:none; }");
 
   p.push('</style>');
@@ -1396,7 +1396,7 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push("document.addEventListener('DOMContentLoaded', function() {");
   p.push(handlers);
   p.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
-  p.push("  setTimeout(hideEffects, 6000);");
+  p.push("  setTimeout(hideEffects, 10000);");
   p.push("});");
   p.push('<'+'/script>');
   p.push('</body>');
@@ -1489,7 +1489,7 @@ function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   parts.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
   parts.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
   parts.push(".shine-active { overflow: hidden; position: relative; }");
-  parts.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 6s linear infinite; pointer-events:none; border-radius:inherit; }");
+  parts.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.35),transparent); transform:skewX(-25deg); animation: shine 2.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
   parts.push(".no-shine::after { animation: none !important; display:none; }");
 
   parts.push('</style>');
@@ -1597,7 +1597,7 @@ function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   parts.push("document.addEventListener('DOMContentLoaded', function() {");
   parts.push(handlers);
   parts.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
-  parts.push("  setTimeout(function(){ var s=document.querySelector('.shine-active'); if(s) s.classList.add('no-shine'); }, 6000);");
+  parts.push("  setTimeout(function(){ var s=document.querySelector('.shine-active'); if(s) s.classList.add('no-shine'); }, 10000);");
   parts.push("});");
   parts.push('<'+'/script>');
   parts.push('</body>');
@@ -1988,7 +1988,6 @@ async function saveCardToSupabase(htmlContent) {
 async function regenerateAllCards() {
   if (!currentUser) return;
 
-  // وەرگرتنی هەموو کارتەکانی ئەم یوزەرە
   const { data: cards, error } = await sb
     .from('proxolink_cards')
     .select('*')
@@ -1996,71 +1995,56 @@ async function regenerateAllCards() {
 
   if (error || !cards || cards.length === 0) return;
 
+  // خەزنکردنی دۆخی فۆرمی ئێستا
+  const savedName    = document.getElementById('f_name').value;
+  const savedBio     = document.getElementById('f_bio').value;
+  const savedTt      = document.getElementById('f_tt').value;
+  const savedVideo   = document.getElementById('f_video').value;
+  const savedStyle   = selectedStyle;
+  const savedColor   = selectedColor;
+  const savedAvatar  = avatarB64;
+  const savedChecked = [...checked];
+
   for (const card of cards) {
     try {
-      // پڕکردنەوەی فۆرم بەپێی داتای کارتەکە
-      const tmpName     = card.name || '';
-      const tmpBio      = card.bio  || '';
-      const tmpTt       = card.tiktok_username || '';
-      const tmpVideo    = card.video_url || '';
-      const tmpStyle    = card.style || 'dark';
-      const tmpColor    = card.color_theme || 'purple';
-      const tmpAvatar   = card.avatar_b64 || '';
-      const tmpChecked  = card.checked_btns || [true,true,false,true,false,false];
-      const tmpContacts = card.contacts || [];
+      // دانانی داتای کارتەکە
+      document.getElementById('f_name').value  = card.name || '';
+      document.getElementById('f_bio').value   = card.bio  || '';
+      document.getElementById('f_tt').value    = card.tiktok_username || '';
+      document.getElementById('f_video').value = card.video_url || '';
+      selectedStyle = card.style      || 'dark';
+      selectedColor = card.color_theme || 'purple';
+      avatarB64     = card.avatar_b64  || '';
+      checked       = card.checked_btns || [true,true,false,true,false,false];
 
-      // بەکارهێنانی متغێرەکانی گلۆبەل بۆ buildPage
-      const savedName    = document.getElementById('f_name').value;
-      const savedBio     = document.getElementById('f_bio').value;
-      const savedTt      = document.getElementById('f_tt').value;
-      const savedVideo   = document.getElementById('f_video').value;
-      const savedStyle   = selectedStyle;
-      const savedColor   = selectedColor;
-      const savedAvatar  = avatarB64;
-      const savedChecked = [...checked];
-
-      // نوێکردنەوەی متغێرەکان بۆ ئەم کارتە
-      document.getElementById('f_name').value  = tmpName;
-      document.getElementById('f_bio').value   = tmpBio;
-      document.getElementById('f_tt').value    = tmpTt;
-      document.getElementById('f_video').value = tmpVideo;
-      selectedStyle  = tmpStyle;
-      selectedColor  = tmpColor;
-      avatarB64      = tmpAvatar;
-      checked        = tmpChecked;
-
-      // نوێکردنەوەی contact fieldەکان
       renderCb();
       renderContacts();
-      tmpContacts.forEach((c, i) => {
+      (card.contacts || []).forEach((c, i) => {
         const el = document.getElementById('c_' + i);
         if (el && c) el.value = c.value || '';
       });
 
-      // generate کردنی HTML ی نوێ
       const newHTML = buildPage();
-
-      // نوێکردنەوەی کارتەکە لە سوپابەیس
       await sb.from('proxolink_cards')
         .update({ html_content: newHTML })
         .eq('id', card.id);
 
-      // گەڕانەوەی متغێرەکانی کۆن
-      document.getElementById('f_name').value  = savedName;
-      document.getElementById('f_bio').value   = savedBio;
-      document.getElementById('f_tt').value    = savedTt;
-      document.getElementById('f_video').value = savedVideo;
-      selectedStyle = savedStyle;
-      selectedColor = savedColor;
-      avatarB64     = savedAvatar;
-      checked       = savedChecked;
-      renderCb();
-      renderContacts();
-
     } catch(e) {
-      console.error('هەڵە لە نوێکردنەوەی کارت:', card.id, e);
+      console.error('هەڵە:', card.id, e);
     }
   }
+
+  // گەڕانەوەی دۆخی فۆرمی کۆن
+  document.getElementById('f_name').value  = savedName;
+  document.getElementById('f_bio').value   = savedBio;
+  document.getElementById('f_tt').value    = savedTt;
+  document.getElementById('f_video').value = savedVideo;
+  selectedStyle = savedStyle;
+  selectedColor = savedColor;
+  avatarB64     = savedAvatar;
+  checked       = savedChecked;
+  renderCb();
+  renderContacts();
 }
 
 // ── باشترکردنی generate بۆ ئەوەی سوپابەیس هم سەیڤ بکات ──
