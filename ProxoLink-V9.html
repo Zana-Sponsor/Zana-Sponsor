@@ -1713,6 +1713,14 @@ async function handleAuth() {
     if (authMode === 'login') {
       const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
       if (error) throw error;
+
+      // پشکنینی بان
+      const { data: profile } = await sb.from('profiles').select('banned_until').eq('id', data.user.id).single();
+      if (profile?.banned_until && new Date(profile.banned_until) > new Date()) {
+        await sb.auth.signOut();
+        throw { message: 'This user has been banned' };
+      }
+
       currentUser = data.user;
       onLoggedIn();
 
@@ -1752,6 +1760,7 @@ async function handleAuth() {
       'Email not confirmed':              'ئیمەیلەکەت پشتڕاست نەکراوەتەوە — تکایە ئیمەیلەکەت بپشکنە',
       'Password should be at least 6 characters': 'پاسۆردەکە کەمترین ٦ پیت دەبێت',
       'Unable to validate email address: invalid format': 'فۆرماتی ئیمەیل هەڵەیە',
+      'This user has been banned':        '🚫 ئەم هەژمارە بانکراوە — پەیوەندی بکە بە بەڕێوەبەرەوە',
     };
     const msg = errMap[err.message] || ('هەڵەیەک ڕوویدا: ' + err.message);
     setAuthMsg(msg, 'err');
