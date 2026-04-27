@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ProxoLink Admin v9.2</title>
+<title>ProxoLink Admin v9.3</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -139,6 +139,14 @@ tbody td{padding:12px 14px;font-size:12px;color:#94a3b8;vertical-align:middle;}
 .pstat-val{font-size:20px;font-weight:800;color:#fff;}
 .pstat-sub{font-size:10px;color:var(--muted);margin-top:3px;}
 
+.pinfo-row{display:flex;align-items:center;gap:12px;
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:12px;padding:12px 14px;}
+.pinfo-ico{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.05);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.pinfo-lbl-sm{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.pinfo-val-sm{font-size:12.5px;color:#fff;font-weight:600;}
+
 /* پاسۆرد */
 .psec-lbl{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:8px;}
 .ppass-box{background:var(--card2);border:1px solid var(--border);border-radius:12px;
@@ -198,7 +206,7 @@ iframe#prframe{width:100%;height:580px;border:none;display:block;}
     <div class="login-logo">
       <div class="login-ico"><i class="fas fa-shield-halved"></i></div>
       <h1>ProxoLink Admin</h1>
-      <p>تەنها بۆ بەڕێوەبەران — v9.2</p>
+      <p>تەنها بۆ بەڕێوەبەران — v9.3</p>
     </div>
     <input class="inp" type="password" id="adminPass" placeholder="پاسۆردی ئەدمین..."
       onkeydown="if(event.key==='Enter')checkAdmin()">
@@ -215,7 +223,7 @@ iframe#prframe{width:100%;height:580px;border:none;display:block;}
     <div class="topbar-l">
       <i class="fas fa-shield-halved t-ico"></i>
       <h1>ProxoLink Admin</h1>
-      <span class="ver">v9.2</span>
+      <span class="ver">v9.3</span>
       <span style="font-size:11px;color:var(--muted)" id="lastRef"></span>
     </div>
     <div class="topbar-r">
@@ -317,21 +325,30 @@ iframe#prframe{width:100%;height:580px;border:none;display:block;}
           <div class="pstat-val" id="pCardsCnt">—</div>
           <div class="pstat-sub">دروستکراوە</div>
         </div>
-        <div class="pstat">
-          <div class="pstat-lbl">
-            <i class="fas fa-calendar-plus" style="color:var(--green)"></i>
-            تۆمارکردن
+      </div>
+
+      <!-- بەروار و ئایپی -->
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+        <div class="pinfo-row">
+          <div class="pinfo-ico" style="color:var(--green)"><i class="fas fa-calendar-plus"></i></div>
+          <div>
+            <div class="pinfo-lbl-sm">بەرواری تۆمارکردن</div>
+            <div class="pinfo-val-sm" id="pJoined">—</div>
           </div>
-          <div class="pstat-val" id="pJoined" style="font-size:13px">—</div>
-          <div class="pstat-sub">بەروار</div>
         </div>
-        <div class="pstat">
-          <div class="pstat-lbl">
-            <i class="fas fa-clock" style="color:var(--blue)"></i>
-            دوایین چوون
+        <div class="pinfo-row">
+          <div class="pinfo-ico" style="color:var(--blue)"><i class="fas fa-clock-rotate-left"></i></div>
+          <div>
+            <div class="pinfo-lbl-sm">دوایین چوونەژوورەوە</div>
+            <div class="pinfo-val-sm" id="pLastSeen">—</div>
           </div>
-          <div class="pstat-val" id="pLastSeen" style="font-size:13px">—</div>
-          <div class="pstat-sub">بەروار</div>
+        </div>
+        <div class="pinfo-row">
+          <div class="pinfo-ico" style="color:var(--yellow)"><i class="fas fa-location-dot"></i></div>
+          <div>
+            <div class="pinfo-lbl-sm">دوایین ئایپی</div>
+            <div class="pinfo-val-sm" id="pIpVal" style="direction:ltr;font-family:monospace">—</div>
+          </div>
         </div>
       </div>
 
@@ -419,7 +436,7 @@ async function loadUsers() {
   // بارکردنی پرۆفایلەکان و کارتەکان یەکجار
   const [profRes, cardRes] = await Promise.all([
     sb.from('profiles')
-      .select('id, full_name, email, created_at, login_count, plain_password')
+      .select('id, full_name, email, created_at, login_count, plain_password, last_seen_at, last_ip')
       .order('created_at', { ascending: false }),
     sb.from('proxolink_cards')
       .select('id, user_id, name, style, color_theme, avatar_b64, created_at, html_content')
@@ -549,9 +566,8 @@ function openProfile(uid) {
   const u = usersMap[uid];
   if (!u) return;
 
-  // سەرەوەکە
   const initial = (u.full_name || u.email || '?')[0].toUpperCase();
-  document.getElementById('pavt').innerHTML   = initial;
+  document.getElementById('pavt').innerHTML    = initial;
   document.getElementById('pname').textContent  = u.full_name || '—';
   document.getElementById('pemail').textContent = u.email || '—';
 
@@ -561,29 +577,36 @@ function openProfile(uid) {
   const uCards = cardsMap[uid] || [];
   document.getElementById('pCardsCnt').textContent = uCards.length;
 
+  // بەرواری تۆمارکردن
   document.getElementById('pJoined').textContent = u.created_at
     ? new Date(u.created_at).toLocaleDateString('ku', { year:'numeric', month:'short', day:'numeric' })
+      + ' — ' + new Date(u.created_at).toLocaleTimeString('ku', { hour:'2-digit', minute:'2-digit' })
     : '—';
 
-  document.getElementById('pLastSeen').textContent = '—';
+  // دوایین چوونەژوورەوە
+  document.getElementById('pLastSeen').textContent = u.last_seen_at
+    ? new Date(u.last_seen_at).toLocaleDateString('ku', { year:'numeric', month:'short', day:'numeric' })
+      + ' — ' + new Date(u.last_seen_at).toLocaleTimeString('ku', { hour:'2-digit', minute:'2-digit' })
+    : '—';
+
+  // IP
+  document.getElementById('pIpVal').textContent = u.last_ip || '—';
 
   // پاسۆرد
   currentPPass = u.plain_password || '';
   passShown = false;
-  document.getElementById('ppassTxt').textContent     = '••••••••';
-  document.getElementById('ppassTxt').style.color     = '#64748b';
+  document.getElementById('ppassTxt').textContent        = '••••••••';
+  document.getElementById('ppassTxt').style.color        = '#64748b';
   document.getElementById('ppassTxt').style.letterSpacing = '2px';
-  document.getElementById('ppassIco').className       = 'fas fa-eye';
+  document.getElementById('ppassIco').className          = 'fas fa-eye';
   if (!currentPPass) {
-    document.getElementById('ppassTxt').textContent = '— تۆمار نەکراوە —';
-    document.getElementById('ppassIco').style.display = 'none';
+    document.getElementById('ppassTxt').textContent        = '— تۆمار نەکراوە —';
+    document.getElementById('ppassIco').style.display     = 'none';
   } else {
-    document.getElementById('ppassIco').style.display = '';
+    document.getElementById('ppassIco').style.display     = '';
   }
 
-  // کارتەکان
   renderProfileCards(uCards);
-
   document.getElementById('poverlay').classList.add('on');
   document.body.style.overflow = 'hidden';
 }
