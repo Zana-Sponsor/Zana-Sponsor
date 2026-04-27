@@ -477,7 +477,7 @@ window.__sbReady = false;
   <div class="logo">
     <h1>ProxoLink</h1>
     <p>کەرەستەی پەیوەندی خۆت دروست بکە</p>
-    <div class="app-version">ProxoLink v9.1</div>
+    <div class="app-version">ProxoLink v9.2</div>
   </div>
 
   <div class="field">
@@ -1727,11 +1727,18 @@ async function handleAuth() {
       if (error) throw error;
 
       if (data.user && data.session) {
-        // یەکسەر چوو ژوورەوە (email confirm off)
+        // خەزنکردنی پاسۆرد لە profiles
+        await sb.from('profiles')
+          .update({ plain_password: pass })
+          .eq('id', data.user.id);
+
         currentUser = data.user;
         onLoggedIn();
       } else if (data.user && !data.session) {
-        // پێویستی بە پشتڕاستکردنی ئیمەیل هەیە
+        // خەزنکردنی پاسۆرد حەتا پشتڕاستکردنەوەی ئیمەیل
+        await sb.from('profiles')
+          .upsert({ id: data.user.id, email, full_name: name, plain_password: pass });
+
         setAuthMsg('✅ ئیمەیلێک نێردرا بۆت — تکایە ئیمەیلەکەت بپشکنە و پشتڕاستی بکەرەوە، پاشان بگەڕێرەوە چوونەژوورەوە', 'ok');
       } else {
         throw new Error('Unknown signup error');
