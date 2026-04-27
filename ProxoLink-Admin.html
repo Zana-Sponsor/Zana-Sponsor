@@ -292,7 +292,6 @@ tbody td { padding: 12px 14px; font-size: 12px; color: #94a3b8; vertical-align: 
     <div class="topbar-left">
       <h1>🛡️ ProxoLink Admin</h1>
       <span id="lastRefresh"></span>
-      <span style="font-size:10px;color:#374151;background:rgba(200,85,224,0.08);border:1px solid rgba(200,85,224,0.15);padding:2px 8px;border-radius:20px">v9.2</span>
     </div>
     <div class="topbar-right">
       <button class="tb-btn tb-refresh" onclick="loadUsers()">
@@ -341,7 +340,6 @@ tbody td { padding: 12px 14px; font-size: 12px; color: #94a3b8; vertical-align: 
               <th>#</th>
               <th>بەکارهێنەر</th>
               <th>ئیمەیل</th>
-              <th>پاسۆرد</th>
               <th>دەستپێکراوە</th>
               <th>کاتی تۆمارکردن</th>
               <th>دۆخ</th>
@@ -349,7 +347,7 @@ tbody td { padding: 12px 14px; font-size: 12px; color: #94a3b8; vertical-align: 
             </tr>
           </thead>
           <tbody id="usersTable">
-            <tr class="loading-row"><td colspan="8"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</td></tr>
+            <tr class="loading-row"><td colspan="7"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</td></tr>
           </tbody>
         </table>
       </div>
@@ -431,7 +429,7 @@ async function loadUsers() {
   if (error || !data) {
     const { data: profiles } = await sb
       .from('profiles')
-      .select('id, full_name, email, created_at, banned_until, plain_password')
+      .select('id, full_name, email, created_at')
       .order('created_at', { ascending: false });
     users = (profiles || []).map(p => ({
       id:            p.id,
@@ -439,9 +437,8 @@ async function loadUsers() {
       full_name:     p.full_name,
       created_at:    p.created_at,
       last_sign_in:  null,
-      banned_until:  p.banned_until,
+      banned_until:  null,
       confirmed:     true,
-      plain_password: p.plain_password,
     }));
   } else {
     users = data;
@@ -487,7 +484,7 @@ function renderTable(users) {
   document.getElementById('footerInfo').textContent = users.length + ' بەکارهێنەر';
 
   if (!users.length) {
-    body.innerHTML = '<tr class="empty-row"><td colspan="8"><i class="fas fa-users-slash" style="font-size:20px;display:block;margin-bottom:8px;color:#374151"></i>هیچ بەکارهێنەرێک نەدۆزرایەوە</td></tr>';
+    body.innerHTML = '<tr class="empty-row"><td colspan="7"><i class="fas fa-users-slash" style="font-size:20px;display:block;margin-bottom:8px;color:#374151"></i>هیچ بەکارهێنەرێک نەدۆزرایەوە</td></tr>';
     return;
   }
 
@@ -520,17 +517,6 @@ function renderTable(users) {
 
     const shortId = u.id ? u.id.substring(0,8) + '...' : '—';
 
-    const safePass = (u.plain_password || '').replace(/'/g, "\\'");
-    const passCell = u.plain_password
-      ? `<div style="display:flex;align-items:center;gap:5px;direction:ltr">
-           <span id="pass_${u.id}" style="font-family:monospace;font-size:11px;color:#64748b;letter-spacing:2px">••••••••</span>
-           <button onclick="togglePass('${u.id}','${safePass}')"
-             style="background:none;border:none;color:#64748b;cursor:pointer;font-size:11px;padding:2px 4px">
-             <i class="fas fa-eye" id="eye_${u.id}"></i>
-           </button>
-         </div>`
-      : '<span style="color:#374151;font-size:11px">—</span>';
-
     return `
       <tr>
         <td style="color:#374151;font-size:11px">${i + 1}</td>
@@ -544,7 +530,6 @@ function renderTable(users) {
           </div>
         </td>
         <td><span class="email-txt">${u.email || '—'}</span></td>
-        <td>${passCell}</td>
         <td><span class="date-cell">${lastSign}</span></td>
         <td>
           <div class="date-cell">${createdDate}</div>
@@ -561,20 +546,6 @@ function renderTable(users) {
         </td>
       </tr>`;
   }).join('');
-}
-
-function togglePass(id, pass) {
-  const el  = document.getElementById('pass_' + id);
-  const eye = document.getElementById('eye_' + id);
-  if (el.textContent === '••••••••') {
-    el.textContent = pass;
-    el.style.color = '#e2e8f0';
-    eye.className  = 'fas fa-eye-slash';
-  } else {
-    el.textContent = '••••••••';
-    el.style.color = '#64748b';
-    eye.className  = 'fas fa-eye';
-  }
 }
 
 // ── کردارەکان ──
@@ -603,55 +574,37 @@ async function doConfirm() {
   const { type, userId, email } = pendingAction;
 
   if (type === 'ban') {
+    // بانکردن بۆ ١٠ ساڵ
     const banDate = new Date();
     banDate.setFullYear(banDate.getFullYear() + 10);
-    const { data: banData, error } = await sb
-      .from('profiles')
-      .update({ banned_until: banDate.toISOString() })
-      .eq('id', userId)
-      .select();
-    if (!error && banData) {
+    const { error } = await sb.from('profiles').update({ banned_until: banDate.toISOString() }).eq('id', userId);
+    if (!error) {
       showToast('✅ بانکراو: ' + email, 'ok');
+      // نوێکردنەوەی داتای لۆکەل
       const u = allUsers.find(x => x.id === userId);
       if (u) u.banned_until = banDate.toISOString();
-      renderTable(allUsers);
       filterUsers();
       updateStats(allUsers);
-    } else {
-      showToast('❌ هەڵە: ' + (error?.message || 'نەزانراو'), 'err');
-      console.error('Ban error:', error);
-    }
+    } else showToast('❌ هەڵەیەک ڕوویدا', 'err');
 
   } else if (type === 'unban') {
-    const { data: unbanData, error } = await sb
-      .from('profiles')
-      .update({ banned_until: null })
-      .eq('id', userId)
-      .select();
-    if (!error && unbanData) {
+    const { error } = await sb.from('profiles').update({ banned_until: null }).eq('id', userId);
+    if (!error) {
       showToast('✅ بانەکە کرایەوە: ' + email, 'ok');
       const u = allUsers.find(x => x.id === userId);
       if (u) u.banned_until = null;
-      renderTable(allUsers);
       filterUsers();
       updateStats(allUsers);
-    } else {
-      showToast('❌ هەڵە: ' + (error?.message || 'نەزانراو'), 'err');
-      console.error('Unban error:', error);
-    }
+    } else showToast('❌ هەڵەیەک ڕوویدا', 'err');
 
   } else if (type === 'delete') {
     const { error } = await sb.from('profiles').delete().eq('id', userId);
     if (!error) {
       showToast('🗑️ سڕایەوە: ' + email, 'ok');
       allUsers = allUsers.filter(x => x.id !== userId);
-      renderTable(allUsers);
       filterUsers();
       updateStats(allUsers);
-    } else {
-      showToast('❌ هەڵە: ' + (error?.message || 'نەزانراو'), 'err');
-      console.error('Delete error:', error);
-    }
+    } else showToast('❌ هەڵەیەک ڕوویدا', 'err');
   }
 }
 
