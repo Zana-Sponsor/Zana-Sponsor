@@ -477,7 +477,7 @@ window.__sbReady = false;
   <div class="logo">
     <h1>ProxoLink</h1>
     <p>کەرەستەی پەیوەندی خۆت دروست بکە</p>
-    <div class="app-version">ProxoLink v9.6</div>
+    <div class="app-version">ProxoLink v9.7</div>
   </div>
 
   <div class="field">
@@ -554,7 +554,7 @@ window.__sbReady = false;
     <label>ناوی ئەکاونت — لینک بە خۆی دروست دەبێت</label>
     <div style="position:relative;display:flex;align-items:center">
       <span style="position:absolute;right:13px;color:#666;font-size:13px;pointer-events:none">@</span>
-      <input type="text" id="f_tt" placeholder="username" onfocus="clearErr('f_tt')" oninput="autoAt(this)" style="padding-right:28px">
+      <input type="text" id="f_tt" placeholder="username" onfocus="clearErr('f_tt')" oninput="autoAt(this)" style="padding-right:28px;direction:ltr;text-align:left">
     </div>
     <div class="field-err" id="err_f_tt" style="display:none"><i class="fas fa-circle-exclamation"></i><span></span></div>
     <div id="tt_link_preview" style="font-size:10.5px;color:#555;margin-top:3px;direction:ltr;text-align:left;display:none">
@@ -772,18 +772,35 @@ function renderContacts() {
     const card = document.createElement('div');
     card.className = 'contact-card';
     const idx = i;
+    const needsNum = ['whatsapp','viber','phone','asya'].includes(b.type);
+    const inputStyle = needsNum ? 'direction:ltr;text-align:left' : '';
     card.innerHTML =
         '<div class="contact-card-hdr"><i class="' + b.icon + '"></i>' + b.label + '</div>'
       + '<div class="field">'
       + '<label style="font-size:11px;color:#8890b0;margin-bottom:4px;display:block">' + fi.lbl + '</label>'
       + '<input type="text" id="c_' + idx + '" value="' + (b._val || '') + '"'
       +   ' placeholder="' + fi.ph + '"'
-      +   ' inputmode="' + fi.mode + '">'
+      +   ' inputmode="' + fi.mode + '"'
+      +   ' style="' + inputStyle + '">'
       + '<div class="field-err" id="err_c_' + idx + '" style="display:none">'
       +   '<i class="fas fa-circle-exclamation"></i><span></span>'
       + '</div>'
       + '</div>';
-    card.querySelector('input').onfocus = function() { clearErr('c_' + idx); };
+    const inp = card.querySelector('input');
+    inp.onfocus = function() {
+      clearErr('c_' + idx);
+      if (needsNum && !this.value) this.value = '9647';
+    };
+    if (needsNum) {
+      inp.oninput = function() {
+        const digits = this.value.replace(/\D/g,'');
+        if (!digits.startsWith('9647')) {
+          this.value = '9647' + digits.replace(/^9647?/,'');
+        } else {
+          this.value = digits;
+        }
+      };
+    }
     container.appendChild(card);
   });
 }
@@ -820,6 +837,20 @@ function validateAll(){
   const name=document.getElementById('f_name').value.trim();
   if(!name){showErr('f_name','تکایە ناوت بنووسە — بەتاڵ نەبێت');return false;}
   if(!validateBio()) return false;
+
+  // پشکنینی وێنە بۆ ستایلی دارک و لایت
+  if((selectedStyle==='dark' || selectedStyle==='light') && !avatarB64){
+    const avatarCircle = document.querySelector('.avatar-circle');
+    avatarCircle.style.borderColor = 'rgba(230,70,70,0.7)';
+    avatarCircle.style.background = 'rgba(230,70,70,0.06)';
+    avatarCircle.scrollIntoView({behavior:'smooth',block:'center'});
+    const hint = document.querySelector('.avatar-hint');
+    const oldText = hint.innerHTML;
+    hint.innerHTML = '<span style="color:#e06060;font-size:11.5px"><i class="fas fa-circle-exclamation"></i> تکایە وێنەیەک هەڵبژێرە — بۆ ستایلی دارک و ڕووناک پێویستە</span>';
+    setTimeout(()=>{ avatarCircle.style.borderColor=''; avatarCircle.style.background=''; hint.innerHTML=oldText; }, 3000);
+    return false;
+  }
+
   for(let i=0;i<BTNS.length;i++){
     if(!checked[i]) continue;
     const el=document.getElementById('c_'+i); if(!el) continue;
@@ -846,6 +877,28 @@ function validateAll(){
   }
   const tt=document.getElementById('f_tt').value.trim();
   if(!tt){showErr('f_tt','تکایە ناوی ئەکاونتی تیکتۆکت بنووسە — بەتاڵ نەبێت');return false;}
+
+  // پشکنینی لینکی ڤیدیۆ
+  const videoVal = document.getElementById('f_video').value.trim();
+  if(videoVal && !videoVal.startsWith('https://')){
+    const vid = document.getElementById('f_video');
+    vid.classList.add('err');
+    vid.scrollIntoView({behavior:'smooth',block:'center'});
+    let errDiv = document.getElementById('err_f_video');
+    if(!errDiv){
+      errDiv = document.createElement('div');
+      errDiv.id = 'err_f_video';
+      errDiv.className = 'field-err';
+      errDiv.innerHTML = '<i class="fas fa-circle-exclamation"></i><span>لینکەکە دەبێت بە https:// دەستپێبکات</span>';
+      vid.parentNode.insertBefore(errDiv, vid.nextSibling);
+    }
+    errDiv.style.display = 'flex';
+    setTimeout(()=>{ vid.classList.remove('err'); errDiv.style.display='none'; }, 4000);
+    return false;
+  }
+  const oldErrDiv = document.getElementById('err_f_video');
+  if(oldErrDiv) oldErrDiv.style.display = 'none';
+
   return true;
 }
 
@@ -1052,6 +1105,7 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.12),transparent); transform:skewX(-25deg); animation: shine 2.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
   p.push(".no-shine::after { animation: none !important; display:none; }");
   p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
+  // ── Theme Toggle ──
 
   p.push('</style>');
   p.push('</head>');
@@ -1281,6 +1335,8 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push(".shine-active { overflow: hidden; position: relative; }");
   p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.12),transparent); transform:skewX(-25deg); animation: shine 2.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
   p.push(".no-shine::after { animation: none !important; display:none; }");
+  // ── Theme Toggle ──
+  // ── Dark Mode for Light Style ──
 
   p.push('</style>');
   p.push('</head>');
