@@ -2846,7 +2846,7 @@ function renderTxHistory(){
     return;
   }
 
-  const statusMap={pending:'sb-p چاوەڕوان',approved:'sb-ok پەسەندکرا',rejected:'sb-no ڕەتکرا',active:'sb-ok چالاک',completed:'sb-ok تەواوبوو',paused:'sb-p وەستا',spent:'sb-no بڕدرا'};
+  const statusMap={pending:'sb-p چاوەڕوانی',approved:'sb-ok پەسەندکرا',rejected:'sb-no ڕەتکرایەوە',active:'sb-ok پەسەندکرا',completed:'sb-ok تەواوبوو',paused:'sb-p وەستا',spent:'sb-no بڕدرا'};
 
   list.innerHTML=filtered.map(t=>{
     const isDeposit=t.kind==='deposit';
