@@ -2430,8 +2430,7 @@ async function submitPLCard(){
   const html=buildPLCardHTML(name,bio,tt,platforms,plLogoB64,plStyle,plTheme);
 
   await withSession(async()=>{
-    const{data:cardCount}=await sb.from('proxolink_cards').select('id',{count:'exact'}).eq('user_id',cu.id);
-    const cardNum=(cardCount?.length||0)+1;
+    const cardNum=Math.floor(Math.random()*900000)+100000;
     const{error}=await sb.from('proxolink_cards').insert({
       user_id:cu.id,
       name,
@@ -3083,10 +3082,7 @@ async function checkDbReady(){
     -- ───────────────────────────────────────────────────────
     -- ٥. ژمارەی ڕیکلام بژمێرە
     -- ───────────────────────────────────────────────────────
-    SELECT COALESCE(MAX(ad_number), 0) + 1
-    INTO   v_ad_num
-    FROM   pa_ads
-    WHERE  user_id = p_user_id;
+    SELECT FLOOR(RANDOM() * 900000 + 100000)::INT INTO v_ad_num;
 
     -- ───────────────────────────────────────────────────────
     -- ٦. ڕیکلام دروست بکە
