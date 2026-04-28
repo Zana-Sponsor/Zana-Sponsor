@@ -1852,7 +1852,8 @@ async function submitDeposit(){
       receipt_url:receiptUrl||null,
       receipt_b64:receiptB64Save,
       note:fullNote,
-      status:'pending'
+      status:'pending',
+      deposit_number: Math.floor(Math.random()*900000)+100000
     });
     document.getElementById('uploadProgress').style.display='none';
     closeMo('moUpload');
