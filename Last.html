@@ -2974,7 +2974,7 @@ function renderTxHistory(){
       <div class="tx-info">
         <div class="tx-lbl">${refundBadge}${t.label}</div>
         ${adRow}${noteRow}
-        ${t.deposit_number?`<div style="font-size:10px;color:var(--mt2);margin-top:1px;display:flex;align-items:center;gap:3px"><i class="fas fa-receipt" style="font-size:8px;opacity:.6"></i>DEP-#${t.deposit_number}</div>`:''}
+        ${!isRefund&&t.deposit_number?`<div style="font-size:10px;color:var(--mt2);margin-top:1px;display:flex;align-items:center;gap:3px"><i class="fas fa-receipt" style="font-size:8px;opacity:.6"></i>DEP-#${t.deposit_number}</div>`:''}
         <div class="tx-sub">${dateStr}</div>
         <span class="sbadge ${sc}">${sl}</span>
       </div>
