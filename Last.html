@@ -791,15 +791,13 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
   </div>
 
   <!-- MY ADS -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-  <div style="display:flex;gap:7px;align-items:center">
-    <div onclick="loadMyAds()" style="width:36px;height:36px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dark)"><i class="fas fa-rotate-right"></i></div>
-    <button class="empty-btn" onclick="goPage('create')" style="padding:8px 14px;font-size:12px">
+  <div class="pg" id="pgMyads">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="pg-title">سپۆنسەرەکانم</div>
+      <button class="empty-btn" onclick="goPage('create')" style="padding:8px 14px;font-size:12px">
         <i class="fas fa-plus"></i> نوێ
       </button>
-  </div>
-  <div class="pg-title">سپۆنسەرەکانم</div>
-</div>
+    </div>
     <div class="ads-filter" id="adsFilter">
       <div class="fchip on" data-f="all" onclick="filterAds(this)">هەموو</div>
       <div class="fchip" data-f="active" onclick="filterAds(this)">چالاک</div>
@@ -958,10 +956,10 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
   </div>
 
   <!-- TRANSACTION HISTORY PAGE -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-  <div onclick="loadTxHistory()" style="width:36px;height:36px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dark)"><i class="fas fa-rotate-right"></i></div>
-  <div class="pg-title">مێژووی مامەڵەکان</div>
-</div>
+  <div class="pg" id="pgTxhistory">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div class="pg-title">مێژووی مامەڵەکان</div>
+    </div>
 
     <!-- فیلتەر -->
     <div style="display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px">
