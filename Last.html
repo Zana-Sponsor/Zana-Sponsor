@@ -2797,6 +2797,7 @@ async function loadTxHistory(){
 
   const{data:deposits}=await sb.from('pa_transactions').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
   const{data:ads}=await sb.from('pa_ads').select('id,title,budget,created_at,ad_number,status').eq('user_id',cu.id).order('created_at',{ascending:false});
+console.log('ads data:', ads);
 
   const mn={fib:'FIB',fastpay:'FastPay',kcard:'K-Card/ZainCash'};
 
