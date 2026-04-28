@@ -793,7 +793,7 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
   </div>
 
   <!-- MY ADS -->
-  <div class="pg" id="pgMyAds">
+  <div class="pg" id="pgMyads">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <div class="pg-title">سپۆنسەرەکانم</div>
       <button class="empty-btn" onclick="goPage('create')" style="padding:8px 14px;font-size:12px">
@@ -2050,9 +2050,8 @@ async function submitAd(){
         throw new Error(friendly?friendly[1]:error.message);
       }
       await loadBal();
-      await loadMyAds();
       showToast('✅ داواکاری ڕیکلامەکەت نێردرا!','ok');
-      setTimeout(()=>goPage('myads'),300);
+      goPage('myads');
     }catch(e){
       showToast(e.message,'err');
       if(e.message?.includes('بەسنی')&&e.message?.includes('موازەنە')){
