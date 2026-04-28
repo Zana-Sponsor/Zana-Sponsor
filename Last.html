@@ -2050,8 +2050,9 @@ async function submitAd(){
         throw new Error(friendly?friendly[1]:error.message);
       }
       await loadBal();
+      await loadMyAds();
       showToast('✅ داواکاری ڕیکلامەکەت نێردرا!','ok');
-      goPage('myads');
+      setTimeout(()=>goPage('myads'),300);
     }catch(e){
       showToast(e.message,'err');
       if(e.message?.includes('بەسنی')&&e.message?.includes('موازەنە')){
