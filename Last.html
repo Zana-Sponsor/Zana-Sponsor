@@ -1666,7 +1666,11 @@ function updateMoAmtIqd(){
 }
 function goToUpload(){
   document.getElementById('moUploadInfo').textContent=`بڕ: $${depAmt} | ڕێگا: ${method}`;
-  closeMo('moAmount');document.getElementById('moUpload').classList.add('on');
+  // ← ئەمە زیاد بکە:
+  const usdInp = document.getElementById('depUsdInput');
+  if(usdInp){ usdInp.value = depAmt; updateIqdDisplay(depAmt); }
+  closeMo('moAmount');
+  document.getElementById('moUpload').classList.add('on');
 }
 
 // ═══ ٤. IMAGE UPLOAD TO SUPABASE STORAGE ═══
