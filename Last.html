@@ -1278,6 +1278,18 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
   </div>
 </div>
 
+<!-- RECEIPT MODAL -->
+<div class="mover" id="moReceipt">
+  <div class="mbox">
+    <div class="mbar"></div>
+    <div class="mhdr">
+      <h3><i class="fas fa-receipt" style="margin-left:7px;color:var(--dark)"></i>پسووڵەی مامەڵە</h3>
+      <button class="mclose" onclick="closeMo('moReceipt')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="receiptContent"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- =====================================================================
@@ -1645,13 +1657,16 @@ async function loadTx(){
   const list=document.getElementById('txList');
   if(!data?.length){list.innerHTML='<div style="text-align:center;padding:14px;color:var(--mt);font-size:12px">هیچ مامەڵەیەک نییە</div>';return;}
   const mn={fib:'FIB',fastpay:'FastPay',kcard:'K-Card'};
+  const appName={fib:'FIB Bank',fastpay:'FastPay',kcard:'ZainCash'};
   const sm={pending:'sb-p چاوەڕوان',approved:'sb-ok پەسەندکرا',rejected:'sb-no ڕەتکرا'};
   list.innerHTML=data.map(t=>{
     const[sc,sl]=(sm[t.status]||'sb-p چاوەڕوان').split(' ');
-    return`<div class="tx-item">
+    const lbl=t.status==='approved'?'زیادکردنی باڵانس لەلایەن ئادمینەوە':(mn[t.method]||'—');
+    const td=encodeURIComponent(JSON.stringify(t));
+    return`<div class="tx-item" style="cursor:pointer" onclick="showReceipt(${JSON.stringify(t)})">
       <div class="tx-ico tx-in"><i class="fas fa-arrow-down-long"></i></div>
       <div class="tx-info">
-        <div class="tx-lbl">${mn[t.method]||'—'}</div>
+        <div class="tx-lbl">${lbl}</div>
         <div class="tx-sub">${new Date(t.created_at).toLocaleDateString('ku')}</div>
         <span class="sbadge ${sc}">${sl}</span>
       </div>
@@ -2431,16 +2446,26 @@ async function loadNotifications(){
   list.innerHTML=data.map(n=>{
     const t=typeMap[n.type]||typeMap.general;
     const timeAgo=getTimeAgo(n.created_at);
-    return`<div class="notif-item ${n.is_read?'':'unread'}">
+    return`<div class="notif-item ${n.is_read?'':'unread'}" id="notif-${n.id}">
       <div class="notif-ico ${t.cls}"><i class="${t.ico}"></i></div>
       <div class="notif-info">
         <div class="notif-title">${n.title||t.title}</div>
         <div class="notif-body">${n.body||''}</div>
         <div class="notif-time">${timeAgo}</div>
       </div>
-      ${!n.is_read?'<div class="unread-dot"></div>':''}
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+        ${!n.is_read?'<div class="unread-dot"></div>':''}
+        <div onclick="dismissNotif('${n.id}')" style="width:24px;height:24px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--mt)"><i class="fas fa-xmark"></i></div>
+      </div>
     </div>`;
   }).join('');
+}
+
+async function dismissNotif(id){
+  await sb.from('pa_notifications').update({is_read:true}).eq('id',id);
+  const el=document.getElementById('notif-'+id);
+  if(el){el.style.transition='opacity .2s';el.style.opacity='0';setTimeout(()=>el.remove(),200);}
+  checkNotifBell();
 }
 
 async function markAllRead(){
@@ -2510,6 +2535,56 @@ async function setupDatabase(){
   }
 }
 
+// ═══ RECEIPT / INVOICE MODAL ═══
+function showReceipt(t){
+  const mn={fib:'FIB Bank',fastpay:'FastPay',kcard:'ZainCash'};
+  const sm={pending:'چاوەڕوان',approved:'پەسەندکرا ✅',rejected:'ڕەتکرا ❌',active:'چالاک',completed:'تەواوبوو',paused:'وەستا'};
+  const isDeposit=t.kind==='deposit'||t.method!==undefined;
+  const appName=mn[t.method]||'—';
+  const amount=parseFloat(t.amount||t.budget||0);
+  const date=new Date(t.date||t.created_at);
+  const dateStr=date.toLocaleDateString('ku')+' — '+date.toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
+  const statusTxt=sm[t.status]||t.status||'—';
+  const txId=(t.id||'').toString().slice(0,8).toUpperCase();
+
+  const rows=isDeposit?[
+    {l:'جۆری مامەڵە',v:'زیادکردنی باڵانس'},
+    {l:'ئەپی پارەدان',v:appName},
+    {l:'بڕی پارە',v:`<span style="color:var(--gr);font-weight:900">+$${amount.toFixed(2)}</span>`},
+    {l:'بار',v:statusTxt},
+    {l:'بەروار',v:dateStr},
+    {l:'ژمارەی مامەڵە',v:`<span style="font-family:monospace;font-size:12px">#${txId}</span>`},
+  ]:[
+    {l:'جۆری مامەڵە',v:'خەرجکردنی باڵانس'},
+    {l:'بۆ',v:t.label||t.title||'ڕیکلام'},
+    {l:'بڕی پارە',v:`<span style="color:var(--rd);font-weight:900">-$${amount.toFixed(2)}</span>`},
+    {l:'باری ڕیکلام',v:statusTxt},
+    {l:'بەروار',v:dateStr},
+    {l:'ژمارەی مامەڵە',v:`<span style="font-family:monospace;font-size:12px">#${txId}</span>`},
+  ];
+
+  document.getElementById('receiptContent').innerHTML=`
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="width:60px;height:60px;border-radius:50%;background:${isDeposit?'rgba(22,163,74,.1)':'rgba(220,38,38,.08)'};border:2px solid ${isDeposit?'rgba(22,163,74,.25)':'rgba(220,38,38,.2)'};display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;color:${isDeposit?'var(--gr)':'var(--rd)'}">
+        <i class="fas ${isDeposit?'fa-arrow-down-long':'fa-arrow-up-long'}"></i>
+      </div>
+      <div style="font-size:26px;font-weight:900;color:${isDeposit?'var(--gr)':'var(--rd)'}">${isDeposit?'+':'-'}$${amount.toFixed(2)}</div>
+      <div style="font-size:12px;color:var(--mt);margin-top:4px">Proxo Ads</div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:16px">
+      ${rows.map((r,i)=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;${i<rows.length-1?'border-bottom:1px solid var(--b1)':''}">
+          <div style="font-size:12px;color:var(--mt)">${r.l}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--dark);text-align:left">${r.v}</div>
+        </div>`).join('')}
+    </div>
+    <button onclick="closeMo('moReceipt')" style="width:100%;padding:13px;background:var(--dark);color:#fff;border:none;border-radius:13px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer">
+      <i class="fas fa-check" style="margin-left:7px"></i>باشە
+    </button>`;
+
+  document.getElementById('moReceipt').classList.add('on');
+}
+
 // ═══ TRANSACTION HISTORY PAGE ═══
 let allTxHistory=[], txFilterMode='all';
 
@@ -2525,7 +2600,7 @@ async function loadTxHistory(){
   const depositItems=(deposits||[]).map(t=>({
     id:t.id,
     kind:'deposit',
-    label:{fib:'FIB',fastpay:'FastPay',kcard:'K-Card/ZainCash'}[t.method]||t.method||'—',
+    label:t.status==='approved'?'زیادکردنی باڵانس لەلایەن ئادمینەوە':({fib:'FIB',fastpay:'FastPay',kcard:'K-Card/ZainCash'}[t.method]||t.method||'—'),
     amount:parseFloat(t.amount),
     status:t.status,
     date:t.created_at
@@ -2566,7 +2641,7 @@ function renderTxHistory(){
     const isDeposit=t.kind==='deposit';
     const[sc,sl]=(statusMap[t.status]||'sb-p —').split(' ');
     const dateStr=new Date(t.date).toLocaleDateString('ku')+' — '+new Date(t.date).toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
-    return`<div class="tx-item">
+    return`<div class="tx-item" style="cursor:pointer" onclick="showReceipt(${JSON.stringify(t)})">
       <div class="tx-ico ${isDeposit?'tx-in':'tx-out'}">
         <i class="fas ${isDeposit?'fa-arrow-down-long':'fa-arrow-up-long'}"></i>
       </div>
