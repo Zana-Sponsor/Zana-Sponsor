@@ -1,0 +1,2500 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Proxo Ads</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+@font-face{font-family:'R';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#f5f6fa;--w:#fff;--card:#fff;
+  --b1:#e8eaf0;--b2:#d0d4de;
+  --dark:#1c2333;--dark2:#2e3a50;
+  --pri:#1c2333;--acc:#1c2333;
+  --gr:#16a34a;--rd:#dc2626;--yw:#d97706;--bl:#2563eb;
+  --mt:#8b95a8;--mt2:#6b7585;
+  --tx:#1c2333;
+}
+body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+/* ══ AUTH ══ */
+#authWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--w);}
+.auth-inner{width:100%;max-width:400px;}
+.auth-brand{text-align:center;margin-bottom:32px;}
+.auth-brand h1{font-size:30px;font-weight:900;color:var(--dark);letter-spacing:-1px;}
+.auth-brand h1 span{color:var(--dark2);}
+.auth-brand p{font-size:13px;color:var(--mt);margin-top:6px;}
+.auth-card{background:var(--w);border:1px solid var(--b1);border-radius:20px;padding:28px 24px;}
+.atabs{display:flex;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:22px;}
+.atab{flex:1;padding:10px;text-align:center;font-size:13px;border-radius:10px;cursor:pointer;font-family:'R',sans-serif;border:none;background:transparent;color:var(--mt);transition:all .2s;}
+.atab.on{background:var(--dark);color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(28,35,51,.2);}
+.finp{width:100%;padding:14px 16px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;color:var(--tx);font-family:'R',sans-serif;font-size:16px;outline:none;transition:all .2s;margin-bottom:12px;}
+.finp:focus{border-color:var(--dark);background:var(--w);}
+.finp::placeholder{color:var(--mt);}
+.finp[dir=ltr]{text-align:left;}
+.abtn{width:100%;padding:15px;background:var(--dark);color:#fff;border:none;border-radius:14px;font-family:'R',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 4px 16px rgba(28,35,51,.25);transition:opacity .2s;}
+.abtn:active{opacity:.9;}
+.abtn:disabled{opacity:.5;pointer-events:none;}
+.amsg{font-size:12.5px;text-align:center;padding:11px 14px;border-radius:11px;display:none;margin-top:10px;}
+.amsg.ok{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr);}
+.amsg.err{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:var(--rd);}
+
+/* ══ OFFLINE BANNER ══ */
+#offlineBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:var(--rd);color:#fff;font-size:13px;font-family:'R',sans-serif;text-align:center;padding:10px 16px;font-weight:700;}
+#offlineBanner.show{display:block;}
+
+/* ══ APP ══ */
+#app{display:none;flex-direction:column;min-height:100vh;padding-bottom:78px;background:var(--bg);}
+.topbar{padding:14px 18px;background:var(--w);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.topbar-brand{font-size:20px;font-weight:900;color:var(--dark);letter-spacing:-0.5px;}
+.topbar-brand span{color:var(--mt2);}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.hbal{display:flex;align-items:center;gap:7px;padding:8px 14px;cursor:pointer;background:var(--dark);border-radius:22px;font-size:13px;color:#fff;font-weight:700;}
+.hbal i{font-size:12px;opacity:.7;}
+
+/* ══ NOTIFICATION BELL ══ */
+.notif-btn{position:relative;width:38px;height:38px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dark);}
+.notif-dot{position:absolute;top:6px;left:6px;width:9px;height:9px;border-radius:50%;background:var(--rd);border:2px solid var(--w);display:none;animation:pulse 1.5s infinite;}
+.notif-dot.show{display:block;}
+.notif-count{position:absolute;top:4px;left:4px;min-width:16px;height:16px;border-radius:8px;background:var(--rd);border:2px solid var(--w);display:none;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;padding:0 3px;}
+.notif-count.show{display:flex;}
+
+/* ══ BOTTOM NAV ══ */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--w);border-top:1px solid var(--b1);display:none;z-index:300;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -2px 20px rgba(0,0,0,.08);}
+.bnav-inner{display:flex;max-width:500px;margin:0 auto;}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px 8px;border:none;background:transparent;color:var(--mt);font-family:'R',sans-serif;font-size:10px;cursor:pointer;transition:color .2s;}
+.bn.on{color:var(--dark);}
+.bn i{font-size:20px;}
+.bn-fab-col{flex:1;display:flex;justify-content:center;align-items:flex-start;padding-top:6px;}
+.bn-fab{background:var(--dark);border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;margin-top:-24px;border:3px solid var(--bg);box-shadow:0 4px 18px rgba(28,35,51,.35);cursor:pointer;transition:transform .2s;}
+.bn-fab:active{transform:scale(.93);}
+.bn-fab i{font-size:22px;color:#fff;}
+
+/* ══ PAGES ══ */
+.pg{display:none;padding:16px;animation:fu .2s ease;}
+.pg.on{display:block;}
+.pg-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.pg-title{font-size:22px;font-weight:900;color:var(--dark);}
+.slbl{font-size:11px;color:var(--mt);letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;font-weight:700;}
+.slbl:first-child{margin-top:0;}
+
+/* ══ HOME ══ */
+.home-hero{background:var(--dark);border-radius:20px;padding:22px 20px;margin-bottom:16px;position:relative;overflow:hidden;}
+.home-hero::before{content:'';position:absolute;top:-30px;left:-30px;width:120px;height:120px;background:rgba(255,255,255,.04);border-radius:50%;}
+.home-hero h2{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px;}
+.home-hero p{font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.7;}
+.home-hero-start{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:9px 18px;background:rgba(255,255,255,.12);border-radius:20px;color:#fff;font-size:13px;cursor:pointer;border:1px solid rgba(255,255,255,.15);}
+.home-card{background:var(--w);border:1px solid var(--b1);border-radius:16px;padding:15px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .18s;}
+.home-card:active{background:var(--bg);}
+.home-card-ico{width:46px;height:46px;border-radius:14px;background:var(--dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.home-card-ico i{font-size:18px;color:#fff;}
+.home-card-ico.light{background:var(--bg);border:1px solid var(--b1);}
+.home-card-ico.light i{color:var(--dark);}
+.home-card-info{flex:1;}
+.home-card-title{font-size:14px;font-weight:700;color:var(--dark);}
+.home-card-sub{font-size:12px;color:var(--mt);margin-top:2px;}
+.home-card-arr{color:var(--mt);font-size:14px;}
+
+/* ══ PROFILE ══ */
+.prof-top{background:var(--w);border:1px solid var(--b1);border-radius:20px;padding:22px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.pav{width:60px;height:60px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0;cursor:pointer;position:relative;}
+.pav img{width:100%;height:100%;object-fit:cover;}
+.pav-cam{position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:var(--dark);border:2px solid var(--w);display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;}
+.prof-info{flex:1;}
+.prof-name{font-size:16px;font-weight:800;color:var(--dark);}
+.prof-email{font-size:11px;color:var(--mt);margin-top:2px;direction:ltr;text-align:right;}
+.pcard{background:var(--w);border:1px solid var(--b1);border-radius:16px;padding:16px;margin-bottom:10px;}
+.pcard-hdr{font-size:11px;color:var(--mt);display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.pcard-hdr-left{display:flex;align-items:center;gap:6px;}
+.bal-row{display:flex;align-items:baseline;gap:6px;}
+.bal-num{font-size:28px;font-weight:900;color:var(--dark);direction:ltr;}
+.bal-cur{font-size:13px;color:var(--mt);}
+.add-bal-btn{width:100%;padding:13px;background:var(--bg);border:1.5px solid var(--b2);border-radius:13px;color:var(--dark);font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;}
+.add-bal-btn:active{background:var(--b1);}
+.plist-item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--b1);cursor:pointer;}
+.plist-item:last-child{border-bottom:none;}
+.plist-ico{width:38px;height:38px;border-radius:12px;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.plist-ico i{font-size:16px;color:var(--dark2);}
+.plist-txt{flex:1;font-size:14px;color:var(--dark);font-weight:600;}
+.plist-arr{color:var(--mt);font-size:13px;}
+.plist-item.green .plist-ico{background:rgba(22,163,74,.08);border-color:rgba(22,163,74,.2);}
+.plist-item.green .plist-ico i{color:var(--gr);}
+.plist-item.green .plist-txt{color:var(--gr);}
+.plist-item.red .plist-ico{background:rgba(220,38,38,.06);border-color:rgba(220,38,38,.15);}
+.plist-item.red .plist-ico i{color:var(--rd);}
+.plist-item.red .plist-txt{color:var(--rd);}
+.save-btn{width:100%;padding:14px;background:var(--dark);color:#fff;border:none;border-radius:13px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 4px 14px rgba(28,35,51,.2);}
+.tx-item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--b1);}
+.tx-item:last-child{border-bottom:none;}
+.tx-ico{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.tx-in{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.15);color:var(--gr);}
+.tx-out{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.12);color:var(--rd);}
+.tx-info{flex:1;}
+.tx-lbl{font-size:13px;color:var(--dark);font-weight:600;}
+.tx-sub{font-size:11px;color:var(--mt);margin-top:2px;}
+.tx-amt{font-size:14px;font-weight:800;direction:ltr;}
+.sbadge{font-size:10px;padding:2px 8px;border-radius:20px;margin-top:3px;display:inline-block;font-weight:600;}
+.sb-p{background:rgba(217,119,6,.08);color:var(--yw);border:1px solid rgba(217,119,6,.2);}
+.sb-ok{background:rgba(22,163,74,.08);color:var(--gr);border:1px solid rgba(22,163,74,.2);}
+.sb-no{background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2);}
+
+/* ══ AGE GROUP MULTI-SELECT ══ */
+.age-groups-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.age-grp{padding:9px 16px;border-radius:20px;font-family:'R',sans-serif;font-size:12px;cursor:pointer;border:1.5px solid var(--b1);background:var(--w);color:var(--mt);transition:all .2s;font-weight:700;display:flex;align-items:center;gap:5px;user-select:none;}
+.age-grp.on{background:var(--dark);color:#fff;border-color:var(--dark);box-shadow:0 2px 10px rgba(28,35,51,.2);}
+.age-grp-all{background:var(--dark);color:#fff;border-color:var(--dark);}
+.age-grp-all.deselect{background:var(--bg);color:var(--mt);border-color:var(--b1);}
+
+/* ══ GENDER ══ */
+.gender-wrap{display:flex;gap:8px;margin-bottom:4px;}
+.gender-btn{flex:1;padding:12px 8px;border-radius:13px;border:1.5px solid var(--b1);background:var(--w);color:var(--mt);font-family:'R',sans-serif;font-size:13px;cursor:pointer;text-align:center;font-weight:700;transition:all .2s;}
+.gender-btn i{display:block;font-size:20px;margin-bottom:5px;}
+.gender-btn.on{background:var(--dark);color:#fff;border-color:var(--dark);box-shadow:0 3px 12px rgba(28,35,51,.2);}
+
+/* ══ CREATE AD ══ */
+.ad-form{background:var(--w);border:1px solid var(--b1);border-radius:20px;padding:20px 18px;}
+.ad-form-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.ad-form-hdr h2{font-size:17px;font-weight:900;color:var(--dark);}
+.date-tag{font-size:11px;color:var(--mt2);background:var(--bg);padding:5px 12px;border-radius:20px;border:1px solid var(--b1);}
+.goal-tabs{display:flex;background:var(--bg);border-radius:13px;padding:4px;margin-bottom:2px;}
+.goal-tab{flex:1;padding:11px 8px;text-align:center;border-radius:10px;cursor:pointer;font-family:'R',sans-serif;font-size:13px;border:none;background:transparent;color:var(--mt);transition:all .2s;}
+.goal-tab.on{background:var(--dark);color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(28,35,51,.2);}
+.goal-tab i{display:block;font-size:18px;margin-bottom:5px;}
+.bud-btn{width:44px;height:44px;border-radius:13px;border:1.5px solid var(--b2);background:var(--w);color:var(--dark);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'R',sans-serif;flex-shrink:0;}
+.bud-btn:active{background:var(--bg);}
+.submit-btn{width:100%;padding:16px;background:var(--dark);color:#fff;border:none;border-radius:15px;font-family:'R',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;box-shadow:0 4px 16px rgba(28,35,51,.22);}
+.submit-btn:active{opacity:.9;}
+.submit-btn:disabled{opacity:.4;pointer-events:none;}
+
+/* ══ ASSET DROPDOWN ══ */
+.asset-select-wrap{position:relative;margin-bottom:4px;}
+.asset-select{width:100%;padding:13px 16px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;color:var(--tx);font-family:'R',sans-serif;font-size:14px;outline:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;}
+.asset-select:focus-within,.asset-select.open{border-color:var(--dark);background:var(--w);}
+.asset-dropdown{position:absolute;top:calc(100% + 4px);right:0;left:0;background:var(--w);border:1.5px solid var(--b1);border-radius:14px;z-index:500;max-height:220px;overflow-y:auto;box-shadow:0 8px 30px rgba(28,35,51,.12);display:none;}
+.asset-dropdown.open{display:block;animation:slideUp .15s ease;}
+.asset-opt{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--b1);}
+.asset-opt:last-child{border-bottom:none;}
+.asset-opt:hover{background:var(--bg);}
+.asset-opt.selected{background:rgba(28,35,51,.04);}
+.asset-opt-ico{width:34px;height:34px;border-radius:10px;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;flex-shrink:0;overflow:hidden;}
+.asset-opt-ico img{width:100%;height:100%;object-fit:cover;}
+.asset-opt-info{flex:1;}
+.asset-opt-name{font-size:13px;font-weight:700;color:var(--dark);}
+.asset-opt-meta{font-size:10px;color:var(--mt);margin-top:1px;}
+.asset-opt-check{font-size:13px;color:var(--gr);display:none;}
+.asset-opt.selected .asset-opt-check{display:block;}
+.asset-none{padding:14px;text-align:center;font-size:12px;color:var(--mt);}
+
+/* ══ MY ADS ══ */
+.ads-filter{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;}
+.ads-filter::-webkit-scrollbar{display:none;}
+.fchip{padding:7px 14px;border-radius:20px;font-family:'R',sans-serif;font-size:12px;cursor:pointer;border:1.5px solid var(--b1);background:var(--w);color:var(--mt);white-space:nowrap;transition:all .2s;}
+.fchip.on{background:var(--dark);color:#fff;border-color:var(--dark);}
+.ad-card{background:var(--w);border:1px solid var(--b1);border-radius:18px;padding:16px;margin-bottom:10px;animation:fu .2s ease;}
+.ad-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.ad-num{font-size:11px;color:var(--mt);background:var(--bg);padding:3px 10px;border-radius:20px;border:1px solid var(--b1);font-family:monospace;}
+.ad-status{font-size:11px;padding:4px 11px;border-radius:20px;font-weight:700;}
+.as-p{background:rgba(217,119,6,.08);color:var(--yw);border:1px solid rgba(217,119,6,.2);}
+.as-a{background:rgba(22,163,74,.08);color:var(--gr);border:1px solid rgba(22,163,74,.2);}
+.as-r{background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2);}
+.as-c{background:rgba(37,99,235,.08);color:var(--bl);border:1px solid rgba(37,99,235,.2);}
+.as-pa{background:var(--bg);color:var(--mt);border:1px solid var(--b1);}
+.ad-title{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.ad-metas{display:flex;gap:8px;flex-wrap:wrap;}
+.ad-m{font-size:11px;color:var(--mt2);display:flex;align-items:center;gap:4px;background:var(--bg);padding:4px 10px;border-radius:20px;border:1px solid var(--b1);}
+.ad-m i{font-size:10px;}
+.ad-reject{margin-top:10px;padding:10px 12px;background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.12);border-radius:11px;font-size:12px;color:var(--rd);line-height:1.6;}
+.empty-box{text-align:center;padding:50px 20px;}
+.empty-box-ico{width:72px;height:72px;border-radius:22px;background:var(--bg);border:1.5px solid var(--b1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--mt);}
+.empty-box h3{font-size:17px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+.empty-box p{font-size:13px;color:var(--mt);line-height:1.8;}
+.empty-btn{display:inline-flex;align-items:center;gap:7px;margin-top:16px;padding:12px 22px;background:var(--dark);color:#fff;border-radius:13px;font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;}
+
+/* ══ ASSETS PAGE ══ */
+.asset-card{background:var(--w);border:1px solid var(--b1);border-radius:16px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.asset-card-ico{width:44px;height:44px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;}
+.asset-card-ico img{width:100%;height:100%;object-fit:cover;}
+.asset-card-info{flex:1;}
+.asset-card-name{font-size:13px;font-weight:700;color:var(--dark);}
+.asset-card-metas{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;}
+.a-chip{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--dark);color:#fff;font-weight:600;}
+.asset-card-actions{display:flex;gap:6px;}
+.asset-act-btn{width:32px;height:32px;border-radius:10px;border:1px solid var(--b1);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--mt);}
+.asset-act-btn.red{color:var(--rd);border-color:rgba(220,38,38,.2);background:rgba(220,38,38,.05);}
+
+/* ══ PROXOLINK ══ */
+.proxo-create-btn{width:100%;padding:15px;background:var(--dark);color:#fff;border:none;border-radius:16px;font-family:'R',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:16px;box-shadow:0 4px 16px rgba(28,35,51,.2);}
+.proxo-cards{display:flex;flex-direction:column;gap:10px;}
+.proxo-card-item{background:var(--w);border:1px solid var(--b1);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.proxo-card-av{width:44px;height:44px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;}
+.proxo-card-av img{width:100%;height:100%;object-fit:cover;}
+.proxo-card-info{flex:1;}
+.proxo-card-name{font-size:13px;font-weight:700;color:var(--dark);}
+.proxo-card-meta{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;}
+.proxo-chip{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--dark);color:#fff;font-weight:600;}
+
+/* PROXOLINK FORM */
+.plform{background:var(--w);border:1px solid var(--b1);border-radius:20px;padding:20px 18px;}
+.plform-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.plform-hdr h2{font-size:17px;font-weight:900;color:var(--dark);}
+.plform-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mt);font-size:14px;}
+.plform-lbl{font-size:12px;color:var(--mt);font-weight:700;text-align:right;margin-bottom:7px;letter-spacing:.5px;}
+.pl-inp{width:100%;padding:13px 15px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;color:var(--tx);font-family:'R',sans-serif;font-size:15px;outline:none;transition:all .2s;margin-bottom:14px;}
+.pl-inp:focus{border-color:var(--dark);background:var(--w);}
+.pl-inp::placeholder{color:var(--mt);}
+.pl-ta{resize:none;min-height:80px;}
+.logo-upload{width:100%;padding:28px 20px;border:2px dashed var(--b2);border-radius:16px;text-align:center;cursor:pointer;color:var(--mt);margin-bottom:14px;position:relative;transition:all .2s;background:var(--bg);}
+.logo-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.logo-upload-ico{width:52px;height:52px;border-radius:16px;background:rgba(22,163,74,.08);border:1.5px solid rgba(22,163,74,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;color:var(--gr);}
+.logo-upload b{display:block;font-size:14px;color:var(--dark);margin-bottom:4px;}
+.logo-upload span{font-size:12px;color:var(--mt);}
+.logo-preview{width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid var(--b1);display:none;margin:0 auto 10px;}
+.platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.plat-btn{padding:13px 8px;border-radius:14px;border:1.5px solid var(--b1);background:var(--w);color:var(--mt);font-family:'R',sans-serif;font-size:12px;cursor:pointer;text-align:center;font-weight:700;transition:all .2s;}
+.plat-btn i{display:block;font-size:22px;margin-bottom:5px;}
+.plat-btn.on{background:var(--dark);color:#fff;border-color:var(--dark);box-shadow:0 3px 12px rgba(28,35,51,.2);}
+.plat-btn.on i{color:#fff;}
+.plat-btn:not(.on) i{color:var(--mt2);}
+.plat-fields{display:flex;flex-direction:column;gap:0;animation:slideUp .2s ease;}
+.plat-field-row{display:flex;flex-direction:column;}
+.plat-field-lbl{font-size:11px;color:var(--mt);font-weight:700;margin-bottom:5px;margin-top:12px;text-align:right;}
+.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.style-card{border-radius:16px;padding:14px 10px;cursor:pointer;border:2px solid var(--b1);text-align:center;transition:all .25s;position:relative;overflow:hidden;}
+.style-card.on{border-color:var(--dark);}
+.style-card .sc-name{font-size:12px;font-weight:700;color:var(--dark);margin-top:8px;}
+.style-card .sc-sub{font-size:10px;color:var(--mt);margin-top:2px;}
+.style-card .sc-chk{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;background:var(--dark);display:none;align-items:center;justify-content:center;font-size:9px;color:#fff;}
+.style-card.on .sc-chk{display:flex;}
+.sc-classic{background:linear-gradient(135deg,#1c2333 0%,#2e3a50 100%);border-radius:12px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
+.sc-classic-inner{text-align:center;}
+.sc-classic-av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);margin:0 auto 4px;}
+.sc-classic-line{height:3px;border-radius:2px;background:rgba(255,255,255,.3);width:40px;margin:2px auto;}
+.sc-minimal{background:#fff;border:1px solid var(--b1);border-radius:12px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
+.sc-minimal-inner{display:flex;align-items:center;gap:6px;}
+.sc-minimal-av{width:24px;height:24px;border-radius:50%;background:var(--b1);}
+.sc-minimal-lines{display:flex;flex-direction:column;gap:3px;}
+.sc-minimal-line1{height:3px;width:35px;border-radius:2px;background:var(--b2);}
+.sc-minimal-line2{height:2px;width:25px;border-radius:2px;background:var(--b1);}
+.sc-gradient{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:12px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
+.sc-gradient-inner{text-align:center;}
+.sc-gradient-av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.3);margin:0 auto 4px;}
+.sc-gradient-line{height:3px;border-radius:2px;background:rgba(255,255,255,.4);width:40px;margin:2px auto;}
+.theme-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.theme-dot{width:34px;height:34px;border-radius:50%;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;border:3px solid transparent;}
+.theme-dot.on{border-color:var(--dark);transform:scale(1.1);}
+.theme-dot i{font-size:12px;color:#fff;display:none;}
+.theme-dot.on i{display:block;}
+
+/* ══ NOTIFICATIONS PAGE ══ */
+.notif-item{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-bottom:1px solid var(--b1);}
+.notif-item:last-child{border-bottom:none;}
+.notif-item.unread{background:rgba(28,35,51,.02);margin:-1px -4px;padding:13px 4px;border-radius:10px;}
+.notif-ico{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.notif-gr{background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.2);color:var(--gr);}
+.notif-yw{background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2);color:var(--yw);}
+.notif-rd{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:var(--rd);}
+.notif-bl{background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.2);color:var(--bl);}
+.notif-info{flex:1;}
+.notif-title{font-size:13px;font-weight:700;color:var(--dark);}
+.notif-body{font-size:12px;color:var(--mt2);margin-top:2px;line-height:1.6;}
+.notif-time{font-size:10px;color:var(--mt);margin-top:4px;}
+.unread-dot{width:8px;height:8px;border-radius:50%;background:var(--bl);margin-top:4px;flex-shrink:0;}
+
+/* ══ SUPPORT ══ */
+.chat-outer{display:flex;flex-direction:column;height:calc(100vh - 175px);}
+.chat-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 0;}
+.mw-u{display:flex;justify-content:flex-start;}
+.mw-a{display:flex;justify-content:flex-end;}
+.bub-u{background:var(--w);border:1px solid var(--b1);color:var(--tx);border-radius:18px 18px 18px 4px;padding:11px 14px;max-width:82%;font-size:13px;line-height:1.7;}
+.bub-a{background:var(--dark);color:#fff;border-radius:18px 18px 4px 18px;padding:11px 14px;max-width:82%;font-size:13px;line-height:1.7;}
+.bub-t{font-size:9.5px;opacity:.5;margin-top:4px;}
+.chat-foot{display:flex;gap:8px;padding:10px 0 0;}
+.chat-inp{flex:1;padding:13px 15px;background:var(--w);border:1.5px solid var(--b1);border-radius:14px;color:var(--tx);font-family:'R',sans-serif;font-size:15px;outline:none;}
+.chat-inp:focus{border-color:var(--dark);}
+.chat-send{width:46px;height:46px;border-radius:13px;background:var(--dark);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+
+/* ══ MODALS ══ */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:flex-end;z-index:9000;padding:0;}
+.mover.on{display:flex;}
+.mbox{background:var(--w);border-radius:24px 24px 0 0;padding:22px 20px 34px;width:100%;max-width:500px;max-height:88vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.15);}
+.mbar{width:40px;height:4px;background:var(--b2);border-radius:4px;margin:0 auto 20px;}
+.mhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.mhdr h3{font-size:17px;font-weight:800;color:var(--dark);}
+.mclose{width:30px;height:30px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);color:var(--mt);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.mlbl{font-size:12px;color:var(--mt);display:block;margin-bottom:7px;font-weight:600;}
+.method-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.meth-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;border:1.5px solid var(--b1);background:var(--w);cursor:pointer;transition:all .2s;}
+.meth-item.sel{border-color:var(--dark);background:rgba(28,35,51,.03);}
+.meth-ico{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.meth-info{flex:1;}
+.meth-name{font-size:15px;font-weight:700;color:var(--dark);}
+.meth-num{font-size:12px;color:var(--mt);margin-top:2px;direction:ltr;text-align:right;}
+.meth-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--b2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.meth-item.sel .meth-check{background:var(--dark);border-color:var(--dark);}
+.meth-item.sel .meth-check i{display:block;}
+.meth-check i{display:none;font-size:10px;color:#fff;}
+.quick-amts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.qa{padding:10px;background:var(--bg);border:1.5px solid var(--b1);border-radius:11px;text-align:center;font-size:12px;font-weight:700;color:var(--dark);cursor:pointer;transition:all .2s;}
+.qa.sel{background:var(--dark);color:#fff;border-color:var(--dark);}
+.upload-zone{width:100%;padding:24px;border:2px dashed var(--b2);border-radius:15px;text-align:center;cursor:pointer;color:var(--mt);font-size:13px;margin:10px 0;position:relative;transition:all .2s;}
+.upload-zone:hover{border-color:var(--dark);color:var(--dark);}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-zone i{font-size:26px;display:block;margin-bottom:8px;}
+.rcpt-prev{width:100%;border-radius:12px;margin:10px 0;display:none;}
+.budget-wrap{display:flex;align-items:center;gap:10px;}
+.bud-val{flex:1;text-align:center;font-size:24px;font-weight:900;color:var(--dark);padding:10px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;direction:ltr;}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(6px);padding:12px 20px;border-radius:14px;font-size:13px;display:none;z-index:19999;white-space:nowrap;opacity:0;transition:all .25s;background:var(--dark);color:#fff;box-shadow:0 6px 24px rgba(28,35,51,.3);}
+.toast.show{display:block;opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.err{background:var(--rd);}
+.toast.ok{background:var(--gr);}
+
+/* CARD PICK */
+.card-pick{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--b1);background:var(--w);cursor:pointer;margin-bottom:8px;transition:all .2s;}
+.card-pick.sel{border-color:var(--dark);background:rgba(28,35,51,.03);}
+.card-pick-av{width:38px;height:38px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;}
+.card-pick-av img{width:100%;height:100%;object-fit:cover;}
+.card-pick-info{flex:1;}
+.card-pick-name{font-size:13px;color:var(--dark);font-weight:700;}
+.card-pick-meta{font-size:10.5px;color:var(--mt);margin-top:2px;}
+.chk{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--b2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.card-pick.sel .chk{background:var(--dark);border-color:var(--dark);}
+.card-pick.sel .chk i{display:block;}
+.chk i{display:none;font-size:10px;color:#fff;}
+.sec-div{height:1px;background:var(--b1);margin:16px 0;}
+
+/* ══ SIDEBAR / DRAWER ══ */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:8000;display:none;opacity:0;transition:opacity .25s;}
+.sidebar-overlay.on{display:block;opacity:1;}
+.sidebar{position:fixed;top:0;right:-300px;width:280px;height:100vh;background:var(--w);z-index:8100;transition:right .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,.12);}
+.sidebar.on{right:0;}
+.sidebar-head{padding:24px 20px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:14px;}
+.sidebar-av{width:52px;height:52px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0;}
+.sidebar-av img{width:100%;height:100%;object-fit:cover;}
+.sidebar-user{flex:1;overflow:hidden;}
+.sidebar-name{font-size:15px;font-weight:800;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sidebar-email{font-size:11px;color:var(--mt);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:right;}
+.sidebar-close{width:32px;height:32px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mt);font-size:14px;flex-shrink:0;}
+.sidebar-body{flex:1;overflow-y:auto;padding:12px 12px;}
+.sidebar-item{display:flex;align-items:center;gap:13px;padding:13px 14px;border-radius:14px;cursor:pointer;transition:all .18s;margin-bottom:4px;}
+.sidebar-item:active,.sidebar-item:hover{background:var(--bg);}
+.sidebar-item.active{background:rgba(28,35,51,.06);}
+.sidebar-item-ico{width:40px;height:40px;border-radius:13px;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--dark2);flex-shrink:0;}
+.sidebar-item-txt{font-size:14px;font-weight:700;color:var(--dark);}
+.sidebar-item.red .sidebar-item-ico{background:rgba(220,38,38,.06);border-color:rgba(220,38,38,.15);}
+.sidebar-item.red .sidebar-item-ico i{color:var(--rd);}
+.sidebar-item.red .sidebar-item-txt{color:var(--rd);}
+.sidebar-item.green .sidebar-item-ico{background:rgba(22,163,74,.07);border-color:rgba(22,163,74,.18);}
+.sidebar-item.green .sidebar-item-ico i{color:var(--gr);}
+.sidebar-div{height:1px;background:var(--b1);margin:8px 4px;}
+.sidebar-bal{display:flex;align-items:center;justify-content:space-between;margin:8px 4px 10px;padding:10px 14px;background:var(--dark);border-radius:14px;}
+.sidebar-bal-lbl{font-size:11px;color:rgba(255,255,255,.6);}
+.sidebar-bal-val{font-size:16px;font-weight:900;color:#fff;direction:ltr;}
+.ham-btn{width:38px;height:38px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dark);font-size:15px;}
+
+/* ══ TUTORIALS PAGE ══ */
+.tut-hero{background:linear-gradient(135deg,var(--dark) 0%,var(--dark2) 100%);border-radius:20px;padding:22px 20px;margin-bottom:16px;position:relative;overflow:hidden;}
+.tut-hero::before{content:'';position:absolute;top:-20px;left:-20px;width:100px;height:100px;background:rgba(255,255,255,.05);border-radius:50%;}
+.tut-hero h2{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px;}
+.tut-hero p{font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.7;}
+.tut-section-title{font-size:13px;font-weight:800;color:var(--dark);margin:18px 0 10px;}
+.tut-card{background:var(--w);border:1px solid var(--b1);border-radius:16px;margin-bottom:10px;overflow:hidden;cursor:pointer;transition:all .18s;}
+.tut-card:active{opacity:.9;}
+.tut-thumb{width:100%;height:160px;background:var(--dark);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.tut-thumb img{width:100%;height:100%;object-fit:cover;}
+.tut-play{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;position:absolute;}
+.tut-play i{font-size:20px;color:#fff;margin-right:-3px;}
+.tut-badge{position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;background:rgba(28,35,51,.7);color:#fff;backdrop-filter:blur(4px);}
+.tut-info{padding:13px 14px;}
+.tut-title{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:4px;}
+.tut-meta{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--mt);}
+.tut-guide-card{background:var(--w);border:1px solid var(--b1);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.tut-guide-ico{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.tut-guide-info h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px;}
+.tut-guide-info p{font-size:11px;color:var(--mt);line-height:1.5;}
+
+/* ══ ASSET PREVIEW CARD ENHANCED ══ */
+.asset-saved-card{background:var(--w);border:1.5px solid var(--b1);border-radius:16px;padding:15px 16px;margin-bottom:10px;animation:slideUp .2s ease;}
+.asset-saved-card-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.asset-saved-ico{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0;}
+.asset-saved-ico.wa{background:linear-gradient(135deg,#25D366,#128C7E);}
+.asset-saved-ico.ig{background:linear-gradient(135deg,#E1306C,#833AB4,#F77737);}
+.asset-saved-ico.ph{background:linear-gradient(135deg,#2563eb,#1d4ed8);}
+.asset-saved-ico.tg{background:linear-gradient(135deg,#229ED9,#0088cc);}
+.asset-saved-ico.lk{background:linear-gradient(135deg,#6366f1,#8b5cf6);}
+.asset-saved-name{font-size:14px;font-weight:800;color:var(--dark);}
+.asset-saved-type{font-size:11px;color:var(--mt);margin-top:2px;}
+.asset-saved-value{background:var(--bg);border:1px solid var(--b1);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--dark2);direction:ltr;text-align:left;font-family:monospace;margin-bottom:6px;}
+.asset-saved-note{font-size:11px;color:var(--mt2);padding:4px 0;}
+.asset-saved-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--b1);}
+</style>
+</head>
+<body>
+
+<!-- OFFLINE BANNER -->
+<div id="offlineBanner"><i class="fas fa-wifi-slash"></i> ئینتەرنێت پچڕاوە — تکایە پەیوەندی بکەرەوە</div>
+
+<!-- AUTH -->
+<div id="authWrap">
+  <div class="auth-inner">
+    <div class="auth-brand">
+      <h1>Proxo <span>Ads</span></h1>
+      <p>بەڕێوەبردنی ڕیکلامەکانی تیکتۆک</p>
+    </div>
+    <div class="auth-card">
+      <div class="atabs">
+        <button class="atab on" id="tabL" onclick="switchTab('login')">چوونەژوورەوە</button>
+        <button class="atab" id="tabS" onclick="switchTab('signup')">تۆمارکردن</button>
+      </div>
+      <div id="nameWrap" style="display:none">
+        <input class="finp" type="text" id="authName" placeholder="ناوی تەواو">
+      </div>
+      <input class="finp" type="email" id="authEmail" placeholder="ئیمەیل" dir="ltr">
+      <input class="finp" type="password" id="authPass" placeholder="پاسۆرد" dir="ltr"
+        onkeydown="if(event.key==='Enter')doAuth()">
+      <button class="abtn" id="authBtn" onclick="doAuth()">
+        <i class="fas fa-arrow-left"></i>
+        <span id="authBtnTxt">چوونەژوورەوە</span>
+      </button>
+      <div class="amsg" id="authMsg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="ham-btn" onclick="openSidebar()"><i class="fas fa-bars"></i></div>
+      <div class="topbar-brand">Proxo <span>Ads</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn" onclick="goPage('notifications')" id="notifBtn">
+        <i class="fas fa-bell" style="font-size:16px"></i>
+        <div class="notif-dot" id="notifDot"></div>
+      </div>
+      <div class="hbal" onclick="goPage('profile')">
+        <i class="fas fa-wallet"></i>
+        <span id="hBal">$0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-av" id="sidebarAv">P</div>
+      <div class="sidebar-user">
+        <div class="sidebar-name" id="sidebarName">—</div>
+        <div class="sidebar-email" id="sidebarEmail">—</div>
+      </div>
+      <div class="sidebar-close" onclick="closeSidebar()"><i class="fas fa-xmark"></i></div>
+    </div>
+    <div class="sidebar-body">
+      <div class="sidebar-bal">
+        <div>
+          <div class="sidebar-bal-lbl">بالانس</div>
+          <div class="sidebar-bal-val" id="sidebarBal">$0.00</div>
+        </div>
+        <div onclick="openDeposit();closeSidebar();" style="background:rgba(255,255,255,.15);border-radius:10px;padding:8px 12px;font-size:12px;color:#fff;cursor:pointer;"><i class="fas fa-plus"></i> بارکردن</div>
+      </div>
+      <div class="sidebar-item" onclick="goPage('home');closeSidebar()">
+        <div class="sidebar-item-ico"><i class="fas fa-house"></i></div>
+        <div class="sidebar-item-txt">سەرەکی</div>
+      </div>
+      <div class="sidebar-item" onclick="goPage('profile');closeSidebar()">
+        <div class="sidebar-item-ico"><i class="fas fa-user"></i></div>
+        <div class="sidebar-item-txt">پرۆفایل</div>
+      </div>
+      <div class="sidebar-item" onclick="goPage('myads');closeSidebar()">
+        <div class="sidebar-item-ico"><i class="fas fa-bullhorn"></i></div>
+        <div class="sidebar-item-txt">ڕیکلامەکانم</div>
+      </div>
+      <div class="sidebar-item" onclick="goPage('proxolink');closeSidebar()">
+        <div class="sidebar-item-ico"><i class="fas fa-link"></i></div>
+        <div class="sidebar-item-txt">ئامرازەکان</div>
+      </div>
+      <div class="sidebar-item" onclick="goPage('tutorials');closeSidebar()">
+        <div class="sidebar-item-ico"><i class="fas fa-graduation-cap"></i></div>
+        <div class="sidebar-item-txt">فێرکارییەکان</div>
+      </div>
+      <div class="sidebar-item" onclick="openAddAsset();closeSidebar()">
+        <div class="sidebar-item-ico"><i class="fas fa-layer-group"></i></div>
+        <div class="sidebar-item-txt">کەرەستەکان</div>
+      </div>
+      <div class="sidebar-div"></div>
+      <div class="sidebar-item red" onclick="doLogout()">
+        <div class="sidebar-item-ico"><i class="fas fa-right-from-bracket"></i></div>
+        <div class="sidebar-item-txt">چوونەدەرەوە</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="pg" id="pgHome">
+    <div class="home-hero">
+      <h2>داشکاندنی نرخ</h2>
+      <p>بۆ هەفتەیەک سپۆنسەری یەک ڕۆژی $20<br>نرخی تەنها 35 هەزارە</p>
+      <div class="home-hero-start" onclick="goPage('create')">
+        <i class="fas fa-arrow-left"></i>دەستپێکردن
+      </div>
+    </div>
+    <div class="home-card" onclick="goPage('create')">
+      <div class="home-card-ico"><i class="fas fa-rectangle-ad"></i></div>
+      <div class="home-card-info">
+        <div class="home-card-title">سپۆنسەری نوێ</div>
+        <div class="home-card-sub">کەمپینێکی ڕیکلامی تیکتۆک دروستبکە</div>
+      </div>
+      <i class="fas fa-chevron-left home-card-arr"></i>
+    </div>
+    <div class="home-card" onclick="goPage('assets')">
+      <div class="home-card-ico light"><i class="fas fa-layer-group"></i></div>
+      <div class="home-card-info">
+        <div class="home-card-title">کەرەستەکان</div>
+        <div class="home-card-sub">ژمارە و لینکەکانت بەڕێوەبە</div>
+      </div>
+      <i class="fas fa-chevron-left home-card-arr"></i>
+    </div>
+    <div class="home-card" onclick="goPage('proxolink')">
+      <div class="home-card-ico light"><i class="fas fa-link"></i></div>
+      <div class="home-card-info">
+        <div class="home-card-title">کەرەستەی پەیوەندی</div>
+        <div class="home-card-sub">کەرەستەی پەیوەندی دروست بکە</div>
+      </div>
+      <i class="fas fa-chevron-left home-card-arr"></i>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="pg" id="pgProfile">
+    <div class="prof-top">
+      <div class="pav" id="profAv" onclick="document.getElementById('avFile').click()">P
+        <div class="pav-cam"><i class="fas fa-camera"></i></div>
+      </div>
+      <input type="file" id="avFile" accept="image/*" style="display:none" onchange="loadAv(this)">
+      <div class="prof-info">
+        <div class="prof-name" id="profName">—</div>
+        <div class="prof-email" id="profEmail">—</div>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-hdr">
+        <div class="pcard-hdr-left"><i class="fas fa-wallet"></i> بالانسەکەت</div>
+        <span style="font-size:11px;cursor:pointer;color:var(--mt)" onclick="loadTx()">
+          <i class="fas fa-clock-rotate-left"></i> ئالوگۆڕەکان
+        </span>
+      </div>
+      <div class="bal-row">
+        <div class="bal-num" id="profBal">0.00</div>
+        <div class="bal-cur">دۆلار</div>
+      </div>
+      <button class="add-bal-btn" onclick="openDeposit()">
+        <i class="fas fa-plus"></i> زیادکردنی بالانس
+      </button>
+    </div>
+    <div class="pcard">
+      <div class="pcard-hdr"><div class="pcard-hdr-left"><i class="fas fa-gear"></i> ڕێکخستنەکان</div></div>
+      <div class="plist-item" onclick="showEditName()">
+        <div class="plist-ico"><i class="fas fa-user"></i></div>
+        <div class="plist-txt" id="editNameDisplay">دەستکاری ناو</div>
+        <i class="fas fa-chevron-left plist-arr"></i>
+      </div>
+      <div class="plist-item green" onclick="openWA()">
+        <div class="plist-ico"><i class="fab fa-whatsapp"></i></div>
+        <div class="plist-txt">گفتوگۆ لەگەڵ ئەدمین</div>
+        <i class="fas fa-chevron-left plist-arr" style="color:var(--gr)"></i>
+      </div>
+      <div class="plist-item red" onclick="doLogout()">
+        <div class="plist-ico"><i class="fas fa-right-from-bracket"></i></div>
+        <div class="plist-txt">چوونەدەرەوە</div>
+        <i class="fas fa-chevron-left plist-arr" style="color:var(--rd)"></i>
+      </div>
+    </div>
+    <div class="pcard" id="txPanel" style="display:none">
+      <div class="pcard-hdr"><div class="pcard-hdr-left"><i class="fas fa-list"></i> مێژووی مامەڵەکان</div></div>
+      <div id="txList"><div style="text-align:center;padding:16px;color:var(--mt);font-size:12px"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+    </div>
+    <div style="height:14px"></div>
+  </div>
+
+  <!-- CREATE AD -->
+  <div class="pg" id="pgCreate">
+    <div class="ad-form">
+      <div class="ad-form-hdr">
+        <h2>سپۆنسەری نوێ</h2>
+        <span class="date-tag" id="todayLbl"></span>
+      </div>
+
+      <div class="slbl">ئامانجی سپۆنسەر</div>
+      <div class="goal-tabs">
+        <button class="goal-tab on" data-g="messages" onclick="pickGoal(this)">
+          <i class="fas fa-comment-dots"></i>نامە
+        </button>
+        <button class="goal-tab" data-g="engagement" onclick="pickGoal(this)">
+          <i class="fas fa-heart"></i>کارلێک
+        </button>
+        <button class="goal-tab" data-g="views" onclick="pickGoal(this)">
+          <i class="fas fa-eye"></i>ڤیووو
+        </button>
+      </div>
+
+      <div id="cardSelWrap" style="display:none">
+        <div class="slbl">پەڕەی دابەزین <span style="color:var(--rd);font-size:10px">پێویستە</span></div>
+        <div id="cardList"><div style="font-size:12px;color:var(--mt);padding:8px">هیچ کەرەستەیەک نییە</div></div>
+      </div>
+
+      <!-- ═══ MESSAGES GOAL: ASSET DROPDOWN ═══ -->
+      <div id="msgAssetWrap">
+        <div class="slbl">کەرەستەی پەیوەندی <span style="color:var(--rd);font-size:10px">پێویستە</span></div>
+        <div class="asset-select-wrap">
+          <div class="asset-select" id="assetSelectBtn" onclick="toggleAssetDropdown()">
+            <span id="assetSelectTxt" style="color:var(--mt);font-size:13px">کەرەستەیەک هەڵبژێرە...</span>
+            <i class="fas fa-chevron-down" id="assetDropChev" style="font-size:12px;color:var(--mt);transition:transform .2s"></i>
+          </div>
+          <div class="asset-dropdown" id="assetDropdown">
+            <div class="asset-none" id="assetDropNone"><i class="fas fa-circle-notch fa-spin"></i></div>
+          </div>
+        </div>
+        <div id="assetSelPreview" style="display:none;background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:10px 13px;margin-bottom:4px;align-items:center;gap:9px;">
+          <div id="assetSelIco" style="width:32px;height:32px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div id="assetSelName" style="font-size:12px;font-weight:700;color:var(--dark)"></div>
+            <div id="assetSelMeta" style="font-size:10px;color:var(--mt);margin-top:1px"></div>
+          </div>
+          <div onclick="clearAssetSel()" style="cursor:pointer;color:var(--mt);font-size:13px"><i class="fas fa-xmark"></i></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════
+           ١. MULTI-SELECT AGE GROUPS
+      ════════════════════════════════════════════════ -->
+      <div class="slbl">تەمەنی ئامانج</div>
+      <div class="age-groups-wrap" id="ageGroupsWrap">
+        <div class="age-grp age-grp-all on" data-age="all" onclick="pickAge(this)">
+          <i class="fas fa-users"></i> هەموو
+        </div>
+        <div class="age-grp" data-age="13-17" onclick="pickAge(this)">13-17</div>
+        <div class="age-grp" data-age="18-24" onclick="pickAge(this)">18-24</div>
+        <div class="age-grp" data-age="25-34" onclick="pickAge(this)">25-34</div>
+        <div class="age-grp" data-age="35-44" onclick="pickAge(this)">35-44</div>
+        <div class="age-grp" data-age="45-54" onclick="pickAge(this)">45-54</div>
+        <div class="age-grp" data-age="55+" onclick="pickAge(this)">55+</div>
+      </div>
+      <div id="ageSelectedDisplay" style="font-size:11px;color:var(--mt2);margin-bottom:4px;margin-top:4px"></div>
+
+      <!-- ══ GENDER ══ -->
+      <div class="slbl">ڕەگەز</div>
+      <div class="gender-wrap">
+        <button class="gender-btn on" data-gen="all" onclick="pickGen(this)">
+          <i class="fas fa-users"></i>هەموو
+        </button>
+        <button class="gender-btn" data-gen="female" onclick="pickGen(this)">
+          <i class="fas fa-venus"></i>ژن
+        </button>
+        <button class="gender-btn" data-gen="male" onclick="pickGen(this)">
+          <i class="fas fa-mars"></i>پیاو
+        </button>
+      </div>
+
+      <div class="slbl">شوێن <span style="color:var(--rd);font-size:10px">پێویستە</span></div>
+      <div style="display:flex;gap:7px;margin-bottom:4px">
+        <div class="fchip on" data-loc="kurdistan" onclick="pickLoc(this)">کوردستان</div>
+        <div class="fchip" data-loc="iraq" onclick="pickLoc(this)">عێراق</div>
+        <div class="fchip" data-loc="all" onclick="pickLoc(this)">کورد و عەرەب</div>
+      </div>
+
+      <div class="slbl">ژمارەی ڕۆژ و بودجەی ڕۆژانە</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="pcard" style="padding:14px;text-align:center">
+          <div style="font-size:11px;color:var(--mt);margin-bottom:8px">ژمارەی ڕۆژ</div>
+          <div style="font-size:24px;font-weight:900;color:var(--dark);margin-bottom:10px" id="daysDisp">1</div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="bud-btn" style="width:34px;height:34px;font-size:16px" onclick="chgDays(-1)">−</button>
+            <button class="bud-btn" style="width:34px;height:34px;font-size:16px" onclick="chgDays(1)">+</button>
+          </div>
+        </div>
+        <div class="pcard" style="padding:14px;text-align:center">
+          <div style="font-size:11px;color:var(--mt);margin-bottom:8px">بودجەی ڕۆژانە</div>
+          <div style="font-size:24px;font-weight:900;color:var(--dark);margin-bottom:10px" id="budDisp">$20</div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="bud-btn" style="width:34px;height:34px;font-size:16px" onclick="chgBud(-5)">−</button>
+            <button class="bud-btn" style="width:34px;height:34px;font-size:16px" onclick="chgBud(5)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;padding:12px 16px;text-align:center;margin-bottom:4px">
+        <span style="font-size:13px;color:var(--mt2)">کۆی بودجە: </span>
+        <span style="font-size:14px;font-weight:800;color:var(--dark)" id="totalBud">$20 بۆ 1 ڕۆژ</span>
+      </div>
+
+      <div class="slbl">ئەنجامی خەملێنراو</div>
+      <div style="background:var(--bg);border:1px solid var(--b1);border-radius:14px;padding:14px;margin-bottom:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="text-align:center;flex:1">
+            <i class="fas fa-mouse-pointer" style="color:var(--dark);font-size:16px;display:block;margin-bottom:4px"></i>
+            <div style="font-size:12px;color:var(--mt)">کرتەکان</div>
+            <div style="font-size:14px;font-weight:700;color:var(--dark)" id="estClicks">20-300</div>
+          </div>
+          <div style="width:1px;height:40px;background:var(--b1)"></div>
+          <div style="text-align:center;flex:1">
+            <i class="fas fa-eye" style="color:var(--dark);font-size:16px;display:block;margin-bottom:4px"></i>
+            <div style="font-size:12px;color:var(--mt)">ڤیووو</div>
+            <div style="font-size:14px;font-weight:700;color:var(--dark)" id="estViews">49k-155k</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slbl">لینکی ڤیدیۆی تیک تۆک</div>
+      <div style="position:relative;display:flex;align-items:center">
+        <i class="fas fa-clipboard" style="position:absolute;right:14px;color:var(--mt);font-size:14px"></i>
+        <input class="finp" style="margin:0;padding-right:42px" type="url" id="adLink" placeholder="لینکی ڤیدیۆی تیک تۆک دابنێ" dir="ltr">
+      </div>
+
+      <div class="slbl">کۆدی پۆستی تیکتۆک</div>
+      <div style="position:relative;display:flex;align-items:center">
+        <i class="fas fa-clipboard" style="position:absolute;right:14px;color:var(--mt);font-size:14px"></i>
+        <input class="finp" style="margin:0;padding-right:42px" type="text" id="adCode" placeholder="کۆدی پۆستی تیکتۆکەکەت لێرە دابنێ" dir="ltr">
+      </div>
+
+      <div style="background:rgba(217,119,6,.07);border:1px solid rgba(217,119,6,.2);border-radius:13px;padding:12px 14px;margin-top:12px">
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <i class="fas fa-triangle-exclamation" style="color:var(--yw);margin-top:2px"></i>
+          <div style="font-size:12px;color:var(--dark);line-height:1.8">
+            <strong>گرنگ:</strong> تەواوی زانیاریەکان بەدروووستی پر بکەوە<br>بەپێچەوانەوە بەرپرسیار نابین.
+          </div>
+        </div>
+      </div>
+
+      <div class="slbl">بەروار و کات</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <input class="finp" style="margin:0" type="date" id="adDate">
+        <input class="finp" style="margin:0" type="time" id="adTime">
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="submitAd()">
+        <i class="fas fa-paper-plane"></i>
+        ناردنی داواکاری
+      </button>
+    </div>
+    <div style="height:14px"></div>
+  </div>
+
+  <!-- MY ADS -->
+  <div class="pg" id="pgMyAds">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="pg-title">سپۆنسەرەکانم</div>
+      <button class="empty-btn" onclick="goPage('create')" style="padding:8px 14px;font-size:12px">
+        <i class="fas fa-plus"></i> نوێ
+      </button>
+    </div>
+    <div class="ads-filter" id="adsFilter">
+      <div class="fchip on" data-f="all" onclick="filterAds(this)">هەموو</div>
+      <div class="fchip" data-f="active" onclick="filterAds(this)">چالاک</div>
+      <div class="fchip" data-f="pending" onclick="filterAds(this)">چاوەڕوان</div>
+      <div class="fchip" data-f="rejected" onclick="filterAds(this)">ڕەتکراوە</div>
+      <div class="fchip" data-f="completed" onclick="filterAds(this)">تەواوبوو</div>
+    </div>
+    <div id="myAdsWrap"></div>
+    <div style="height:14px"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       ٢. ASSETS PAGE  (ئێستا modal — pgAssets نامانێت بۆ پرۆکسیلینک)
+  ════════════════════════════════════════════════ -->
+  <div class="pg" id="pgAssets" style="display:none"></div>
+
+  <!-- PROXOLINK -->
+  <div class="pg" id="pgProxolink">
+    <div id="plListView">
+      <div class="pg-title" style="margin-bottom:14px">کەرەستەی پەیوەندی</div>
+      <button class="proxo-create-btn" onclick="showPLForm()">
+        <i class="fas fa-plus"></i>دروستکردنی کەرەستەی نوێ
+      </button>
+      <div class="slbl">کەرەستەکانت</div>
+      <div class="proxo-cards" id="proxoCardsList">
+        <div style="text-align:center;padding:20px;color:var(--mt)"><i class="fas fa-circle-notch fa-spin"></i></div>
+      </div>
+      <div style="height:14px"></div>
+    </div>
+    <div id="plFormView" style="display:none">
+      <div class="plform">
+        <div class="plform-hdr">
+          <h2>پەڕەی نوێ زیادبکە</h2>
+          <div class="plform-close" onclick="hidePLForm()"><i class="fas fa-xmark"></i></div>
+        </div>
+        <div class="plform-lbl">ناوی براند <span style="color:var(--rd)">*</span></div>
+        <input class="pl-inp" type="text" id="plBrandName" placeholder="ناوی پەڕە یان براند">
+        <div class="plform-lbl">وتەی کورت</div>
+        <textarea class="pl-inp pl-ta" id="plDesc" placeholder="پەیوەندیمان پێوە بکە"></textarea>
+        <div class="plform-lbl">لۆگۆ</div>
+        <div class="logo-upload" id="logoUploadZone">
+          <input type="file" id="plLogoFile" accept="image/*" onchange="loadPlLogo(this)">
+          <img id="plLogoPrev" class="logo-preview" alt="لۆگۆ">
+          <div class="logo-upload-ico"><i class="fas fa-image"></i></div>
+          <b>لۆگۆ بارکە</b>
+          <span>کرتە بکە یان رابکێشە</span>
+        </div>
+        <div class="plform-lbl">پلاتفۆرمی پەیوەندی هەڵبژێرە</div>
+        <div class="platform-grid">
+          <button class="plat-btn on" data-p="instagram" onclick="togglePlat(this)"><i class="fab fa-instagram"></i>ئینستاگرام</button>
+          <button class="plat-btn on" data-p="viber" onclick="togglePlat(this)"><i class="fab fa-viber"></i>ڤایبەر</button>
+          <button class="plat-btn on" data-p="whatsapp" onclick="togglePlat(this)"><i class="fab fa-whatsapp"></i>واتسئاپ</button>
+          <button class="plat-btn" data-p="phone" onclick="togglePlat(this)"><i class="fas fa-phone"></i>ژمارە</button>
+          <button class="plat-btn" data-p="telegram" onclick="togglePlat(this)"><i class="fab fa-telegram"></i>تێلێگرام</button>
+          <button class="plat-btn" data-p="snapchat" onclick="togglePlat(this)"><i class="fab fa-snapchat"></i>سناپچات</button>
+        </div>
+        <div class="plat-fields" id="platFields"></div>
+        <div class="sec-div"></div>
+        <div class="plform-lbl">ستایلی کارت</div>
+        <div class="style-grid">
+          <div class="style-card on" data-style="classic" onclick="pickStyle(this)">
+            <div class="sc-chk"><i class="fas fa-check"></i></div>
+            <div class="sc-classic"><div class="sc-classic-inner"><div class="sc-classic-av"></div><div class="sc-classic-line"></div><div class="sc-classic-line" style="width:28px;opacity:.6"></div></div></div>
+            <div class="sc-name">کلاسیک</div><div class="sc-sub">تاریک و جوان</div>
+          </div>
+          <div class="style-card" data-style="minimal" onclick="pickStyle(this)">
+            <div class="sc-chk"><i class="fas fa-check"></i></div>
+            <div class="sc-minimal"><div class="sc-minimal-inner"><div class="sc-minimal-av"></div><div class="sc-minimal-lines"><div class="sc-minimal-line1"></div><div class="sc-minimal-line2"></div></div></div></div>
+            <div class="sc-name">مینیمال</div><div class="sc-sub">ساکار و سپی</div>
+          </div>
+          <div class="style-card" data-style="gradient" onclick="pickStyle(this)">
+            <div class="sc-chk"><i class="fas fa-check"></i></div>
+            <div class="sc-gradient"><div class="sc-gradient-inner"><div class="sc-gradient-av"></div><div class="sc-gradient-line"></div><div class="sc-gradient-line" style="width:28px;opacity:.6"></div></div></div>
+            <div class="sc-name">گرادیێنت</div><div class="sc-sub">رەنگین و تازە</div>
+          </div>
+        </div>
+        <div class="plform-lbl">ڕەنگی تەم</div>
+        <div class="theme-wrap" id="themeWrap">
+          <div class="theme-dot on" style="background:#1c2333" data-color="#1c2333" onclick="pickTheme(this)"><i class="fas fa-check"></i></div>
+          <div class="theme-dot" style="background:#2563eb" data-color="#2563eb" onclick="pickTheme(this)"><i class="fas fa-check"></i></div>
+          <div class="theme-dot" style="background:#16a34a" data-color="#16a34a" onclick="pickTheme(this)"><i class="fas fa-check"></i></div>
+          <div class="theme-dot" style="background:#dc2626" data-color="#dc2626" onclick="pickTheme(this)"><i class="fas fa-check"></i></div>
+          <div class="theme-dot" style="background:#d97706" data-color="#d97706" onclick="pickTheme(this)"><i class="fas fa-check"></i></div>
+          <div class="theme-dot" style="background:#7c3aed" data-color="#7c3aed" onclick="pickTheme(this)"><i class="fas fa-check"></i></div>
+          <div class="theme-dot" style="background:#0891b2" data-color="#0891b2" onclick="pickTheme(this)"><i class="fas fa-check"></i></div>
+          <div class="theme-dot" style="background:#be185d" data-color="#be185d" onclick="pickTheme(this)"><i class="fas fa-check"></i></div>
+        </div>
+        <button class="submit-btn" onclick="submitPLCard()">
+          <i class="fas fa-check"></i>دروستکردن
+        </button>
+      </div>
+      <div style="height:14px"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       ٥. NOTIFICATIONS PAGE
+  ════════════════════════════════════════════════ -->
+  <div class="pg" id="pgNotifications">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="pg-title">ئاگادارییەکان</div>
+      <button onclick="markAllRead()" style="font-size:11px;color:var(--mt);background:none;border:none;font-family:'R',sans-serif;cursor:pointer">
+        <i class="fas fa-check-double"></i> هەموو خوێندرایەوە
+      </button>
+    </div>
+    <div class="pcard">
+      <div id="notifList">
+        <div style="text-align:center;padding:20px;color:var(--mt)"><i class="fas fa-circle-notch fa-spin"></i></div>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+  </div>
+
+  <!-- SUPPORT -->
+  <div class="pg" id="pgSupport">
+    <div class="pg-title" style="margin-bottom:14px">سەپۆرت</div>
+    <div class="chat-outer">
+      <div class="chat-body" id="chatBody">
+        <div style="text-align:center;padding:30px;color:var(--mt)">
+          <i class="fas fa-headset" style="font-size:32px;display:block;margin-bottom:10px;opacity:.3"></i>
+          <span style="font-size:13px">سەلام! چۆن یارمەتیت بدەین؟</span>
+        </div>
+      </div>
+      <div class="chat-foot">
+        <input class="chat-inp" type="text" id="chatInp" placeholder="پەیامت بنووسە..."
+          onkeydown="if(event.key==='Enter')sendMsg()">
+        <button class="chat-send" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       TUTORIALS PAGE
+  ════════════════════════════════════════════════ -->
+  <div class="pg" id="pgTutorials">
+    <div class="tut-hero">
+      <h2><i class="fas fa-graduation-cap" style="margin-left:8px"></i>فێرکارییەکان</h2>
+      <p>ئامۆژگاری و ڤیدیۆکانی سیستەمەکە لێرەن تا ئەسانتر بتوانی کار بکەیت</p>
+    </div>
+
+    <!-- ── کەرەستەکانم ── -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="tut-section-title" style="margin:0"><i class="fas fa-layer-group" style="margin-left:6px;color:var(--dark)"></i>کەرەستەکانم</div>
+      <button class="empty-btn" onclick="openAddAsset()" style="padding:7px 13px;font-size:12px;margin:0">
+        <i class="fas fa-plus"></i> نوێ
+      </button>
+    </div>
+    <div id="assetsListWrap">
+      <div style="text-align:center;padding:16px;color:var(--mt)"><i class="fas fa-circle-notch fa-spin"></i></div>
+    </div>
+    <div style="height:16px"></div>
+
+    <div class="tut-section-title"><i class="fas fa-play-circle" style="margin-left:6px;color:var(--rd)"></i>ڤیدیۆی فێرکاری</div>
+
+    <div class="tut-card" onclick="openTutVideo('https://www.youtube.com/watch?v=example1')">
+      <div class="tut-thumb" style="background:linear-gradient(135deg,#1c2333,#2e3a50)">
+        <div class="tut-play"><i class="fas fa-play"></i></div>
+        <div class="tut-badge"><i class="fas fa-clock"></i> 5:30</div>
+      </div>
+      <div class="tut-info">
+        <div class="tut-title">چۆن سپۆنسەری نوێ دروست بکەیت</div>
+        <div class="tut-meta"><i class="fas fa-eye"></i> فێرکاری یەکەم &nbsp;·&nbsp; <i class="fas fa-star" style="color:var(--yw)"></i> پێشنیارکراو</div>
+      </div>
+    </div>
+
+    <div class="tut-card" onclick="openTutVideo('https://www.youtube.com/watch?v=example2')">
+      <div class="tut-thumb" style="background:linear-gradient(135deg,#2563eb,#1d4ed8)">
+        <div class="tut-play"><i class="fas fa-play"></i></div>
+        <div class="tut-badge"><i class="fas fa-clock"></i> 3:15</div>
+      </div>
+      <div class="tut-info">
+        <div class="tut-title">چۆن کەرەستەی پەیوەندی زیاد بکەیت</div>
+        <div class="tut-meta"><i class="fas fa-eye"></i> فێرکاری دووەم</div>
+      </div>
+    </div>
+
+    <div class="tut-card" onclick="openTutVideo('https://www.youtube.com/watch?v=example3')">
+      <div class="tut-thumb" style="background:linear-gradient(135deg,#16a34a,#15803d)">
+        <div class="tut-play"><i class="fas fa-play"></i></div>
+        <div class="tut-badge"><i class="fas fa-clock"></i> 4:45</div>
+      </div>
+      <div class="tut-info">
+        <div class="tut-title">چۆن باڵانس بارکەیت</div>
+        <div class="tut-meta"><i class="fas fa-eye"></i> فێرکاری سێیەم</div>
+      </div>
+    </div>
+
+    <div class="tut-section-title" style="margin-top:20px"><i class="fas fa-book-open" style="margin-left:6px;color:var(--bl)"></i>ڕێنمایی خێرا</div>
+
+    <div class="tut-guide-card">
+      <div class="tut-guide-ico" style="background:rgba(37,99,235,.1);color:var(--bl)"><i class="fas fa-rectangle-ad"></i></div>
+      <div class="tut-guide-info">
+        <h4>دروستکردنی ڕیکلام</h4>
+        <p>هەموو مەرحەلەکانی دروستکردنی کەمپینێکی ئەفزای تیکتۆک</p>
+      </div>
+    </div>
+
+    <div class="tut-guide-card">
+      <div class="tut-guide-ico" style="background:rgba(22,163,74,.1);color:var(--gr)"><i class="fas fa-layer-group"></i></div>
+      <div class="tut-guide-info">
+        <h4>بەڕێوەبردنی کەرەستەکان</h4>
+        <p>چۆن ژمارەکانت و ئاکاونتی سۆشیاڵ میدیاکانت پاشەکەوت بکەیت</p>
+      </div>
+    </div>
+
+    <div class="tut-guide-card">
+      <div class="tut-guide-ico" style="background:rgba(217,119,6,.08);color:var(--yw)"><i class="fas fa-wallet"></i></div>
+      <div class="tut-guide-info">
+        <h4>بارکردنی باڵانس</h4>
+        <p>ڕێنمایی بۆ پارەدان لەڕێگەی FIB، FastPay و ZainCash</p>
+      </div>
+    </div>
+
+    <div class="tut-guide-card" onclick="openWA()" style="cursor:pointer">
+      <div class="tut-guide-ico" style="background:rgba(22,163,74,.1);color:var(--gr)"><i class="fab fa-whatsapp"></i></div>
+      <div class="tut-guide-info">
+        <h4>پرسیارت هەیە؟</h4>
+        <p>ڕاستەوخۆ لەگەڵ تیمی پشتیوانی گفتوگۆ بکە — هەمیشە ئامادەین</p>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav" id="bnav">
+  <div class="bnav-inner">
+    <button class="bn on" id="bn_home" onclick="goPage('home')">
+      <i class="fas fa-house"></i>سەرەکی
+    </button>
+    <button class="bn" id="bn_myads" onclick="goPage('myads')">
+      <i class="fas fa-bullhorn"></i>سپۆنسەرەکان
+    </button>
+    <div class="bn-fab-col">
+      <div class="bn-fab" onclick="goPage('create')"><i class="fas fa-plus"></i></div>
+    </div>
+    <button class="bn" id="bn_tutorials" onclick="goPage('tutorials')">
+      <i class="fas fa-graduation-cap"></i>فێرکارییەکان
+    </button>
+    <button class="bn" id="bn_proxolink" onclick="goPage('proxolink')">
+      <i class="fas fa-link"></i>ئامرازەکان
+    </button>
+  </div>
+</nav>
+
+<!-- DEPOSIT: METHOD -->
+<div class="mover" id="moMethod">
+  <div class="mbox">
+    <div class="mbar"></div>
+    <div class="mhdr">
+      <h3>شێوازی پارەدان هەڵبژێرە</h3>
+      <button class="mclose" onclick="closeMo('moMethod')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="method-list">
+      <div class="meth-item" data-m="fib" onclick="pickMethod(this)">
+        <div class="meth-ico" style="background:#e8f5e9"><i class="fas fa-university" style="color:#1b5e20;font-size:22px"></i></div>
+        <div class="meth-info"><div class="meth-name">FIB</div><div class="meth-num">7518070901</div></div>
+        <div class="meth-check"><i class="fas fa-check"></i></div>
+      </div>
+      <div class="meth-item" data-m="fastpay" onclick="pickMethod(this)">
+        <div class="meth-ico" style="background:#fce4ec"><i class="fas fa-bolt" style="color:#c62828;font-size:22px"></i></div>
+        <div class="meth-info"><div class="meth-name">FastPay</div><div class="meth-num">7518070901</div></div>
+        <div class="meth-check"><i class="fas fa-check"></i></div>
+      </div>
+      <div class="meth-item" data-m="kcard" onclick="pickMethod(this)">
+        <div class="meth-ico" style="background:#fff9c4"><i class="fas fa-credit-card" style="color:#f57f17;font-size:22px"></i></div>
+        <div class="meth-info"><div class="meth-name">K-Card / ZainCash</div><div class="meth-num">07738887202</div></div>
+        <div class="meth-check"><i class="fas fa-check"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEPOSIT: AMOUNT -->
+<div class="mover" id="moAmount">
+  <div class="mbox">
+    <div class="mbar"></div>
+    <div class="mhdr">
+      <h3>زیادکردنی بالانس</h3>
+      <button class="mclose" onclick="closeMo('moAmount')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="moAmtMethod" style="background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:11px 14px;margin-bottom:16px;font-size:13px;color:var(--dark);display:flex;align-items:center;gap:8px;"></div>
+    <div class="mlbl">بڕ (دۆلار)</div>
+    <div class="budget-wrap" style="margin-bottom:14px">
+      <button class="bud-btn" onclick="chgDep(-10)">−</button>
+      <div class="bud-val" id="depDisp">$50</div>
+      <button class="bud-btn" onclick="chgDep(10)">+</button>
+    </div>
+    <div class="quick-amts">
+      <div class="qa" onclick="setDep(10)">$10</div>
+      <div class="qa" onclick="setDep(25)">$25</div>
+      <div class="qa" onclick="setDep(50)">$50</div>
+      <div class="qa" onclick="setDep(100)">$100</div>
+    </div>
+    <button class="submit-btn" onclick="goToUpload()">
+      <i class="fas fa-arrow-left"></i> دواتر
+    </button>
+  </div>
+</div>
+
+<!-- DEPOSIT: UPLOAD -->
+<div class="mover" id="moUpload">
+  <div class="mbox">
+    <div class="mbar"></div>
+    <div class="mhdr">
+      <h3>بارکردنی بەڵکەی پارەدان</h3>
+      <button class="mclose" onclick="closeMo('moUpload')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="moUploadInfo" style="background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:11px 14px;margin-bottom:14px;font-size:13px;color:var(--dark)"></div>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="rcptFile" accept="image/*" onchange="loadRcpt(this)">
+      <i class="fas fa-arrow-up-from-bracket"></i>
+      کرتە بکە بۆ بارکردن<br><span style="font-size:12px">کامێرا یان گالەری</span>
+    </div>
+    <img id="rcptPrev" class="rcpt-prev" alt="وەسڵ">
+    <div id="uploadProgress" style="display:none;text-align:center;padding:10px;font-size:12px;color:var(--mt)">
+      <i class="fas fa-circle-notch fa-spin"></i> ئەپڵۆدکردن...
+    </div>
+    <button class="submit-btn" onclick="submitDeposit()">
+      <i class="fas fa-paper-plane"></i> ناردن
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     ASSET BUILDER MODAL — ستایلی ProxoLink + Live Preview + Telegram
+════════════════════════════════════════════════ -->
+<div class="mover" id="moAddAsset" style="align-items:flex-end">
+  <div class="mbox" style="max-height:95vh;padding:20px 18px 30px">
+    <div class="mbar"></div>
+    <div class="mhdr">
+      <h3><i class="fas fa-layer-group" style="margin-left:6px;color:var(--dark)"></i>کەرەستەی نوێ</h3>
+      <button class="mclose" onclick="closeMo('moAddAsset');resetAssetBuilder()"><i class="fas fa-xmark"></i></button>
+    </div>
+
+    <!-- ── فۆرمی زانیاری ── -->
+    <div id="assetBuilderForm">
+      <!-- ناو -->
+      <div class="mlbl">ناوی کەرەستە <span style="color:var(--rd)">*</span></div>
+      <input class="finp" style="margin-bottom:14px" type="text" id="assetName"
+        placeholder="بۆ نموونە: Tahina Shop"
+        oninput="updateAssetLivePreview()">
+
+      <!-- جۆر -->
+      <div class="mlbl">جۆری پەیوەندی</div>
+      <div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap" id="assetTypeWrap">
+        <div class="fchip on" data-at="whatsapp" onclick="pickAssetType(this)"><i class="fab fa-whatsapp"></i> واتسئەپ</div>
+        <div class="fchip" data-at="instagram" onclick="pickAssetType(this)"><i class="fab fa-instagram"></i> ئینستاگرام</div>
+        <div class="fchip" data-at="phone" onclick="pickAssetType(this)"><i class="fas fa-phone"></i> تەلەفۆن</div>
+        <div class="fchip" data-at="telegram" onclick="pickAssetType(this)"><i class="fab fa-telegram"></i> تێلێگرام</div>
+        <div class="fchip" data-at="link" onclick="pickAssetType(this)"><i class="fas fa-link"></i> لینک</div>
+      </div>
+
+      <!-- نرخ/لینک -->
+      <div class="mlbl" id="assetValueLbl">ژمارەی واتسئەپ</div>
+      <input class="finp" style="margin-bottom:14px;direction:ltr;text-align:left" type="text"
+        id="assetValue" placeholder="+9647501234567"
+        oninput="updateAssetLivePreview()">
+
+      <!-- تێبینی -->
+      <div class="mlbl">تێبینی (ئۆپشنی)</div>
+      <input class="finp" style="margin-bottom:16px" type="text" id="assetNote"
+        placeholder="زانیاری زیاتر" oninput="updateAssetLivePreview()">
+
+      <!-- ── ستایل ── -->
+      <div class="mlbl" style="margin-bottom:10px">ستایلی کارت</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+        <!-- کلاسیک -->
+        <div class="style-card on" data-style="classic" onclick="pickAssetStyle(this)" id="asStyleClassic">
+          <div class="sc-chk"><i class="fas fa-check"></i></div>
+          <div class="sc-classic"><div class="sc-classic-inner"><div class="sc-classic-av"></div><div class="sc-classic-line"></div><div class="sc-classic-line" style="width:28px;opacity:.6"></div></div></div>
+          <div class="sc-name">کلاسیک</div><div class="sc-sub">تاریک</div>
+        </div>
+        <!-- ڕۆژ -->
+        <div class="style-card" data-style="light" onclick="pickAssetStyle(this)" id="asStyleLight">
+          <div class="sc-chk"><i class="fas fa-check"></i></div>
+          <div class="sc-minimal"><div class="sc-minimal-inner"><div class="sc-minimal-av"></div><div class="sc-minimal-lines"><div class="sc-minimal-line1"></div><div class="sc-minimal-line2"></div></div></div></div>
+          <div class="sc-name">ڕۆژ</div><div class="sc-sub">ڕووناک</div>
+        </div>
+        <!-- گرادیێنت -->
+        <div class="style-card" data-style="gradient" onclick="pickAssetStyle(this)" id="asStyleGradient">
+          <div class="sc-chk"><i class="fas fa-check"></i></div>
+          <div class="sc-gradient"><div class="sc-gradient-inner"><div class="sc-gradient-av"></div><div class="sc-gradient-line"></div><div class="sc-gradient-line" style="width:28px;opacity:.6"></div></div></div>
+          <div class="sc-name">گرادیێنت</div><div class="sc-sub">رەنگاوڕەنگ</div>
+        </div>
+      </div>
+
+      <!-- ── Live Preview ── -->
+      <div class="mlbl" style="margin-bottom:8px"><i class="fas fa-eye" style="margin-left:5px;color:var(--bl)"></i>پێشبینی زیندوو</div>
+      <div id="assetLivePreview" style="border:1.5px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:16px;background:var(--bg);min-height:90px;display:flex;align-items:center;justify-content:center">
+        <div style="text-align:center;padding:20px;color:var(--mt);font-size:12px">
+          <i class="fas fa-layer-group" style="font-size:24px;display:block;margin-bottom:8px;opacity:.3"></i>
+          ناو و نرخ بنووسە تا پێشبینی ببینیت
+        </div>
+      </div>
+
+      <!-- دووگمەی پاشەکەوت -->
+      <button class="save-btn" onclick="submitAsset()">
+        <i class="fas fa-check"></i> پاشەکەوتکردن
+      </button>
+    </div>
+
+    <!-- ── پاشکردنی Asset: نیشاندانی کارت + دووگمەی Telegram ── -->
+    <div id="assetBuilderResult" style="display:none">
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(22,163,74,.1);border:1.5px solid rgba(22,163,74,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px;color:var(--gr)">
+          <i class="fas fa-check"></i>
+        </div>
+        <div style="font-size:15px;font-weight:800;color:var(--dark)">کەرەستەکەت پاشەکەوتکرا</div>
+        <div style="font-size:12px;color:var(--mt);margin-top:4px">ئێستا دەتوانی بنێریت بۆ تیلیگرام</div>
+      </div>
+
+      <!-- پێشبینی کارتی پاشەکەوتراو -->
+      <div id="assetResultCard" style="margin-bottom:16px"></div>
+
+      <!-- دووگمەی Telegram -->
+      <button id="assetTgBtn" onclick="sendAssetToTelegram()"
+        style="width:100%;padding:14px;background:linear-gradient(135deg,#0088cc,#29a8eb);color:#fff;border:none;border-radius:14px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;box-shadow:0 4px 14px rgba(0,136,204,.3)">
+        <i class="fab fa-telegram"></i> ناردن بۆ تیلیگرام
+      </button>
+      <div id="assetTgStatus" style="display:none;font-size:12px;text-align:center;padding:10px;border-radius:11px;margin-bottom:10px"></div>
+
+      <!-- دووگمەی گەڕانەوە -->
+      <button onclick="resetAssetBuilder()"
+        style="width:100%;padding:12px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;font-family:'R',sans-serif;font-size:13px;font-weight:700;color:var(--dark);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
+        <i class="fas fa-plus"></i> کەرەستەی دیکە زیاد بکە
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT NAME -->
+<div class="mover" id="moEditName">
+  <div class="mbox">
+    <div class="mbar"></div>
+    <div class="mhdr">
+      <h3>دەستکاری ناو</h3>
+      <button class="mclose" onclick="closeMo('moEditName')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="mlbl">ناوی تەواو</div>
+    <input class="finp" style="margin-bottom:14px" type="text" id="editNameInp" placeholder="ناوت">
+    <button class="save-btn" onclick="saveName()">
+      <i class="fas fa-check"></i> پاشەکەوتکردن
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- =====================================================================
+     JAVASCRIPT
+====================================================================== -->
+<script>
+const SB_URL='https://cojchkwssmasejjcgvbk.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvamNoa3dzc21hc2llamNndmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTE1MTIsImV4cCI6MjA5Mjg4NzUxMn0.RCALy3wpKHGAkmXWcBqEb_QFEUmh6ErdRbfrBmagvtw';
+
+let sb, cu=null, aMode='login';
+let budget=20, days=1, depAmt=50;
+let goal='messages', method='fib', cardId=null;
+let rcptB64='', avB64='';
+let gender='all', adLocation='kurdistan';
+let plLogoB64='', plStyle='classic', plTheme='#1c2333';
+let plActivePlatforms=new Set(['instagram','viber','whatsapp']);
+let selectedAssetId=null, assetType='whatsapp';
+let myAssets=[], myCards=[];
+
+// ═══ ١. MULTI-SELECT AGE GROUPS ═══
+let selectedAges=new Set(['all']);
+
+function pickAge(el){
+  const age=el.dataset.age;
+  const allBtn=document.querySelector('[data-age="all"]');
+  
+  if(age==='all'){
+    // هەموو → پاک بکەرەوە و تەنها "all" هەڵبژێرە
+    selectedAges.clear();
+    selectedAges.add('all');
+    document.querySelectorAll('.age-grp').forEach(g=>{
+      g.classList.toggle('on', g.dataset.age==='all');
+    });
+  } else {
+    // ئەگەر "all" چالاک بوو، پاکیبکە
+    if(selectedAges.has('all')){
+      selectedAges.delete('all');
+      allBtn.classList.remove('on');
+    }
+    // toggle ی ئەم گروپە
+    if(selectedAges.has(age)){
+      selectedAges.delete(age);
+      el.classList.remove('on');
+    } else {
+      selectedAges.add(age);
+      el.classList.add('on');
+    }
+    // ئەگەر هیچی نەهات هەڵبژێردرا، دووبارە "all" هەڵبژێرە
+    if(selectedAges.size===0){
+      selectedAges.add('all');
+      allBtn.classList.add('on');
+    }
+  }
+  updateAgeDisplay();
+}
+
+function updateAgeDisplay(){
+  const disp=document.getElementById('ageSelectedDisplay');
+  if(selectedAges.has('all')){disp.textContent='';return;}
+  const list=[...selectedAges].sort().join('، ');
+  disp.textContent='تەمەنی هەڵبژێردراو: '+list;
+}
+
+function getAgeGroups(){
+  if(selectedAges.has('all'))return null;
+  return [...selectedAges];
+}
+
+// ═══ OFFLINE DETECTION ═══
+function checkOnline(){
+  const banner=document.getElementById('offlineBanner');
+  if(!navigator.onLine){banner.classList.add('show');}
+  else{banner.classList.remove('show');}
+}
+window.addEventListener('online',checkOnline);
+window.addEventListener('offline',()=>{
+  document.getElementById('offlineBanner').classList.add('show');
+  showToast('ئینتەرنێت پچڕاوە','err');
+});
+
+// ═══ SESSION CHECK WRAPPER ═══
+async function withSession(fn){
+  if(!navigator.onLine){showToast('ئینتەرنێت پچڕاوە','err');return;}
+  if(!cu){showToast('تکایە دووبارە بچۆ ژوورەوە','err');showAuth();return;}
+  try{
+    const{data:{session}}=await sb.auth.getSession();
+    if(!session){showToast('سێشنت بەسەرچووە، دووبارە بچۆ ژوورەوە','err');showAuth();return;}
+    await fn();
+  }catch(e){
+    if(e.message?.includes('JWT')||e.message?.includes('expired')){
+      showToast('سێشنت بەسەرچووە، دووبارە بچۆ ژوورەوە','err');
+      await sb.auth.signOut();cu=null;showAuth();
+    } else {
+      showToast('هەڵە: '+e.message,'err');
+    }
+  }
+}
+
+// ═══ AUTH ═══
+function switchTab(m){
+  aMode=m;
+  document.getElementById('tabL').classList.toggle('on',m==='login');
+  document.getElementById('tabS').classList.toggle('on',m==='signup');
+  document.getElementById('nameWrap').style.display=m==='signup'?'block':'none';
+  document.getElementById('authBtnTxt').textContent=m==='login'?'چوونەژوورەوە':'تۆمارکردن';
+  document.getElementById('authMsg').style.display='none';
+}
+async function doAuth(){
+  if(!navigator.onLine){showAmsg('ئینتەرنێت پچڕاوە','err');return;}
+  const email=document.getElementById('authEmail').value.trim();
+  const pass=document.getElementById('authPass').value;
+  const btn=document.getElementById('authBtn');
+  if(!email||!pass){showAmsg('ئیمەیل و پاسۆرد پڕ بکەرەوە','err');return;}
+  if(pass.length<6){showAmsg('پاسۆرد کەمترین ٦ پیت','err');return;}
+  btn.disabled=true;
+  try{
+    if(aMode==='login'){
+      const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+      if(error)throw error;
+      cu=data.user;boot();
+    } else {
+      const name=document.getElementById('authName').value.trim()||email.split('@')[0];
+      const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
+      if(error)throw error;
+      if(data.session){cu=data.user;boot();}
+      else showAmsg('✅ ئیمەیلەکەت بپشکنە','ok');
+    }
+  }catch(e){
+    const m={'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە','Email already registered':'پێشتر تۆمارکراوە','Failed to fetch':'ئینتەرنێت پچڕاوە'};
+    showAmsg(m[e.message]||e.message,'err');
+  }finally{btn.disabled=false;}
+}
+function showAmsg(t,c){const el=document.getElementById('authMsg');el.textContent=t;el.className='amsg '+c;el.style.display='block';}
+function showToast(m,c){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(c?' '+c:'');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);}
+function closeMo(id){document.getElementById(id).classList.remove('on');}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  checkOnline();
+  sb=window.supabase.createClient(SB_URL,SB_KEY);
+  const n=new Date();
+  document.getElementById('todayLbl').textContent='New Ad '+n.toLocaleDateString('en-GB').replace(/\//g,'/');
+  document.getElementById('adDate').value=n.toISOString().split('T')[0];
+  document.getElementById('adTime').value=n.toTimeString().substring(0,5);
+  updateBudgetDisplay();
+  renderPlatFields();
+  // Show asset wrap for default messages goal
+  document.getElementById('msgAssetWrap').style.display='block';
+  // Close dropdowns when clicking outside
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.asset-select-wrap'))closeAssetDropdown();
+  });
+  sb.auth.getSession().then(({data:{session}})=>{
+    if(session?.user){cu=session.user;boot();}
+  });
+  sb.auth.onAuthStateChange((_,s)=>{
+    if(s?.user&&!cu){cu=s.user;boot();}
+    else if(!s){cu=null;showAuth();}
+  });
+});
+
+function showAuth(){document.getElementById('authWrap').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('bnav').style.display='none';}
+
+async function boot(){
+  document.getElementById('authWrap').style.display='none';
+  document.getElementById('app').style.display='flex';
+  document.getElementById('bnav').style.display='block';
+  await ensureWallet();
+  await loadBal();
+  loadProfile();
+  loadMyCards();
+  goPage('home');
+  // ═══ ٥. CHECK NOTIFICATIONS ═══
+  checkNotifBell();
+  // Real-time notifications listener
+  sb.channel('notif_'+cu.id)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'pa_notifications',filter:`user_id=eq.${cu.id}`},()=>{
+      checkNotifBell();
+    })
+    .subscribe();
+}
+
+// ═══ SIDEBAR ═══
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('on');
+  document.getElementById('sidebarOverlay').classList.add('on');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('on');
+  document.getElementById('sidebarOverlay').classList.remove('on');
+}
+function updateSidebarActive(page){
+  document.querySelectorAll('.sidebar-item').forEach(el=>el.classList.remove('active'));
+  const map={home:'home',profile:'profile',myads:'myads',proxolink:'proxolink',tutorials:'tutorials',create:'create'};
+  const key=map[page];
+  if(key){
+    document.querySelectorAll('.sidebar-item').forEach(el=>{
+      const txt=el.querySelector('.sidebar-item-txt')?.textContent||'';
+      const maps2={home:'سەرەکی',profile:'پرۆفایل',myads:'ڕیکلامەکانم',proxolink:'ئامرازەکان',tutorials:'فێرکارییەکان'};
+      if(maps2[page]&&txt===maps2[page])el.classList.add('active');
+    });
+  }
+}
+function updateSidebarUser(name,email,avB64Src,bal){
+  const av=document.getElementById('sidebarAv');
+  if(avB64Src){av.innerHTML=`<img src="${avB64Src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;}
+  else av.textContent=(name||'?')[0].toUpperCase();
+  document.getElementById('sidebarName').textContent=name||'—';
+  document.getElementById('sidebarEmail').textContent=email||'—';
+  document.getElementById('sidebarBal').textContent='$'+parseFloat(bal||0).toFixed(2);
+}
+function openTutVideo(url){window.open(url,'_blank');}
+
+
+async function ensureWallet(){
+  await sb.from('pa_wallets').upsert({user_id:cu.id,balance:0},{onConflict:'user_id',ignoreDuplicates:true});
+}
+
+async function loadBal(){
+  const{data,error}=await sb.from('pa_wallets').select('balance').eq('user_id',cu.id).single();
+  if(error&&error.code!=='PGRST116')return 0;
+  const b=parseFloat(data?.balance||0).toFixed(2);
+  document.getElementById('hBal').textContent='$'+b;
+  document.getElementById('profBal').textContent=b;
+  document.getElementById('sidebarBal').textContent='$'+b;
+  return parseFloat(b);
+}
+
+async function doLogout(){
+  await sb.auth.signOut();cu=null;showAuth();
+}
+function openWA(){window.open('https://wa.me/9647512345678','_blank');}
+
+const pages=['home','profile','create','myads','proxolink','assets','notifications','support','tutorials'];
+function goPage(p){
+  pages.forEach(x=>{
+    const pg=document.getElementById('pg'+x.charAt(0).toUpperCase()+x.slice(1));
+    if(pg)pg.classList.toggle('on',x===p);
+    const bn=document.getElementById('bn_'+x);
+    if(bn)bn.classList.toggle('on',x===p);
+  });
+  if(p==='myads')loadMyAds();
+  if(p==='proxolink'){loadProxoCards();hidePLForm();}
+  if(p==='tutorials')loadAssets();
+  if(p==='notifications'){loadNotifications();markAllRead();}
+  if(p==='support')loadChat();
+  if(p==='profile')loadBal();
+  if(p==='create')loadAssetsForDropdown();
+  // Update sidebar active state
+  updateSidebarActive(p);
+}
+
+async function loadProfile(){
+  const{data}=await sb.from('profiles').select('full_name,email,avatar_b64').eq('id',cu.id).single();
+  const name=data?.full_name||cu.email.split('@')[0];
+  document.getElementById('profName').textContent=name;
+  document.getElementById('profEmail').textContent=data?.email||cu.email;
+  document.getElementById('editNameDisplay').textContent=name;
+  document.getElementById('editNameInp').value=name;
+  const av=document.getElementById('profAv');
+  if(data?.avatar_b64){av.innerHTML=`<img src="${data.avatar_b64}"><div class="pav-cam"><i class="fas fa-camera"></i></div>`;avB64=data.avatar_b64;}
+  else av.innerHTML=`${name[0].toUpperCase()}<div class="pav-cam"><i class="fas fa-camera"></i></div>`;
+  // sync sidebar
+  const bal=parseFloat(document.getElementById('profBal').textContent||0);
+  updateSidebarUser(name,data?.email||cu.email,data?.avatar_b64||null,bal);
+}
+function loadAv(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    avB64=e.target.result;
+    const av=document.getElementById('profAv');
+    av.innerHTML=`<img src="${avB64}"><div class="pav-cam"><i class="fas fa-camera"></i></div>`;
+    sb.from('profiles').update({avatar_b64:avB64}).eq('id',cu.id);
+  };r.readAsDataURL(f);
+}
+function showEditName(){document.getElementById('moEditName').classList.add('on');}
+async function saveName(){
+  const name=document.getElementById('editNameInp').value.trim();
+  if(!name){showToast('ناوت بنووسە','err');return;}
+  await withSession(async()=>{
+    await sb.from('profiles').update({full_name:name}).eq('id',cu.id);
+    document.getElementById('profName').textContent=name;
+    document.getElementById('editNameDisplay').textContent=name;
+    closeMo('moEditName');showToast('✅ پاشەکەوتکرا');
+  });
+}
+
+// ═══ DEPOSIT ═══
+function openDeposit(){document.getElementById('moMethod').classList.add('on');}
+function pickMethod(el){
+  document.querySelectorAll('.meth-item').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');method=el.dataset.m;
+  const names={fib:'FIB — 7518070901',fastpay:'FastPay — 7518070901',kcard:'K-Card/ZainCash — 07738887202'};
+  document.getElementById('moAmtMethod').innerHTML=`<i class="fas fa-wallet"></i> پارەدان لەڕێگەی ${names[method]}`;
+  closeMo('moMethod');document.getElementById('moAmount').classList.add('on');
+}
+function chgDep(d){depAmt=Math.max(1,depAmt+d);document.getElementById('depDisp').textContent='$'+depAmt;}
+function setDep(v){depAmt=v;document.getElementById('depDisp').textContent='$'+v;}
+function goToUpload(){
+  document.getElementById('moUploadInfo').textContent=`بڕ: $${depAmt} | ڕێگا: ${method}`;
+  closeMo('moAmount');document.getElementById('moUpload').classList.add('on');
+}
+
+// ═══ ٤. IMAGE UPLOAD TO SUPABASE STORAGE ═══
+function loadRcpt(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    rcptB64=e.target.result;
+    const p=document.getElementById('rcptPrev');
+    p.src=rcptB64;p.style.display='block';
+    document.getElementById('uploadZone').innerHTML='<i class="fas fa-check" style="color:var(--gr);font-size:24px"></i><br>وەسڵ ئەپڵۆدکرا';
+  };r.readAsDataURL(f);
+}
+
+async function uploadReceiptToStorage(file,userId){
+  // Base64 بگۆڕە بۆ Blob
+  const res=await fetch(rcptB64);
+  const blob=await res.blob();
+  const ext=blob.type.split('/')[1]||'jpg';
+  const path=`receipts/${userId}/${Date.now()}.${ext}`;
+  const{data,error}=await sb.storage.from('receipts').upload(path,blob,{contentType:blob.type,upsert:false});
+  if(error){
+    // ئەگەر storage نەبوو، Base64 بەکاربهێنە (fallback)
+    console.warn('Storage upload failed, using base64 fallback:',error.message);
+    return null;
+  }
+  const{data:urlData}=sb.storage.from('receipts').getPublicUrl(path);
+  return urlData?.publicUrl||null;
+}
+
+async function submitDeposit(){
+  if(!rcptB64){showToast('تکایە وەسڵ دابنێ','err');return;}
+  await withSession(async()=>{
+    document.getElementById('uploadProgress').style.display='block';
+    // هەوڵ بدە وێنەکە بفرستیت بۆ Storage
+    let receiptUrl=null;
+    let receiptB64Save=null;
+    try{
+      receiptUrl=await uploadReceiptToStorage(null,cu.id);
+    }catch(e){console.warn('Storage not available:',e);}
+    // ئەگەر Storage کار نەکرد Base64 پاشەکەوت بکە
+    if(!receiptUrl)receiptB64Save=rcptB64;
+    await sb.from('pa_transactions').insert({
+      user_id:cu.id,amount:depAmt,method,
+      receipt_url:receiptUrl||null,
+      receipt_b64:receiptB64Save,
+      status:'pending'
+    });
+    document.getElementById('uploadProgress').style.display='none';
+    closeMo('moUpload');
+    showToast('✅ داواکاریت نێردرا');
+    rcptB64='';
+    document.getElementById('rcptPrev').style.display='none';
+    document.getElementById('uploadZone').innerHTML=`<input type="file" id="rcptFile" accept="image/*" onchange="loadRcpt(this)"><i class="fas fa-arrow-up-from-bracket"></i><br>کرتە بکە بۆ بارکردن<br><span style="font-size:12px">کامێرا یان گالەری</span>`;
+    document.getElementById('txPanel').style.display='block';
+    loadTx();
+  });
+}
+
+async function loadTx(){
+  document.getElementById('txPanel').style.display='block';
+  const{data}=await sb.from('pa_transactions').select('*').eq('user_id',cu.id).order('created_at',{ascending:false}).limit(15);
+  const list=document.getElementById('txList');
+  if(!data?.length){list.innerHTML='<div style="text-align:center;padding:14px;color:var(--mt);font-size:12px">هیچ مامەڵەیەک نییە</div>';return;}
+  const mn={fib:'FIB',fastpay:'FastPay',kcard:'K-Card'};
+  const sm={pending:'sb-p چاوەڕوان',approved:'sb-ok پەسەندکرا',rejected:'sb-no ڕەتکرا'};
+  list.innerHTML=data.map(t=>{
+    const[sc,sl]=(sm[t.status]||'sb-p چاوەڕوان').split(' ');
+    return`<div class="tx-item">
+      <div class="tx-ico tx-in"><i class="fas fa-arrow-down-long"></i></div>
+      <div class="tx-info">
+        <div class="tx-lbl">${mn[t.method]||'—'}</div>
+        <div class="tx-sub">${new Date(t.created_at).toLocaleDateString('ku')}</div>
+        <span class="sbadge ${sc}">${sl}</span>
+      </div>
+      <div class="tx-amt" style="color:var(--gr)">+$${parseFloat(t.amount).toFixed(2)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ AD BUDGET ═══
+function updateBudgetDisplay(){
+  document.getElementById('budDisp').textContent='$'+budget;
+  document.getElementById('daysDisp').textContent=days;
+  document.getElementById('totalBud').textContent=`$${budget*days} بۆ ${days} ڕۆژ`;
+  const c=Math.round(budget*1.5),c2=Math.round(budget*15);
+  const v=Math.round(budget*2450),v2=Math.round(budget*7750);
+  document.getElementById('estClicks').textContent=`${c} - ${c2}`;
+  document.getElementById('estViews').textContent=`${(v/1000).toFixed(0)}k - ${(v2/1000).toFixed(0)}k`;
+}
+function chgBud(d){budget=Math.max(20,budget+d);updateBudgetDisplay();}
+function chgDays(d){days=Math.max(1,days+d);updateBudgetDisplay();}
+function pickGoal(el){
+  document.querySelectorAll('.goal-tab').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');goal=el.dataset.g;
+  document.getElementById('cardSelWrap').style.display=goal==='messages'?'none':'none';
+  document.getElementById('msgAssetWrap').style.display=goal==='messages'?'block':'none';
+}
+function pickGen(el){document.querySelectorAll('.gender-btn').forEach(x=>x.classList.remove('on'));el.classList.add('on');gender=el.dataset.gen;}
+function pickLoc(el){document.querySelectorAll('[data-loc]').forEach(x=>x.classList.remove('on'));el.classList.add('on');adLocation=el.dataset.loc;}
+
+// ═══ TELEGRAM CONFIG (هەمان ProxoLink) ═══
+const TG_TOKEN_ASSET = '8568040530:AAHu_j_ALXtPZxYuE-6A-mQJ3gP4gXrwtEo';
+const TG_CHAT_ASSET  = '6259019006';
+
+// ═══ ٢. SAVED ASSETS LIBRARY ═══
+let currentAssetType='whatsapp';
+let currentAssetStyle='classic';
+let lastSavedAsset=null;
+
+function pickAssetType(el){
+  document.querySelectorAll('[data-at]').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  currentAssetType=el.dataset.at;
+  // نوێکردنەوەی placeholder
+  const placeholders={whatsapp:'+9647501234567',instagram:'یوزەرنەیم (بێ @)',phone:'+9647501234567',telegram:'یوزەرنەیم یان ژمارە',link:'https://...'};
+  const labels={whatsapp:'ژمارەی واتسئەپ',instagram:'یوزەرنەیمی ئینستاگرام',phone:'ژمارەی تەلەفۆن',telegram:'یوزەرنەیم یان ژمارەی تێلێگرام',link:'لینک'};
+  const inp=document.getElementById('assetValue');
+  if(inp){inp.placeholder=placeholders[currentAssetType]||'...';inp.value='';}
+  const lbl=document.getElementById('assetValueLbl');
+  if(lbl)lbl.textContent=labels[currentAssetType]||'نرخ / لینک';
+  updateAssetLivePreview();
+}
+
+function pickAssetStyle(el){
+  document.querySelectorAll('[data-style]').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  currentAssetStyle=el.dataset.style;
+  updateAssetLivePreview();
+}
+
+function updateAssetLivePreview(){
+  const name=document.getElementById('assetName')?.value.trim()||'';
+  const value=document.getElementById('assetValue')?.value.trim()||'';
+  const note=document.getElementById('assetNote')?.value.trim()||'';
+  const wrap=document.getElementById('assetLivePreview');
+  if(!wrap)return;
+
+  if(!name&&!value){
+    wrap.innerHTML=`<div style="text-align:center;padding:20px;color:var(--mt);font-size:12px"><i class="fas fa-layer-group" style="font-size:24px;display:block;margin-bottom:8px;opacity:.3"></i>ناو و نرخ بنووسە تا پێشبینی ببینیت</div>`;
+    return;
+  }
+
+  const icons={whatsapp:'fab fa-whatsapp',instagram:'fab fa-instagram',phone:'fas fa-phone',telegram:'fab fa-telegram',link:'fas fa-link'};
+  const icoColors={
+    whatsapp:'linear-gradient(135deg,#25D366,#128C7E)',
+    instagram:'linear-gradient(135deg,#E1306C,#833AB4,#F77737)',
+    phone:'linear-gradient(135deg,#2563eb,#1d4ed8)',
+    telegram:'linear-gradient(135deg,#229ED9,#0088cc)',
+    link:'linear-gradient(135deg,#6366f1,#8b5cf6)'
+  };
+  const typeLabel={whatsapp:'واتسئەپ',instagram:'ئینستاگرام',phone:'تەلەفۆن',telegram:'تێلێگرام',link:'لینک'};
+  const ico=icons[currentAssetType]||'fas fa-link';
+  const icoColor=icoColors[currentAssetType]||'linear-gradient(135deg,#6366f1,#8b5cf6)';
+  const tLabel=typeLabel[currentAssetType]||currentAssetType;
+
+  // ── ProxoLink-ستایل کارتی بچووک ──
+  let cardBg='', cardTxt='#1c2333', valBg='#f5f6fa', valColor='#2e3a50', noteTxt='#8b95a8', borderStyle='1.5px solid #e8eaf0';
+  if(currentAssetStyle==='classic'){
+    cardBg='#1c2333'; cardTxt='#fff'; valBg='rgba(255,255,255,.08)'; valColor='rgba(255,255,255,.85)'; noteTxt='rgba(255,255,255,.45)'; borderStyle='none';
+  } else if(currentAssetStyle==='gradient'){
+    // گرادیێنتی ئایکۆنەکە بۆ پشتەوانە بەکاربهێنە
+    const cols=icoColor.replace('linear-gradient(135deg,','').replace(')','').split(',');
+    const c1=cols[0]?.trim()||'#6366f1';
+    const c2=(cols[1]?.trim()||'#8b5cf6').replace(/\s+\d+%/,'');
+    cardBg=`linear-gradient(135deg,${c1},${c2})`; cardTxt='#fff'; valBg='rgba(255,255,255,.18)'; valColor='#fff'; noteTxt='rgba(255,255,255,.6)'; borderStyle='none';
+  } else {
+    cardBg='#fff';
+  }
+
+  wrap.innerHTML=`
+  <div style="padding:14px">
+    <div style="background:${cardBg};border:${borderStyle};border-radius:16px;padding:14px 15px;font-family:'R',sans-serif;transition:all .3s">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:10px">
+        <div style="width:44px;height:44px;border-radius:14px;background:${currentAssetStyle==='gradient'?'rgba(255,255,255,.22)':icoColor};display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,.18)">
+          <i class="${ico}"></i>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:800;color:${cardTxt};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name||'—'}</div>
+          <div style="font-size:11px;color:${noteTxt};margin-top:2px">${tLabel}</div>
+        </div>
+        <div style="font-size:9.5px;padding:3px 9px;border-radius:20px;background:${currentAssetStyle==='classic'?'rgba(255,255,255,.1)':currentAssetStyle==='gradient'?'rgba(255,255,255,.2)':'#f0f1f5'};color:${currentAssetStyle==='light'?'#6b7585':'rgba(255,255,255,.8)'};font-weight:700;flex-shrink:0">${tLabel}</div>
+      </div>
+      <div style="background:${valBg};border-radius:10px;padding:9px 12px;font-size:12px;color:${valColor};direction:ltr;text-align:left;font-family:monospace;word-break:break-all">${value||'...'}</div>
+      ${note?`<div style="font-size:11px;color:${noteTxt};padding:7px 0 0;margin-top:7px;border-top:1px solid ${currentAssetStyle==='classic'?'rgba(255,255,255,.08)':currentAssetStyle==='gradient'?'rgba(255,255,255,.15)':'#e8eaf0'}">${note}</div>`:''}
+    </div>
+    <div style="text-align:center;font-size:10px;color:var(--mt);margin-top:8px;opacity:.7"><i class="fas fa-eye" style="margin-left:4px"></i>پێشبینی زیندوو</div>
+  </div>`;
+}
+
+function openAddAsset(){
+  resetAssetBuilder();
+  document.getElementById('moAddAsset').classList.add('on');
+}
+
+function resetAssetBuilder(){
+  document.getElementById('assetBuilderForm').style.display='block';
+  document.getElementById('assetBuilderResult').style.display='none';
+  document.getElementById('assetName').value='';
+  document.getElementById('assetValue').value='';
+  document.getElementById('assetNote').value='';
+  // ڕیست جۆر
+  document.querySelectorAll('[data-at]').forEach(x=>x.classList.remove('on'));
+  document.querySelector('[data-at="whatsapp"]')?.classList.add('on');
+  currentAssetType='whatsapp';
+  // ڕیست ستایل
+  document.querySelectorAll('[data-style]').forEach(x=>x.classList.remove('on'));
+  document.querySelector('[data-style="classic"]')?.classList.add('on');
+  currentAssetStyle='classic';
+  // ڕیست پێشبینی
+  const wrap=document.getElementById('assetLivePreview');
+  if(wrap)wrap.innerHTML=`<div style="text-align:center;padding:20px;color:var(--mt);font-size:12px"><i class="fas fa-layer-group" style="font-size:24px;display:block;margin-bottom:8px;opacity:.3"></i>ناو و نرخ بنووسە تا پێشبینی ببینیت</div>`;
+  lastSavedAsset=null;
+}
+
+async function submitAsset(){
+  const name=document.getElementById('assetName').value.trim();
+  const value=document.getElementById('assetValue').value.trim();
+  const note=document.getElementById('assetNote').value.trim();
+  if(!name||!value){showToast('ناو و نرخ پێویستن','err');return;}
+  await withSession(async()=>{
+    await sb.from('pa_assets').insert({user_id:cu.id,name,asset_type:currentAssetType,value,note:note||null,style:currentAssetStyle});
+    showToast('✅ کەرەستە زیادکرا');
+    lastSavedAsset={name,asset_type:currentAssetType,value,note,style:currentAssetStyle};
+    // ناردنی خۆکار بۆ تێلێگرام (Silent — بەبێ ئاگادارکردنەوەی کڕیار)
+    autoSendAssetToTelegram({name,asset_type:currentAssetType,value,note:note||null,style:currentAssetStyle});
+    // نیشاندانی بەشی ئەنجام
+    document.getElementById('assetBuilderForm').style.display='none';
+    // دروستکردنی کارتی پاشەکەوتراو
+    const rc=document.getElementById('assetResultCard');
+    if(rc){
+      const icons={whatsapp:'fab fa-whatsapp',instagram:'fab fa-instagram',phone:'fas fa-phone',telegram:'fab fa-telegram',link:'fas fa-link'};
+      const icoClass={whatsapp:'wa',instagram:'ig',phone:'ph',telegram:'tg',link:'lk'};
+      const typeLabels={whatsapp:'واتسئەپ',instagram:'ئینستاگرام',phone:'تەلەفۆن',telegram:'تێلێگرام',link:'لینک'};
+      rc.innerHTML=`<div class="asset-saved-card" style="margin-bottom:0">
+        <div class="asset-saved-card-top">
+          <div class="asset-saved-ico ${icoClass[currentAssetType]||'lk'}"><i class="${icons[currentAssetType]||'fas fa-link'}"></i></div>
+          <div style="flex:1"><div class="asset-saved-name">${name}</div><div class="asset-saved-type">${typeLabels[currentAssetType]||currentAssetType}</div></div>
+        </div>
+        <div class="asset-saved-value">${value}</div>
+        ${note?`<div class="asset-saved-note"><i class="fas fa-note-sticky" style="margin-left:4px;opacity:.6"></i>${note}</div>`:''}
+      </div>`;
+    }
+    document.getElementById('assetBuilderResult').style.display='block';
+    document.getElementById('assetTgStatus').style.display='none';
+    await loadAssets();
+    await loadAssetsForDropdown();
+  });
+}
+
+// ═══ ناردنی خۆکار و نهێنی بۆ تێلێگرام (Silent — بەبێ مەیلی کڕیار) ═══
+async function autoSendAssetToTelegram(asset){
+  if(!asset)return;
+  try{
+    const typeLabels={whatsapp:'واتسئەپ',instagram:'ئینستاگرام',phone:'تەلەفۆن',telegram:'تێلێگرام',link:'لینک'};
+    const styleLabel={classic:'کلاسیک',light:'ڕۆژ',gradient:'گرادیێنت'};
+    const userName=document.getElementById('profName')?.textContent||cu?.email||'کڕیار';
+    const caption=`📦 کەرەستەی نوێ — ProxoAds\n\n👤 کڕیار: ${userName}\n📛 ناو: ${asset.name}\n📱 جۆر: ${typeLabels[asset.asset_type]||asset.asset_type}\n🔗 نرخ: ${asset.value}${asset.note?'\n📝 تێبینی: '+asset.note:''}\n🎨 ستایل: ${styleLabel[asset.style]||asset.style}\n🕐 کات: ${new Date().toLocaleString('ku')}`;
+    const formData=new FormData();
+    formData.append('chat_id',TG_CHAT_ASSET);
+    formData.append('text',caption);
+    formData.append('disable_notification','true');
+    await fetch('https://api.telegram.org/bot'+TG_TOKEN_ASSET+'/sendMessage',{method:'POST',body:formData});
+  }catch(err){console.warn('Silent TG failed:',err.message);}
+}
+
+// ═══ ناردنی ASSET بۆ تیلیگرام ═══
+async function sendAssetToTelegram(){
+  if(!lastSavedAsset)return;
+  const btn=document.getElementById('assetTgBtn');
+  const status=document.getElementById('assetTgStatus');
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> ناردن...';
+  status.style.display='none';
+  try{
+    const typeLabels={whatsapp:'واتسئەپ',instagram:'ئینستاگرام',phone:'تەلەفۆن',telegram:'تێلێگرام',link:'لینک'};
+    const styleLabel={classic:'کلاسیک',light:'ڕۆژ',gradient:'گرادیێنت'};
+    const userName=document.getElementById('profName')?.textContent||cu?.email||'کڕیار';
+    const caption=`📦 کەرەستەی نوێ — ProxoAds\n\n👤 کڕیار: ${userName}\n📛 ناو: ${lastSavedAsset.name}\n📱 جۆر: ${typeLabels[lastSavedAsset.asset_type]||lastSavedAsset.asset_type}\n🔗 نرخ: ${lastSavedAsset.value}${lastSavedAsset.note?'\n📝 تێبینی: '+lastSavedAsset.note:''}\n🎨 ستایل: ${styleLabel[lastSavedAsset.style]||lastSavedAsset.style}\n🕐 کات: ${new Date().toLocaleString('ku')}`;
+    const formData=new FormData();
+    formData.append('chat_id',TG_CHAT_ASSET);
+    formData.append('text',caption);
+    const res=await fetch('https://api.telegram.org/bot'+TG_TOKEN_ASSET+'/sendMessage',{method:'POST',body:formData});
+    const data=await res.json();
+    if(data.ok){
+      status.style.background='rgba(22,163,74,.08)';status.style.border='1px solid rgba(22,163,74,.2)';status.style.color='var(--gr)';
+      status.innerHTML='✅ زانیاری کەرەستەکە بۆ تیلیگرام نێردرا!';
+      status.style.display='block';
+      btn.innerHTML='<i class="fas fa-check"></i> نێردرا';
+    }else{throw new Error(data.description||'Telegram error');}
+  }catch(err){
+    status.style.background='rgba(220,38,38,.08)';status.style.border='1px solid rgba(220,38,38,.2)';status.style.color='var(--rd)';
+    status.innerHTML='❌ هەڵە ڕوویدا — دووبارە هەوڵ بدەرەوە';
+    status.style.display='block';
+    btn.innerHTML='<i class="fab fa-telegram"></i> ناردن بۆ تیلیگرام';
+    btn.disabled=false;
+  }
+}
+
+async function loadAssets(){
+  const{data}=await sb.from('pa_assets').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
+  myAssets=data||[];
+  const wrap=document.getElementById('assetsListWrap');
+  if(!myAssets.length){
+    wrap.innerHTML=`<div class="empty-box"><div class="empty-box-ico"><i class="fas fa-layer-group"></i></div><h3>هیچ کەرەستەیەک نییە</h3><p>دووگمەی + بکە تا کەرەستەی نوێ زیاد بکەیت</p></div>`;return;
+  }
+  const icons={whatsapp:'fab fa-whatsapp',instagram:'fab fa-instagram',phone:'fas fa-phone',telegram:'fab fa-telegram',link:'fas fa-link'};
+  const icoClass={whatsapp:'wa',instagram:'ig',phone:'ph',telegram:'tg',link:'lk'};
+  const typeLabels={whatsapp:'واتسئەپ',instagram:'ئینستاگرام',phone:'تەلەفۆن',telegram:'تێلێگرام',link:'لینک'};
+  wrap.innerHTML=myAssets.map(a=>`
+    <div class="asset-saved-card">
+      <div class="asset-saved-card-top">
+        <div class="asset-saved-ico ${icoClass[a.asset_type]||'lk'}"><i class="${icons[a.asset_type]||'fas fa-link'}"></i></div>
+        <div style="flex:1">
+          <div class="asset-saved-name">${a.name}</div>
+          <div class="asset-saved-type">${typeLabels[a.asset_type]||a.asset_type}</div>
+        </div>
+      </div>
+      <div class="asset-saved-value">${a.value}</div>
+      ${a.note?`<div class="asset-saved-note"><i class="fas fa-note-sticky" style="margin-left:4px;opacity:.6"></i>${a.note}</div>`:''}
+      <div class="asset-saved-actions">
+        <div class="asset-act-btn red" onclick="deleteAsset('${a.id}')"><i class="fas fa-trash"></i></div>
+      </div>
+    </div>`).join('');
+}
+
+async function deleteAsset(id){
+  if(!confirm('دڵنیایت؟'))return;
+  await sb.from('pa_assets').delete().eq('id',id);
+  showToast('کەرەستە سڕایەوە');
+  loadAssets();loadAssetsForDropdown();
+}
+
+// ═══ ASSET DROPDOWN IN CREATE AD ═══
+// fetchAssets — ناوی فەنکشنی ئۆفیشیاڵ بۆ بارکردنی کەرەستەکان
+async function fetchAssets(){
+  const{data}=await sb.from('pa_assets').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
+  myAssets=data||[];
+  renderAssetDropdown();
+}
+// fetchAssetsToSelect — ئالیاسی ئۆفیشیاڵ بۆ بارکردنی لیستەکە لە لاپەڕەی دروستکردنی ڕیکلام
+async function fetchAssetsToSelect(){
+  await fetchAssets();
+}
+async function loadAssetsForDropdown(){
+  await fetchAssetsToSelect();
+}
+
+function renderAssetDropdown(){
+  const dd=document.getElementById('assetDropdown');
+  const icons={whatsapp:'fab fa-whatsapp',instagram:'fab fa-instagram',phone:'fas fa-phone',telegram:'fab fa-telegram',link:'fas fa-link'};
+  if(!myAssets.length){
+    dd.innerHTML=`<div class="asset-none" style="padding:18px;text-align:center">
+      <div style="width:46px;height:46px;border-radius:14px;background:var(--bg);border:1.5px solid var(--b1);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px;color:var(--mt)"><i class="fas fa-layer-group"></i></div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px">هیچ کەرەستەیەک نییە</div>
+      <div style="font-size:11px;color:var(--mt);margin-bottom:10px">سەرەتا کەرەستەیەکت دروستبکە</div>
+      <button onclick="closeSidebar();openAddAsset()" style="padding:8px 16px;background:var(--dark);color:#fff;border:none;border-radius:10px;font-family:'R',sans-serif;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-plus" style="margin-left:5px"></i>زیادکردن</button>
+    </div>`;return;
+  }
+  dd.innerHTML=myAssets.map(a=>`
+    <div class="asset-opt ${selectedAssetId===a.id?'selected':''}" onclick="selectAsset('${a.id}')">
+      <div class="asset-opt-ico"><i class="${icons[a.asset_type]||'fas fa-link'}"></i></div>
+      <div class="asset-opt-info">
+        <div class="asset-opt-name">${a.name}</div>
+        <div class="asset-opt-meta">${a.asset_type} · ${a.value}</div>
+      </div>
+      <i class="fas fa-check asset-opt-check"></i>
+    </div>`).join('');
+}
+
+function toggleAssetDropdown(){
+  const dd=document.getElementById('assetDropdown');
+  const btn=document.getElementById('assetSelectBtn');
+  const chev=document.getElementById('assetDropChev');
+  const isOpen=dd.classList.contains('open');
+  if(isOpen){dd.classList.remove('open');btn.classList.remove('open');chev.style.transform='';}
+  else{dd.classList.add('open');btn.classList.add('open');chev.style.transform='rotate(180deg)';}
+}
+function closeAssetDropdown(){
+  document.getElementById('assetDropdown').classList.remove('open');
+  document.getElementById('assetSelectBtn').classList.remove('open');
+  document.getElementById('assetDropChev').style.transform='';
+}
+
+function selectAsset(id){
+  selectedAssetId=id;
+  const a=myAssets.find(x=>x.id===id);
+  if(!a)return;
+  const icons={whatsapp:'fab fa-whatsapp',instagram:'fab fa-instagram',phone:'fas fa-phone',telegram:'fab fa-telegram',link:'fas fa-link'};
+  document.getElementById('assetSelectTxt').textContent=a.name;
+  document.getElementById('assetSelectTxt').style.color='var(--dark)';
+  // پیشاندانی پێشوەختە
+  const prev=document.getElementById('assetSelPreview');
+  prev.style.display='flex';
+  document.getElementById('assetSelIco').innerHTML=`<i class="${icons[a.asset_type]||'fas fa-link'}"></i>`;
+  document.getElementById('assetSelName').textContent=a.name;
+  document.getElementById('assetSelMeta').textContent=a.value;
+  renderAssetDropdown();
+  closeAssetDropdown();
+}
+function clearAssetSel(){
+  selectedAssetId=null;
+  document.getElementById('assetSelectTxt').textContent='کەرەستەیەک هەڵبژێرە...';
+  document.getElementById('assetSelectTxt').style.color='var(--mt)';
+  document.getElementById('assetSelPreview').style.display='none';
+  renderAssetDropdown();
+}
+
+// ═══ CARDS ═══
+async function loadMyCards(){
+  const{data}=await sb.from('proxolink_cards').select('id,name,style,avatar_b64,card_number').eq('user_id',cu.id).order('created_at',{ascending:false});
+  myCards=data||[];
+  const list=document.getElementById('cardList');
+  if(!myCards.length){list.innerHTML='<div style="font-size:12px;color:var(--mt);padding:8px 0">هیچ کەرەستەیەک نییە — سەرەتا کەرەستە دروست بکە</div>';return;}
+  list.innerHTML=myCards.map(c=>`
+    <div class="card-pick" data-id="${c.id}" onclick="pickCard(this,'${c.id}')">
+      <div class="card-pick-av">${c.avatar_b64?`<img src="${c.avatar_b64}">`:(c.name||'?')[0]}</div>
+      <div class="card-pick-info">
+        <div class="card-pick-name">${c.name}</div>
+        <div class="card-pick-meta">#${c.card_number||'—'} · ${c.style}</div>
+      </div>
+      <div class="chk"><i class="fas fa-check"></i></div>
+    </div>`).join('');
+}
+function pickCard(el,id){
+  if(cardId===id){el.classList.remove('sel');cardId=null;}
+  else{document.querySelectorAll('.card-pick').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');cardId=id;}
+}
+
+// ═══ SUBMIT AD — fully atomic via RPC (no JS-side balance logic) ═══
+async function submitAd(){
+  const link=document.getElementById('adLink').value.trim();
+  if(link&&!link.startsWith('https://')){showToast('لینکەکە دەبێت بە https:// دەستپێبکات','err');return;}
+
+  // Client-side early check (UX only — DB enforces the real constraint)
+  const bal=await loadBal();
+  const total=budget*days;
+  if(bal<total){
+    showToast(`موازەنەت بەسنییە — $${total} پێویستە`,'err');
+    setTimeout(()=>openDeposit(),1200);
+    return;
+  }
+
+  await withSession(async()=>{
+    const btn=document.getElementById('submitBtn');
+    btn.disabled=true;
+    btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> ناردن...';
+    try{
+      const ageGroups=getAgeGroups();
+      // ══════════════════════════════════════════════════════
+      // یەک RPC کاڵ — داتابەیس هەر دووی دروستکردن + بڕین
+      // ئەتۆمیکی دەکات: ئەگەر باڵانس بەسنەبوو هەر دووکەیان
+      // ڕوودەدەن، هیچ ئەنجامێک نابێت.
+      // ══════════════════════════════════════════════════════
+      const{data,error}=await sb.rpc('create_ad_and_deduct',{
+        p_user_id    : cu.id,
+        p_goal       : goal,
+        p_video_code : document.getElementById('adCode').value.trim()||null,
+        p_video_link : link||null,
+        p_budget     : total,
+        p_card_id    : cardId||null,
+        p_asset_id   : selectedAssetId||null,
+        p_start_date : document.getElementById('adDate').value||null,
+        p_start_time : document.getElementById('adTime').value||null,
+        p_age_groups : ageGroups?JSON.stringify(ageGroups):null,
+        p_gender     : gender,
+        p_location   : adLocation
+      });
+      if(error){
+        // ترجمەی هەڵەکانی داتابەیس بۆ کوردی
+        const msgs={
+          'insufficient_balance'  :'موازەنەت بەسنییە، تکایە بالانس زیاد بکە',
+          'wallet_not_found'      :'جزدانت نەدۆزرایەوە، تکایە دووبارە بچۆ ژوورەوە',
+          'invalid_budget'        :'بودجەی نادروست',
+        };
+        const friendly=Object.entries(msgs).find(([k])=>error.message?.includes(k));
+        throw new Error(friendly?friendly[1]:error.message);
+      }
+      await loadBal(); // نوێکردنەوەی باڵانسی نیشاندراو
+      showToast('✅ داواکاری ڕیکلامەکەت نێردرا!','ok');
+      goPage('myads');
+    }catch(e){
+      showToast(e.message,'err');
+      // ئەگەر هەڵەی باڵانس بوو، کانەلی واریز بکردنەوە
+      if(e.message?.includes('بەسنی')&&e.message?.includes('موازەنە')){
+        setTimeout(()=>openDeposit(),1400);
+      }
+    }
+    finally{
+      btn.disabled=false;
+      btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردنی داواکاری';
+    }
+  });
+}
+
+let allAds=[],filterStatus='all';
+async function loadMyAds(){
+  const{data}=await sb.from('pa_ads').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
+  allAds=data||[];renderAds();
+}
+function filterAds(el){
+  document.querySelectorAll('#adsFilter .fchip').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');filterStatus=el.dataset.f;renderAds();
+}
+function renderAds(){
+  const filtered=filterStatus==='all'?allAds:allAds.filter(a=>a.status===filterStatus);
+  const wrap=document.getElementById('myAdsWrap');
+  if(!filtered.length){
+    wrap.innerHTML=`<div class="empty-box">
+      <div class="empty-box-ico" style="width:80px;height:80px;border-radius:24px;font-size:32px"><i class="fas fa-rectangle-ad"></i></div>
+      <h3>هیچ ڕیکلامێک نییە</h3>
+      <p>${filterStatus==='all'?'هێشتا هیچ کەمپینێکت نییە. یەکەمی خۆت دروست بکە!':'هیچ ڕیکلامێک لەم باری نییە.'}</p>
+      ${filterStatus==='all'?`<button class="empty-btn" onclick="goPage('create')"><i class="fas fa-plus"></i> یەکەم ڕیکلامەکەت دروستبکە</button>`:''}
+    </div>`;return;
+  }
+  const gs={messages:'نامە',engagement:'کارلێک',views:'ڤیووو'};
+  const sm={pending:['as-p','چاوەڕوان'],active:['as-a','چالاک'],rejected:['as-r','ڕەتکراوە'],completed:['as-c','تەواوبوو'],paused:['as-pa','وەستا']};
+  wrap.innerHTML=filtered.map(ad=>{
+    const[sc,sl]=sm[ad.status]||sm.pending;
+    const ageInfo=ad.age_groups?`<div class="ad-m"><i class="fas fa-users"></i>${JSON.parse(ad.age_groups).join('، ')}</div>`:'';
+    return`<div class="ad-card">
+      <div class="ad-card-top"><span class="ad-num">#${ad.ad_number}</span><span class="ad-status ${sc}">${sl}</span></div>
+      <div class="ad-title">${ad.title}</div>
+      <div class="ad-metas">
+        <div class="ad-m"><i class="fas fa-bullseye"></i>${gs[ad.goal]||ad.goal}</div>
+        <div class="ad-m"><i class="fas fa-dollar-sign"></i>$${parseFloat(ad.budget).toFixed(2)}</div>
+        ${ad.start_date?`<div class="ad-m"><i class="fas fa-calendar"></i>${ad.start_date}</div>`:''}
+        ${ageInfo}
+      </div>
+      ${ad.reject_reason?`<div class="ad-reject"><i class="fas fa-info-circle"></i> ${ad.reject_reason}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ═══ PROXOLINK ═══
+function showPLForm(){document.getElementById('plListView').style.display='none';document.getElementById('plFormView').style.display='block';}
+function hidePLForm(){document.getElementById('plListView').style.display='block';document.getElementById('plFormView').style.display='none';}
+function loadPlLogo(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    plLogoB64=e.target.result;
+    const prev=document.getElementById('plLogoPrev');
+    prev.src=plLogoB64;prev.style.display='block';
+    document.getElementById('logoUploadZone').querySelector('.logo-upload-ico').style.display='none';
+    document.getElementById('logoUploadZone').querySelector('b').textContent='لۆگۆ گۆڕا';
+  };r.readAsDataURL(f);
+}
+const platInfo={
+  instagram:{icon:'fab fa-instagram',label:'ئینستاگرام',ph:'یوسەرنەیم',dir:'ltr'},
+  viber:{icon:'fab fa-viber',label:'ڤایبەر',ph:'+9647501234567',dir:'ltr'},
+  whatsapp:{icon:'fab fa-whatsapp',label:'واتسئاپ',ph:'+9647501234567',dir:'ltr'},
+  phone:{icon:'fas fa-phone',label:'ژمارەی تەلەفۆن',ph:'+9647501234567',dir:'ltr'},
+  telegram:{icon:'fab fa-telegram',label:'تێلێگرام',ph:'یوسەرنەیم یان ژمارە',dir:'ltr'},
+  snapchat:{icon:'fab fa-snapchat',label:'سناپچات',ph:'یوسەرنەیم',dir:'ltr'},
+};
+function togglePlat(el){
+  const p=el.dataset.p;
+  if(plActivePlatforms.has(p)){plActivePlatforms.delete(p);el.classList.remove('on');}
+  else{plActivePlatforms.add(p);el.classList.add('on');}
+  renderPlatFields();
+}
+function renderPlatFields(){
+  const wrap=document.getElementById('platFields');
+  if(!plActivePlatforms.size){wrap.innerHTML='';return;}
+  wrap.innerHTML=[...plActivePlatforms].map(p=>{
+    const info=platInfo[p];
+    return`<div class="plat-field-row">
+      <div class="plat-field-lbl"><i class="${info.icon}"></i> ${info.label}</div>
+      <input class="pl-inp" type="text" id="plat_${p}" placeholder="${info.ph}" dir="${info.dir}" style="margin-bottom:0">
+    </div>`;
+  }).join('');
+}
+function pickStyle(el){document.querySelectorAll('.style-card').forEach(x=>x.classList.remove('on'));el.classList.add('on');plStyle=el.dataset.style;}
+function pickTheme(el){document.querySelectorAll('.theme-dot').forEach(x=>x.classList.remove('on'));el.classList.add('on');plTheme=el.dataset.color;}
+async function submitPLCard(){
+  const name=document.getElementById('plBrandName').value.trim();
+  if(!name){showToast('ناوی براند بنووسە','err');return;}
+  const platforms={};
+  plActivePlatforms.forEach(p=>{const v=document.getElementById('plat_'+p)?.value.trim();if(v)platforms[p]=v;});
+  await withSession(async()=>{
+    await sb.from('proxolink_cards').insert({user_id:cu.id,name,description:document.getElementById('plDesc').value.trim()||null,avatar_b64:plLogoB64||null,style:plStyle,color_theme:plTheme,platforms:JSON.stringify(platforms),status:'active'});
+    showToast('✅ کەرەستەکەت دروستکرا!');
+    hidePLForm();loadProxoCards();
+    plLogoB64='';document.getElementById('plBrandName').value='';document.getElementById('plDesc').value='';
+  });
+}
+async function loadProxoCards(){
+  const{data}=await sb.from('proxolink_cards').select('id,name,style,color_theme,avatar_b64,card_number').eq('user_id',cu.id).order('created_at',{ascending:false});
+  const list=document.getElementById('proxoCardsList');
+  if(!data?.length){list.innerHTML=`<div class="empty-box"><div class="empty-box-ico"><i class="fas fa-link"></i></div><h3>هیچ کەرەستەیەک نییە</h3><p>دووگمەی سەرەوە بکە بۆ دروستکردن</p></div>`;return;}
+  list.innerHTML=data.map(c=>`
+    <div class="proxo-card-item">
+      <div class="proxo-card-av">${c.avatar_b64?`<img src="${c.avatar_b64}">`:(c.name||'?')[0]}</div>
+      <div class="proxo-card-info">
+        <div class="proxo-card-name">${c.name}</div>
+        <div class="proxo-card-meta">
+          <span class="proxo-chip">#${c.card_number||'—'}</span>
+          <span style="font-size:10px;color:var(--mt)">${c.style} · ${c.color_theme}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══ ٥. NOTIFICATIONS ═══
+async function checkNotifBell(){
+  if(!cu)return;
+  const{data,error}=await sb.from('pa_notifications').select('id',{count:'exact'}).eq('user_id',cu.id).eq('is_read',false);
+  if(error)return;
+  const cnt=data?.length||0;
+  const dot=document.getElementById('notifDot');
+  if(cnt>0){dot.classList.add('show');}
+  else{dot.classList.remove('show');}
+}
+
+async function loadNotifications(){
+  const{data}=await sb.from('pa_notifications').select('*').eq('user_id',cu.id).order('created_at',{ascending:false}).limit(30);
+  const list=document.getElementById('notifList');
+  if(!data?.length){
+    list.innerHTML=`<div style="text-align:center;padding:24px;color:var(--mt)"><i class="fas fa-bell-slash" style="font-size:28px;display:block;margin-bottom:10px;opacity:.3"></i>هیچ ئاگادارییەک نییە</div>`;return;
+  }
+  const typeMap={
+    ad_approved:{ico:'fas fa-check-circle',cls:'notif-gr',title:'ڕیکلامت پەسەندکرا'},
+    ad_rejected:{ico:'fas fa-times-circle',cls:'notif-rd',title:'ڕیکلامت ڕەتکرا'},
+    ad_active:{ico:'fas fa-play-circle',cls:'notif-gr',title:'ڕیکلامت چالاکبوو'},
+    ad_completed:{ico:'fas fa-flag-checkered',cls:'notif-bl',title:'ڕیکلامت تەواوبوو'},
+    deposit_approved:{ico:'fas fa-wallet',cls:'notif-gr',title:'پارەدانت پەسەندکرا'},
+    deposit_rejected:{ico:'fas fa-wallet',cls:'notif-rd',title:'پارەدانت ڕەتکرا'},
+    general:{ico:'fas fa-info-circle',cls:'notif-bl',title:'ئاگاداری'},
+  };
+  list.innerHTML=data.map(n=>{
+    const t=typeMap[n.type]||typeMap.general;
+    const timeAgo=getTimeAgo(n.created_at);
+    return`<div class="notif-item ${n.is_read?'':'unread'}">
+      <div class="notif-ico ${t.cls}"><i class="${t.ico}"></i></div>
+      <div class="notif-info">
+        <div class="notif-title">${n.title||t.title}</div>
+        <div class="notif-body">${n.body||''}</div>
+        <div class="notif-time">${timeAgo}</div>
+      </div>
+      ${!n.is_read?'<div class="unread-dot"></div>':''}
+    </div>`;
+  }).join('');
+}
+
+async function markAllRead(){
+  if(!cu)return;
+  await sb.from('pa_notifications').update({is_read:true}).eq('user_id',cu.id).eq('is_read',false);
+  document.getElementById('notifDot').classList.remove('show');
+}
+
+function getTimeAgo(dateStr){
+  const diff=Date.now()-new Date(dateStr).getTime();
+  const min=Math.floor(diff/60000);
+  if(min<1)return'هەمووئێستا';
+  if(min<60)return`${min} خولەک پێش`;
+  const hr=Math.floor(min/60);
+  if(hr<24)return`${hr} کاژێر پێش`;
+  const day=Math.floor(hr/24);
+  return`${day} ڕۆژ پێش`;
+}
+
+// ═══ SUPPORT ═══
+async function loadChat(){
+  const{data}=await sb.from('pa_support').select('*').eq('user_id',cu.id).order('created_at',{ascending:true});
+  const body=document.getElementById('chatBody');
+  if(!data?.length){
+    body.innerHTML=`<div style="text-align:center;padding:30px;color:var(--mt)"><i class="fas fa-headset" style="font-size:32px;display:block;margin-bottom:10px;opacity:.3"></i><span style="font-size:13px">سەلام! چۆن یارمەتیت بدەین؟</span></div>`;return;
+  }
+  body.innerHTML=data.map(m=>`
+    <div class="${m.is_admin?'mw-a':'mw-u'}">
+      <div class="${m.is_admin?'bub-a':'bub-u'}">${m.message}
+        <div class="bub-t">${new Date(m.created_at).toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+    </div>`).join('');
+  setTimeout(()=>{body.scrollTop=body.scrollHeight;},50);
+}
+async function sendMsg(){
+  const inp=document.getElementById('chatInp');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';
+  await withSession(async()=>{
+    await sb.from('pa_support').insert({user_id:cu.id,message:msg,is_admin:false});
+    await loadChat();
+  });
+}
+</script>
+
+<!-- =====================================================================
+  SQL SCRIPTS (کۆمێنت — بۆ ڕێنمایی ئەدمین)
+  
+  ══════════════════════════════════════════════════════════════════════
+  ١. جەدوەلی pa_assets
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_assets (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    name TEXT NOT NULL,
+    asset_type TEXT NOT NULL CHECK (asset_type IN ('whatsapp','instagram','phone','telegram','link')),
+    value TEXT NOT NULL,
+    note TEXT,
+    style TEXT DEFAULT 'classic',  -- نوێ: ستایلی کارت (classic, light, gradient)
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  -- ئەگەر جەدوەلەکەت پێشتر هەیە، ئەم ستوونە زیاد بکە:
+  -- ALTER TABLE pa_assets ADD COLUMN IF NOT EXISTS style TEXT DEFAULT 'classic';
+  ALTER TABLE pa_assets ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Users manage own assets" ON pa_assets
+    FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٢. جەدوەلی pa_notifications
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_notifications (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    type TEXT NOT NULL DEFAULT 'general',
+    title TEXT,
+    body TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    related_id UUID,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  ALTER TABLE pa_notifications ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Users read own notifications" ON pa_notifications
+    FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٣. تریگەری ئاگاداری کاتێک ئەدمین ستاتۆس گۆڕی
+  ══════════════════════════════════════════════════════════════════════
+  CREATE OR REPLACE FUNCTION notify_ad_status_change()
+  RETURNS TRIGGER AS $$
+  DECLARE
+    notif_type TEXT;
+    notif_title TEXT;
+    notif_body TEXT;
+  BEGIN
+    IF OLD.status IS DISTINCT FROM NEW.status THEN
+      CASE NEW.status
+        WHEN 'active' THEN
+          notif_type := 'ad_active';
+          notif_title := 'ڕیکلامت چالاکبوو ✅';
+          notif_body := 'ڕیکلامەکەت دەستیپێکرد و ئێستا لە تیکتۆک پیشاندەدرێت.';
+        WHEN 'approved' THEN
+          notif_type := 'ad_approved';
+          notif_title := 'ڕیکلامت پەسەندکرا ✅';
+          notif_body := 'داواکاریەکەت پەسەندکرا و بەم زووانە دەستیپێدەکات.';
+        WHEN 'rejected' THEN
+          notif_type := 'ad_rejected';
+          notif_title := 'ڕیکلامت ڕەتکرا ❌';
+          notif_body := COALESCE('هۆکاری ڕەتکردن: ' || NEW.reject_reason, 'ڕیکلامەکەت ڕەتکرا.');
+        WHEN 'completed' THEN
+          notif_type := 'ad_completed';
+          notif_title := 'ڕیکلامت تەواوبوو 🏁';
+          notif_body := 'کەمپینەکەت بە سەرکەوتوویی تەواو بوو.';
+        ELSE
+          RETURN NEW;
+      END CASE;
+      INSERT INTO pa_notifications (user_id, type, title, body, related_id)
+      VALUES (NEW.user_id, notif_type, notif_title, notif_body, NEW.id);
+    END IF;
+    RETURN NEW;
+  END;
+  $$ LANGUAGE plpgsql SECURITY DEFINER;
+  
+  CREATE TRIGGER ad_status_notifier
+    AFTER UPDATE ON pa_ads
+    FOR EACH ROW EXECUTE FUNCTION notify_ad_status_change();
+
+  ══════════════════════════════════════════════════════════════════════
+  ٤. [SECURE] create_ad_and_deduct  ← فەنکشنی سەرەکی
+  ══════════════════════════════════════════════════════════════════════
+  -- ئەم فەنکشنە یەک تراناکشنی ئەتۆمیک جێبەجێ دەکات:
+  --   ١. چێکردنەوەی باڵانس  (ئەگەر بەسنەبوو → ROLLBACK خۆکار)
+  --   ٢. INSERT ی ڕیکلام    (تەنها ئەگەر باڵانس بەسا)
+  -- JavaScript ڕاستەوخۆ نا باڵانس دەگۆڕێت نا ڕیکلام دروست دەکات.
+  -- هەموو لۆجیک و چێکردنەوە لە داتابەیس دایە.
+
+  CREATE OR REPLACE FUNCTION create_ad_and_deduct(
+    p_user_id    UUID,
+    p_goal       TEXT,
+    p_video_code TEXT    DEFAULT NULL,
+    p_video_link TEXT    DEFAULT NULL,
+    p_budget     NUMERIC DEFAULT 20,
+    p_card_id    UUID    DEFAULT NULL,
+    p_asset_id   UUID    DEFAULT NULL,
+    p_start_date DATE    DEFAULT NULL,
+    p_start_time TIME    DEFAULT NULL,
+    p_age_groups TEXT    DEFAULT NULL,
+    p_gender     TEXT    DEFAULT 'all',
+    p_location   TEXT    DEFAULT 'kurdistan'
+  )
+  RETURNS UUID          -- دەگەڕێنێتەوە ID ی ڕیکلامی نوێ
+  LANGUAGE plpgsql
+  SECURITY DEFINER      -- بە مافی تەواو ئەجرا دەبێت
+  SET search_path = public
+  AS $$
+  DECLARE
+    v_balance  NUMERIC;
+    v_ad_id    UUID;
+    v_ad_num   INT;
+  BEGIN
+    -- ───────────────────────────────────────────────────────
+    -- ١. Validation: بودجە دەبێت > 0 بێت
+    -- ───────────────────────────────────────────────────────
+    IF p_budget <= 0 THEN
+      RAISE EXCEPTION 'invalid_budget: بودجە دەبێت لە سفرە زیاتر بێت';
+    END IF;
+
+    -- ───────────────────────────────────────────────────────
+    -- ٢. باڵانسی ئێستا بخوێنەوە — بە FOR UPDATE قفڵ بکە
+    --    تاوەکو race condition نەبێت
+    -- ───────────────────────────────────────────────────────
+    SELECT balance INTO v_balance
+    FROM   pa_wallets
+    WHERE  user_id = p_user_id
+    FOR UPDATE;                    -- ← قفڵی ڕیزەکە لەماوەی تراناکشن
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'wallet_not_found: جزدانت نەدۆزرایەوە';
+    END IF;
+
+    -- ───────────────────────────────────────────────────────
+    -- ٣. چێکردنەوەی باڵانس — ئەگەر بەسنەبوو هەڵە
+    -- ───────────────────────────────────────────────────────
+    IF v_balance < p_budget THEN
+      RAISE EXCEPTION 'insufficient_balance: موازەنەت بەسنییە. باڵانس: $%, پێویستە: $%',
+            round(v_balance,2), round(p_budget,2);
+    END IF;
+
+    -- ───────────────────────────────────────────────────────
+    -- ٤. بڕینی پارە (ئەتۆمیک — لە هەمان تراناکشن)
+    -- ───────────────────────────────────────────────────────
+    UPDATE pa_wallets
+    SET    balance     = balance - p_budget,
+           updated_at  = NOW()
+    WHERE  user_id = p_user_id;
+
+    -- ───────────────────────────────────────────────────────
+    -- ٥. ژمارەی ڕیکلام بژمێرە
+    -- ───────────────────────────────────────────────────────
+    SELECT COALESCE(MAX(ad_number), 0) + 1
+    INTO   v_ad_num
+    FROM   pa_ads
+    WHERE  user_id = p_user_id;
+
+    -- ───────────────────────────────────────────────────────
+    -- ٦. ڕیکلام دروست بکە
+    -- ───────────────────────────────────────────────────────
+    INSERT INTO pa_ads (
+      user_id, title, goal,
+      video_code, video_link,
+      budget, card_id, asset_id,
+      start_date, start_time,
+      status, age_groups, gender, location,
+      ad_number
+    ) VALUES (
+      p_user_id,
+      'New Ad ' || TO_CHAR(NOW(), 'DD/MM/YYYY'),
+      p_goal,
+      p_video_code, p_video_link,
+      p_budget, p_card_id, p_asset_id,
+      p_start_date, p_start_time,
+      'pending',
+      p_age_groups::jsonb,
+      p_gender, p_location,
+      v_ad_num
+    )
+    RETURNING id INTO v_ad_id;
+
+    -- ───────────────────────────────────────────────────────
+    -- ٧. تراناکشن تەواوبوو — هەر دووکەی دڵنیا بوون
+    -- ───────────────────────────────────────────────────────
+    RETURN v_ad_id;
+
+  EXCEPTION
+    -- هەر هەڵەیەک → ROLLBACK خۆکار (هیچ گۆڕانکارییەک نامێنێت)
+    WHEN OTHERS THEN
+      RAISE;
+  END;
+  $$;
+
+  -- ───────────────────────────────────────────────────────
+  -- RLS: ئەم فەنکشنە تەنها بۆ بەکارهێنەری دەستنیشانکراو
+  -- ───────────────────────────────────────────────────────
+  REVOKE ALL ON FUNCTION create_ad_and_deduct FROM PUBLIC;
+  GRANT  EXECUTE ON FUNCTION create_ad_and_deduct TO authenticated;
+
+  ══════════════════════════════════════════════════════════════════════
+  ٥. [LEGACY - ئێستا ناکارێت] deduct_wallet_balance
+  ══════════════════════════════════════════════════════════════════════
+  -- ئەم فەنکشنە لە نەوەی پێشووەوە مایەوە، دەتوانیت
+  -- بیساریتەوە یان بیهێڵیتەوە — ئێستا بەکار نایێت.
+  /*
+  CREATE OR REPLACE FUNCTION deduct_wallet_balance(p_user_id UUID, p_amount NUMERIC)
+  RETURNS VOID AS $$
+  BEGIN
+    UPDATE pa_wallets
+    SET balance = balance - p_amount
+    WHERE user_id = p_user_id AND balance >= p_amount;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'موازەنەت بەسنییە';
+    END IF;
+  END;
+  $$ LANGUAGE plpgsql SECURITY DEFINER;
+  */
+
+  ══════════════════════════════════════════════════════════════════════
+  ٦. RLS بۆ هەموو جەدوەلەکان
+  ══════════════════════════════════════════════════════════════════════
+  -- pa_wallets
+  ALTER TABLE pa_wallets ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Own wallet only" ON pa_wallets FOR ALL USING (auth.uid() = user_id);
+  
+  -- pa_ads
+  ALTER TABLE pa_ads ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Own ads only" ON pa_ads FOR ALL USING (auth.uid() = user_id);
+  
+  -- pa_transactions
+  ALTER TABLE pa_transactions ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Own transactions only" ON pa_transactions FOR ALL USING (auth.uid() = user_id);
+  
+  -- pa_support
+  ALTER TABLE pa_support ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Own support msgs" ON pa_support FOR ALL USING (auth.uid() = user_id);
+  
+  -- proxolink_cards
+  ALTER TABLE proxolink_cards ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Own cards only" ON proxolink_cards FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٧. Storage Bucket بۆ وەسڵەکان
+  ══════════════════════════════════════════════════════════════════════
+  -- لە Supabase Dashboard → Storage → New Bucket:
+  -- Bucket Name: receipts
+  -- Public: true (یان false ئەگەر پرایڤەت دەتەوێت)
+  
+  -- Storage Policy:
+  CREATE POLICY "Users upload own receipts"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (bucket_id = 'receipts' AND (storage.foldername(name))[1] = 'receipts' AND auth.uid()::text = (storage.foldername(name))[2]);
+  
+  CREATE POLICY "Public read receipts"
+  ON storage.objects FOR SELECT
+  TO authenticated
+  USING (bucket_id = 'receipts');
+  
+======================================================================= -->
+
+
+</body>
+</html>
