@@ -2970,7 +2970,6 @@ function renderTxHistory(){
     return`<div class="tx-item" style="cursor:pointer" onclick="showReceipt(${JSON.stringify(t)})">
       <div class="tx-ico ${icoClass}" ${isRefund?'style="background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.15)"':''}>
         <i class="fas ${icoName}"></i>
-    const depIdRow=t.deposit_number?`<div style="font-size:10px;color:var(--mt2);margin-top:1px;display:flex;align-items:center;gap:3px"><i class="fas fa-receipt" style="font-size:8px;opacity:.6"></i>DEP-#${t.deposit_number}</div>`:'';
       </div>
       <div class="tx-info">
         <div class="tx-lbl">${refundBadge}${t.label}</div>
