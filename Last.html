@@ -1800,7 +1800,16 @@ async function uploadReceiptToStorage(file,userId){
   const{data:urlData}=sb.storage.from('receipts').getPublicUrl(path);
   return urlData?.publicUrl||null;
 }
-
+  
+// ═══ ONLINE CHECK ═══
+function requireOnline(){
+  if(!navigator.onLine){
+    showToast('پەیوەندی ئینتەرنێت نییە — تکایە پەیوەندی بکەرەوە','err');
+    return false;
+  }
+  return true;
+}
+  
 // ═══ IQD CURRENCY DISPLAY ═══
 const IQD_RATE = 1800;
 function updateIqdDisplay(val){
@@ -1815,6 +1824,7 @@ function updateIqdDisplay(val){
 }
 
 async function submitDeposit(){
+  if(!requireOnline())return;
   // خوێندنەوەی بڕ لە خانەی نوێ
   const usdInput=document.getElementById('depUsdInput');
   const usdVal=parseFloat(usdInput?.value)||0;
@@ -2032,6 +2042,7 @@ function resetAssetBuilder(){
 }
 
 async function submitAsset(){
+  if(!requireOnline())return;
   const name=document.getElementById('assetName').value.trim();
   const value=document.getElementById('assetValue').value.trim();
   const note=document.getElementById('assetNote').value.trim();
@@ -2243,6 +2254,7 @@ function pickCard(el,id){
 
 // ═══ SUBMIT AD — fully atomic via RPC (no JS-side balance logic) ═══
 async function submitAd(){
+  if(!requireOnline())return;
   const link=document.getElementById('adLink').value.trim();
   if(link&&!link.startsWith('https://')){showToast('لینکەکە دەبێت بە https:// دەستپێبکات','err');return;}
 
@@ -2508,6 +2520,7 @@ function updatePLPreview(){
 }
 
 async function submitPLCard(){
+  if(!requireOnline())return;
   const name=document.getElementById('plBrandName').value.trim();
   const bio=document.getElementById('plDesc')?.value.trim()||'';
   const tt=document.getElementById('plTT')?.value.trim().replace(/^@/,'')||'';
