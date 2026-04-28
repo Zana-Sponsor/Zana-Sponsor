@@ -22,6 +22,9 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+/* ══ UPDATE PROFILE FORM ══ */
+.phone-wrap{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.phone-flag{padding:12px 14px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;font-size:15px;flex-shrink:0;}
 
 /* ══ AUTH ══ */
 #authWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--w);}
@@ -598,11 +601,11 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
       <button id="setupDbBtn" onclick="setupDatabase()" style="display:none;width:100%;padding:13px;background:rgba(37,99,235,.08);border:1.5px solid rgba(37,99,235,.2);border-radius:13px;color:var(--bl);font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;align-items:center;justify-content:center;gap:7px;margin-bottom:10px">
         <i class="fas fa-database"></i> دانانی فەنکشنی داتابەیس
       </button>
-      <div class="plist-item" onclick="showEditName()">
-        <div class="plist-ico"><i class="fas fa-user"></i></div>
-        <div class="plist-txt" id="editNameDisplay">دەستکاری ناو</div>
-        <i class="fas fa-chevron-left plist-arr"></i>
-      </div>
+      <div class="plist-item" onclick="showUpdateProfile()">
+  <div class="plist-ico"><i class="fas fa-user-pen"></i></div>
+  <div class="plist-txt">دەستکاری پرۆفایل</div>
+  <i class="fas fa-chevron-left plist-arr"></i>
+</div>
       <div class="plist-item green" onclick="openWA()">
         <div class="plist-ico"><i class="fab fa-whatsapp"></i></div>
         <div class="plist-txt">گفتوگۆ لەگەڵ ئەدمین</div>
@@ -1340,6 +1343,101 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
     </button>
   </div>
 </div>
+<!-- UPDATE PROFILE -->
+<div class="mover" id="moUpdateProfile">
+  <div class="mbox">
+    <div class="mbar"></div>
+    <div class="mhdr">
+      <h3>دەستکاری پرۆفایل</h3>
+      <button class="mclose" onclick="closeMo('moUpdateProfile')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="pav" id="updProfAv" onclick="document.getElementById('updAvFile').click()"
+        style="width:80px;height:80px;font-size:28px;margin:0 auto;cursor:pointer;position:relative">P
+        <div class="pav-cam"><i class="fas fa-camera"></i></div>
+      </div>
+      <input type="file" id="updAvFile" accept="image/*" style="display:none" onchange="loadUpdAv(this)">
+      <div style="font-size:11px;color:var(--mt);margin-top:8px">کرتە بکە بۆ گۆڕینی وێنە</div>
+    </div>
+    <div class="mlbl">ناوی تەواو</div>
+    <input class="finp" style="margin-bottom:14px" type="text" id="updNameInp" placeholder="ناوت بنووسە">
+    <div class="mlbl">ژمارەی مۆبایل</div>
+    <div class="phone-wrap">
+      <div class="phone-flag">🇮🇶</div>
+      <input class="finp" style="margin:0;flex:1;direction:ltr;text-align:left" type="tel"
+        id="updPhoneInp" placeholder="+9647XXXXXXXXX">
+    </div>
+    <div id="updProfMsg" style="display:none;font-size:12px;padding:10px 13px;border-radius:11px;margin-bottom:12px;text-align:center"></div>
+    <button class="save-btn" onclick="saveProfile()" id="updProfBtn">
+      <i class="fas fa-check"></i> پاشەکەوتکردن
+    </button>
+  </div>
+</div>
+// ══ UPDATE PROFILE ══
+let updAvB64New = null;
+
+function showUpdateProfile(){
+  const name = document.getElementById('profName').textContent;
+  document.getElementById('updNameInp').value = name === '—' ? '' : name;
+  const updAvEl = document.getElementById('updProfAv');
+  if(avB64){
+    updAvEl.innerHTML = `<img src="${avB64}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"><div class="pav-cam"><i class="fas fa-camera"></i></div>`;
+  } else {
+    updAvEl.innerHTML = `${(name||'?')[0].toUpperCase()}<div class="pav-cam"><i class="fas fa-camera"></i></div>`;
+  }
+  updAvB64New = null;
+  sb.from('profiles').select('phone').eq('id', cu.id).single().then(({data}) => {
+    document.getElementById('updPhoneInp').value = data?.phone || '';
+  });
+  document.getElementById('updProfMsg').style.display = 'none';
+  document.getElementById('moUpdateProfile').classList.add('on');
+}
+
+function loadUpdAv(inp){
+  const f = inp.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    updAvB64New = e.target.result;
+    const el = document.getElementById('updProfAv');
+    el.innerHTML = `<img src="${updAvB64New}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"><div class="pav-cam"><i class="fas fa-camera"></i></div>`;
+  };
+  r.readAsDataURL(f);
+}
+
+async function saveProfile(){
+  const name  = document.getElementById('updNameInp').value.trim();
+  const phone = document.getElementById('updPhoneInp').value.trim();
+  const btn   = document.getElementById('updProfBtn');
+  const msg   = document.getElementById('updProfMsg');
+  if(!name){ showToast('ناوت بنووسە','err'); return; }
+  await withSession(async () => {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> پاشەکەوتکردن...';
+    const updates = { full_name: name };
+    if(phone) updates.phone = phone;
+    if(updAvB64New){ updates.avatar_b64 = updAvB64New; avB64 = updAvB64New; }
+    const { error } = await sb.from('profiles').update(updates).eq('id', cu.id);
+    if(error){
+      showToast('هەڵە: ' + error.message, 'err');
+    } else {
+      document.getElementById('profName').textContent = name;
+      document.getElementById('editNameDisplay').textContent = name;
+      document.getElementById('editNameInp').value = name;
+      if(updAvB64New){
+        const av = document.getElementById('profAv');
+        av.innerHTML = `<img src="${updAvB64New}"><div class="pav-cam"><i class="fas fa-camera"></i></div>`;
+      }
+      updateSidebarUser(name, cu.email, updAvB64New || avB64 || null,
+        parseFloat(document.getElementById('profBal').textContent || 0));
+      msg.style.cssText = 'display:block;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr)';
+      msg.textContent = '✅ پرۆفایلەکەت نوێکرایەوە!';
+      setTimeout(() => closeMo('moUpdateProfile'), 1200);
+      showToast('✅ پرۆفایل پاشەکەوتکرا', 'ok');
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-check"></i> پاشەکەوتکردن';
+  });
+}
 
 <!-- RECEIPT MODAL -->
 <div class="mover" id="moReceipt">
