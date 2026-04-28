@@ -1146,11 +1146,13 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
       <button class="bud-btn" onclick="chgDep(10)">+</button>
     </div>
     <div class="quick-amts">
+      <button class="submit-btn" onclick="goToUpload()">
       <div class="qa" onclick="setDep(10)">$10</div>
       <div class="qa" onclick="setDep(25)">$25</div>
       <div class="qa" onclick="setDep(50)">$50</div>
       <div class="qa" onclick="setDep(100)">$100</div>
     </div>
+    <div id="moAmtIqdDisplay" style="display:none;background:rgba(22,163,74,.07);border:1px solid rgba(22,163,74,.2);border-radius:11px;padding:9px 14px;margin-bottom:10px;font-size:13px;color:#16a34a;font-weight:700;direction:ltr;text-align:left">≈ 0 IQD</div>
     <button class="submit-btn" onclick="goToUpload()">
       <i class="fas fa-arrow-left"></i> دواتر
     </button>
@@ -1654,8 +1656,14 @@ function pickMethod(el){
   document.getElementById('moAmtMethod').innerHTML=`<i class="fas fa-wallet"></i> پارەدان لەڕێگەی ${names[method]}`;
   closeMo('moMethod');document.getElementById('moAmount').classList.add('on');
 }
-function chgDep(d){depAmt=Math.max(1,depAmt+d);document.getElementById('depDisp').textContent='$'+depAmt;}
-function setDep(v){depAmt=v;document.getElementById('depDisp').textContent='$'+v;}
+function chgDep(d){depAmt=Math.max(1,depAmt+d);document.getElementById('depDisp').textContent='$'+depAmt;updateMoAmtIqd();}
+function setDep(v){depAmt=v;document.getElementById('depDisp').textContent='$'+v;updateMoAmtIqd();}
+function updateMoAmtIqd(){
+  const el=document.getElementById('moAmtIqdDisplay');
+  if(!el)return;
+  if(depAmt>0){el.style.display='block';el.textContent='≈ '+(depAmt*1800).toLocaleString()+' IQD  (1$ = 1,800 IQD)';}
+  else{el.style.display='none';}
+}
 function goToUpload(){
   document.getElementById('moUploadInfo').textContent=`بڕ: $${depAmt} | ڕێگا: ${method}`;
   closeMo('moAmount');document.getElementById('moUpload').classList.add('on');
@@ -1690,7 +1698,7 @@ async function uploadReceiptToStorage(file,userId){
 }
 
 // ═══ IQD CURRENCY DISPLAY ═══
-const IQD_RATE = 1500;
+const IQD_RATE = 1800;
 function updateIqdDisplay(val){
   const usd=parseFloat(val)||0;
   const disp=document.getElementById('iqdDisplay');
