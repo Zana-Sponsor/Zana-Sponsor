@@ -655,12 +655,15 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         <div id="cardList"><div style="font-size:12px;color:var(--mt);padding:8px">هیچ کەرەستەیەک نییە</div></div>
       </div>
 
-      <!-- ═══ MESSAGES GOAL: ASSET DROPDOWN ═══ -->
+      <!-- ═══ MESSAGES GOAL: PROXOLINK CARD DROPDOWN ═══ -->
       <div id="msgAssetWrap">
-        <div class="slbl">کەرەستەی پەیوەندی <span style="color:var(--rd);font-size:10px">پێویستە</span></div>
+        <div class="slbl" style="display:flex;align-items:center;justify-content:space-between">
+          <span>ئامرازەکان <span style="color:var(--rd);font-size:10px">پێویستە</span></span>
+          <span onclick="goPage('proxolink')" style="font-size:11px;color:var(--bl);cursor:pointer"><i class="fas fa-plus" style="margin-left:3px"></i>ئامرازی نوێ</span>
+        </div>
         <div class="asset-select-wrap">
           <div class="asset-select" id="assetSelectBtn" onclick="toggleAssetDropdown()">
-            <span id="assetSelectTxt" style="color:var(--mt);font-size:13px">کەرەستەیەک هەڵبژێرە...</span>
+            <span id="assetSelectTxt" style="color:var(--mt);font-size:13px">ئامرازێک هەڵبژێرە...</span>
             <i class="fas fa-chevron-down" id="assetDropChev" style="font-size:12px;color:var(--mt);transition:transform .2s"></i>
           </div>
           <div class="asset-dropdown" id="assetDropdown">
@@ -1908,13 +1911,12 @@ async function deleteAsset(id){
 }
 
 // ═══ ASSET DROPDOWN IN CREATE AD ═══
-// fetchAssets — ناوی فەنکشنی ئۆفیشیاڵ بۆ بارکردنی کەرەستەکان
+// fetchAssets — بارکردنی ئامرازەکان (proxolink cards) بۆ dropdown
 async function fetchAssets(){
-  const{data}=await sb.from('pa_assets').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
+  const{data}=await sb.from('proxolink_cards').select('id,name,style,avatar_b64,card_number').eq('user_id',cu.id).order('created_at',{ascending:false});
   myAssets=data||[];
   renderAssetDropdown();
 }
-// fetchAssetsToSelect — ئالیاسی ئۆفیشیاڵ بۆ بارکردنی لیستەکە لە لاپەڕەی دروستکردنی ڕیکلام
 async function fetchAssetsToSelect(){
   await fetchAssets();
 }
@@ -1924,21 +1926,20 @@ async function loadAssetsForDropdown(){
 
 function renderAssetDropdown(){
   const dd=document.getElementById('assetDropdown');
-  const icons={whatsapp:'fab fa-whatsapp',instagram:'fab fa-instagram',phone:'fas fa-phone',telegram:'fab fa-telegram',link:'fas fa-link'};
   if(!myAssets.length){
     dd.innerHTML=`<div class="asset-none" style="padding:18px;text-align:center">
-      <div style="width:46px;height:46px;border-radius:14px;background:var(--bg);border:1.5px solid var(--b1);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px;color:var(--mt)"><i class="fas fa-layer-group"></i></div>
-      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px">هیچ کەرەستەیەک نییە</div>
-      <div style="font-size:11px;color:var(--mt);margin-bottom:10px">سەرەتا کەرەستەیەکت دروستبکە</div>
-      <button onclick="closeSidebar();openAddAsset()" style="padding:8px 16px;background:var(--dark);color:#fff;border:none;border-radius:10px;font-family:'R',sans-serif;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-plus" style="margin-left:5px"></i>زیادکردن</button>
+      <div style="width:46px;height:46px;border-radius:14px;background:var(--bg);border:1.5px solid var(--b1);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px;color:var(--mt)"><i class="fas fa-link"></i></div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px">هیچ ئامرازێک نییە</div>
+      <div style="font-size:11px;color:var(--mt);margin-bottom:10px">سەرەتا ئامرازێکت دروستبکە</div>
+      <button onclick="goPage('proxolink')" style="padding:8px 16px;background:var(--dark);color:#fff;border:none;border-radius:10px;font-family:'R',sans-serif;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-plus" style="margin-left:5px"></i>دروستکردن</button>
     </div>`;return;
   }
   dd.innerHTML=myAssets.map(a=>`
     <div class="asset-opt ${selectedAssetId===a.id?'selected':''}" onclick="selectAsset('${a.id}')">
-      <div class="asset-opt-ico"><i class="${icons[a.asset_type]||'fas fa-link'}"></i></div>
+      <div class="asset-opt-ico">${a.avatar_b64?`<img src="${a.avatar_b64}">`:(a.name||'?')[0].toUpperCase()}</div>
       <div class="asset-opt-info">
         <div class="asset-opt-name">${a.name}</div>
-        <div class="asset-opt-meta">${a.asset_type} · ${a.value}</div>
+        <div class="asset-opt-meta">#${a.card_number||'—'} · ${a.style||''}</div>
       </div>
       <i class="fas fa-check asset-opt-check"></i>
     </div>`).join('');
@@ -1962,15 +1963,13 @@ function selectAsset(id){
   selectedAssetId=id;
   const a=myAssets.find(x=>x.id===id);
   if(!a)return;
-  const icons={whatsapp:'fab fa-whatsapp',instagram:'fab fa-instagram',phone:'fas fa-phone',telegram:'fab fa-telegram',link:'fas fa-link'};
   document.getElementById('assetSelectTxt').textContent=a.name;
   document.getElementById('assetSelectTxt').style.color='var(--dark)';
-  // پیشاندانی پێشوەختە
   const prev=document.getElementById('assetSelPreview');
   prev.style.display='flex';
-  document.getElementById('assetSelIco').innerHTML=`<i class="${icons[a.asset_type]||'fas fa-link'}"></i>`;
+  document.getElementById('assetSelIco').innerHTML=a.avatar_b64?`<img src="${a.avatar_b64}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(a.name||'?')[0].toUpperCase();
   document.getElementById('assetSelName').textContent=a.name;
-  document.getElementById('assetSelMeta').textContent=a.value;
+  document.getElementById('assetSelMeta').textContent='#'+(a.card_number||'—')+' · '+(a.style||'');
   renderAssetDropdown();
   closeAssetDropdown();
 }
