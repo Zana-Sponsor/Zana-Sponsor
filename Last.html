@@ -551,6 +551,29 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
       </div>
       <i class="fas fa-chevron-left home-card-arr"></i>
     </div>
+    <div class="home-card" onclick="goPage('proxolink')">
+      <div class="home-card-ico light"><i class="fas fa-link"></i></div>
+      <div class="home-card-info">
+        <div class="home-card-title">ئامرازەکان</div>
+        <div class="home-card-sub">ئامرازی پەیوەندی دروست بکە</div>
+      </div>
+      <i class="fas fa-chevron-left home-card-arr"></i>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="pg" id="pgProfile">
+    <div class="prof-top">
+      <div class="pav" id="profAv" onclick="document.getElementById('avFile').click()">P
+        <div class="pav-cam"><i class="fas fa-camera"></i></div>
+      </div>
+      <input type="file" id="avFile" accept="image/*" style="display:none" onchange="loadAv(this)">
+      <div class="prof-info">
+        <div class="prof-name" id="profName">—</div>
+        <div class="prof-email" id="profEmail">—</div>
+      </div>
+    </div>
     <div class="pcard">
       <div class="pcard-hdr">
         <div class="pcard-hdr-left"><i class="fas fa-wallet"></i> بالانسەکەت</div>
