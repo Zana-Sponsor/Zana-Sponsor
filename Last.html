@@ -1443,8 +1443,10 @@ async function saveProfile(){
       showToast('هەڵە: ' + error.message, 'err');
     } else {
       document.getElementById('profName').textContent = name;
-      document.getElementById('editNameDisplay').textContent = name;
-      document.getElementById('editNameInp').value = name;
+      const editDisp = document.getElementById('editNameDisplay');
+      if(editDisp) editDisp.textContent = name;
+      const editInp = document.getElementById('editNameInp');
+      if(editInp) editInp.value = name;
       if(updAvB64New){
         const av = document.getElementById('profAv');
         av.innerHTML = `<img src="${updAvB64New}"><div class="pav-cam"><i class="fas fa-camera"></i></div>`;
