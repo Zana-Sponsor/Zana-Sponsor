@@ -1774,11 +1774,36 @@ function goToUpload(){
 }
 
 // ═══ ٤. IMAGE UPLOAD TO SUPABASE STORAGE ═══
+function compressImage(file,maxKB=500){
+  return new Promise(resolve=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      let w=img.width,h=img.height;
+      const max=1200;
+      if(w>max){h=Math.round(h*max/w);w=max;}
+      if(h>max){w=Math.round(w*max/h);h=max;}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      let q=0.85;
+      const tryCompress=()=>{
+        const data=canvas.toDataURL('image/jpeg',q);
+        const kb=(data.length*3/4)/1024;
+        if(kb<=maxKB||q<=0.1){URL.revokeObjectURL(url);resolve(data);}
+        else{q-=0.1;tryCompress();}
+      };
+      tryCompress();
+    };
+    img.src=url;
+  });
+}
+
 function loadRcpt(inp){
   const f=inp.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=e=>{
-    rcptB64=e.target.result;
+  r.onload=async e=>{
+    rcptB64=await compressImage(f);
     const p=document.getElementById('rcptPrev');
     p.src=rcptB64;p.style.display='block';
     document.getElementById('uploadZone').innerHTML='<i class="fas fa-check" style="color:var(--gr);font-size:24px"></i><br>وەسڵ ئەپڵۆدکرا';
