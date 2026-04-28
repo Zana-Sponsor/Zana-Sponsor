@@ -1395,6 +1395,11 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 const SB_URL='https://cojchkwssmasiejcgvbk.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvamNoa3dzc21hc2llamNndmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTE1MTIsImV4cCI6MjA5Mjg4NzUxMn0.RCALy3wpKHGAkmXWcBqEb_QFEUmh6ErdRbfrBmagvtw';
 
+let sb, cu=null, aMode='login';  ← سەرەتا
+let budget=20, days=1, depAmt=50;
+let rcptB64='', avB64='';
+let myAssets=[], myCards=[];
+  
 // ══ UPDATE PROFILE ══
 let updAvB64New = null;
 
