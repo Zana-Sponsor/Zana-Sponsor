@@ -2817,9 +2817,9 @@ async function loadTxHistory(){
   const spendItems=(ads||[]).map(a=>({
     id:a.id,
     kind:'spend',
-    label:'ڕیکلام #'+(a.ad_number||'—')+' — '+(a.title||''),
+    label:'New Ad '+(a.ad_number||'—'),
     amount:parseFloat(a.budget),
-    status:a.status,
+    status:'approved',
     date:a.created_at
   }));
 
