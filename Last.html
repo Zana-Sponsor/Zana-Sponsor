@@ -1527,7 +1527,7 @@ function checkOnline(){
 }
 window.addEventListener('online',checkOnline);
 window.addEventListener('offline',()=>{
-  // بێدەنگ — بانەری ئینتەرنێت نانێریت
+  document.getElementById('offlineBanner').classList.add('show');
 });
 
 // ═══ SESSION CHECK WRAPPER ═══
