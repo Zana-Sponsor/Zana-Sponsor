@@ -2085,9 +2085,9 @@ function renderAds(){
   if(!filtered.length){
     wrap.innerHTML=`<div class="empty-box">
       <div class="empty-box-ico" style="width:80px;height:80px;border-radius:24px;font-size:32px"><i class="fas fa-rectangle-ad"></i></div>
-      <h3>هیچ ڕیکلامێک نییە</h3>
-      <p>${filterStatus==='all'?'هێشتا هیچ کەمپینێکت نییە. یەکەمی خۆت دروست بکە!':'هیچ ڕیکلامێک لەم باری نییە.'}</p>
-      ${filterStatus==='all'?`<button class="empty-btn" onclick="goPage('create')"><i class="fas fa-plus"></i> یەکەم ڕیکلامەکەت دروستبکە</button>`:''}
+      <h3>هیچ ڕیکلامێک نەدۆزرایەوە</h3>
+      <p>${filterStatus==='all'?'ڕیکلامێکی نوێ دروست بکە':'هیچ ڕیکلامێک لەم باری نییە.'}</p>
+      ${filterStatus==='all'?`<button class="empty-btn" onclick="goPage('create')"><i class="fas fa-plus"></i> ڕیکلامێکی نوێ دروست بکە</button>`:''}
     </div>`;return;
   }
   const gs={messages:'نامە',engagement:'کارلێک',views:'ڤیووو'};
