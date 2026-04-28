@@ -526,6 +526,10 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         <div class="sidebar-item-ico"><i class="fas fa-graduation-cap"></i></div>
         <div class="sidebar-item-txt">فێرکارییەکان</div>
       </div>
+      <div class="sidebar-item" onclick="goPage('txhistory');closeSidebar()">
+        <div class="sidebar-item-ico"><i class="fas fa-clock-rotate-left"></i></div>
+        <div class="sidebar-item-txt">مێژووی مامەڵەکان</div>
+      </div>
       <div class="sidebar-div"></div>
       <div class="sidebar-item red" onclick="doLogout()">
         <div class="sidebar-item-ico"><i class="fas fa-right-from-bracket"></i></div>
@@ -946,6 +950,27 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         <button class="chat-send" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
       </div>
     </div>
+  </div>
+
+  <!-- TRANSACTION HISTORY PAGE -->
+  <div class="pg" id="pgTxhistory">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div class="pg-title">مێژووی مامەڵەکان</div>
+    </div>
+
+    <!-- فیلتەر -->
+    <div style="display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px">
+      <div class="fchip on" data-txf="all" onclick="filterTxHistory(this)">هەموو</div>
+      <div class="fchip" data-txf="deposit" onclick="filterTxHistory(this)">زیادکردن</div>
+      <div class="fchip" data-txf="spend" onclick="filterTxHistory(this)">خەرجکردن</div>
+    </div>
+
+    <div class="pcard" id="txHistoryPanel">
+      <div id="txHistoryList">
+        <div style="text-align:center;padding:20px;color:var(--mt)"><i class="fas fa-circle-notch fa-spin"></i></div>
+      </div>
+    </div>
+    <div style="height:14px"></div>
   </div>
 
   <!-- ═══════════════════════════════════════════════
@@ -1445,12 +1470,12 @@ function closeSidebar(){
 }
 function updateSidebarActive(page){
   document.querySelectorAll('.sidebar-item').forEach(el=>el.classList.remove('active'));
-  const map={home:'home',profile:'profile',myads:'myads',proxolink:'proxolink',tutorials:'tutorials',create:'create'};
+  const map={home:'home',profile:'profile',myads:'myads',proxolink:'proxolink',tutorials:'tutorials',create:'create',txhistory:'txhistory'};
   const key=map[page];
   if(key){
     document.querySelectorAll('.sidebar-item').forEach(el=>{
       const txt=el.querySelector('.sidebar-item-txt')?.textContent||'';
-      const maps2={home:'سەرەکی',profile:'پرۆفایل',myads:'ڕیکلامەکانم',proxolink:'ئامرازەکان',tutorials:'فێرکارییەکان'};
+      const maps2={home:'سەرەکی',profile:'پرۆفایل',myads:'ڕیکلامەکانم',proxolink:'ئامرازەکان',tutorials:'فێرکارییەکان',txhistory:'مێژووی مامەڵەکان'};
       if(maps2[page]&&txt===maps2[page])el.classList.add('active');
     });
   }
@@ -1485,7 +1510,7 @@ async function doLogout(){
 }
 function openWA(){window.open('https://wa.me/9647512345678','_blank');}
 
-const pages=['home','profile','create','myads','proxolink','notifications','support','tutorials'];
+const pages=['home','profile','create','myads','proxolink','notifications','support','tutorials','txhistory'];
 function goPage(p){
   pages.forEach(x=>{
     const pg=document.getElementById('pg'+x.charAt(0).toUpperCase()+x.slice(1));
@@ -1500,6 +1525,7 @@ function goPage(p){
   if(p==='support')loadChat();
   if(p==='profile')loadBal();
   if(p==='create')loadAssetsForDropdown();
+  if(p==='txhistory')loadTxHistory();
   // Update sidebar active state
   updateSidebarActive(p);
 }
@@ -2484,7 +2510,79 @@ async function setupDatabase(){
   }
 }
 
-// ═══ AUTO CHECK DB ON BOOT ═══
+// ═══ TRANSACTION HISTORY PAGE ═══
+let allTxHistory=[], txFilterMode='all';
+
+async function loadTxHistory(){
+  const list=document.getElementById('txHistoryList');
+  list.innerHTML='<div style="text-align:center;padding:20px;color:var(--mt)"><i class="fas fa-circle-notch fa-spin"></i></div>';
+
+  // مامەڵەی بارکردن (pa_transactions)
+  const{data:deposits}=await sb.from('pa_transactions').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
+  // مامەڵەی خەرجکردن (pa_ads — هەر ڕیکلامێک پارەی تێچووە)
+  const{data:ads}=await sb.from('pa_ads').select('id,title,budget,created_at,ad_number,status').eq('user_id',cu.id).order('created_at',{ascending:false});
+
+  const depositItems=(deposits||[]).map(t=>({
+    id:t.id,
+    kind:'deposit',
+    label:{fib:'FIB',fastpay:'FastPay',kcard:'K-Card/ZainCash'}[t.method]||t.method||'—',
+    amount:parseFloat(t.amount),
+    status:t.status,
+    date:t.created_at
+  }));
+
+  const spendItems=(ads||[]).map(a=>({
+    id:a.id,
+    kind:'spend',
+    label:'ڕیکلام #'+(a.ad_number||'—')+' — '+(a.title||''),
+    amount:parseFloat(a.budget),
+    status:a.status,
+    date:a.created_at
+  }));
+
+  allTxHistory=[...depositItems,...spendItems].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  renderTxHistory();
+}
+
+function filterTxHistory(el){
+  document.querySelectorAll('[data-txf]').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  txFilterMode=el.dataset.txf;
+  renderTxHistory();
+}
+
+function renderTxHistory(){
+  const list=document.getElementById('txHistoryList');
+  const filtered=txFilterMode==='all'?allTxHistory:allTxHistory.filter(t=>t.kind===txFilterMode);
+
+  if(!filtered.length){
+    list.innerHTML='<div style="text-align:center;padding:24px;color:var(--mt);font-size:13px"><i class="fas fa-inbox" style="font-size:28px;display:block;margin-bottom:10px;opacity:.3"></i>هیچ مامەڵەیەک نەدۆزرایەوە</div>';
+    return;
+  }
+
+  const statusMap={pending:'sb-p چاوەڕوان',approved:'sb-ok پەسەندکرا',rejected:'sb-no ڕەتکرا',active:'sb-ok چالاک',completed:'sb-ok تەواوبوو',paused:'sb-p وەستا'};
+
+  list.innerHTML=filtered.map(t=>{
+    const isDeposit=t.kind==='deposit';
+    const[sc,sl]=(statusMap[t.status]||'sb-p —').split(' ');
+    const dateStr=new Date(t.date).toLocaleDateString('ku')+' — '+new Date(t.date).toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
+    return`<div class="tx-item">
+      <div class="tx-ico ${isDeposit?'tx-in':'tx-out'}">
+        <i class="fas ${isDeposit?'fa-arrow-down-long':'fa-arrow-up-long'}"></i>
+      </div>
+      <div class="tx-info">
+        <div class="tx-lbl">${t.label}</div>
+        <div class="tx-sub">${dateStr}</div>
+        <span class="sbadge ${sc}">${sl}</span>
+      </div>
+      <div class="tx-amt" style="color:${isDeposit?'var(--gr)':'var(--rd)'}">
+        ${isDeposit?'+':'-'}$${t.amount.toFixed(2)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+
 async function checkDbReady(){
   try{
     const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
