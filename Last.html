@@ -2435,27 +2435,42 @@ async function loadNotifications(){
     list.innerHTML=`<div style="text-align:center;padding:24px;color:var(--mt)"><i class="fas fa-bell-slash" style="font-size:28px;display:block;margin-bottom:10px;opacity:.3"></i>هیچ ئاگادارییەک نییە</div>`;return;
   }
   const typeMap={
-    ad_approved:{ico:'fas fa-check-circle',cls:'notif-gr',title:'ڕیکلامت پەسەندکرا'},
-    ad_rejected:{ico:'fas fa-times-circle',cls:'notif-rd',title:'ڕیکلامت ڕەتکرا'},
-    ad_active:{ico:'fas fa-play-circle',cls:'notif-gr',title:'ڕیکلامت چالاکبوو'},
-    ad_completed:{ico:'fas fa-flag-checkered',cls:'notif-bl',title:'ڕیکلامت تەواوبوو'},
-    deposit_approved:{ico:'fas fa-wallet',cls:'notif-gr',title:'پارەدانت پەسەندکرا'},
-    deposit_rejected:{ico:'fas fa-wallet',cls:'notif-rd',title:'پارەدانت ڕەتکرا'},
-    general:{ico:'fas fa-info-circle',cls:'notif-bl',title:'ئاگاداری'},
+    ad_approved:       {ico:'fas fa-check-circle',    cls:'notif-gr', title:'ڕیکلامت پەسەندکرا'},
+    ad_rejected:       {ico:'fas fa-times-circle',    cls:'notif-rd', title:'ڕیکلامت ڕەتکرا'},
+    ad_active:         {ico:'fas fa-play-circle',     cls:'notif-gr', title:'ڕیکلامت چالاکبوو'},
+    ad_completed:      {ico:'fas fa-flag-checkered',  cls:'notif-bl', title:'ڕیکلامت تەواوبوو'},
+    ad_paused:         {ico:'fas fa-pause-circle',    cls:'notif-yw', title:'ڕیکلامت وەستاوە'},
+    ad_pending:        {ico:'fas fa-clock',           cls:'notif-yw', title:'ڕیکلامت چاوەڕوانە'},
+    deposit_approved:  {ico:'fas fa-circle-check',   cls:'notif-gr', title:'زیادکردنی باڵانس لەلایەن ئادمینەوە'},
+    deposit_rejected:  {ico:'fas fa-circle-xmark',   cls:'notif-rd', title:'داواکاری پارەدانت ڕەتکرا'},
+    deposit_pending:   {ico:'fas fa-clock',           cls:'notif-yw', title:'داواکاری پارەدانت چاوەڕوانە'},
+    balance_added:     {ico:'fas fa-wallet',          cls:'notif-gr', title:'باڵانست زیادکرا'},
+    general:           {ico:'fas fa-info-circle',     cls:'notif-bl', title:'ئاگاداری'},
+    warning:           {ico:'fas fa-triangle-exclamation', cls:'notif-yw', title:'ئاگادارکردنەوە'},
+    error:             {ico:'fas fa-circle-exclamation',   cls:'notif-rd', title:'کێشە'},
   };
   list.innerHTML=data.map(n=>{
     const t=typeMap[n.type]||typeMap.general;
     const timeAgo=getTimeAgo(n.created_at);
-    return`<div class="notif-item ${n.is_read?'':'unread'}" id="notif-${n.id}">
-      <div class="notif-ico ${t.cls}"><i class="${t.ico}"></i></div>
-      <div class="notif-info">
+    // رەنگی پاشزەمینەی ئایکۆن بەپێی کڵاس
+    const icoBgMap={'notif-gr':'rgba(22,163,74,.1)','notif-rd':'rgba(220,38,38,.08)','notif-yw':'rgba(217,119,6,.08)','notif-bl':'rgba(37,99,235,.08)'};
+    const icoBorderMap={'notif-gr':'rgba(22,163,74,.2)','notif-rd':'rgba(220,38,38,.15)','notif-yw':'rgba(217,119,6,.2)','notif-bl':'rgba(37,99,235,.15)'};
+    return`<div class="notif-item ${n.is_read?'':'unread'}" id="notif-${n.id}" style="position:relative">
+      <div class="notif-ico ${t.cls}" style="background:${icoBgMap[t.cls]||'var(--bg)'};border:1px solid ${icoBorderMap[t.cls]||'var(--b1)'}">
+        <i class="${t.ico}"></i>
+      </div>
+      <div class="notif-info" style="flex:1;min-width:0">
         <div class="notif-title">${n.title||t.title}</div>
-        <div class="notif-body">${n.body||''}</div>
-        <div class="notif-time">${timeAgo}</div>
+        ${n.body?`<div class="notif-body">${n.body}</div>`:''}
+        <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+          <div class="notif-time"><i class="fas fa-clock" style="margin-left:3px;opacity:.6"></i>${timeAgo}</div>
+        </div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
         ${!n.is_read?'<div class="unread-dot"></div>':''}
-        <div onclick="dismissNotif('${n.id}')" style="width:24px;height:24px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--mt)"><i class="fas fa-xmark"></i></div>
+        <div onclick="dismissNotif('${n.id}')" style="width:26px;height:26px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--mt);transition:all .15s" onmouseenter="this.style.background='var(--b1)'" onmouseleave="this.style.background='var(--bg)'">
+          <i class="fas fa-xmark"></i>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -2538,48 +2553,85 @@ async function setupDatabase(){
 // ═══ RECEIPT / INVOICE MODAL ═══
 function showReceipt(t){
   const mn={fib:'FIB Bank',fastpay:'FastPay',kcard:'ZainCash'};
-  const sm={pending:'چاوەڕوان',approved:'پەسەندکرا ✅',rejected:'ڕەتکرا ❌',active:'چالاک',completed:'تەواوبوو',paused:'وەستا'};
+  const appIco={fib:'fas fa-university',fastpay:'fas fa-bolt',kcard:'fas fa-credit-card'};
+  const appColor={fib:'#1b5e20',fastpay:'#c62828',kcard:'#f57f17'};
+  const appBg={fib:'#e8f5e9',fastpay:'#fce4ec',kcard:'#fff9c4'};
+  const smMap={
+    pending:  {txt:'چاوەڕوان',    bg:'rgba(217,119,6,.1)', color:'var(--yw)', ico:'fas fa-clock'},
+    approved: {txt:'پەسەندکرا',   bg:'rgba(22,163,74,.1)', color:'var(--gr)', ico:'fas fa-check-circle'},
+    rejected: {txt:'ڕەتکرا',      bg:'rgba(220,38,38,.08)',color:'var(--rd)', ico:'fas fa-times-circle'},
+    active:   {txt:'چالاک',       bg:'rgba(22,163,74,.1)', color:'var(--gr)', ico:'fas fa-play-circle'},
+    completed:{txt:'تەواوبوو',    bg:'rgba(37,99,235,.08)',color:'var(--bl)', ico:'fas fa-flag-checkered'},
+    paused:   {txt:'وەستاوە',     bg:'rgba(139,149,168,.1)',color:'var(--mt)',ico:'fas fa-pause-circle'},
+  };
+
   const isDeposit=t.kind==='deposit'||t.method!==undefined;
-  const appName=mn[t.method]||'—';
   const amount=parseFloat(t.amount||t.budget||0);
   const date=new Date(t.date||t.created_at);
   const dateStr=date.toLocaleDateString('ku')+' — '+date.toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
-  const statusTxt=sm[t.status]||t.status||'—';
-  const txId=(t.id||'').toString().slice(0,8).toUpperCase();
+  const st=smMap[t.status]||smMap.pending;
+  const txId='#'+(t.id||'').toString().slice(0,8).toUpperCase();
+  const accentColor=isDeposit?'var(--gr)':'var(--rd)';
+  const accentBg=isDeposit?'rgba(22,163,74,.08)':'rgba(220,38,38,.06)';
+  const accentBorder=isDeposit?'rgba(22,163,74,.2)':'rgba(220,38,38,.15)';
 
-  const rows=isDeposit?[
-    {l:'جۆری مامەڵە',v:'زیادکردنی باڵانس'},
-    {l:'ئەپی پارەدان',v:appName},
-    {l:'بڕی پارە',v:`<span style="color:var(--gr);font-weight:900">+$${amount.toFixed(2)}</span>`},
-    {l:'بار',v:statusTxt},
-    {l:'بەروار',v:dateStr},
-    {l:'ژمارەی مامەڵە',v:`<span style="font-family:monospace;font-size:12px">#${txId}</span>`},
-  ]:[
-    {l:'جۆری مامەڵە',v:'خەرجکردنی باڵانس'},
-    {l:'بۆ',v:t.label||t.title||'ڕیکلام'},
-    {l:'بڕی پارە',v:`<span style="color:var(--rd);font-weight:900">-$${amount.toFixed(2)}</span>`},
-    {l:'باری ڕیکلام',v:statusTxt},
-    {l:'بەروار',v:dateStr},
-    {l:'ژمارەی مامەڵە',v:`<span style="font-family:monospace;font-size:12px">#${txId}</span>`},
-  ];
+  // سەرەوەی ئایکۆنی ئەپ بۆ deposit
+  const appSection=isDeposit&&t.method?`
+    <div style="display:flex;align-items:center;gap:10px;background:${appBg[t.method]||'var(--bg)'};border-radius:12px;padding:10px 14px;margin-bottom:10px">
+      <div style="width:36px;height:36px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;color:${appColor[t.method]||'var(--dark)'}">
+        <i class="${appIco[t.method]||'fas fa-wallet'}"></i>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--mt)">ئەپی پارەدان</div>
+        <div style="font-size:14px;font-weight:800;color:var(--dark)">${mn[t.method]||'—'}</div>
+      </div>
+    </div>`:
+    `<div style="background:var(--bg);border-radius:12px;padding:10px 14px;margin-bottom:10px;font-size:13px;color:var(--dark);font-weight:700">
+      <i class="fas fa-bullhorn" style="margin-left:7px;color:var(--mt)"></i>${t.label||t.title||'ڕیکلام'}
+    </div>`;
 
   document.getElementById('receiptContent').innerHTML=`
-    <div style="text-align:center;margin-bottom:20px">
-      <div style="width:60px;height:60px;border-radius:50%;background:${isDeposit?'rgba(22,163,74,.1)':'rgba(220,38,38,.08)'};border:2px solid ${isDeposit?'rgba(22,163,74,.25)':'rgba(220,38,38,.2)'};display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;color:${isDeposit?'var(--gr)':'var(--rd)'}">
+    <!-- سەرەوەی پسووڵە -->
+    <div style="background:linear-gradient(135deg,var(--dark),#2e3a50);border-radius:18px;padding:22px 20px;text-align:center;margin-bottom:18px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;left:-20px;width:80px;height:80px;background:rgba(255,255,255,.05);border-radius:50%"></div>
+      <div style="position:absolute;bottom:-15px;right:-15px;width:60px;height:60px;background:rgba(255,255,255,.04);border-radius:50%"></div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Proxo Ads — پسووڵەی مامەڵە</div>
+      <div style="width:56px;height:56px;border-radius:50%;background:${accentBg};border:2px solid ${accentBorder};display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;color:${accentColor}">
         <i class="fas ${isDeposit?'fa-arrow-down-long':'fa-arrow-up-long'}"></i>
       </div>
-      <div style="font-size:26px;font-weight:900;color:${isDeposit?'var(--gr)':'var(--rd)'}">${isDeposit?'+':'-'}$${amount.toFixed(2)}</div>
-      <div style="font-size:12px;color:var(--mt);margin-top:4px">Proxo Ads</div>
+      <div style="font-size:32px;font-weight:900;color:#fff;direction:ltr">${isDeposit?'+':'-'}$${amount.toFixed(2)}</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:6px">${isDeposit?'زیادکردنی باڵانس':'خەرجکردنی باڵانس'}</div>
+      <!-- باری مامەڵە -->
+      <div style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:6px 14px;border-radius:20px;background:${st.bg};border:1px solid ${accentBorder}">
+        <i class="${st.ico}" style="font-size:11px;color:${st.color}"></i>
+        <span style="font-size:12px;font-weight:700;color:${st.color}">${st.txt}</span>
+      </div>
     </div>
+
+    <!-- وردەکاریەکان -->
     <div style="background:var(--bg);border:1px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:16px">
-      ${rows.map((r,i)=>`
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;${i<rows.length-1?'border-bottom:1px solid var(--b1)':''}">
-          <div style="font-size:12px;color:var(--mt)">${r.l}</div>
-          <div style="font-size:13px;font-weight:700;color:var(--dark);text-align:left">${r.v}</div>
-        </div>`).join('')}
+      ${appSection}
+      <div style="border-top:1px solid var(--b1)">
+        ${[
+          {ico:'fas fa-calendar',   l:'بەروار و کات',   v:dateStr},
+          {ico:'fas fa-hashtag',    l:'ژمارەی مامەڵە',  v:`<span style="font-family:monospace;font-size:11px;background:var(--bg);padding:2px 8px;border-radius:6px;border:1px solid var(--b1)">${txId}</span>`},
+          {ico:'fas fa-user',       l:'بەکارهێنەر',     v:document.getElementById('profName')?.textContent||'—'},
+        ].map((r,i,a)=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:13px 14px;${i<a.length-1?'border-bottom:1px solid var(--b1)':''}">
+            <div style="width:30px;height:30px;border-radius:9px;background:var(--w);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mt);flex-shrink:0">
+              <i class="${r.ico}"></i>
+            </div>
+            <div style="flex:1">
+              <div style="font-size:10px;color:var(--mt);margin-bottom:1px">${r.l}</div>
+              <div style="font-size:13px;font-weight:700;color:var(--dark)">${r.v}</div>
+            </div>
+          </div>`).join('')}
+      </div>
     </div>
-    <button onclick="closeMo('moReceipt')" style="width:100%;padding:13px;background:var(--dark);color:#fff;border:none;border-radius:13px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer">
-      <i class="fas fa-check" style="margin-left:7px"></i>باشە
+
+    <!-- دووگمەی داخستن -->
+    <button onclick="closeMo('moReceipt')" style="width:100%;padding:14px;background:var(--dark);color:#fff;border:none;border-radius:14px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(28,35,51,.2)">
+      <i class="fas fa-check"></i> باشە، داخە
     </button>`;
 
   document.getElementById('moReceipt').classList.add('on');
