@@ -2820,7 +2820,7 @@ console.log('ads data:', ads);
     kind:'spend',
     label:'New Ad '+(a.ad_number||'—'),
     amount:parseFloat(a.budget),
-    status:'approve',
+    status:'spent',
     date:a.created_at
   }));
 
@@ -2847,7 +2847,6 @@ function renderTxHistory(){
   }
 
   const statusMap={pending:'sb-p چاوەڕوان',approved:'sb-ok پەسەندکرا',rejected:'sb-no ڕەتکرا',active:'sb-ok چالاک',completed:'sb-ok تەواوبوو',paused:'sb-p وەستا',spent:'sb-no بڕدرا'};
-  if(t.kind==='spend') return {...t, status:'spent'};
 
   list.innerHTML=filtered.map(t=>{
     const isDeposit=t.kind==='deposit';
