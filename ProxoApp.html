@@ -1791,7 +1791,7 @@ async function loadReferralSection(){
   const {data} = await sb.from('pa_referrals').select('id').eq('referrer_id', cu.id).not('referred_id','is',null);
   const count = data?.length || 0;
   const el = document.getElementById('refEarnedLbl');
-  if(el && count > 0) el.textContent = `${count} کەس · +${count*100} 🪙`;
+  if(el && count > 0) el.textContent = `${count} کەس · +${count*50} 🪙`;
 }
 
 function copyRefLink(){
@@ -1847,14 +1847,14 @@ async function checkAndApplyRef(){
 
   // ── تەنها ئێستا کۆین بدە — insert سەرکەوتبوو یەکجارێک
   const {data: refCoins} = await sb.from('pa_coins').select('coins_balance').eq('user_id', referrerId).maybeSingle();
-  const newBal = (parseInt(refCoins?.coins_balance||0)) + 100;
+  const newBal = (parseInt(refCoins?.coins_balance||0)) + 50;
   // upsert: ئەگەر row نەبوو دروستی بکە، ئەگەر بوو نوێیبکەرەوە
   await sb.from('pa_coins').upsert(
     {user_id: referrerId, coins_balance: newBal},
     {onConflict: 'user_id'}
   );
   await sb.from('pa_coin_transactions').insert({
-    user_id: referrerId, amount: 100,
+    user_id: referrerId, amount: 50,
     reason: 'بانگێشتکردنی بەکارهێنەری نوێ',
     balance_after: newBal
   });
@@ -4717,4 +4717,4 @@ async function checkDbReady(){
           -- ١. گەڕاندنەوەی بالانس
           UPDATE pa_wallets
             SET balance=balance+NEW.budget, updated_at=NOW()
-            WHERE user_id=
+            WHERE user_id=NEW
