@@ -1846,9 +1846,13 @@ async function checkAndApplyRef(){
   if(insErr) return;
 
   // ── تەنها ئێستا کۆین بدە — insert سەرکەوتبوو یەکجارێک
-  const {data: refCoins} = await sb.from('pa_coins').select('coins_balance').eq('user_id', referrerId).single();
+  const {data: refCoins} = await sb.from('pa_coins').select('coins_balance').eq('user_id', referrerId).maybeSingle();
   const newBal = (parseInt(refCoins?.coins_balance||0)) + 100;
-  await sb.from('pa_coins').update({coins_balance: newBal}).eq('user_id', referrerId);
+  // upsert: ئەگەر row نەبوو دروستی بکە، ئەگەر بوو نوێیبکەرەوە
+  await sb.from('pa_coins').upsert(
+    {user_id: referrerId, coins_balance: newBal},
+    {onConflict: 'user_id'}
+  );
   await sb.from('pa_coin_transactions').insert({
     user_id: referrerId, amount: 100,
     reason: 'بانگێشتکردنی بەکارهێنەری نوێ',
@@ -4713,6 +4717,4 @@ async function checkDbReady(){
           -- ١. گەڕاندنەوەی بالانس
           UPDATE pa_wallets
             SET balance=balance+NEW.budget, updated_at=NOW()
-            WHERE user_id=NEW.user_id;
-          -- ٢. تۆمارکردنی مامەڵەی گەڕانەوە
-          INSERT INTO pa_transactions(user_
+            WHERE user_id=
