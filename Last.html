@@ -1775,35 +1775,33 @@ async function checkAndApplyRef(){
   const ref = params.get('ref');
   if(!ref) return;
 
-  // ئایا ئەم بەکارهێنەرە پێشتر ref بەکارهێناوە؟
+  // ── پاراستن ١: ref کۆد دەبێت شێوەی دروست هەبێت
+  if(!/^PRX-[A-Z0-9]{8}$/.test(ref)) return;
+
+  // ── پاراستن ٢: ئایا ئەم بەکارهێنەرە پێشتر ref بەکارهێناوە؟
   const {data: existing} = await sb.from('pa_referrals').select('id').eq('referred_id', cu.id).maybeSingle();
-  if(existing) return; // پێشتر بەکارهێناوە
+  if(existing) return;
 
-  // referrer بدۆزەرەوە
-  // کۆدی referrer = PRX-{userId بەشی یەکەم}
-  const {data: allUsers} = await sb.from('pa_referrals').select('referrer_id,ref_code').eq('ref_code', ref).is('referred_id', null).maybeSingle();
-  
-  let referrerId = null;
-  if(allUsers){
-    referrerId = allUsers.referrer_id;
-  } else {
-    // ref کۆد لە UUID دۆزەرەوە
-    const codeBody = ref.replace('PRX-','').toLowerCase();
-    const {data: profiles} = await sb.from('profiles').select('id').ilike('id', codeBody + '%').maybeSingle();
-    if(profiles) referrerId = profiles.id;
-  }
+  // ── referrer بدۆزەرەوە لە UUID
+  const codeBody = ref.replace('PRX-','').toLowerCase();
+  const {data: refProfile} = await sb.from('profiles').select('id').ilike('id', codeBody + '%').maybeSingle();
+  const referrerId = refProfile?.id || null;
 
+  // ── پاراستن ٣: referrer دەبێت هەبێت و خۆی نەبێت
   if(!referrerId || referrerId === cu.id) return;
 
-  // تۆمارکردنی referral
-  await sb.from('pa_referrals').upsert({
+  // ── پاراستن ٤: INSERT تەنها — ئەگەر پێشتر هەبوو error دەدات و دەوەستێت
+  const {error: insErr} = await sb.from('pa_referrals').insert({
     referrer_id: referrerId,
     referred_id: cu.id,
     ref_code: ref,
     used_at: new Date().toISOString()
-  }, {onConflict: 'ref_code', ignoreDuplicates: false}).maybeSingle();
+  });
 
-  // 100 کۆین بۆ referrer زیاد بکە
+  // ئەگەر insert سەرکەوت نەبوو (duplicate یان هەر هەڵەیەک) — هیچ کۆینێک نەدە
+  if(insErr) return;
+
+  // ── تەنها ئێستا کۆین بدە — insert سەرکەوتبوو یەکجارێک
   const {data: refCoins} = await sb.from('pa_coins').select('coins_balance').eq('user_id', referrerId).single();
   const newBal = (parseInt(refCoins?.coins_balance||0)) + 100;
   await sb.from('pa_coins').update({coins_balance: newBal}).eq('user_id', referrerId);
@@ -1811,9 +1809,9 @@ async function checkAndApplyRef(){
     user_id: referrerId, amount: 100,
     reason: 'بانگێشتکردنی بەکارهێنەری نوێ',
     balance_after: newBal
-  }).maybeSingle();
+  });
 
-  // URL پاک بکەرەوە
+  // ── URL پاک بکەرەوە
   window.history.replaceState({}, '', window.location.pathname);
 }
 
