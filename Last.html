@@ -2675,8 +2675,716 @@ async function submitPLCard(){
   });
 }
 
-function buildPLCardHTML(name,bio,tt,platforms,avatar,style,theme){
-  // ── ئامادەکاری زانیاریەکان ──
+
+// ═══════════════════════════════════════════════════════
+// بناخەی ProxoLink — کۆپی ڕاستەقینە
+// ═══════════════════════════════════════════════════════
+function makeBtnInner(b){
+  return '<i class="'+b.icon+'"></i><span>'+b.label+'</span>';
+}
+function makeBtnDark(b, isFirst){ return '<a id="'+b.id+'" class="btn'+(isFirst?' shine-active':'')+'">'+makeBtnInner(b)+'</a>'; }
+function makeBtnLight(b, isFirst){ return '<a id="'+b.id+'" class="btn'+(isFirst?' shine-active':'')+'">'+makeBtnInner(b)+'</a>'; }
+
+
+function buildLayout(activeBtns, tt, ttUrl, btnFn){
+  // RTL: index 0 = راست، index 1 = چەپ
+  // واتسئاپ هەموو کات لای چەپ (index 1) + بریقەکەش بۆ هەمانە
+  let btns = [...activeBtns];
+
+  const waIdx = btns.findIndex(b => b.type === 'whatsapp');
+  if (waIdx === 0 && btns.length >= 2) {
+    [btns[0], btns[1]] = [btns[1], btns[0]];
+  } else if (waIdx > 1) {
+    const wa = btns.splice(waIdx, 1)[0];
+    btns.splice(1, 0, wa);
+  }
+
+  // ئیندێکسی بریقە: واتسئاپ هەبوو = index 1 (چەپ)، نەبوو = index 1
+  const shineIdx = 1;
+
+  const count = btns.length;
+  let gridHTML = '', belowGrid = '';
+
+  if(count === 1){
+    gridHTML = '';
+    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(btns[0],true)+'</div>';
+  } else if(count === 3){
+    gridHTML = btnFn(btns[0],false)+btnFn(btns[1],true);
+    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(btns[2],false)+'</div>';
+  } else if(count === 5){
+    gridHTML = btnFn(btns[0],false)+btnFn(btns[1],true)+btnFn(btns[2],false)+btnFn(btns[3],false);
+    belowGrid = '<div class="three-bottom-row"><a href="'+ttUrl+'" target="_blank" class="tt-pill"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a>'+btnFn(btns[4],false)+'</div>';
+  } else {
+    gridHTML = btns.map((b,i) => btnFn(b, i===shineIdx)).join('');
+    belowGrid = '<div class="tt-wrap"><a href="'+ttUrl+'" target="_blank" class="tt-badge"><span>'+tt+'</span><i class="fab fa-tiktok"></i></a></div>';
+  }
+
+  return { gridHTML, belowGrid, cols:'1fr 1fr' };
+}
+
+// ── DARK ──
+function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
+  const {gridHTML,belowGrid,cols} = buildLayout(activeBtns,tt,ttUrl,makeBtnDark);
+  const bioSafe = bio.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const p = [];
+
+  // ── Head ──
+  p.push('<!DOCTYPE html>');
+  p.push('<html dir="rtl" lang="ku">');
+  p.push('<head>');
+  p.push('  <meta charset="UTF-8">');
+  p.push('  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
+  p.push('  <title>' + name + '</title>');
+  p.push('  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">');
+  p.push('<style>');
+
+  // ── Font ──
+  p.push("@font-face { font-family: 'Rabar_021'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2'); }");
+  p.push("@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');");
+
+  // ── Reset ──
+  p.push('* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }');
+
+  // ── Body ──
+  p.push("body { font-family: 'Inter', 'Rabar_021', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; background: #0d1021; min-height: 100vh; }");
+
+  // ── Layout ──
+  p.push('.page { width: 100%; max-width: 430px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; background: #0d1021; }');
+  p.push('.top-section { width: 100%; position: relative; }');
+  p.push('.gradient-bg { width: 100%; height: 190px; background: ' + theme.grad + '; position: relative; }');
+  p.push(".gradient-bg::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: #0d1021; border-radius: 50% 50% 0 0 / 55px 55px 0 0; }");
+  p.push('.avatar { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); width: 100px; height: 100px; border-radius: 50%; border: 5px solid #fff; overflow: hidden; background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,.4); z-index: 10; }');
+  p.push('.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }');
+  p.push('.content { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 16px 50px; background: #0d1021; }');
+  p.push(".name { font-size: 19px; font-weight: 600; color: #fff; text-align: center; position: relative; top: -25px; margin-bottom: -10px; font-family: 'Inter', 'Rabar_021', sans-serif; }");
+  p.push('.desc { font-size: 14px; color: #EDEDED; line-height: 2; text-align: center; margin-top: 18px; padding: 0 6px; white-space: pre-line; }');
+
+  // ── Grid & Buttons ──
+  p.push('.grid { display: grid; grid-template-columns: ' + cols + '; gap: 10px; width: 100%; margin-top: 40px; }');
+  p.push('.btn { position: relative; display: flex; flex-direction: column; align-items: center;');
+  p.push('  justify-content: center; gap: 8px; padding: 18px 8px 15px; border-radius: 18px;');
+  p.push('  font-size: 14px; font-weight: bold; color: #fff; min-height: 88px; cursor: pointer;');
+  p.push('  text-decoration: none; overflow: hidden; transition: transform .13s;');
+  p.push('  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); }');
+  p.push('.btn:active { transform: scale(.96); background: rgba(255,255,255,.12); }');
+  p.push('.btn i { font-size: 28px; }');
+  p.push('#wa i { font-size: 25px; }');
+  p.push('#vb i { font-size: 22px; }');
+  p.push('#tg i { font-size: 22px; }');
+  p.push('#ig i { font-size: 22px; }');
+  p.push('#ph i { font-size: 20px; }');
+  p.push('#as i { font-size: 20px; }');
+  p.push('.three-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 10px; align-items: center; }');
+
+  // ── TikTok Badge ──
+  p.push(".tt-pill { display: inline-flex; flex-direction: row; align-items: center;");
+  p.push("  justify-content: center; gap: 7px; padding: 9px 16px; border-radius: 90px;");
+  p.push("  background: rgba(255,255,255,0.03); backdrop-filter: blur(5px); color: #fff;");
+  p.push("  text-decoration: none; font-family: 'Rabar_021', sans-serif; font-size: 13.5px;");
+  p.push("  font-weight: 600; position: relative; border: 1px solid rgba(255,255,255,0.1);");
+  p.push("  width: 100%; box-sizing: border-box; }");
+  p.push(".tt-pill::before { content: ''; position: absolute; inset: -1px; border-radius: 90px; padding: 1.2px; background: linear-gradient(45deg, #69c9d0, #ee1d52); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: .7; }");
+  p.push('.tt-pill i { font-size: 18px; position: relative; z-index: 1; }');
+  p.push('.tt-pill span { position: relative; z-index: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: ltr; }');
+  p.push('.tt-pill:active { transform: scale(.95); }');
+  p.push('.tt-wrap { display: flex; justify-content: center; width: 100%; }');
+  p.push(".tt-badge { background: rgba(255,255,255,0.03); backdrop-filter: blur(5px); color: #fff;");
+  p.push("  text-decoration: none; display: flex; flex-direction: row; align-items: center;");
+  p.push("  gap: 8px; padding: 7px 18px; border-radius: 90px;");
+  p.push("  border: 1px solid rgba(255,255,255,0.1); position: relative; margin-top: 14px;");
+  p.push("  font-family: 'Rabar_021', sans-serif; font-size: 14.5px; font-weight: 600; }");
+  p.push(".tt-badge::before { content: ''; position: absolute; inset: -1px; border-radius: 50px; padding: 1.2px; background: linear-gradient(45deg, #69c9d0, #ee1d52); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: .6; }");
+  p.push('.tt-badge i { font-size: 17px; position: relative; z-index: 1; }');
+  p.push('.tt-badge span { position: relative; z-index: 1; direction: ltr; }');
+  p.push('.tt-badge:active { transform: scale(.95); }');
+
+  // ── Footer ──
+  p.push('.footer { width: 100%; margin-top: 100px; padding-bottom: 28px; text-align: center; }');
+  p.push('.footer small { display: block; font-size: 11px; color: #8b8b8b; margin-bottom: 8px; }');
+  p.push('.footer img { height: 13px; display: block; margin: 0 auto 10px; }');
+  p.push('.legal { font-size: 10px; color: #8b8b8b; }');
+  p.push('.legal a { color: inherit; text-decoration: none; margin: 0 5px; }');
+
+  // ── Modal ──
+  p.push('.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000; }');
+  p.push('.modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }');
+  p.push('.modal-content { width: 85%; max-width: 320px; padding: 35px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); background: #16181d; color: #fff; border: 1px solid rgba(255,255,255,0.1); }');
+  p.push('.modal-content h3 { margin: 0 0 16px; font-size: 20px; }');
+  p.push('.modal-content p { font-size: 14px; opacity: 0.7; margin-bottom: 25px; line-height: 1.6; }');
+  p.push(".btn-confirm { width: 100%; padding: 16px; border-radius: 16px; border: none; font-family: 'Rabar_021'; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 12px; }");
+  p.push('.btn-cancel { color: #888; font-size: 14px; cursor: pointer; display: inline-block; padding: 5px; }');
+  p.push('.btn-confirm.confirm-wh { background: #28E16D; color: #000; }');
+  p.push('.btn-confirm.confirm-vi { background: #7360f2; color: #fff; }');
+  p.push('.btn-confirm.confirm-te { background: #26A5E4; color: #fff; }');
+  p.push('.btn-confirm.confirm-ph { background: #fff;    color: #000; }');
+  p.push('.btn-confirm.confirm-as { background: #e03030; color: #fff; }');
+  p.push('.btn-confirm.confirm-in { background: #dc2743; color: #fff; }');
+
+  // ── Animations ──
+  p.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
+  p.push(".shine-active { overflow: hidden; position: relative; }");
+  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.12),transparent); transform:skewX(-25deg); animation: shine 2.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
+  p.push(".no-shine::after { animation: none !important; display:none; }");
+  p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
+  // ── Theme Toggle ──
+
+  p.push('</style>');
+  p.push('</head>');
+  p.push('<body>');
+  p.push('');
+
+  // ── Modal HTML ──
+  p.push('<div class="modal-overlay" id="confirm-modal">');
+  p.push('  <div class="modal-content">');
+  p.push('    <h3 id="modal-title">...</h3>');
+  p.push('    <p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p>');
+  p.push('    <button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button>');
+  p.push('    <div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div>');
+  p.push('  </div>');
+  p.push('</div>');
+  p.push('');
+
+  // ── Page Content ──
+  p.push('<div class="page">');
+  p.push('  <div class="top-section">');
+  p.push('    <div class="gradient-bg"></div>');
+  p.push('    <div class="avatar"><img src="' + avatar + '" alt="' + name + '"></div>');
+  p.push('  </div>');
+  p.push('  <div class="content">');
+  p.push('    <h1 class="name">' + name + '</h1>');
+  p.push('    <p class="desc">' + bioSafe + '</p>');
+  p.push('    <div class="grid">' + gridHTML + '</div>');
+  p.push('    ' + belowGrid);
+  p.push('    <div class="footer">');
+  p.push('      <small>سپۆنسەر کراوە لەلایەن</small>');
+  p.push('      <a href="https://www.tiktok.com/@proxo_iq" target="_blank">');
+  p.push('        <img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Sponsor">');
+  p.push('      </a>');
+  p.push('      <div class="legal">');
+  p.push('        <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a>');
+  p.push('        | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a>');
+  p.push('      </div>');
+  p.push('    </div>');
+  p.push('  </div>');
+  p.push('</div>');
+  p.push('');
+
+  // ── Script ──
+  p.push('<script>');
+  p.push("const urlParams = new URLSearchParams(window.location.search);");
+  p.push("let selectedApp = '';");
+  p.push("let selectedUrl = '';");
+  p.push("");
+  p.push("function hideEffects() {");
+  p.push("    const hand     = document.getElementById('click-hand');");
+  p.push("    const shineBtn = document.querySelector('.shine-active');");
+  p.push("    if (hand)     hand.classList.add('hidden');");
+  p.push("    if (shineBtn) shineBtn.classList.add('no-shine');");
+  p.push("}");
+  p.push("");
+  p.push("function askConfirm(name, url, kurdishName) {");
+  p.push("    selectedApp = name;");
+  p.push("    selectedUrl = url;");
+  p.push("    const btn   = document.getElementById('main-confirm-btn');");
+  p.push("    const title = document.getElementById('modal-title');");
+  p.push("    title.innerText = kurdishName;");
+  p.push("    btn.className   = 'btn-confirm confirm-' + name.toLowerCase().substring(0, 2);");
+  p.push("    document.getElementById('confirm-modal').classList.add('active');");
+  p.push("    if (navigator.vibrate) navigator.vibrate(25);");
+  p.push("}");
+  p.push("");
+  p.push("function closeModal() { document.getElementById('confirm-modal').classList.remove('active'); }");
+  p.push("");
+  p.push("function goLink() {");
+  p.push("    hideEffects();");
+  p.push("");
+  p.push("    // لۆژیکی نوێ بۆ پشکنینی ٢٤ کاتژمێر");
+  p.push("    const lastTrackTime   = localStorage.getItem('tt_contact_timestamp');");
+  p.push("    const currentTime     = new Date().getTime();");
+  p.push("    const twentyFourHours = 24 * 60 * 60 * 1000; // ٢٤ کاتژمێر بە میلی چرکە");
+  p.push("");
+  p.push("    if (window.ttq) {");
+  p.push("        if (!lastTrackTime || (currentTime - lastTrackTime > twentyFourHours)) {");
+  p.push("            ttq.track('Contact', { content_id: 'contact_button', content_name: selectedApp });");
+  p.push("            localStorage.setItem('tt_contact_timestamp', currentTime);");
+  p.push("        }");
+  p.push("    }");
+  p.push("");
+  p.push("    closeModal();");
+  p.push("    setTimeout(() => { window.location.href = selectedUrl; }, 700);");
+  p.push("}");
+  p.push("");
+  p.push("!function (w, d, t) {");
+  p.push("  w.TiktokAnalyticsObject = t;");
+  p.push("  var ttq = w[t] = w[t] || [];");
+  p.push("  ttq.methods = ['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie','holdConsent','revokeConsent','grantConsent'];");
+  p.push("  ttq.setAndDefer = function(t, e) { t[e] = function() { t.push([e].concat(Array.prototype.slice.call(arguments, 0))); }; };");
+  p.push("  for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);");
+  p.push("  ttq.instance = function(t) {");
+  p.push("    for (var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(e, ttq.methods[n]);");
+  p.push("    return e;");
+  p.push("  };");
+  p.push("  ttq.load = function(e, n) {");
+  p.push("    var r = 'https://analytics.tiktok.com/i18n/pixel/events.js';");
+  p.push("    ttq._i = ttq._i || {}; ttq._i[e] = []; ttq._i[e]._u = r;");
+  p.push("    ttq._t = ttq._t || {}; ttq._t[e] = +new Date;");
+  p.push("    ttq._o = ttq._o || {}; ttq._o[e] = n || {};");
+  p.push("    var s = document.createElement('script');");
+  p.push("    s.type = 'text/javascript'; s.async = true;");
+  p.push("    s.src = r + '?sdkid=' + e + '&lib=' + t;");
+  p.push("    e = document.getElementsByTagName('script')[0];");
+  p.push("    e.parentNode.insertBefore(s, e);");
+  p.push("  };");
+  p.push("  ttq.load('D6BIIA3C77U1CE9DCUMG'); // ← Pixel ID دەتوانی لێرەدا بیگۆڕی");
+  p.push("  ttq.page();");
+  p.push("}(window, document, 'ttq');");
+  p.push("");
+  p.push("document.addEventListener('DOMContentLoaded', function() {");
+  p.push(handlers);
+  p.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
+  p.push("  setTimeout(hideEffects, 10000);");
+  p.push("  // فووتەر خۆکار");p.push("  (function(){var b=document.querySelectorAll('.btn');var n=b.length;var m=n<=2?100:n<=3?120:n<=4?140:n<=5?160:180;var f=document.querySelector('.footer');if(f)f.style.marginTop=m+'px';})();");p.push("});");
+  p.push('<'+'/script>');
+  p.push('</body>');
+  p.push('</html>');
+
+  return p.join('\n');
+}
+// ── LIGHT ──
+function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
+  const {gridHTML,belowGrid,cols} = buildLayout(activeBtns,tt,ttUrl,makeBtnLight);
+  const bioSafe = bio.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const p = [];
+
+  // ── Head ──
+  p.push('<!DOCTYPE html>');
+  p.push('<html dir="rtl" lang="ku">');
+  p.push('<head>');
+  p.push('  <meta charset="UTF-8">');
+  p.push('  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
+  p.push('  <title>' + name + '</title>');
+  p.push('  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">');
+  p.push('<style>');
+
+  // ── Font ──
+  p.push("@font-face { font-family: 'Rabar_021'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2'); }");
+  p.push("@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');");
+
+  // ── Reset ──
+  p.push('* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }');
+
+  // ── Body ──
+  p.push("body { font-family: 'Inter', 'Rabar_021', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; background: #f0f0f0; min-height: 100vh; }");
+
+  // ── Layout ──
+  p.push('.page { width: 100%; max-width: 430px; background: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }');
+  p.push('.top-section { width: 100%; position: relative; }');
+  p.push('.gradient-bg { width: 100%; height: 190px; background: ' + theme.grad + '; position: relative; }');
+  p.push(".gradient-bg::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 55px; background: #fff; border-radius: 50% 50% 0 0 / 55px 55px 0 0; }");
+  p.push('.avatar { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); width: 100px; height: 100px; border-radius: 50%; border: 5px solid #fff; overflow: hidden; background: #ddd; box-shadow: 0 4px 24px rgba(0,0,0,.25); z-index: 10; }');
+  p.push('.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }');
+  p.push('.content { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 16px 50px; background: #fff; }');
+  p.push(".name { font-size: 19px; font-weight: 600; color: #111; text-align: center; position: relative; top: -25px; margin-bottom: -10px; font-family: 'Inter', 'Rabar_021', sans-serif; }");
+  p.push('.desc { font-size: 14px; color: #333; line-height: 2; text-align: center; margin-top: 18px; padding: 0 6px; white-space: pre-line; }');
+
+  // ── Grid & Buttons ──
+  p.push('.grid { display: grid; grid-template-columns: ' + cols + '; gap: 10px; width: 100%; margin-top: 40px; }');
+  p.push('.btn { position: relative; display: flex; flex-direction: column; align-items: center;');
+  p.push('  justify-content: center; gap: 8px; padding: 18px 8px 15px; border-radius: 18px;');
+  p.push('  font-size: 14px; font-weight: bold; color: #fff; min-height: 88px; cursor: pointer;');
+  p.push('  text-decoration: none; overflow: hidden; transition: transform .13s; background: #888; box-shadow: 0 4px 14px rgba(0,0,0,.15); }');
+  p.push('#vb { background: linear-gradient(135deg, #5b40e8, #7b65f2); }');
+  p.push('#wa { background: linear-gradient(135deg, #1aad4e, #25d366); }');
+  p.push('#ig { background: linear-gradient(to right, #8a2387, #e94057, #f27121); }');
+  p.push('#tg { background: linear-gradient(135deg, #0c85c2, #29a8eb); }');
+  p.push('#ph { background: #e03030; } #as { background: #e03030; }');
+  p.push('.btn:active { transform: scale(.96); }');
+  p.push('.btn i { font-size: 28px; }');
+  p.push('#wa i { font-size: 25px; }');
+  p.push('#vb i { font-size: 22px; }');
+  p.push('#tg i { font-size: 22px; }');
+  p.push('#ig i { font-size: 22px; }');
+  p.push('#ph i { font-size: 20px; }');
+  p.push('#as i { font-size: 20px; }');
+  p.push('.three-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 10px; align-items: center; }');
+
+  // ── TikTok Badge ──
+  p.push(".tt-pill { display: inline-flex; flex-direction: row; align-items: center;");
+  p.push("  justify-content: center; gap: 7px; padding: 9px 16px; border-radius: 90px;");
+  p.push("  background: rgba(255,255,255,0.06); color: #111; text-decoration: none;");
+  p.push("  font-family: 'Rabar_021', sans-serif; font-size: 13.5px; font-weight: 600;");
+  p.push("  position: relative; border: 1px solid rgba(0,0,0,0.12); width: 100%; box-sizing: border-box; }");
+  p.push(".tt-pill::before { content: ''; position: absolute; inset: -1px; border-radius: 90px; padding: 1.2px; background: linear-gradient(45deg, #69c9d0, #ee1d52); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: .65; }");
+  p.push('.tt-pill i { font-size: 18px; position: relative; z-index: 1; }');
+  p.push('.tt-pill span { position: relative; z-index: 1; direction: ltr; }');
+  p.push('.tt-pill:active { transform: scale(.95); }');
+  p.push('.tt-wrap { display: flex; justify-content: center; width: 100%; }');
+  p.push(".tt-badge { background: rgba(0,0,0,0.04); color: #111; text-decoration: none;");
+  p.push("  display: flex; flex-direction: row; align-items: center; gap: 8px;");
+  p.push("  padding: 7px 18px; border-radius: 90px; border: 1px solid rgba(0,0,0,0.1);");
+  p.push("  position: relative; margin-top: 14px; font-family: 'Rabar_021', sans-serif; font-size: 14.5px; font-weight: 600; }");
+  p.push(".tt-badge::before { content: ''; position: absolute; inset: -1px; border-radius: 50px; padding: 1.2px; background: linear-gradient(45deg, #69c9d0, #ee1d52); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: .6; }");
+  p.push('.tt-badge i { font-size: 17px; position: relative; z-index: 1; }');
+  p.push('.tt-badge span { position: relative; z-index: 1; direction: ltr; }');
+  p.push('.tt-badge:active { transform: scale(.95); }');
+
+  // ── Footer ──
+  p.push('.footer { width: 100%; margin-top: 100px; padding-bottom: 28px; text-align: center; }');
+  p.push('.footer small { display: block; font-size: 11px; color: #7A7A7A; margin-bottom: 8px; }');
+  p.push('.footer img { height: 13px; display: block; margin: 0 auto 10px; }');
+  p.push('.legal { font-size: 10px; color: #7A7A7A; }');
+  p.push('.legal a { color: inherit; text-decoration: none; margin: 0 5px; }');
+
+  // ── Modal ──
+  p.push('.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000; }');
+  p.push('.modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }');
+  p.push('.modal-content { width: 85%; max-width: 320px; padding: 35px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); background: #16181d; color: #fff; border: 1px solid rgba(255,255,255,0.1); }');
+  p.push('.modal-content h3 { margin: 0 0 16px; font-size: 20px; }');
+  p.push('.modal-content p { font-size: 14px; opacity: 0.7; margin-bottom: 25px; line-height: 1.6; }');
+  p.push(".btn-confirm { width: 100%; padding: 16px; border-radius: 16px; border: none; font-family: 'Rabar_021'; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 12px; }");
+  p.push('.btn-cancel { color: #888; font-size: 14px; cursor: pointer; display: inline-block; padding: 5px; }');
+  p.push('.btn-confirm.confirm-wh { background: #28E16D; color: #000; }');
+  p.push('.btn-confirm.confirm-vi { background: #7360f2; color: #fff; }');
+  p.push('.btn-confirm.confirm-te { background: #26A5E4; color: #fff; }');
+  p.push('.btn-confirm.confirm-ph { background: #fff;    color: #000; }');
+  p.push('.btn-confirm.confirm-as { background: #e03030; color: #fff; }');
+  p.push('.btn-confirm.confirm-in { background: #dc2743; color: #fff; }');
+
+  // ── Animations ──
+  p.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
+  p.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
+  p.push(".shine-active { overflow: hidden; position: relative; }");
+  p.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.12),transparent); transform:skewX(-25deg); animation: shine 2.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
+  p.push(".no-shine::after { animation: none !important; display:none; }");
+  // ── Theme Toggle ──
+  // ── Dark Mode for Light Style ──
+
+  p.push('</style>');
+  p.push('</head>');
+  p.push('<body>');
+  p.push('');
+
+  // ── Modal HTML ──
+  p.push('<div class="modal-overlay" id="confirm-modal">');
+  p.push('  <div class="modal-content">');
+  p.push('    <h3 id="modal-title">...</h3>');
+  p.push('    <p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p>');
+  p.push('    <button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button>');
+  p.push('    <div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div>');
+  p.push('  </div>');
+  p.push('</div>');
+  p.push('');
+
+  // ── Page Content ──
+  p.push('<div class="page">');
+  p.push('  <div class="top-section">');
+  p.push('    <div class="gradient-bg"></div>');
+  p.push('    <div class="avatar"><img src="' + avatar + '" alt="' + name + '"></div>');
+  p.push('  </div>');
+  p.push('  <div class="content">');
+  p.push('    <h1 class="name">' + name + '</h1>');
+  p.push('    <p class="desc">' + bioSafe + '</p>');
+  p.push('    <div class="grid">' + gridHTML + '</div>');
+  p.push('    ' + belowGrid);
+  p.push('    <div class="footer">');
+  p.push('      <small>سپۆنسەر کراوە لەلایەن</small>');
+  p.push('      <a href="https://www.tiktok.com/@proxo_iq" target="_blank">');
+  p.push('        <img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Sponsor">');
+  p.push('      </a>');
+  p.push('      <div class="legal">');
+  p.push('        <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a>');
+  p.push('        | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a>');
+  p.push('      </div>');
+  p.push('    </div>');
+  p.push('  </div>');
+  p.push('</div>');
+  p.push('');
+
+  // ── Script ──
+  p.push('<script>');
+  p.push("const urlParams = new URLSearchParams(window.location.search);");
+  p.push("let selectedApp = '';");
+  p.push("let selectedUrl = '';");
+  p.push("");
+  p.push("function hideEffects() {");
+  p.push("    const hand     = document.getElementById('click-hand');");
+  p.push("    const shineBtn = document.querySelector('.shine-active');");
+  p.push("    if (hand)     hand.classList.add('hidden');");
+  p.push("    if (shineBtn) shineBtn.classList.add('no-shine');");
+  p.push("}");
+  p.push("");
+  p.push("function askConfirm(name, url, kurdishName) {");
+  p.push("    selectedApp = name;");
+  p.push("    selectedUrl = url;");
+  p.push("    const btn   = document.getElementById('main-confirm-btn');");
+  p.push("    const title = document.getElementById('modal-title');");
+  p.push("    title.innerText = kurdishName;");
+  p.push("    btn.className   = 'btn-confirm confirm-' + name.toLowerCase().substring(0, 2);");
+  p.push("    document.getElementById('confirm-modal').classList.add('active');");
+  p.push("    if (navigator.vibrate) navigator.vibrate(25);");
+  p.push("}");
+  p.push("");
+  p.push("function closeModal() { document.getElementById('confirm-modal').classList.remove('active'); }");
+  p.push("");
+  p.push("function goLink() {");
+  p.push("    hideEffects();");
+  p.push("");
+  p.push("    // لۆژیکی نوێ بۆ پشکنینی ٢٤ کاتژمێر");
+  p.push("    const lastTrackTime   = localStorage.getItem('tt_contact_timestamp');");
+  p.push("    const currentTime     = new Date().getTime();");
+  p.push("    const twentyFourHours = 24 * 60 * 60 * 1000; // ٢٤ کاتژمێر بە میلی چرکە");
+  p.push("");
+  p.push("    if (window.ttq) {");
+  p.push("        if (!lastTrackTime || (currentTime - lastTrackTime > twentyFourHours)) {");
+  p.push("            ttq.track('Contact', { content_id: 'contact_button', content_name: selectedApp });");
+  p.push("            localStorage.setItem('tt_contact_timestamp', currentTime);");
+  p.push("        }");
+  p.push("    }");
+  p.push("");
+  p.push("    closeModal();");
+  p.push("    setTimeout(() => { window.location.href = selectedUrl; }, 700);");
+  p.push("}");
+  p.push("");
+  p.push("!function (w, d, t) {");
+  p.push("  w.TiktokAnalyticsObject = t;");
+  p.push("  var ttq = w[t] = w[t] || [];");
+  p.push("  ttq.methods = ['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie','holdConsent','revokeConsent','grantConsent'];");
+  p.push("  ttq.setAndDefer = function(t, e) { t[e] = function() { t.push([e].concat(Array.prototype.slice.call(arguments, 0))); }; };");
+  p.push("  for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);");
+  p.push("  ttq.instance = function(t) {");
+  p.push("    for (var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(e, ttq.methods[n]);");
+  p.push("    return e;");
+  p.push("  };");
+  p.push("  ttq.load = function(e, n) {");
+  p.push("    var r = 'https://analytics.tiktok.com/i18n/pixel/events.js';");
+  p.push("    ttq._i = ttq._i || {}; ttq._i[e] = []; ttq._i[e]._u = r;");
+  p.push("    ttq._t = ttq._t || {}; ttq._t[e] = +new Date;");
+  p.push("    ttq._o = ttq._o || {}; ttq._o[e] = n || {};");
+  p.push("    var s = document.createElement('script');");
+  p.push("    s.type = 'text/javascript'; s.async = true;");
+  p.push("    s.src = r + '?sdkid=' + e + '&lib=' + t;");
+  p.push("    e = document.getElementsByTagName('script')[0];");
+  p.push("    e.parentNode.insertBefore(s, e);");
+  p.push("  };");
+  p.push("  ttq.load('D6BIIA3C77U1CE9DCUMG'); // ← Pixel ID دەتوانی لێرەدا بیگۆڕی");
+  p.push("  ttq.page();");
+  p.push("}(window, document, 'ttq');");
+  p.push("");
+  p.push("document.addEventListener('DOMContentLoaded', function() {");
+  p.push(handlers);
+  p.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
+  p.push("  setTimeout(hideEffects, 10000);");
+  p.push("  (function(){var b=document.querySelectorAll('.btn');var n=b.length;var m=n<=2?100:n<=3?120:n<=4?140:n<=5?160:180;var f=document.querySelector('.footer');if(f)f.style.marginTop=m+'px';})();");p.push("});");
+  p.push('<'+'/script>');
+  p.push('</body>');
+  p.push('</html>');
+
+  return p.join('\n');
+}
+// ── CLASSIC ──
+function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
+  const bioSafe = bio.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const btnColors = { wa:'#25d366', vb:'#7360F2', tg:'#29a8eb', ig:'linear-gradient(to right,#8a2387,#e94057,#f27121)', ph:'#e03030', as:'#e03030' };
+  const btnHTML = activeBtns.map((b, idx) => {
+    const bg = btnColors[b.id] || '#888';
+    return '<a id="' + b.id + '" class="btn-classic' + (idx === 0 ? ' shine-active' : '') + '" style="background:' + bg + '">'
+      + '<div class="ic-spacer"></div>'
+      + '<span>' + b.label + '</span>'
+      + '<div class="ic-wrap"><i class="' + b.icon + '"></i></div>'
+      + '</a>';
+  }).join('');
+  const ttBadge = '<a href="' + ttUrl + '" target="_blank" class="tt-classic"><span dir="ltr">' + tt + '</span><i class="fab fa-tiktok"></i></a>';
+  const parts = [];
+
+  // ── Head ──
+  parts.push('<!DOCTYPE html>');
+  parts.push('<html dir="rtl" lang="ku">');
+  parts.push('<head>');
+  parts.push('  <meta charset="UTF-8">');
+  parts.push('  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">');
+  parts.push('  <title>' + name + '</title>');
+  parts.push('  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">');
+  parts.push('<style>');
+
+  // ── Font ──
+  parts.push("@font-face { font-family: 'Rabar_021'; src: url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2'); }");
+
+  // ── Reset ──
+  parts.push('* { box-sizing: border-box; margin: 0; padding: 0; }');
+
+  // ── Body ──
+  parts.push("body { font-family: 'Rabar_021', sans-serif; background: #f0f0f0; display: flex; justify-content: center; min-height: 100vh; }");
+
+  // ── Layout ──
+  parts.push('.page { width: 100%; max-width: 430px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; background: #f0f0f0; padding-bottom: 60px; }');
+  parts.push('.top-banner { width: 100%; background: ' + theme.grad + '; padding: 36px 20px 60px; text-align: center; }');
+  parts.push(".name { font-size: 22px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.3); font-family: 'Inter', 'Rabar_021', sans-serif; }");
+  parts.push('.desc { font-size: 14px; color: rgba(255,255,255,.9); line-height: 1.9; text-align: center; margin-top: 10px; padding: 0 10px; white-space: pre-line; }');
+  parts.push('.content { width: 100%; padding: 0 18px; margin-top: -30px; }');
+  parts.push('.card-inner { background: #fff; border-radius: 24px; padding: 24px 16px 20px; box-shadow: 0 4px 24px rgba(0,0,0,.1); display: flex; flex-direction: column; gap: 10px; align-items: center; }');
+  parts.push('.btn-classic { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; padding: 14px 16px; border-radius: 50px; font-size: 16px; font-weight: 700; color: #fff; text-decoration: none; cursor: pointer; transition: transform .12s, opacity .12s; width: 100%; }');
+  parts.push('.btn-classic:active { transform: scale(.97); opacity: .9; }');
+  parts.push('.btn-classic .ic-wrap { display: flex; align-items: center; justify-content: center; font-size: 22px; }');
+  parts.push('.btn-classic span { text-align: center; }');
+  parts.push('.btn-classic .ic-spacer { width: 44px; }');
+  parts.push(".tt-classic { display: flex; align-items: center; justify-content: center;");
+  parts.push("  gap: 7px; margin-top: 4px; padding: 8px 20px; border-radius: 50px;");
+  parts.push("  background: #111; color: #fff; text-decoration: none;");
+  parts.push("  font-family: 'Rabar_021', sans-serif; font-size: 13px; font-weight: 600; transition: transform .12s; }");
+  parts.push('.tt-classic i { font-size: 18px; }');
+  parts.push('#wa i { font-size: 25px; }');
+  parts.push('#vb i { font-size: 22px; }');
+  parts.push('#tg i { font-size: 22px; }');
+  parts.push('#ig i { font-size: 22px; }');
+  parts.push('#ph i { font-size: 20px; }');
+  parts.push('#as i { font-size: 20px; }');
+  parts.push('.tt-classic:active { transform: scale(.96); }');
+
+  // ── Footer ──
+  parts.push('.footer { width: 100%; margin-top: 80px; padding: 0 18px 20px; text-align: center; }');
+  parts.push('.footer small { display: block; font-size: 11px; color: #aaa; margin-bottom: 8px; }');
+  parts.push('.footer img { height: 13px; display: block; margin: 0 auto 10px; }');
+  parts.push('.legal { font-size: 10px; color: #bbb; }');
+  parts.push('.legal a { color: inherit; text-decoration: none; margin: 0 5px; }');
+
+  // ── Modal ──
+  parts.push('.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000; }');
+  parts.push('.modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }');
+  parts.push('.modal-content { width: 85%; max-width: 320px; padding: 35px 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); background: #16181d; color: #fff; border: 1px solid rgba(255,255,255,0.1); }');
+  parts.push('.modal-content h3 { margin: 0 0 16px; font-size: 20px; }');
+  parts.push('.modal-content p { font-size: 14px; opacity: 0.7; margin-bottom: 25px; line-height: 1.6; }');
+  parts.push(".btn-confirm { width: 100%; padding: 16px; border-radius: 16px; border: none; font-family: 'Rabar_021'; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 12px; }");
+  parts.push('.btn-cancel { color: #888; font-size: 14px; cursor: pointer; display: inline-block; padding: 5px; }');
+  parts.push('.btn-confirm.confirm-wh { background: #28E16D; color: #000; }');
+  parts.push('.btn-confirm.confirm-vi { background: #7360f2; color: #fff; }');
+  parts.push('.btn-confirm.confirm-te { background: #26A5E4; color: #fff; }');
+  parts.push('.btn-confirm.confirm-ph { background: #fff;    color: #000; }');
+  parts.push('.btn-confirm.confirm-as { background: #e03030; color: #fff; }');
+  parts.push('.btn-confirm.confirm-in { background: #dc2743; color: #fff; }');
+
+  // ── Animations ──
+  parts.push("@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }");
+  parts.push("@keyframes shine { 0% { left: -100%; } 100% { left: 150%; } }");
+  parts.push(".shine-active { overflow: hidden; position: relative; }");
+  parts.push(".shine-active::after { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(to right,transparent,rgba(255,255,255,0.12),transparent); transform:skewX(-25deg); animation: shine 2.5s ease-in-out infinite; pointer-events:none; border-radius:inherit; }");
+  parts.push(".no-shine::after { animation: none !important; display:none; }");
+
+  parts.push('</style>');
+  parts.push('</head>');
+  parts.push('<body>');
+  parts.push('');
+
+  // ── Modal HTML ──
+  parts.push('<div class="modal-overlay" id="confirm-modal">');
+  parts.push('  <div class="modal-content">');
+  parts.push('    <h3 id="modal-title">...</h3>');
+  parts.push('    <p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p>');
+  parts.push('    <button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button>');
+  parts.push('    <div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div>');
+  parts.push('  </div>');
+  parts.push('</div>');
+  parts.push('');
+
+  // ── Page Content ──
+  parts.push('<div class="page">');
+  parts.push('  <div class="top-banner">');
+  parts.push('    <h1 class="name">' + name + '</h1>');
+  parts.push('    <p class="desc">' + bioSafe + '</p>');
+  parts.push('  </div>');
+  parts.push('  <div class="content">');
+  parts.push('    <div class="card-inner">');
+  parts.push('      ' + btnHTML);
+  parts.push('      ' + ttBadge);
+  parts.push('    </div>');
+  parts.push('  </div>');
+  parts.push('  <div class="footer">');
+  parts.push('    <small>سپۆنسەر کراوە لەلایەن</small>');
+  parts.push('    <a href="https://www.tiktok.com/@proxo_iq" target="_blank">');
+  parts.push('      <img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Sponsor">');
+  parts.push('    </a>');
+  parts.push('    <div class="legal">');
+  parts.push('      <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a>');
+  parts.push('      | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a>');
+  parts.push('    </div>');
+  parts.push('  </div>');
+  parts.push('</div>');
+  parts.push('');
+
+  // ── Script ──
+  parts.push('<script>');
+  parts.push("const urlParams = new URLSearchParams(window.location.search);");
+  parts.push("let selectedApp = '';");
+  parts.push("let selectedUrl = '';");
+  parts.push("");
+  parts.push("function askConfirm(name, url, kurdishName) {");
+  parts.push("    selectedApp = name;");
+  parts.push("    selectedUrl = url;");
+  parts.push("    const btn   = document.getElementById('main-confirm-btn');");
+  parts.push("    const title = document.getElementById('modal-title');");
+  parts.push("    title.innerText = kurdishName;");
+  parts.push("    btn.className   = 'btn-confirm confirm-' + name.toLowerCase().substring(0, 2);");
+  parts.push("    document.getElementById('confirm-modal').classList.add('active');");
+  parts.push("    if (navigator.vibrate) navigator.vibrate(25);");
+  parts.push("}");
+  parts.push("");
+  parts.push("function closeModal() { document.getElementById('confirm-modal').classList.remove('active'); }");
+  parts.push("");
+  parts.push("function goLink() {");
+  parts.push("    // لۆژیکی نوێ بۆ پشکنینی ٢٤ کاتژمێر");
+  parts.push("    const lastTrackTime   = localStorage.getItem('tt_contact_timestamp');");
+  parts.push("    const currentTime     = new Date().getTime();");
+  parts.push("    const twentyFourHours = 24 * 60 * 60 * 1000; // ٢٤ کاتژمێر بە میلی چرکە");
+  parts.push("");
+  parts.push("    if (window.ttq) {");
+  parts.push("        if (!lastTrackTime || (currentTime - lastTrackTime > twentyFourHours)) {");
+  parts.push("            ttq.track('Contact', { content_id: 'contact_button', content_name: selectedApp });");
+  parts.push("            localStorage.setItem('tt_contact_timestamp', currentTime);");
+  parts.push("        }");
+  parts.push("    }");
+  parts.push("");
+  parts.push("    closeModal();");
+  parts.push("    setTimeout(() => { window.location.href = selectedUrl; }, 700);");
+  parts.push("}");
+  parts.push("");
+  parts.push("!function (w, d, t) {");
+  parts.push("  w.TiktokAnalyticsObject = t;");
+  parts.push("  var ttq = w[t] = w[t] || [];");
+  parts.push("  ttq.methods = ['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie','holdConsent','revokeConsent','grantConsent'];");
+  parts.push("  ttq.setAndDefer = function(t, e) { t[e] = function() { t.push([e].concat(Array.prototype.slice.call(arguments, 0))); }; };");
+  parts.push("  for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);");
+  parts.push("  ttq.instance = function(t) {");
+  parts.push("    for (var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(e, ttq.methods[n]);");
+  parts.push("    return e;");
+  parts.push("  };");
+  parts.push("  ttq.load = function(e, n) {");
+  parts.push("    var r = 'https://analytics.tiktok.com/i18n/pixel/events.js';");
+  parts.push("    ttq._i = ttq._i || {}; ttq._i[e] = []; ttq._i[e]._u = r;");
+  parts.push("    ttq._t = ttq._t || {}; ttq._t[e] = +new Date;");
+  parts.push("    ttq._o = ttq._o || {}; ttq._o[e] = n || {};");
+  parts.push("    var s = document.createElement('script');");
+  parts.push("    s.type = 'text/javascript'; s.async = true;");
+  parts.push("    s.src = r + '?sdkid=' + e + '&lib=' + t;");
+  parts.push("    e = document.getElementsByTagName('script')[0];");
+  parts.push("    e.parentNode.insertBefore(s, e);");
+  parts.push("  };");
+  parts.push("  ttq.load('D6BIIA3C77U1CE9DCUMG'); // ← Pixel ID دەتوانی لێرەدا بیگۆڕی");
+  parts.push("  ttq.page();");
+  parts.push("}(window, document, 'ttq');");
+  parts.push("");
+  parts.push("document.addEventListener('DOMContentLoaded', function() {");
+  parts.push(handlers);
+  parts.push("  window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }");
+  parts.push("  setTimeout(function(){ var s=document.querySelector('.shine-active'); if(s) s.classList.add('no-shine'); }, 10000);");
+  parts.push("  (function(){var b=document.querySelectorAll('.btn-classic');var n=b.length;var m=n<=2?80:n<=3?100:n<=4?120:n<=5?140:160;var f=document.querySelector('.footer');if(f)f.style.marginTop=m+'px';})();");parts.push("});");
+  parts.push('<'+'/script>');
+  parts.push('</body>');
+  parts.push('</html>');
+
+  return parts.join('\n');
+}
+
+// ── Wrapper بۆ Last16 ──
+function buildPLCardHTML(name, bio, tt, platforms, avatar, style, theme){
   const themeMap={
     purple:{grad:'linear-gradient(to right,#5b1fa8,#c855e0)',from:'#5b1fa8',to:'#c855e0'},
     blue:  {grad:'linear-gradient(to right,#1e3a8a,#2563eb)',from:'#1e3a8a',to:'#2563eb'},
@@ -2687,312 +3395,42 @@ function buildPLCardHTML(name,bio,tt,platforms,avatar,style,theme){
     pink:  {grad:'linear-gradient(to right,#831843,#be185d)',from:'#831843',to:'#be185d'},
     dark:  {grad:'linear-gradient(to right,#0d1021,#1c2333)',from:'#0d1021',to:'#1c2333'},
   };
-  const tg = themeMap[theme]||themeMap.purple;
-  const ttUrl='https://www.tiktok.com/@'+tt;
-  const bioSafe=(bio||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const avImg=avatar?`<img src="${avatar}" alt="${name}" style="width:100%;height:100%;object-fit:cover;display:block;">`
-    :`<span style="font-size:32px;font-weight:800;color:#fff">${(name[0]||'?').toUpperCase()}</span>`;
+  const tg = themeMap[theme] || themeMap.purple;
+  const ttUrl = 'https://www.tiktok.com/@' + tt;
 
-  // ── تایبەتمەندیەکانی پلاتفۆرمەکان ──
-  const platDefs={
-    whatsapp:{id:'wa',icon:'fab fa-whatsapp',label:'واتسئاپ',bg:'linear-gradient(135deg,#1aad4e,#25d366)',url:'whatsapp://send?phone=',conf:'wh'},
-    viber:   {id:'vb',icon:'fab fa-viber',   label:'ڤایبەر',  bg:'linear-gradient(135deg,#5b40e8,#7b65f2)',url:'viber://chat?number=',  conf:'vi'},
-    instagram:{id:'ig',icon:'fab fa-instagram',label:'ئینستاگرام',bg:'linear-gradient(to right,#8a2387,#e94057,#f27121)',url:'https://instagram.com/',conf:'in'},
-    telegram:{id:'tg',icon:'fab fa-telegram',label:'تیلیگرام',bg:'linear-gradient(135deg,#0c85c2,#29a8eb)',url:'https://t.me/',         conf:'te'},
-    phone:   {id:'ph',icon:'fas fa-phone-alt',label:'کۆرەک',  bg:'#e03030',                              url:'tel:',                   conf:'ph'},
-    asya:    {id:'as',icon:'fas fa-phone-alt',label:'ئاسیا سێڵ',bg:'#e03030',                           url:'tel:',                   conf:'as'},
+  // کۆنڤێرتی platforms object بۆ activeBtns array
+  const platDefs = {
+    whatsapp:{id:'wa',type:'whatsapp',icon:'fab fa-whatsapp',label:'واتسئاپ',url:'whatsapp://send?phone='},
+    viber:   {id:'vb',type:'viber',   icon:'fab fa-viber',   label:'ڤایبەر', url:'viber://chat?number='},
+    instagram:{id:'ig',type:'instagram',icon:'fab fa-instagram',label:'ئینستاگرام',url:'https://instagram.com/'},
+    telegram:{id:'tg',type:'telegram',icon:'fab fa-telegram',label:'تیلیگرام',url:'https://t.me/'},
+    phone:   {id:'ph',type:'phone',   icon:'fas fa-phone-alt',label:'کۆرەک',  url:'tel:'},
+    asya:    {id:'as',type:'asya',    icon:'fas fa-phone-alt',label:'ئاسیا سێڵ',url:'tel:'},
   };
 
-  const activeBtns=Object.entries(platforms).map(([p,v])=>{
-    const pd=platDefs[p]||{id:p,icon:'fas fa-link',label:p,bg:'#888',url:'',conf:'xx'};
-    return{...pd,contact:v,href:pd.url+v};
+  const activeBtns = Object.entries(platforms).map(([p, v]) => {
+    const pd = platDefs[p] || {id:p,type:p,icon:'fas fa-link',label:p,url:''};
+    return {...pd, contact:v};
   });
 
-  // ── بلۆکی هەموو پارچەی هاوبەشی JS ──
-  const sharedScript=`
-const urlParams=new URLSearchParams(window.location.search);
-let selectedApp='',selectedUrl='';
-function askConfirm(name,url,label){
-  selectedApp=name;selectedUrl=url;
-  const btn=document.getElementById('main-confirm-btn');
-  const title=document.getElementById('modal-title');
-  title.innerText=label;
-  btn.className='btn-confirm confirm-'+name.substring(0,2);
-  document.getElementById('confirm-modal').classList.add('active');
-  if(navigator.vibrate)navigator.vibrate(25);
-}
-function closeModal(){document.getElementById('confirm-modal').classList.remove('active');}
-function goLink(){
-  const last=localStorage.getItem('tt_ct');
-  const now=Date.now();
-  if(window.ttq&&(!last||(now-last>86400000))){
-    ttq.track('Contact',{content_id:'contact_button',content_name:selectedApp});
-    localStorage.setItem('tt_ct',now);
-  }
-  closeModal();
-  setTimeout(()=>{window.location.href=selectedUrl;},700);
-}
-!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie'];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)));};};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e;};ttq.load=function(e,n){var r='https://analytics.tiktok.com/i18n/pixel/events.js';ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=r;ttq._t=ttq._t||{};ttq._t[e]=+new Date;ttq._o=ttq._o||{};ttq._o[e]=n||{};var s=document.createElement('script');s.type='text/javascript';s.async=true;s.src=r+'?sdkid='+e+'&lib='+t;e=document.getElementsByTagName('script')[0];e.parentNode.insertBefore(s,e);};ttq.load('D6BIIA3C77U1CE9DCUMG');ttq.page();}(window,document,'ttq');
-document.addEventListener('DOMContentLoaded',function(){
-  window.onclick=function(e){if(e.target.id==='confirm-modal')closeModal();};
-  setTimeout(function(){var s=document.querySelector('.shine-active');if(s)s.classList.add('no-shine');},10000);
-  ${activeBtns.map(b=>`document.getElementById('${b.id}').onclick=function(){askConfirm('${b.conf}','${b.href}','${b.label}');};`).join('\n  ')}
-});`;
+  // بناخەی handlers
+  const handlers = activeBtns.map(b => {
+    let url;
+    if(b.type==='instagram') url = b.url + b.contact;
+    else if(b.type==='telegram') url = b.url + b.contact;
+    else url = b.url + b.contact;
+    return `  document.getElementById('${b.id}').onclick = function(){
+    askConfirm('${b.type}', '${url}', '${b.label}');
+  };`;
+  }).join('\n');
 
-  const modalHTML=`<div class="modal-overlay" id="confirm-modal">
-  <div class="modal-content">
-    <h3 id="modal-title">...</h3>
-    <p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p>
-    <button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button>
-    <div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div>
-  </div>
-</div>`;
+  const avatarImg = avatar
+    ? '<img src="' + avatar + '" alt="' + name + '" style="width:100%;height:100%;object-fit:cover;display:block;">'
+    : '<span style="font-size:32px;font-weight:800;color:#fff">' + (name[0]||'?').toUpperCase() + '</span>';
 
-  const footerHTML=`<div class="footer">
-  <small>سپۆنسەر کراوە لەلایەن</small>
-  <a href="https://www.tiktok.com/@proxo_iq" target="_blank">
-    <img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo">
-  </a>
-  <div class="legal">
-    <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a>
-    | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a>
-  </div>
-</div>`;
-
-  const sharedModalCSS=`
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:10000;}
-.modal-overlay.active{display:flex;animation:fadeIn .2s ease;}
-.modal-content{width:85%;max-width:320px;padding:35px 25px;border-radius:24px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3);background:#16181d;color:#fff;border:1px solid rgba(255,255,255,.1);}
-.modal-content h3{margin:0 0 16px;font-size:20px;}
-.modal-content p{font-size:14px;opacity:.7;margin-bottom:25px;line-height:1.6;}
-.btn-confirm{width:100%;padding:16px;border-radius:16px;border:none;font-family:'Rabar_021',sans-serif;font-size:16px;font-weight:bold;cursor:pointer;transition:.2s;margin-bottom:12px;}
-.btn-cancel{color:#888;font-size:14px;cursor:pointer;display:inline-block;padding:5px;}
-.confirm-wh{background:#28E16D;color:#000;}.confirm-vi{background:#7360f2;color:#fff;}
-.confirm-te{background:#26A5E4;color:#fff;}.confirm-ph{background:#fff;color:#000;}
-.confirm-as{background:#e03030;color:#fff;}.confirm-in{background:#dc2743;color:#fff;}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-@keyframes shine{0%{left:-100%;}100%{left:150%;}}
-.shine-active{overflow:hidden;position:relative;}
-.shine-active::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(to right,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-25deg);animation:shine 2.5s ease-in-out infinite;pointer-events:none;border-radius:inherit;}
-.no-shine::after{animation:none!important;display:none;}`;
-
-  const head=(ttl)=>`<!DOCTYPE html>
-<html dir="rtl" lang="ku">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>${ttl}</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-@font-face{font-family:'Rabar_021';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');}
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}`;
-
-  // ════════════════════════════════
-  // ── DARK ──
-  // ════════════════════════════════
-  if(style==='dark'){
-    // بناخەی grid — لە ProxoLink buildLayout
-    let btns=[...activeBtns];
-    const waIdx=btns.findIndex(b=>b.id==='wa');
-    if(waIdx===0&&btns.length>=2)[btns[0],btns[1]]=[btns[1],btns[0]];
-    else if(waIdx>1){const wa=btns.splice(waIdx,1)[0];btns.splice(1,0,wa);}
-    const count=btns.length;
-    let gridHTML='',belowGrid='';
-    const mkBtn=(b,shine)=>`<a id="${b.id}" class="btn${shine?' shine-active':''}" style="background:${b.bg}"><i class="${b.icon}"></i>${b.label}</a>`;
-    if(count===1){
-      gridHTML='';
-      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[0],true)}</div>`;
-    } else if(count===3){
-      gridHTML=mkBtn(btns[0],false)+mkBtn(btns[1],true);
-      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[2],false)}</div>`;
-    } else if(count===5){
-      gridHTML=mkBtn(btns[0],false)+mkBtn(btns[1],true)+mkBtn(btns[2],false)+mkBtn(btns[3],false);
-      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[4],false)}</div>`;
-    } else {
-      gridHTML=btns.map((b,i)=>mkBtn(b,i===1)).join('');
-      belowGrid=`<div class="tt-wrap"><a href="${ttUrl}" target="_blank" class="tt-badge"><span>@${tt}</span><i class="fab fa-tiktok"></i></a></div>`;
-    }
-    const btnColors='';
-    return head(name)+`
-body{font-family:'Inter','Rabar_021',sans-serif;background:#0d1021;display:flex;justify-content:center;min-height:100vh;}
-.page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;align-items:center;background:#0d1021;}
-.top-section{width:100%;position:relative;}
-.gradient-bg{width:100%;height:190px;background:${tg.grad};position:relative;}
-.gradient-bg::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:55px;background:#0d1021;border-radius:50% 50% 0 0/55px 55px 0 0;}
-.avatar{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:100px;height:100px;border-radius:50%;border:5px solid #fff;overflow:hidden;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.4);z-index:10;}
-.content{width:100%;display:flex;flex-direction:column;align-items:center;padding:0 16px 50px;background:#0d1021;}
-.name{font-size:19px;font-weight:600;color:#fff;text-align:center;position:relative;top:-25px;margin-bottom:-10px;}
-.desc{font-size:14px;color:#EDEDED;line-height:2;text-align:center;margin-top:18px;padding:0 6px;white-space:pre-line;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:40px;}
-.btn{position:relative;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;padding:16px 12px;border-radius:50px;font-size:15px;font-weight:bold;color:#fff;cursor:pointer;text-decoration:none;overflow:hidden;transition:transform .13s;}
-.btn:active{transform:scale(.96);}
-.btn i{font-size:22px;}
-.three-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:10px;align-items:center;}
-.tt-pill{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:90px;background:rgba(255,255,255,.03);backdrop-filter:blur(5px);color:#fff;text-decoration:none;font-family:'Rabar_021',sans-serif;font-size:13.5px;font-weight:600;position:relative;border:1px solid rgba(255,255,255,.1);width:100%;box-sizing:border-box;}
-.tt-pill::before{content:'';position:absolute;inset:-1px;border-radius:90px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.7;}
-.tt-pill i{font-size:18px;position:relative;z-index:1;}
-.tt-pill span{position:relative;z-index:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;}
-.tt-pill:active{transform:scale(.95);}
-.tt-wrap{display:flex;justify-content:center;width:100%;}
-.tt-badge{background:rgba(255,255,255,.03);color:#fff;text-decoration:none;display:flex;flex-direction:row;align-items:center;gap:8px;padding:7px 18px;border-radius:90px;border:1px solid rgba(255,255,255,.1);position:relative;margin-top:14px;font-family:'Rabar_021',sans-serif;font-size:14.5px;font-weight:600;}
-.tt-badge::before{content:'';position:absolute;inset:-1px;border-radius:50px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.6;}
-.tt-badge i{font-size:17px;position:relative;z-index:1;}
-.tt-badge span{position:relative;z-index:1;direction:ltr;}
-.tt-badge:active{transform:scale(.95);}
-.footer{width:100%;margin-top:100px;padding-bottom:28px;text-align:center;}
-.footer small{display:block;font-size:11px;color:#8b8b8b;margin-bottom:8px;}
-.footer img{height:13px;display:block;margin:0 auto 10px;}
-.legal{font-size:10px;color:#8b8b8b;}
-.legal a{color:inherit;text-decoration:none;margin:0 5px;}
-${btnColors}
-${sharedModalCSS}
-</style></head><body>
-${modalHTML}
-<div class="page">
-  <div class="top-section">
-    <div class="gradient-bg"></div>
-    <div class="avatar">${avImg}</div>
-  </div>
-  <div class="content">
-    <h1 class="name">${name}</h1>
-    <p class="desc">${bioSafe}</p>
-    <div class="grid">${gridHTML}</div>
-    ${belowGrid}
-    ${footerHTML}
-  </div>
-</div>
-<script>${sharedScript}<\/script>
-</body></html>`;
-  }
-
-  // ════════════════════════════════
-  // ── LIGHT ──
-  // ════════════════════════════════
-  if(style==='light'){
-    let btns=[...activeBtns];
-    const waIdx=btns.findIndex(b=>b.id==='wa');
-    if(waIdx===0&&btns.length>=2)[btns[0],btns[1]]=[btns[1],btns[0]];
-    else if(waIdx>1){const wa=btns.splice(waIdx,1)[0];btns.splice(1,0,wa);}
-    const count=btns.length;
-    let gridHTML='',belowGrid='';
-    const mkBtn=(b,shine)=>`<a id="${b.id}" class="btn${shine?' shine-active':''}" style="background:${b.bg}"><i class="${b.icon}"></i>${b.label}</a>`;
-    if(count===1){
-      gridHTML='';
-      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[0],true)}</div>`;
-    } else if(count===3){
-      gridHTML=mkBtn(btns[0],false)+mkBtn(btns[1],true);
-      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[2],false)}</div>`;
-    } else if(count===5){
-      gridHTML=mkBtn(btns[0],false)+mkBtn(btns[1],true)+mkBtn(btns[2],false)+mkBtn(btns[3],false);
-      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[4],false)}</div>`;
-    } else {
-      gridHTML=btns.map((b,i)=>mkBtn(b,i===1)).join('');
-      belowGrid=`<div class="tt-wrap"><a href="${ttUrl}" target="_blank" class="tt-badge"><span>@${tt}</span><i class="fab fa-tiktok"></i></a></div>`;
-    }
-    const btnColors='';
-    return head(name)+`
-body{font-family:'Inter','Rabar_021',sans-serif;background:#f0f0f0;display:flex;justify-content:center;min-height:100vh;}
-.page{width:100%;max-width:430px;background:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
-.top-section{width:100%;position:relative;}
-.gradient-bg{width:100%;height:190px;background:${tg.grad};position:relative;}
-.gradient-bg::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:55px;background:#fff;border-radius:50% 50% 0 0/55px 55px 0 0;}
-.avatar{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:100px;height:100px;border-radius:50%;border:5px solid #fff;overflow:hidden;background:#ddd;box-shadow:0 4px 24px rgba(0,0,0,.25);z-index:10;}
-.content{width:100%;display:flex;flex-direction:column;align-items:center;padding:0 16px 50px;background:#fff;}
-.name{font-size:19px;font-weight:600;color:#111;text-align:center;position:relative;top:-25px;margin-bottom:-10px;}
-.desc{font-size:14px;color:#333;line-height:2;text-align:center;margin-top:18px;padding:0 6px;white-space:pre-line;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:40px;}
-.btn{position:relative;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;padding:16px 12px;border-radius:50px;font-size:15px;font-weight:bold;color:#fff;cursor:pointer;text-decoration:none;overflow:hidden;transition:transform .13s;}
-.btn:active{transform:scale(.96);}
-.btn i{font-size:22px;}
-.three-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:10px;align-items:center;}
-.tt-pill{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:90px;background:rgba(255,255,255,.06);color:#111;text-decoration:none;font-family:'Rabar_021',sans-serif;font-size:13.5px;font-weight:600;position:relative;border:1px solid rgba(0,0,0,.12);width:100%;box-sizing:border-box;}
-.tt-pill::before{content:'';position:absolute;inset:-1px;border-radius:90px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.65;}
-.tt-pill i{font-size:18px;position:relative;z-index:1;}
-.tt-pill span{position:relative;z-index:1;direction:ltr;}
-.tt-pill:active{transform:scale(.95);}
-.tt-wrap{display:flex;justify-content:center;width:100%;}
-.tt-badge{background:rgba(0,0,0,.04);color:#111;text-decoration:none;display:flex;flex-direction:row;align-items:center;gap:8px;padding:7px 18px;border-radius:90px;border:1px solid rgba(0,0,0,.1);position:relative;margin-top:14px;font-family:'Rabar_021',sans-serif;font-size:14.5px;font-weight:600;}
-.tt-badge::before{content:'';position:absolute;inset:-1px;border-radius:50px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.6;}
-.tt-badge i{font-size:17px;position:relative;z-index:1;}
-.tt-badge span{position:relative;z-index:1;direction:ltr;}
-.tt-badge:active{transform:scale(.95);}
-.footer{width:100%;margin-top:100px;padding-bottom:28px;text-align:center;}
-.footer small{display:block;font-size:11px;color:#7A7A7A;margin-bottom:8px;}
-.footer img{height:13px;display:block;margin:0 auto 10px;}
-.legal{font-size:10px;color:#7A7A7A;}
-.legal a{color:inherit;text-decoration:none;margin:0 5px;}
-${btnColors}
-${sharedModalCSS}
-</style></head><body>
-${modalHTML}
-<div class="page">
-  <div class="top-section">
-    <div class="gradient-bg"></div>
-    <div class="avatar">${avImg}</div>
-  </div>
-  <div class="content">
-    <h1 class="name">${name}</h1>
-    <p class="desc">${bioSafe}</p>
-    <div class="grid">${gridHTML}</div>
-    ${belowGrid}
-    ${footerHTML}
-  </div>
-</div>
-<script>${sharedScript}<\/script>
-</body></html>`;
-  }
-
-  // ════════════════════════════════
-  // ── CLASSIC ──
-  // ════════════════════════════════
-  const btnColors={wa:'#25d366',vb:'#7360F2',tg:'#29a8eb',ig:'linear-gradient(to right,#8a2387,#e94057,#f27121)',ph:'#e03030',as:'#e03030'};
-  const classicBtns=activeBtns.map((b,i)=>`<a id="${b.id}" class="btn-classic${i===0?' shine-active':''}" style="background:${btnColors[b.id]||b.bg}">
-  <div class="ic-spacer"></div>
-  <span>${b.label}</span>
-  <div class="ic-wrap"><i class="${b.icon}"></i></div>
-</a>`).join('\n');
-  const ttClassic=`<a href="${ttUrl}" target="_blank" class="tt-classic"><span dir="ltr">@${tt}</span><i class="fab fa-tiktok"></i></a>`;
-  return head(name)+`
-body{font-family:'Rabar_021',sans-serif;background:#f0f0f0;display:flex;justify-content:center;min-height:100vh;}
-.page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;align-items:center;background:#f0f0f0;padding-bottom:60px;}
-.top-banner{width:100%;background:${tg.grad};padding:36px 20px 60px;text-align:center;}
-.name{font-size:22px;font-weight:600;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3);}
-.desc{font-size:14px;color:rgba(255,255,255,.9);line-height:1.9;text-align:center;margin-top:10px;padding:0 10px;white-space:pre-line;}
-.content{width:100%;padding:0 18px;margin-top:-30px;}
-.card-inner{background:#fff;border-radius:24px;padding:24px 16px 20px;box-shadow:0 4px 24px rgba(0,0,0,.1);display:flex;flex-direction:column;gap:10px;align-items:center;}
-.btn-classic{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:14px 16px;border-radius:50px;font-size:16px;font-weight:700;color:#fff;text-decoration:none;cursor:pointer;transition:transform .12s,opacity .12s;width:100%;}
-.btn-classic:active{transform:scale(.97);opacity:.9;}
-.btn-classic .ic-wrap{display:flex;align-items:center;justify-content:center;font-size:22px;}
-.btn-classic span{text-align:center;}
-.btn-classic .ic-spacer{width:44px;}
-.tt-classic{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:4px;padding:8px 20px;border-radius:50px;background:#111;color:#fff;text-decoration:none;font-family:'Rabar_021',sans-serif;font-size:13px;font-weight:600;transition:transform .12s;}
-.tt-classic i{font-size:18px;}
-.tt-classic:active{transform:scale(.96);}
-#wa i{font-size:25px;}#vb i{font-size:22px;}#tg i{font-size:22px;}#ig i{font-size:22px;}#ph i{font-size:20px;}#as i{font-size:20px;}
-.footer{width:100%;margin-top:80px;padding:0 18px 20px;text-align:center;}
-.footer small{display:block;font-size:11px;color:#aaa;margin-bottom:8px;}
-.footer img{height:13px;display:block;margin:0 auto 10px;}
-.legal{font-size:10px;color:#bbb;}
-.legal a{color:inherit;text-decoration:none;margin:0 5px;}
-${sharedModalCSS}
-</style></head><body>
-${modalHTML}
-<div class="page">
-  <div class="top-banner">
-    <h1 class="name">${name}</h1>
-    <p class="desc">${bioSafe}</p>
-  </div>
-  <div class="content">
-    <div class="card-inner">
-      ${classicBtns}
-      ${ttClassic}
-    </div>
-  </div>
-  ${footerHTML}
-</div>
-<script>${sharedScript}<\/script>
-</body></html>`;
+  if(style === 'light')   return buildPageLight(name, bio, tt, ttUrl, avatarImg, activeBtns, handlers, tg);
+  if(style === 'classic') return buildPageClassic(name, bio, tt, ttUrl, avatarImg, activeBtns, handlers, tg);
+  return buildPageDark(name, bio, tt, ttUrl, avatarImg, activeBtns, handlers, tg);
 }
 
 async function loadProxoCards(){
