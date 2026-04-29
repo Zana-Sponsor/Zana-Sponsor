@@ -1175,9 +1175,6 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
   <div class="pg" id="pgTxhistory">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
       <div class="pg-title">مێژووی مامەڵەکان</div>
-      <button onclick="openSendBalance()" style="display:flex;align-items:center;gap:7px;padding:10px 16px;background:var(--dark);color:#fff;border:none;border-radius:13px;font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(28,35,51,.22)">
-        <i class="fas fa-paper-plane"></i> ناردنی باڵانس
-      </button>
     </div>
 
     <!-- فیلتەر -->
@@ -1186,8 +1183,6 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       <div class="fchip" data-txf="deposit" onclick="filterTxHistory(this)">زیادکردن</div>
       <div class="fchip" data-txf="spend" onclick="filterTxHistory(this)">خەرجکردن</div>
       <div class="fchip" data-txf="refund" onclick="filterTxHistory(this)"><i class="fas fa-rotate-left" style="font-size:10px"></i> گەڕانەوە</div>
-      <div class="fchip" data-txf="transfer_out" onclick="filterTxHistory(this)"><i class="fas fa-paper-plane" style="font-size:10px"></i> ناردنی باڵانس</div>
-      <div class="fchip" data-txf="transfer_in" onclick="filterTxHistory(this)"><i class="fas fa-inbox" style="font-size:10px"></i> وەرگرتنی باڵانس</div>
       <div class="fchip" data-txf="coin_exchange" onclick="filterTxHistory(this)"><span style="font-size:11px">🪙</span> کۆین گۆڕین</div>
     </div>
 
@@ -1220,91 +1215,6 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       </div>
     </div>
     <div style="height:14px"></div>
-  </div>
-</div>
-
-<!-- ═══ SEND BALANCE MODAL ═══ -->
-<div class="mover" id="moSendBalance">
-  <div class="mbox">
-    <div class="mbar"></div>
-    <div class="mhdr">
-      <h3><i class="fas fa-paper-plane" style="margin-left:7px;color:var(--dark)"></i>ناردنی باڵانس</h3>
-      <button class="mclose" onclick="closeMo('moSendBalance')"><i class="fas fa-xmark"></i></button>
-    </div>
-
-    <!-- کرێی گواستنەوە -->
-    <div style="background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);border-radius:13px;padding:11px 14px;margin-bottom:16px;display:flex;align-items:flex-start;gap:9px">
-      <i class="fas fa-circle-info" style="color:var(--rd);margin-top:2px;flex-shrink:0"></i>
-      <div style="font-size:12.5px;color:var(--rd);line-height:1.7">
-        بۆ هەر ناردنێک <b>$1.50</b> کرێی گواستنەوە کەم دەکرێت. دڵنیابە باڵانست بەس هەیە.
-      </div>
-    </div>
-
-    <!-- ئیمێڵی وەرگر -->
-    <div class="mlbl">ئیمێڵی وەرگر <span style="color:var(--rd)">*</span></div>
-    <input class="finp" type="email" id="sendToEmail" placeholder="email@example.com" dir="ltr"
-      style="margin-bottom:14px" oninput="fetchReceiverProfile()">
-
-    <!-- پرۆفایلی وەرگر — پیشاندان دوای دۆزینەوە -->
-    <div id="receiverProfileCard" style="display:none;background:var(--bg);border:1.5px solid var(--b1);border-radius:14px;padding:13px 15px;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div id="receiverAvatar" style="width:46px;height:46px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0">?</div>
-        <div>
-          <div id="receiverName" style="font-size:15px;font-weight:800;color:var(--dark)">—</div>
-          <div id="receiverEmail" style="font-size:11px;color:var(--mt);margin-top:2px;direction:ltr;text-align:right">—</div>
-        </div>
-        <div style="margin-right:auto">
-          <div style="width:22px;height:22px;border-radius:50%;background:rgba(22,163,74,.1);border:1.5px solid rgba(22,163,74,.2);display:flex;align-items:center;justify-content:center">
-            <i class="fas fa-check" style="font-size:10px;color:var(--gr)"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ئەگەر نەدۆزرایەوە -->
-    <div id="receiverNotFound" style="display:none;background:rgba(220,38,38,.05);border:1px solid rgba(220,38,38,.15);border-radius:11px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--rd)">
-      <i class="fas fa-user-xmark" style="margin-left:6px"></i>هیچ بەکارهێنەرێک بە ئەم ئیمێڵە نەدۆزرایەوە
-    </div>
-
-    <!-- بڕی ناردن -->
-    <div class="mlbl">بڕی ناردن (دۆلار) <span style="color:var(--rd)">*</span></div>
-    <div style="position:relative;margin-bottom:6px">
-      <input type="number" id="sendAmount" min="1" step="0.01" placeholder="بڕ بنووسە بە دۆلار ($)"
-        style="width:100%;padding:13px 16px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;color:var(--tx);font-family:'R',sans-serif;font-size:15px;outline:none;direction:ltr;text-align:left;transition:border-color .2s"
-        oninput="updateSendFeeDisplay()"
-        onfocus="this.style.borderColor='var(--dark)'" onblur="this.style.borderColor='var(--b1)'">
-    </div>
-
-    <!-- نیشاندانی کرێ و باڵانسی کۆتایی -->
-    <div id="sendFeeBox" style="display:none;background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:12px 14px;margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px">
-        <span style="color:var(--mt)">بڕی ناردن</span>
-        <span id="sendAmtDisplay" style="font-weight:700;color:var(--dark)">$0.00</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px">
-        <span style="color:var(--mt)">کرێی گواستنەوە</span>
-        <span style="font-weight:700;color:var(--rd)">-$1.50</span>
-      </div>
-      <div style="height:1px;background:var(--b1);margin-bottom:6px"></div>
-      <div style="display:flex;justify-content:space-between;font-size:13px">
-        <span style="color:var(--mt)">کۆی کەمکراوە لە باڵانسەکەت</span>
-        <span id="sendTotalDeduct" style="font-weight:800;color:var(--rd)">$0.00</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-top:5px">
-        <span style="color:var(--mt)">وەرگر وەردەگرێت</span>
-        <span id="sendNetAmount" style="font-weight:800;color:var(--gr)">$0.00</span>
-      </div>
-    </div>
-
-    <!-- تێبینی -->
-    <div class="mlbl">تێبینی <span style="font-size:10px;color:var(--mt)">(ئۆپشنی)</span></div>
-    <textarea id="sendNote" placeholder="سەبەبی ناردن یان هەر پەیامێک..." style="width:100%;padding:12px 14px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;color:var(--tx);font-family:'R',sans-serif;font-size:14px;outline:none;resize:none;min-height:60px;margin-bottom:16px;transition:border-color .2s" onfocus="this.style.borderColor='var(--dark)'" onblur="this.style.borderColor='var(--b1)'"></textarea>
-
-    <div id="sendBalMsg" style="display:none;font-size:12.5px;padding:10px 13px;border-radius:11px;margin-bottom:12px;text-align:center"></div>
-
-    <button class="submit-btn" id="sendBalBtn" onclick="submitSendBalance()">
-      <i class="fas fa-paper-plane"></i> ناردنی باڵانس
-    </button>
   </div>
 </div>
 
@@ -2000,7 +1910,7 @@ function switchTab(m){
   document.getElementById('authMsg').style.display='none';
 }
 async function doAuth(){
-  const email=document.getElementById('authEmail').value.trim().toLowerCase();
+  const email=document.getElementById('authEmail').value.trim();
   const pass=document.getElementById('authPass').value;
   const btn=document.getElementById('authBtn');
   if(!email||!pass){showAmsg('ئیمەیل و پاسۆرد پڕ بکەرەوە','err');return;}
@@ -2009,57 +1919,21 @@ async function doAuth(){
   try{
     if(aMode==='login'){
       const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
-      if(error){
-        // هەڵەی ئیمێڵ پشتڕاستنەکراو
-        if(error.message?.toLowerCase().includes('email not confirmed')||error.message?.includes('Email not confirmed')){
-          showAmsg('ئیمێڵەکەت پشتڕاست نەکراوە — تکایە بۆ ئەدمین بگو تا چالاکت بکات','err');
-        } else {
-          throw error;
-        }
-        return;
-      }
+      if(error)throw error;
       cu=data.user;boot();
     } else {
       const name=document.getElementById('authName').value.trim()||email.split('@')[0];
       const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
-      if(error){
-        // ئەگەر پێشتر تۆمارکراوە، هەوڵ بدە چوونەژوورەوە
-        if(error.message?.includes('already registered')||error.message?.includes('already been registered')){
-          showAmsg('ئەم ئیمەیلە پێشتر تۆمارکراوە — تکایە بچۆ ژوورەوە','err');
-          switchTab('login');
-        } else {
-          throw error;
-        }
-        return;
-      }
-      // ئەگەر session هەیە — ڕاستەوخۆ بۆ ژوورەوە
-      if(data?.session){
-        cu=data.user;
-        boot();
-        return;
-      }
-      // ئەگەر session نییە — هەوڵ بدە چوونەژوورەوە (ئیمێڵ کۆنفێرمیشن چالاک نییە)
-      if(data?.user){
+      if(error)throw error;
+      if(data.session){cu=data.user;boot();}
+      else{
         const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
-        if(!le&&ld?.session){
-          cu=ld.user;
-          boot();
-          return;
-        }
-        // ئیمێڵ کۆنفێرمیشن چالاکە لە Supabase
-        showAmsg('✅ هەژمارت دروستکرا! تکایە ئیمێڵەکەت بپشکنە بۆ پشتڕاستکردن، یان پەیوەند بە ئەدمین بکە.','ok');
-        return;
+        if(!le&&ld.session){cu=ld.user;boot();}
+        else showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');
       }
-      showAmsg('هەڵەیەک ڕوویدا — دووبارە هەوڵ بدەرەوە','err');
     }
   }catch(e){
-    const m={
-      'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە',
-      'Email already registered':'پێشتر تۆمارکراوە — چوونەژوورەوە بکە',
-      'User already registered':'پێشتر تۆمارکراوە — چوونەژوورەوە بکە',
-      'Password should be at least 6 characters':'پاسۆرد کەمترین ٦ پیت پێویستە',
-      'Unable to validate email address: invalid format':'فۆرماتی ئیمەیل هەڵەیە',
-    };
+    const m={'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە','Email already registered':'پێشتر تۆمارکراوە','User already registered':'پێشتر تۆمارکراوە'};
     showAmsg(m[e.message]||e.message,'err');
   }finally{btn.disabled=false;}
 }
@@ -4209,9 +4083,6 @@ async function loadNotifications(){
     refund_rejected_ad:{ico:'fas fa-rotate-left',         cls:'notif-gr', title:'پارەی ڕیکلامی ڕەتکراو گەڕایەوە 💸'},
     // ── ئامراز ──
     new_asset:         {ico:'fas fa-link',                cls:'notif-bl', title:'ئامرازی نوێ دروستکرا 🔗'},
-    // ── گواستنەوەی باڵانس ──
-    transfer_out:      {ico:'fas fa-paper-plane',         cls:'notif-rd', title:'باڵانس نێردرا ✅'},
-    transfer_in:       {ico:'fas fa-inbox',               cls:'notif-gr', title:'باڵانست زیادبوو 💰'},
     // ── ئادمین ──
     admin_msg:         {ico:'fas fa-bullhorn',            cls:'notif-yw', title:'پەیامی ئادمین 📣'},
     system_update:     {ico:'fas fa-rotate',              cls:'notif-bl', title:'نوێکردنەوەی سیستەم 🔔'},
@@ -4444,13 +4315,10 @@ console.log('ads data:', ads);
 
   const depositItems=(deposits||[]).map(t=>({
     id:t.id,
-    kind: t.kind==='refund'?'refund':
-          t.type==='transfer_out'||t.kind==='transfer_out'?'transfer_out':
-          t.type==='transfer_in'||t.kind==='transfer_in'?'transfer_in':'deposit',
-    label: t.kind==='refund'?`گەڕانەوەی پارە${t.ad_number?' — ڕیکلام #'+t.ad_number:''}`:
-           (t.type==='transfer_out'||t.kind==='transfer_out')?`ناردنی باڵانس بۆ ${t.receiver_email||'—'}`:
-           (t.type==='transfer_in'||t.kind==='transfer_in')?`وەرگرتنی باڵانس لە ${t.sender_email||'—'}`:
-           t.status==='approved'?'زیادکردنی باڵانس لەلایەن ئادمینەوە':(mn[t.method]||t.method||'—'),
+    kind: t.kind==='refund'?'refund':'deposit',
+    label: t.kind==='refund'
+      ? `گەڕانەوەی پارە${t.ad_number?' — ڕیکلام #'+t.ad_number:''}`
+      : t.status==='approved'?'زیادکردنی باڵانس لەلایەن ئادمینەوە':(mn[t.method]||t.method||'—'),
     amount:parseFloat(t.amount),
     status:t.status,
     date:t.created_at,
@@ -4458,9 +4326,6 @@ console.log('ads data:', ads);
     ad_number:t.ad_number||null,
     note:t.note||null,
     deposit_number:t.deposit_number||null,
-    receiver_email:t.receiver_email||null,
-    sender_email:t.sender_email||null,
-    fee:parseFloat(t.fee||0),
   }));
 
   const spendItems=(ads||[]).map(a=>({
@@ -4511,230 +4376,389 @@ function renderTxHistory(){
     const isRefund=t.kind==='refund';
     const isSpend=t.kind==='spend';
     const isCoinExchange=t.kind==='coin_exchange';
-    const isTransferOut=t.kind==='transfer_out';
-    const isTransferIn=t.kind==='transfer_in';
 
     let icoName='fa-arrow-down-long', amtColor='var(--gr)', amtPrefix='+';
     let icoBg='rgba(22,163,74,.08)', icoBorder='rgba(22,163,74,.15)', icoColor='var(--gr)';
-
     if(isSpend){icoName='fa-arrow-up-long';amtColor='var(--rd)';amtPrefix='-';icoBg='rgba(220,38,38,.06)';icoBorder='rgba(220,38,38,.12)';icoColor='var(--rd)';}
     if(isRefund){icoName='fa-rotate-left';}
     if(isCoinExchange){icoName='fa-coins';amtColor='#d97706';amtPrefix='+';icoBg='rgba(245,158,11,.1)';icoBorder='rgba(245,158,11,.25)';icoColor='#d97706';}
-    if(isTransferOut){icoName='fa-paper-plane';amtColor='var(--rd)';amtPrefix='-';icoBg='rgba(220,38,38,.06)';icoBorder='rgba(220,38,38,.12)';icoColor='var(--rd)';}
-    if(isTransferIn){icoName='fa-inbox';amtColor='var(--gr)';amtPrefix='+';icoBg='rgba(22,163,74,.08)';icoBorder='rgba(22,163,74,.15)';icoColor='var(--gr)';}
 
-    // ناو
+    // ناو کورت
     let label=t.label||'—';
     if(isCoinExchange) label='کۆین گۆڕدرا بۆ بالانس';
     else if(isRefund) label='گەڕانەوەی پارە'+(t.ad_number?' #'+t.ad_number:'');
-    else if(isTransferOut) label='ناردنی باڵانس'+(t.receiver_email?' بۆ '+t.receiver_email:'');
-    else if(isTransferIn) label='وەرگرتنی باڵانس'+(t.sender_email?' لە '+t.sender_email:'');
 
-    // بەروار
+    // بەروار — تەنها کات و بەروار، بەبێ زیادە
     const d=new Date(t.date);
     const dateStr=d.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit'})+' · '+d.toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
 
     // بڕ
-    let amtText;
-    if(isCoinExchange) amtText=`+$${t.usd_amount.toFixed(2)}`;
-    else if(isTransferOut) amtText=`-$${t.amount.toFixed(2)}`;
-    else amtText=`${amtPrefix}$${t.amount.toFixed(2)}`;
+    const amtText=isCoinExchange
+      ?`+$${t.usd_amount.toFixed(2)}`
+      :`${amtPrefix}$${t.amount.toFixed(2)}`;
 
-    // ژێر-ناو
+    // ژێر-ناو — تەنها یەک ڕیز
     let sub='';
     if(isCoinExchange) sub=`🪙 ${t.coins_amount.toLocaleString()} کۆین`;
     else if(isSpend) sub='ڕیکلام';
     else if(isRefund&&t.note) sub=t.note;
-    else if(isTransferOut) sub=t.fee?`کرێ: $${parseFloat(t.fee).toFixed(2)}`:'';
-    else if(isTransferIn) sub=t.deposit_number?`#${t.deposit_number}`:'';
 
-    // بادج ستاتۆس بۆ گواستنەوەکان
-    const statusBadge=(isTransferOut||isTransferIn)?`<span class="sbadge sb-ok">تەواوبوو</span>`:'';
-
-    // دیتایلی گواستنەوە (کارتی تایبەت)
-    let transferDetail = '';
-    if(isTransferOut || isTransferIn){
-      const counterParty = isTransferOut ? t.receiver_email : t.sender_email;
-      const netAmt = isTransferOut ? (t.amount - (t.fee||TRANSFER_FEE)) : t.amount;
-      transferDetail = `
-        <div style="background:var(--bg);border:1px solid var(--b1);border-radius:10px;padding:9px 12px;margin-top:8px;font-size:11px">
-          ${isTransferOut?`
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-              <span style="color:var(--mt)">وەرگر</span>
-              <span style="font-weight:700;color:var(--dark);direction:ltr">${t.receiver_email||'—'}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-              <span style="color:var(--mt)">بڕی نێردراو</span>
-              <span style="font-weight:700;color:var(--gr)">+$${Math.max(0,netAmt).toFixed(2)}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between">
-              <span style="color:var(--mt)">کرێی گواستنەوە</span>
-              <span style="font-weight:700;color:var(--rd)">-$${parseFloat(t.fee||TRANSFER_FEE).toFixed(2)}</span>
-            </div>
-          `:`
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-              <span style="color:var(--mt)">نێرەر</span>
-              <span style="font-weight:700;color:var(--dark);direction:ltr">${t.sender_email||'—'}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between">
-              <span style="color:var(--mt)">بڕی وەرگیراو</span>
-              <span style="font-weight:700;color:var(--gr)">+$${t.amount.toFixed(2)}</span>
-            </div>
-          `}
-          ${t.deposit_number?`<div style="display:flex;justify-content:space-between;margin-top:4px"><span style="color:var(--mt)">ژمارەی مامەڵە</span><span style="font-family:monospace;font-weight:700;color:var(--dark)">#${t.deposit_number}</span></div>`:''}
-        </div>`;
-    }
-
-    return`<div class="tx-item" style="cursor:pointer;padding:12px 0;flex-direction:column;align-items:stretch" onclick="${isCoinExchange||isTransferOut||isTransferIn?'':('showReceipt('+JSON.stringify(t)+')')}">
-      <div style="display:flex;align-items:center;gap:11px">
-        <div class="tx-ico" style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">
-          <i class="fas ${icoName}"></i>
-        </div>
-        <div class="tx-info" style="flex:1;min-width:0">
-          <div class="tx-lbl" style="font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>
-          <div style="font-size:11px;color:var(--mt);margin-top:2px;display:flex;align-items:center;gap:5px">
-            <span>${dateStr}</span>
-            ${sub?`<span style="color:var(--mt2)">·</span><span>${sub}</span>`:''}
-          </div>
-          ${statusBadge}
-        </div>
-        <div style="font-size:14px;font-weight:700;color:${amtColor};font-family:'Inter',sans-serif;flex-shrink:0">${amtText}</div>
+    return`<div class="tx-item" style="cursor:pointer;padding:12px 0" onclick="${isCoinExchange?'':('showReceipt('+JSON.stringify(t)+')')}">
+      <div class="tx-ico" style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">
+        <i class="fas ${icoName}"></i>
       </div>
-      ${transferDetail}
+      <div class="tx-info" style="flex:1;min-width:0">
+        <div class="tx-lbl" style="font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>
+        <div style="font-size:11px;color:var(--mt);margin-top:2px;display:flex;align-items:center;gap:5px">
+          <span>${dateStr}</span>
+          ${sub?`<span style="color:var(--mt2)">·</span><span>${sub}</span>`:''}
+        </div>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:${amtColor};font-family:'Inter',sans-serif;flex-shrink:0">${amtText}</div>
     </div>`;
   }).join('');
 }
 
 
-
-// ═══════════════════════════════════════════════════
-// SEND BALANCE — ناردنی باڵانس بۆ بەکارهێنەری دیکە
-// ═══════════════════════════════════════════════════
-const TRANSFER_FEE = 1.50; // کرێی گواستنەوە
-let receiverUserId = null;
-let receiverProfile = null;
-let fetchReceiverTimer = null;
-
-function openSendBalance(){
-  // ڕیست کردنەوەی فۆرم
-  document.getElementById('sendToEmail').value = '';
-  document.getElementById('sendAmount').value = '';
-  document.getElementById('sendNote').value = '';
-  document.getElementById('receiverProfileCard').style.display = 'none';
-  document.getElementById('receiverNotFound').style.display = 'none';
-  document.getElementById('sendFeeBox').style.display = 'none';
-  document.getElementById('sendBalMsg').style.display = 'none';
-  receiverUserId = null;
-  receiverProfile = null;
-  document.getElementById('moSendBalance').classList.add('on');
-}
-
-function fetchReceiverProfile(){
-  clearTimeout(fetchReceiverTimer);
-  const email = document.getElementById('sendToEmail').value.trim().toLowerCase();
-  document.getElementById('receiverProfileCard').style.display = 'none';
-  document.getElementById('receiverNotFound').style.display = 'none';
-  receiverUserId = null;
-  receiverProfile = null;
-  if(!email || !email.includes('@')) return;
-  fetchReceiverTimer = setTimeout(async()=>{
-    const{data} = await sb.from('profiles').select('id,full_name,email,avatar_b64').eq('email',email).single();
-    if(!data || data.id === cu.id){
-      // ئەگەر ئیمێڵەکەی خۆی بوو یان نەدۆزرایەوە
-      document.getElementById('receiverNotFound').style.display = 'block';
-      if(data && data.id === cu.id){
-        document.getElementById('receiverNotFound').innerHTML = '<i class="fas fa-user-xmark" style="margin-left:6px"></i>ناتوانی باڵانس بنێریت بۆ خۆت';
+async function checkDbReady(){
+  try{
+    const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
+    // ئەگەر invalid_budget هاتەوە = فەنکشنەکە هەیە
+    const ready=error?.message?.includes('invalid_budget')||error?.message?.includes('بودجە');
+    const btn=document.getElementById('setupDbBtn');
+    if(btn){
+      if(ready){
+        btn.style.display='none'; // فەنکشنەکە هەیە، دووگمە شاری بکە
       } else {
-        document.getElementById('receiverNotFound').innerHTML = '<i class="fas fa-user-xmark" style="margin-left:6px"></i>هیچ بەکارهێنەرێک بە ئەم ئیمێڵە نەدۆزرایەوە';
+        btn.style.display='flex'; // نییە، پیشان بدە
       }
-      return;
     }
-    receiverUserId = data.id;
-    receiverProfile = data;
-    const nameEl = document.getElementById('receiverName');
-    const emailEl = document.getElementById('receiverEmail');
-    const avEl = document.getElementById('receiverAvatar');
-    const name = data.full_name || data.email.split('@')[0];
-    nameEl.textContent = name;
-    emailEl.textContent = data.email;
-    if(data.avatar_b64){
-      avEl.innerHTML = `<img src="${data.avatar_b64}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-    } else {
-      avEl.textContent = name[0].toUpperCase();
-      avEl.style.background = 'var(--dark)';
-    }
-    document.getElementById('receiverProfileCard').style.display = 'block';
-  }, 600);
+  }catch(e){/* بێدەنگ */}
 }
+</script>
 
-function updateSendFeeDisplay(){
-  const amt = parseFloat(document.getElementById('sendAmount').value) || 0;
-  const box = document.getElementById('sendFeeBox');
-  if(amt <= 0){ box.style.display = 'none'; return; }
-  box.style.display = 'block';
-  const net = Math.max(0, amt - TRANSFER_FEE);
-  const total = amt + TRANSFER_FEE;
-  document.getElementById('sendAmtDisplay').textContent = '$' + amt.toFixed(2);
-  document.getElementById('sendTotalDeduct').textContent = '-$' + total.toFixed(2);
-  document.getElementById('sendNetAmount').textContent = '+$' + net.toFixed(2);
-}
+<!-- =====================================================================
+  SQL SCRIPTS (کۆمێنت — بۆ ڕێنمایی ئەدمین)
+  
+  ══════════════════════════════════════════════════════════════════════
+  ١. جەدوەلی pa_assets
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_assets (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    name TEXT NOT NULL,
+    asset_type TEXT NOT NULL CHECK (asset_type IN ('whatsapp','instagram','phone','telegram','link')),
+    value TEXT NOT NULL,
+    note TEXT,
+    style TEXT DEFAULT 'classic',  -- نوێ: ستایلی کارت (classic, light, gradient)
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  -- ئەگەر جەدوەلەکەت پێشتر هەیە، ئەم ستوونە زیاد بکە:
+  -- ALTER TABLE pa_assets ADD COLUMN IF NOT EXISTS style TEXT DEFAULT 'classic';
+  ALTER TABLE pa_assets ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Users manage own assets" ON pa_assets
+    FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٢. جەدوەلی pa_notifications
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_notifications (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    type TEXT NOT NULL DEFAULT 'general',
+    title TEXT,
+    body TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    related_id UUID,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  ALTER TABLE pa_notifications ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Users read own notifications" ON pa_notifications
+    FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٣. تریگەری ئاگاداری کاتێک ئەدمین ستاتۆس گۆڕی
+  ══════════════════════════════════════════════════════════════════════
+  CREATE OR REPLACE FUNCTION notify_ad_status_change()
+  RETURNS TRIGGER AS $$
+  DECLARE
+    notif_type TEXT;
+    notif_title TEXT;
+    notif_body TEXT;
+    v_meta JSONB;
+  BEGIN
+    IF OLD.status IS DISTINCT FROM NEW.status THEN
+      v_meta := jsonb_build_object('ad_number', NEW.ad_number, 'ad_title', NEW.title);
+      CASE NEW.status
+        WHEN 'active' THEN
+          notif_type := 'ad_active';
+          notif_title := 'ڕیکلامت چالاکبوو 🟢';
+          notif_body  := 'ڕیکلامەکەت دەستیپێکرد و ئێستا لە تیکتۆک پیشاندەدرێت.';
+        WHEN 'approved' THEN
+          notif_type := 'ad_approved';
+          notif_title := 'ڕیکلامت پەسەندکرا ✅';
+          notif_body  := 'داواکاریەکەت پەسەندکرا و بەم زووانە دەستیپێدەکات.';
+        WHEN 'rejected' THEN
+          notif_type := 'ad_rejected';
+          notif_title := 'ڕیکلامت ڕەتکرا ❌';
+          notif_body  := COALESCE('هۆکاری ڕەتکردن: ' || NEW.reject_reason, 'ڕیکلامەکەت ڕەتکرا.');
+          -- ═══ گەڕانەوەی خۆکاری پارە کاتی ڕەتکردن ═══
+          -- ١. گەڕاندنەوەی بالانس
+          UPDATE pa_wallets
+            SET balance=balance+NEW.budget, updated_at=NOW()
+            WHERE user_id=NEW.user_id;
+          -- ٢. تۆمارکردنی مامەڵەی گەڕانەوە
+          INSERT INTO pa_transactions(user_id,amount,kind,status,ad_number,note)
+            VALUES(NEW.user_id, NEW.budget, 'refund', 'approved', NEW.ad_number,
+              'گەڕانەوەی خۆکار — ڕیکلام #'||COALESCE(NEW.ad_number::TEXT,''));
+          -- ٣. کەمکردنەوەی ٥٠ کۆین لە pa_coins (ئەگەر کۆین هەبوو)
+          UPDATE pa_coins
+            SET coins_balance = GREATEST(0, coins_balance - 50)
+            WHERE user_id = NEW.user_id;
+          -- ٤. تۆمارکردنی مامەڵەی کۆین
+          INSERT INTO pa_coin_transactions(user_id, amount, reason, balance_after)
+            SELECT NEW.user_id, -50, 'ڕیکلامی ڕەتکراو — کۆین کەمکرایەوە #'||COALESCE(NEW.ad_number::TEXT,''),
+              GREATEST(0, coins_balance - 50)
+            FROM pa_coins WHERE user_id = NEW.user_id;
+          -- ٥. ئاگاداری تایبەت بۆ گەڕانەوە
+          INSERT INTO pa_notifications(user_id,type,title,body,related_id,meta)
+            VALUES(NEW.user_id,'refund_rejected_ad',
+              'پارەی ڕیکلامی ڕەتکراوت گەڕایەوە 💸',
+              'بڕی $'||NEW.budget||' گەڕایەوە بۆ جزدانەکەت.',
+              NEW.id,
+              jsonb_build_object('amount',NEW.budget,'ad_number',NEW.ad_number,'ad_title',NEW.title,'reason',NEW.reject_reason)
+            );
+        WHEN 'completed' THEN
+          notif_type := 'ad_completed';
+          notif_title := 'ڕیکلامت تەواوبوو 🏁';
+          notif_body  := 'کەمپینەکەت بە سەرکەوتوویی تەواو بوو.';
+        ELSE
+          RETURN NEW;
+      END CASE;
+      -- ئاگاداری گشتی (جگە لە rejected کە خودی خۆی دوو ئاگاداری دەناردێت)
+      IF NEW.status != 'rejected' THEN
+        INSERT INTO pa_notifications(user_id,type,title,body,related_id,meta)
+          VALUES(NEW.user_id, notif_type, notif_title, notif_body, NEW.id, v_meta);
+      END IF;
+    END IF;
+    RETURN NEW;
+  END;
+  $$ LANGUAGE plpgsql SECURITY DEFINER;
+  
+  CREATE TRIGGER ad_status_notifier
+    AFTER UPDATE ON pa_ads
+    FOR EACH ROW EXECUTE FUNCTION notify_ad_status_change();
 
-async function submitSendBalance(){
-  if(!requireOnline()) return;
-  const email = document.getElementById('sendToEmail').value.trim();
-  const amt = parseFloat(document.getElementById('sendAmount').value) || 0;
-  const note = document.getElementById('sendNote').value.trim();
-  const btn = document.getElementById('sendBalBtn');
-  const msgEl = document.getElementById('sendBalMsg');
+  -- ═══ ستوونی پێویست بۆ pa_transactions ═══
+  -- ALTER TABLE pa_transactions ADD COLUMN IF NOT EXISTS kind TEXT DEFAULT 'deposit';
+  -- ALTER TABLE pa_transactions ADD COLUMN IF NOT EXISTS ad_number INT;
+  -- ALTER TABLE pa_transactions ADD COLUMN IF NOT EXISTS note TEXT;
+  
+  -- ═══ ستوونی meta بۆ pa_notifications ═══
+  -- ALTER TABLE pa_notifications ADD COLUMN IF NOT EXISTS meta JSONB;
 
-  // چێکردنەوە
-  if(!email){ showToast('ئیمێڵی وەرگر داخڵ بکە','err'); return; }
-  if(!receiverUserId){ showToast('تکایە چاوەڕوان بە — وەرگر نەدۆزرایەوە','err'); return; }
-  if(amt <= 0){ showToast('بڕی ناردن داخڵ بکە','err'); return; }
+  ══════════════════════════════════════════════════════════════════════
+  ٤. [SECURE] create_ad_and_deduct  ← فەنکشنی سەرەکی
+  ══════════════════════════════════════════════════════════════════════
+  -- ئەم فەنکشنە یەک تراناکشنی ئەتۆمیک جێبەجێ دەکات:
+  --   ١. چێکردنەوەی باڵانس  (ئەگەر بەسنەبوو → ROLLBACK خۆکار)
+  --   ٢. INSERT ی ڕیکلام    (تەنها ئەگەر باڵانس بەسا)
+  -- JavaScript ڕاستەوخۆ نا باڵانس دەگۆڕێت نا ڕیکلام دروست دەکات.
+  -- هەموو لۆجیک و چێکردنەوە لە داتابەیس دایە.
 
-  const totalDeduct = amt + TRANSFER_FEE;
+  CREATE OR REPLACE FUNCTION create_ad_and_deduct(
+    p_user_id    UUID,
+    p_goal       TEXT,
+    p_video_code TEXT    DEFAULT NULL,
+    p_video_link TEXT    DEFAULT NULL,
+    p_budget     NUMERIC DEFAULT 20,
+    p_card_id    UUID    DEFAULT NULL,
+    p_asset_id   UUID    DEFAULT NULL,
+    p_start_date DATE    DEFAULT NULL,
+    p_start_time TIME    DEFAULT NULL,
+    p_age_groups TEXT    DEFAULT NULL,
+    p_gender     TEXT    DEFAULT 'all',
+    p_location   TEXT    DEFAULT 'kurdistan'
+  )
+  RETURNS UUID          -- دەگەڕێنێتەوە ID ی ڕیکلامی نوێ
+  LANGUAGE plpgsql
+  SECURITY DEFINER      -- بە مافی تەواو ئەجرا دەبێت
+  SET search_path = public
+  AS $$
+  DECLARE
+    v_balance  NUMERIC;
+    v_ad_id    UUID;
+    v_ad_num   INT;
+  BEGIN
+    -- ───────────────────────────────────────────────────────
+    -- ١. Validation: بودجە دەبێت > 0 بێت
+    -- ───────────────────────────────────────────────────────
+    IF p_budget <= 0 THEN
+      RAISE EXCEPTION 'invalid_budget: بودجە دەبێت لە سفرە زیاتر بێت';
+    END IF;
 
-  await withSession(async()=>{
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> ناردن...';
+    -- ───────────────────────────────────────────────────────
+    -- ٢. باڵانسی ئێستا بخوێنەوە — بە FOR UPDATE قفڵ بکە
+    --    تاوەکو race condition نەبێت
+    -- ───────────────────────────────────────────────────────
+    SELECT balance INTO v_balance
+    FROM   pa_wallets
+    WHERE  user_id = p_user_id
+    FOR UPDATE;                    -- ← قفڵی ڕیزەکە لەماوەی تراناکشن
 
-    // بینینی باڵانسی نێرەر
-    const{data:walletData} = await sb.from('pa_wallets').select('balance').eq('user_id',cu.id).single();
-    const currentBal = parseFloat(walletData?.balance || 0);
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'wallet_not_found: جزدانت نەدۆزرایەوە';
+    END IF;
 
-    if(currentBal < totalDeduct){
-      msgEl.className = 'amsg err';
-      msgEl.style.display = 'block';
-      msgEl.textContent = `باڵانست بەس نییە. پێویستت بە $${totalDeduct.toFixed(2)}ە، تەنها $${currentBal.toFixed(2)} هەیتە.`;
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-paper-plane"></i> ناردنی باڵانس';
-      return;
-    }
+    -- ───────────────────────────────────────────────────────
+    -- ٣. چێکردنەوەی باڵانس — ئەگەر بەسنەبوو هەڵە
+    -- ───────────────────────────────────────────────────────
+    IF v_balance < p_budget THEN
+      RAISE EXCEPTION 'insufficient_balance: موازەنەت بەسنییە. باڵانس: $%, پێویستە: $%',
+            round(v_balance,2), round(p_budget,2);
+    END IF;
 
-    // ژمارەی مامەڵەی یەکتا
-    const txNumber = Math.floor(Math.random()*900000)+100000;
-    const now = new Date().toISOString();
-    const senderName = document.getElementById('profName')?.textContent || cu.email;
-    const netAmount = parseFloat((amt - TRANSFER_FEE).toFixed(2));
-    const noteText = note ? ` | تێبینی: ${note}` : '';
+    -- ───────────────────────────────────────────────────────
+    -- ٤. بڕینی پارە (ئەتۆمیک — لە هەمان تراناکشن)
+    -- ───────────────────────────────────────────────────────
+    UPDATE pa_wallets
+    SET    balance     = balance - p_budget,
+           updated_at  = NOW()
+    WHERE  user_id = p_user_id;
 
-    // ١. کەمکردنی باڵانسی نێرەر (بڕ + کرێ)
-    await sb.rpc('deduct_and_transfer', {
-      p_sender_id: cu.id,
-      p_receiver_id: receiverUserId,
-      p_amount: parseFloat(amt.toFixed(2)),
-      p_fee: TRANSFER_FEE,
-      p_net: parseFloat(netAmount.toFixed(2))
-    }).then(async({error: rpcErr}) => {
-      if(rpcErr){
-        // fallback دەستی: بەدواداچوونی مامەڵەکان
-        // ١. کەمکردنی باڵانسی نێرەر
-        const{error:e1} = await sb.from('pa_wallets')
-          .update({balance: currentBal - totalDeduct})
-          .eq('user_id', cu.id).gte('balance', totalDeduct);
-        if(e1) throw new Error('باڵانست بەس نییە یان هەڵەیەک ڕوویدا');
+    -- ───────────────────────────────────────────────────────
+    -- ٥. ژمارەی ڕیکلام بژمێرە
+    -- ───────────────────────────────────────────────────────
+    SELECT FLOOR(RANDOM() * 900000 + 100000)::INT INTO v_ad_num;
 
-        // ٢. زیادکردنی باڵانسی وەرگر
-        const{data:recvWallet} = await sb.from('pa_wallets').select('balance').eq('user_id', receiverUserId).single();
-        const recvBal = parseFloat(recvWallet?.balance || 0);
-        await sb.from('pa_wallets').update({balance: recv
+    -- ───────────────────────────────────────────────────────
+    -- ٦. ڕیکلام دروست بکە
+    -- ───────────────────────────────────────────────────────
+    INSERT INTO pa_ads (
+      user_id, title, goal,
+      video_code, video_link,
+      budget, card_id, asset_id,
+      start_date, start_time,
+      status, age_groups, gender, location,
+      ad_number
+    ) VALUES (
+      p_user_id,
+      'New Ad ' || TO_CHAR(NOW(), 'DD/MM/YYYY'),
+      p_goal,
+      p_video_code, p_video_link,
+      p_budget, p_card_id, p_asset_id,
+      p_start_date, p_start_time,
+      'pending',
+      p_age_groups::jsonb,
+      p_gender, p_location,
+      v_ad_num
+    )
+    RETURNING id INTO v_ad_id;
+
+    -- ───────────────────────────────────────────────────────
+    -- ٧. تراناکشن تەواوبوو — هەر دووکەی دڵنیا بوون
+    -- ───────────────────────────────────────────────────────
+    RETURN v_ad_id;
+
+  EXCEPTION
+    -- هەر هەڵەیەک → ROLLBACK خۆکار (هیچ گۆڕانکارییەک نامێنێت)
+    WHEN OTHERS THEN
+      RAISE;
+  END;
+  $$;
+
+  -- ───────────────────────────────────────────────────────
+  -- RLS: ئەم فەنکشنە تەنها بۆ بەکارهێنەری دەستنیشانکراو
+  -- ───────────────────────────────────────────────────────
+  REVOKE ALL ON FUNCTION create_ad_and_deduct FROM PUBLIC;
+  GRANT  EXECUTE ON FUNCTION create_ad_and_deduct TO authenticated;
+
+  ══════════════════════════════════════════════════════════════════════
+  ٥. [LEGACY - ئێستا ناکارێت] deduct_wallet_balance
+  ══════════════════════════════════════════════════════════════════════
+  -- ئەم فەنکشنە لە نەوەی پێشووەوە مایەوە، دەتوانیت
+  -- بیساریتەوە یان بیهێڵیتەوە — ئێستا بەکار نایێت.
+  /*
+  CREATE OR REPLACE FUNCTION deduct_wallet_balance(p_user_id UUID, p_amount NUMERIC)
+  RETURNS VOID AS $$
+  BEGIN
+    UPDATE pa_wallets
+    SET balance = balance - p_amount
+    WHERE user_id = p_user_id AND balance >= p_amount;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'موازەنەت بەسنییە';
+    END IF;
+  END;
+  $$ LANGUAGE plpgsql SECURITY DEFINER;
+  */
+
+  ══════════════════════════════════════════════════════════════════════
+  ٦. RLS بۆ هەموو جەدوەلەکان
+  ══════════════════════════════════════════════════════════════════════
+  -- pa_wallets
+  ALTER TABLE pa_wallets ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Own wallet only" ON pa_wallets FOR ALL USING (auth.uid() = user_id);
+  
+  -- pa_ads
+  ALTER TABLE pa_ads ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Own ads only" ON pa_ads FOR ALL USING (auth.uid() = user_id);
+  
+  -- pa_transactions
+  ALTER TABLE pa_transactions ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Own transactions only" ON pa_transactions FOR ALL USING (auth.uid() = user_id);
+  
+  -- pa_support
+  ALTER TABLE pa_support ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Own support msgs" ON pa_support FOR ALL USING (auth.uid() = user_id);
+  
+  -- proxolink_cards
+  ALTER TABLE proxolink_cards ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Own cards only" ON proxolink_cards FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٧. Storage Bucket بۆ وەسڵەکان
+  ══════════════════════════════════════════════════════════════════════
+  -- لە Supabase Dashboard → Storage → New Bucket:
+  -- Bucket Name: receipts
+  -- Public: true (یان false ئەگەر پرایڤەت دەتەوێت)
+  
+  -- Storage Policy:
+  CREATE POLICY "Users upload own receipts"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (bucket_id = 'receipts' AND (storage.foldername(name))[1] = 'receipts' AND auth.uid()::text = (storage.foldername(name))[2]);
+  
+  CREATE POLICY "Public read receipts"
+  ON storage.objects FOR SELECT
+  TO authenticated
+  USING (bucket_id = 'receipts');
+  
+======================================================================= -->
+
+
+<!-- 
+══════════════════════════════════════════════════════
+SQL بۆ Supabase — جێبەجێ بکە لە SQL Editor
+══════════════════════════════════════════════════════
+
+-- جەدوەلی referral codes
+CREATE TABLE IF NOT EXISTS pa_referrals (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  referrer_id UUID REFERENCES auth.users(id) NOT NULL,
+  referred_id UUID REFERENCES auth.users(id),
+  ref_code TEXT UNIQUE NOT NULL,
+  used_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
+CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
+
+-- ref_code زیاد بکە بۆ profiles
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
+
+══════════════════════════════════════════════════════ -->
+</body>
+</html>
