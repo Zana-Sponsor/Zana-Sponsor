@@ -426,6 +426,12 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .meth-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--b2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .meth-item.sel .meth-check{background:var(--dark);border-color:var(--dark);}
 .meth-item.sel .meth-check i{display:block;}
+.gimal-profile{display:flex;align-items:center;gap:10px;padding:4px 0;}
+.gimal-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0;}
+.gimal-info{flex:1;}
+.gimal-name{font-size:14px;font-weight:700;color:var(--dark);}
+.gimal-email{font-size:11px;color:var(--mt);direction:ltr;text-align:left;}
+.gimal-num{font-size:11px;color:var(--mt2);margin-top:2px;}
 .meth-check i{display:none;font-size:10px;color:#fff;}
 .quick-amts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
 .qa{padding:10px;background:var(--bg);border:1.5px solid var(--b1);border-radius:11px;text-align:center;font-size:12px;font-weight:700;color:var(--dark);cursor:pointer;transition:all .2s;}
@@ -1300,6 +1306,17 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
         </div>
         <div class="meth-check"><i class="fas fa-check"></i></div>
       </div>
+      <!-- GimAl -->
+      <div class="meth-item" data-m="gimal" onclick="pickMethod(this)">
+        <div class="meth-ico" style="background:#e3f2fd;display:flex;align-items:center;justify-content:center;font-size:22px;">
+          💳
+        </div>
+        <div class="meth-info">
+          <div class="meth-name">GimAl</div>
+          <div style="font-size:11px;color:var(--mt);margin-top:2px">بەرپرسی GimAl بنێرە</div>
+        </div>
+        <div class="meth-check"><i class="fas fa-check"></i></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1437,6 +1454,27 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
     <div class="mlbl">ناوی هەژمار <span style="color:var(--rd)">*</span></div>
     <input class="finp" type="text" id="senderName" placeholder="ناوی هەژمارەکەی پارەکەی لێوە هاتووە"
       style="margin-bottom:14px">
+
+    <!-- ── GimAl Info Section ── -->
+    <div id="gimalInfoSection" style="display:none;background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);border-radius:14px;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:12px;color:var(--bl);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+        <i class="fas fa-circle-info"></i> زانیاری هەژمارەی GimAl
+      </div>
+      <div id="gimalLookupResult" style="font-size:13px;color:var(--dark)">
+        <div style="color:var(--mt);font-size:12px">گیمێڵی بەکارهێنەر داخل بکە بۆ بینینی زانیاری</div>
+      </div>
+    </div>
+
+    <!-- ── GimAl Email Input ── -->
+    <div id="gimalEmailSection" style="display:none">
+      <div class="mlbl">ئیمەیڵی GimAl <span style="color:var(--rd)">*</span></div>
+      <div style="position:relative;margin-bottom:14px">
+        <input class="finp" type="email" id="gimalEmail" placeholder="example@gmail.com"
+          dir="ltr" style="text-align:left;padding-left:44px"
+          oninput="lookupGimAl(this.value)">
+        <i class="fas fa-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--mt);font-size:14px;pointer-events:none"></i>
+      </div>
+    </div>
 
     <!-- ── تێبینی ── -->
     <div class="mlbl">تێبینی <span style="font-size:10px;color:var(--mt)">(ئۆپشنی — بۆ ئادمین)</span></div>
@@ -1774,34 +1812,20 @@ async function checkAndApplyRef(){
   const params = new URLSearchParams(window.location.search);
   const ref = params.get('ref');
   if(!ref) return;
-
-  // ── پاراستن ١: ref کۆد دەبێت شێوەی دروست هەبێت
   if(!/^PRX-[A-Z0-9]{8}$/.test(ref)) return;
-
-  // ── پاراستن ٢: ئایا ئەم بەکارهێنەرە پێشتر ref بەکارهێناوە؟
   const {data: existing} = await sb.from('pa_referrals').select('id').eq('referred_id', cu.id).maybeSingle();
   if(existing) return;
-
-  // ── referrer بدۆزەرەوە لە UUID
   const codeBody = ref.replace('PRX-','').toLowerCase();
   const {data: refProfile} = await sb.from('profiles').select('id').ilike('id', codeBody + '%').maybeSingle();
   const referrerId = refProfile?.id || null;
-
-  // ── پاراستن ٣: referrer دەبێت هەبێت و خۆی نەبێت
   if(!referrerId || referrerId === cu.id) return;
-
-  // ── پاراستن ٤: INSERT تەنها — ئەگەر پێشتر هەبوو error دەدات و دەوەستێت
   const {error: insErr} = await sb.from('pa_referrals').insert({
     referrer_id: referrerId,
     referred_id: cu.id,
     ref_code: ref,
     used_at: new Date().toISOString()
   });
-
-  // ئەگەر insert سەرکەوت نەبوو (duplicate یان هەر هەڵەیەک) — هیچ کۆینێک نەدە
   if(insErr) return;
-
-  // ── تەنها ئێستا کۆین بدە — insert سەرکەوتبوو یەکجارێک
   const {data: refCoins} = await sb.from('pa_coins').select('coins_balance').eq('user_id', referrerId).single();
   const newBal = (parseInt(refCoins?.coins_balance||0)) + 100;
   await sb.from('pa_coins').update({coins_balance: newBal}).eq('user_id', referrerId);
@@ -1810,8 +1834,6 @@ async function checkAndApplyRef(){
     reason: 'بانگێشتکردنی بەکارهێنەری نوێ',
     balance_after: newBal
   });
-
-  // ── URL پاک بکەرەوە
   window.history.replaceState({}, '', window.location.pathname);
 }
 
@@ -2279,9 +2301,61 @@ function openDeposit(){document.getElementById('moMethod').classList.add('on');}
 function pickMethod(el){
   document.querySelectorAll('.meth-item').forEach(x=>x.classList.remove('sel'));
   el.classList.add('sel');method=el.dataset.m;
-  const names={fib:'FIB — 7518070901',fastpay:'FastPay — 7518070901',kcard:'K-Card/ZainCash — 07738887202'};
-  document.getElementById('moAmtMethod').innerHTML=`<i class="fas fa-wallet"></i> پارەدان لەڕێگەی ${names[method]}`;
+  const names={fib:'FIB — 7518070901',fastpay:'FastPay — 7518070901',kcard:'K-Card/ZainCash — 07738887202',gimal:'GimAl'};
+  document.getElementById('moAmtMethod').innerHTML=`<i class="fas fa-wallet"></i> پارەدان لەڕێگەی ${names[method]||method}`;
   closeMo('moMethod');document.getElementById('moAmount').classList.add('on');
+}
+// ── نیشاندانی/شاردنەوەی بەشی GimAl بەپێی ڕێگای هەڵبژێراو ──
+function updateGimalVisibility(){
+  const isGimal = method === 'gimal';
+  document.getElementById('gimalEmailSection').style.display = isGimal ? 'block' : 'none';
+  document.getElementById('gimalInfoSection').style.display = isGimal ? 'block' : 'none';
+  // ناو و ژمارەی نێرەر — ئەگەر GimAl بوو ئاگاداری دەکەین
+  const senderNameLbl = document.querySelector('label[for="senderName"],div.mlbl:has(+#senderName)');
+  if(!isGimal){ document.getElementById('gimalEmail').value=''; resetGimAlLookup(); }
+}
+function resetGimAlLookup(){
+  document.getElementById('gimalLookupResult').innerHTML='<div style="color:var(--mt);font-size:12px">گیمێڵی بەکارهێنەر داخل بکە بۆ بینینی زانیاری</div>';
+}
+// ── گەڕان بەدواکی زانیاری GimAl ──
+let gimalTimer=null, gimalData=null;
+function lookupGimAl(email){
+  clearTimeout(gimalTimer);
+  gimalData=null;
+  const box=document.getElementById('gimalLookupResult');
+  if(!email||!email.includes('@')){ resetGimAlLookup(); return; }
+  box.innerHTML='<div style="color:var(--mt);font-size:12px"><i class="fas fa-circle-notch fa-spin"></i> گەڕان...</div>';
+  gimalTimer=setTimeout(async()=>{
+    try{
+      const {data,error}=await sb.from('profiles')
+        .select('id,full_name,avatar_url,ref_code')
+        .eq('email', email.toLowerCase().trim())
+        .maybeSingle();
+      if(error||!data){
+        box.innerHTML='<div style="color:var(--rd);font-size:12px"><i class="fas fa-circle-xmark"></i> بەکارهێنەر نەدۆزرایەوە</div>';
+        gimalData=null; return;
+      }
+      gimalData=data;
+      const initials=(data.full_name||'?')[0].toUpperCase();
+      const avatarHtml=data.avatar_url
+        ? `<img src="${data.avatar_url}" style="width:42px;height:42px;border-radius:50%;object-fit:cover">`
+        : `<div class="gimal-avatar">${initials}</div>`;
+      box.innerHTML=`<div class="gimal-profile">
+        ${avatarHtml}
+        <div class="gimal-info">
+          <div class="gimal-name">${data.full_name||'—'}</div>
+          <div class="gimal-email">${email}</div>
+          ${data.ref_code?`<div class="gimal-num">کۆد: ${data.ref_code}</div>`:''}
+        </div>
+        <i class="fas fa-circle-check" style="color:var(--gr);font-size:18px"></i>
+      </div>`;
+      // ناو و ژمارە خۆکار پڕ بکە
+      document.getElementById('senderName').value=data.full_name||'';
+      document.getElementById('senderPhone').value=email;
+    }catch(e){
+      box.innerHTML='<div style="color:var(--rd);font-size:12px"><i class="fas fa-circle-xmark"></i> هەڵەیەک ڕوویدا</div>';
+    }
+  },600);
 }
 function chgDep(d){depAmt=Math.max(1,depAmt+d);document.getElementById('depDisp').textContent='$'+depAmt;updateMoAmtIqd();}
 function setDep(v){depAmt=v;document.getElementById('depDisp').textContent='$'+v;updateMoAmtIqd();}
@@ -2298,6 +2372,7 @@ function goToUpload(){
   if(usdInp){ usdInp.value = depAmt; updateIqdDisplay(depAmt); }
   closeMo('moAmount');
   document.getElementById('moUpload').classList.add('on');
+  updateGimalVisibility();
 }
 
 // ═══ ٤. IMAGE UPLOAD TO SUPABASE STORAGE ═══
@@ -2389,6 +2464,10 @@ async function submitDeposit(){
   const senderName=document.getElementById('senderName')?.value.trim()||'';
   if(!senderPhone){showToast('ژمارەی نێرەر پێویستە','err');return;}
   if(!senderName){showToast('ناوی هەژمار پێویستە','err');return;}
+  // GimAl: پشکنین
+  if(method==='gimal'){
+    if(!gimalData){showToast('تکایە ئیمەیڵی GimAl پشکنین بکە','err');return;}
+  }
 
   await withSession(async()=>{
     document.getElementById('uploadProgress').style.display='block';
@@ -4737,28 +4816,4 @@ async function checkDbReady(){
 
 
 <!-- 
-══════════════════════════════════════════════════════
-SQL بۆ Supabase — جێبەجێ بکە لە SQL Editor
-══════════════════════════════════════════════════════
-
--- جەدوەلی referral codes
-CREATE TABLE IF NOT EXISTS pa_referrals (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  referrer_id UUID REFERENCES auth.users(id) NOT NULL,
-  referred_id UUID REFERENCES auth.users(id),
-  ref_code TEXT UNIQUE NOT NULL,
-  used_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
-CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
-
--- ref_code زیاد بکە بۆ profiles
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
-
-══════════════════════════════════════════════════════ -->
-</body>
-</html>
+═════════════════════════════════════════════════════
