@@ -2000,7 +2000,7 @@ function switchTab(m){
   document.getElementById('authMsg').style.display='none';
 }
 async function doAuth(){
-  const email=document.getElementById('authEmail').value.trim();
+  const email=document.getElementById('authEmail').value.trim().toLowerCase();
   const pass=document.getElementById('authPass').value;
   const btn=document.getElementById('authBtn');
   if(!email||!pass){showAmsg('ئیمەیل و پاسۆرد پڕ بکەرەوە','err');return;}
@@ -2009,21 +2009,57 @@ async function doAuth(){
   try{
     if(aMode==='login'){
       const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
-      if(error)throw error;
+      if(error){
+        // هەڵەی ئیمێڵ پشتڕاستنەکراو
+        if(error.message?.toLowerCase().includes('email not confirmed')||error.message?.includes('Email not confirmed')){
+          showAmsg('ئیمێڵەکەت پشتڕاست نەکراوە — تکایە بۆ ئەدمین بگو تا چالاکت بکات','err');
+        } else {
+          throw error;
+        }
+        return;
+      }
       cu=data.user;boot();
     } else {
       const name=document.getElementById('authName').value.trim()||email.split('@')[0];
       const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
-      if(error)throw error;
-      if(data.session){cu=data.user;boot();}
-      else{
-        const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
-        if(!le&&ld.session){cu=ld.user;boot();}
-        else showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');
+      if(error){
+        // ئەگەر پێشتر تۆمارکراوە، هەوڵ بدە چوونەژوورەوە
+        if(error.message?.includes('already registered')||error.message?.includes('already been registered')){
+          showAmsg('ئەم ئیمەیلە پێشتر تۆمارکراوە — تکایە بچۆ ژوورەوە','err');
+          switchTab('login');
+        } else {
+          throw error;
+        }
+        return;
       }
+      // ئەگەر session هەیە — ڕاستەوخۆ بۆ ژوورەوە
+      if(data?.session){
+        cu=data.user;
+        boot();
+        return;
+      }
+      // ئەگەر session نییە — هەوڵ بدە چوونەژوورەوە (ئیمێڵ کۆنفێرمیشن چالاک نییە)
+      if(data?.user){
+        const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
+        if(!le&&ld?.session){
+          cu=ld.user;
+          boot();
+          return;
+        }
+        // ئیمێڵ کۆنفێرمیشن چالاکە لە Supabase
+        showAmsg('✅ هەژمارت دروستکرا! تکایە ئیمێڵەکەت بپشکنە بۆ پشتڕاستکردن، یان پەیوەند بە ئەدمین بکە.','ok');
+        return;
+      }
+      showAmsg('هەڵەیەک ڕوویدا — دووبارە هەوڵ بدەرەوە','err');
     }
   }catch(e){
-    const m={'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە','Email already registered':'پێشتر تۆمارکراوە','User already registered':'پێشتر تۆمارکراوە'};
+    const m={
+      'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە',
+      'Email already registered':'پێشتر تۆمارکراوە — چوونەژوورەوە بکە',
+      'User already registered':'پێشتر تۆمارکراوە — چوونەژوورەوە بکە',
+      'Password should be at least 6 characters':'پاسۆرد کەمترین ٦ پیت پێویستە',
+      'Unable to validate email address: invalid format':'فۆرماتی ئیمەیل هەڵەیە',
+    };
     showAmsg(m[e.message]||e.message,'err');
   }finally{btn.disabled=false;}
 }
@@ -4701,45 +4737,4 @@ async function submitSendBalance(){
         // ٢. زیادکردنی باڵانسی وەرگر
         const{data:recvWallet} = await sb.from('pa_wallets').select('balance').eq('user_id', receiverUserId).single();
         const recvBal = parseFloat(recvWallet?.balance || 0);
-        await sb.from('pa_wallets').update({balance: recvBal + netAmount}).eq('user_id', receiverUserId);
-      }
-    });
-
-    // ٢. تۆماری مامەڵەی نێرەر
-    await sb.from('pa_transactions').insert({
-      user_id: cu.id,
-      amount: totalDeduct,
-      type: 'transfer_out',
-      kind: 'transfer_out',
-      status: 'approved',
-      note: `ناردنی باڵانس بۆ ${receiverProfile?.email || email} | کرێ: $${TRANSFER_FEE}${noteText}`,
-      deposit_number: txNumber,
-      receiver_email: email,
-      receiver_id: receiverUserId,
-      fee: TRANSFER_FEE,
-    });
-
-    // ٣. تۆماری مامەڵەی وەرگر
-    await sb.from('pa_transactions').insert({
-      user_id: receiverUserId,
-      amount: netAmount,
-      type: 'transfer_in',
-      kind: 'transfer_in',
-      status: 'approved',
-      note: `وەرگرتنی باڵانس لە ${senderName} (${cu.email})${noteText}`,
-      deposit_number: txNumber,
-      sender_email: cu.email,
-      sender_id: cu.id,
-      fee: 0,
-    });
-
-    // ٤. ئاگادارییەکان بۆ دووکەسەکە
-    const senderFullName = document.getElementById('profName')?.textContent || cu.email;
-    const receiverFullName = receiverProfile?.full_name || receiverProfile?.email?.split('@')[0] || '—';
-
-    // ئاگاداری بۆ نێرەر
-    await sb.from('pa_notifications').insert({
-      user_id: cu.id,
-      type: 'transfer_out',
-      title: 'باڵانس نێردرا ✅',
-      body
+        await sb.from('pa_wallets').update({balance: recv
