@@ -337,8 +337,6 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-item" onclick="goPage('notifications')"><i class="fas fa-bell"></i> ناردنی ئاگاداری</div>
     <div class="sb-item" onclick="goPage('banners')"><i class="fas fa-ad"></i> بانەری ڕیکلام</div>
     <div class="sb-item" onclick="goPage('support')"><i class="fas fa-headset"></i> پشتیوانی / چات</div>
-    <div class="sb-section">بەستەرەکان</div>
-    <div class="sb-item" onclick="window.open('Last.html','_blank')"><i class="fas fa-mobile-screen"></i> کراوبوونی ئەپ <i class="fas fa-arrow-up-right-from-square" style="font-size:10px;margin-right:auto;opacity:.5"></i></div>
   </div>
 
   <div class="sb-footer">
@@ -677,6 +675,7 @@ const ADMIN_EMAILS=['admin@proxoads.com','proxo.admin@gmail.com'];
 
 let sb, adminUser=null;
 let allUsers=[], allDeposits=[], allAds=[], allBanners=[];
+let _depMap={}, _adMap={};
 let depFilter='all', adFilter='all', userFilter='all';
 let currentSupportUserId=null, currentSupportUserName='';
 let selectedNotifType='general';
@@ -825,7 +824,11 @@ async function loadAdBadge(){
 }
 
 async function loadDashDeposits(){
-  const{data}=await sb.from('pa_transactions').select('*,profiles(full_name,email)').order('created_at',{ascending:false}).limit(8);
+  const{data:_dtxs}=await sb.from('pa_transactions').select('*').order('created_at',{ascending:false}).limit(8);
+  const _duids=[...new Set((_dtxs||[]).map(t=>t.user_id).filter(Boolean))];
+  const{data:_dprofs}=await _duids.length?sb.from('profiles').select('id,full_name,email').in('id',_duids):{data:[]};
+  const _dpmap={};(_dprofs||[]).forEach(p=>{_dpmap[p.id]=p;});
+  const data=(_dtxs||[]).map(t=>({...t,profiles:_dpmap[t.user_id]||null}));
   const wrap=document.getElementById('dashDeposits');
   if(!data?.length){wrap.innerHTML='<div class="empty"><i class="fas fa-inbox"></i><p>هیچ داواکارییەک نییە</p></div>';return;}
   wrap.innerHTML='<div class="tbl-scroll">'+renderDepTable(data,true)+'</div>';
@@ -866,7 +869,7 @@ function renderUsers(q=''){
       <td style="font-size:11px;color:var(--mt)">${new Date(u.created_at).toLocaleDateString('ku')}</td>
       <td><div class="act-grp">
         <div class="act-btn dark" onclick="showUserDetail('${u.id}')"><i class="fas fa-eye"></i></div>
-        <div class="act-btn bl" onclick="openEditUser(${JSON.stringify(u).replace(/"/g,'&quot;')})"><i class="fas fa-pen"></i></div>
+        <div class="act-btn bl" onclick="openEditUser(allUsers.find(x=>x.id==='${u.id}'))"><i class="fas fa-pen"></i></div>
         <div class="act-btn gr" onclick="openAddBalanceUser('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-plus"></i></div>
         <div class="act-btn yw" onclick="openDeductBalance('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-minus"></i></div>
         <div class="act-btn ${u.is_banned?'gr':'rd'}" onclick="toggleBan('${u.id}',${u.is_banned})">${u.is_banned?'<i class="fas fa-unlock"></i>':'<i class="fas fa-ban"></i>'}</div>
@@ -988,8 +991,14 @@ async function confirmDeductBalance(){
 
 // ══ DEPOSITS ══
 async function loadDeposits(){
-  const{data}=await sb.from('pa_transactions').select('*,profiles(full_name,email,avatar_b64)').order('created_at',{ascending:false}).limit(100);
-  allDeposits=data||[];renderDeposits();
+  const{data:txs}=await sb.from('pa_transactions').select('*').order('created_at',{ascending:false}).limit(100);
+  if(!txs?.length){allDeposits=[];renderDeposits();return;}
+  // بارکردنی پرۆفایلەکان بە user_id
+  const uids=[...new Set(txs.map(t=>t.user_id).filter(Boolean))];
+  const{data:profs}=await sb.from('profiles').select('id,full_name,email,avatar_b64').in('id',uids);
+  const profMap={};(profs||[]).forEach(p=>{profMap[p.id]=p;});
+  allDeposits=txs.map(t=>({...t,profiles:profMap[t.user_id]||null}));
+  renderDeposits();
 }
 
 function filterDeps(el){
@@ -998,6 +1007,7 @@ function filterDeps(el){
 }
 
 function renderDeposits(q=''){
+  _depMap={}; allDeposits.forEach(d=>{_depMap[d.id]=d;});
   let list=allDeposits;
   if(depFilter!=='all')list=list.filter(d=>d.status===depFilter);
   if(q)list=list.filter(d=>(d.profiles?.full_name||'').toLowerCase().includes(q)||(d.profiles?.email||'').toLowerCase().includes(q));
@@ -1018,7 +1028,7 @@ function renderDepTable(list,mini){
       <td><span class="badge ${d.status}">${statusKu(d.status)}</span></td>
       <td style="font-size:11px;color:var(--mt)">${new Date(d.created_at).toLocaleDateString('ku')}</td>
       <td><div class="act-grp">
-        <div class="act-btn dark" onclick="showDepDetail(${JSON.stringify(d).replace(/"/g,'&quot;')})"><i class="fas fa-eye"></i></div>
+        <div class="act-btn dark" onclick="showDepDetail(_depMap['${d.id}'])"><i class="fas fa-eye"></i></div>
         ${d.status==='pending'?`<div class="act-btn gr" onclick="approveDeposit('${d.id}','${d.user_id}',${d.amount})"><i class="fas fa-check"></i></div>
         <div class="act-btn rd" onclick="showRejectReason('${d.id}','deposit')"><i class="fas fa-times"></i></div>`:''}
       </div></td>
@@ -1061,7 +1071,11 @@ async function approveDeposit(id,userId,amount){
 
 // ══ ADS ══
 async function loadAds(){
-  const{data}=await sb.from('pa_ads').select('*,profiles(full_name,email)').order('created_at',{ascending:false}).limit(200);
+  const{data:adsRaw}=await sb.from('pa_ads').select('*').order('created_at',{ascending:false}).limit(200);
+  const _adUids=[...new Set((adsRaw||[]).map(a=>a.user_id).filter(Boolean))];
+  const{data:_adProfs}=await _adUids.length?sb.from('profiles').select('id,full_name,email').in('id',_adUids):{data:[]};
+  const _adProfMap={};(_adProfs||[]).forEach(p=>{_adProfMap[p.id]=p;});
+  const data=(adsRaw||[]).map(a=>({...a,profiles:_adProfMap[a.user_id]||null}));
   allAds=data||[];renderAdsTable();
 }
 
@@ -1071,6 +1085,7 @@ function filterAds(el){
 }
 
 function renderAdsTable(q=''){
+  _adMap={}; allAds.forEach(a=>{_adMap[a.id]=a;});
   let list=allAds;
   if(adFilter!=='all')list=list.filter(a=>a.status===adFilter);
   if(q)list=list.filter(a=>(a.profiles?.full_name||'').toLowerCase().includes(q)||(a.title||'').toLowerCase().includes(q));
@@ -1192,7 +1207,11 @@ async function sendNotification(){
 }
 
 async function loadNotifHistory(){
-  const{data}=await sb.from('pa_notifications').select('*,profiles(full_name,email)').order('created_at',{ascending:false}).limit(30);
+  const{data:_ntxs}=await sb.from('pa_notifications').select('*').order('created_at',{ascending:false}).limit(30);
+  const _nuids=[...new Set((_ntxs||[]).map(n=>n.user_id).filter(Boolean))];
+  const{data:_nprofs}=await _nuids.length?sb.from('profiles').select('id,full_name,email').in('id',_nuids):{data:[]};
+  const _npmap={};(_nprofs||[]).forEach(p=>{_npmap[p.id]=p;});
+  const data=(_ntxs||[]).map(n=>({...n,profiles:_npmap[n.user_id]||null}));
   const wrap=document.getElementById('notifHistory');
   if(!data?.length){wrap.innerHTML='<div class="empty"><i class="fas fa-bell-slash"></i><p>هیچ ئاگادارییەک نەدۆزرایەوە</p></div>';return;}
   wrap.innerHTML='<div class="tbl-scroll"><table><thead><tr><th>ناونیشان</th><th>جۆر</th><th>بەکارهێنەر</th><th>خوێندراوە؟</th><th>بەروار</th></tr></thead><tbody>'+
@@ -1225,7 +1244,7 @@ function renderBanners(){
         <div class="banner-prev-btn"><i class="fas fa-arrow-left"></i> ${b.btn_text||'ببینە'}</div>
       </div>
       <div class="act-grp" style="margin-top:12px">
-        <div class="act-btn bl" onclick="editBanner(${JSON.stringify(b).replace(/"/g,'&quot;')})"><i class="fas fa-pen"></i> دەستکاری</div>
+        <div class="act-btn bl" onclick="editBanner(allBanners.find(x=>x.id===b.id))"><i class="fas fa-pen"></i> دەستکاری</div>
         <div class="act-btn ${b.is_active?'yw':'gr'}" onclick="toggleBanner('${b.id}',${b.is_active})">${b.is_active?'<i class="fas fa-pause"></i> وەستان':'<i class="fas fa-play"></i> چالاک'}</div>
         <div class="act-btn rd" onclick="deleteBanner('${b.id}')"><i class="fas fa-trash"></i> سڕینەوە</div>
       </div>
@@ -1275,7 +1294,11 @@ async function deleteBanner(id){
 
 // ══ SUPPORT ══
 async function loadSupportUsers(){
-  const{data}=await sb.from('pa_support').select('user_id,message,created_at,is_admin,profiles(full_name,email,avatar_b64)').order('created_at',{ascending:false});
+  const{data:_supmsgs}=await sb.from('pa_support').select('user_id,message,created_at,is_admin').order('created_at',{ascending:false});
+  const _supuids=[...new Set((_supmsgs||[]).map(m=>m.user_id).filter(Boolean))];
+  const{data:_supprofs}=await _supuids.length?sb.from('profiles').select('id,full_name,email,avatar_b64').in('id',_supuids):{data:[]};
+  const _supmap={};(_supprofs||[]).forEach(p=>{_supmap[p.id]=p;});
+  const data=(_supmsgs||[]).map(m=>({...m,profiles:_supmap[m.user_id]||null}));
   const userMap={};
   (data||[]).forEach(m=>{
     if(!userMap[m.user_id])userMap[m.user_id]={user_id:m.user_id,name:m.profiles?.full_name||m.profiles?.email||'—',avatar:m.profiles?.avatar_b64||null,lastMsg:m.message};
