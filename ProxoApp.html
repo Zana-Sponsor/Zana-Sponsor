@@ -1977,37 +1977,33 @@ async function doAuth(){
         else{showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');return;}
       }
       cu=newUser;
-      // ── AUTO REFERRAL ─────────────────────────────────────────
-      // Step 1: تەنها ئەگەر کۆد هەبوو بانگی RPC بکە
+      // ══ AUTO REFERRAL — strict sequence ══════════════════════
       const refCode=localStorage.getItem('proxo_ref');
       let referralSuccess=false;
       if(refCode){
         try{
-          // Step 2: await دڵنیا دەکات SQL تەواو بووە پێش بەردەوامبوون
+          // STEP 1 ── RPC یەکەم: دڵنیابوون SQL تەواو بووە
           const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
             p_new_user_id:cu.id,
             p_ref_code:refCode
           });
-          // Step 3: همیشه کۆد پاک بکەرەوە — سەرکەوتن یان شکست
           localStorage.removeItem('proxo_ref');
-          // Step 4: تەنها ئەگەر SQL بە ئاشکرا ok:true گەڕاندەوە
           if(!rErr && rData?.ok===true) referralSuccess=true;
-        }catch(_){
-          localStorage.removeItem('proxo_ref');/* silent */
-        }
+          // STEP 2 ── کچکەی کووتا: supabase replication تەواو بێت
+          await new Promise(r=>setTimeout(r,500));
+        }catch(_){localStorage.removeItem('proxo_ref');}
       }
-      // Step 5: boot() — UI دروست دەکات، wallet دروست دەکات، loadCoins() جاری یەکەم دەبانگێت
+      // STEP 3 ── boot() دوای RPC: ensureCoinsWallet+loadCoins
+      // ئێستا ڕیزی pa_coins پێشتر لەلایەن SQL دروستکراوە و 50 کۆینی تێدایە
       await boot();
-      // Step 6: ئەگەر ڕیفێرال سەرکەوتوو بوو، loadCoins() دووبارە بانگ بکە
-      // ئەمە دڵنیای لێدەدات کۆینە نوێکان کە SQL زیادیکردووە لە UI دەردەکەون
-      // (boot() > ensureCoinsWallet ignoreDuplicates پیش از RPC اجرا شد،
-      //  پس باید یک بار دیگر بعد از RPC بارگذاری شود)
       if(referralSuccess){
-        await loadCoins(); // بالانسی نوێ لە DB بخوێنەرەوە و badge نوێ بکەرەوە
+        // STEP 4 ── دووبارە loadCoins() بانگ بکە تا badge نوێترین ژمارە نیشان بدات
+        await loadCoins();
+        // STEP 5 ── پەیامی سەرکەوتن دوای نوێکردنەوەی UI
         showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
       }
-      return; // boot() پێشتر بانگکرا
-      // ──────────────────────────────────────────────────────────
+      return;
+      // ═════════════════════════════════════════════════════════
     }
   }catch(e){
     const m={'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە','Email already registered':'پێشتر تۆمارکراوە','User already registered':'پێشتر تۆمارکراوە'};
@@ -4710,4 +4706,11 @@ async function checkDbReady(){
   
   ══════════════════════════════════════════════════════════════════════
   ٢. جەدوەلی pa_notifications
-  ═════════════════════════════════════
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_notifications (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    type TEXT NOT NULL DEFAULT 'general',
+    title TEXT,
+    body TEXT,
+    is_read BOOL
