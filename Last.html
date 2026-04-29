@@ -567,10 +567,6 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       </div>
     </div>
     <div class="topbar-right">
-      <!-- Admin Panel button — visible only for admins -->
-      <div id="adminPanelBtn" onclick="window.open('Admin-Panel.html','_blank')" title="پانێڵی ئادمین" style="display:none;width:34px;height:34px;border-radius:50%;background:var(--dark);border:none;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:14px;flex-shrink:0;box-shadow:0 2px 8px rgba(28,35,51,.3);">
-        <i class="fas fa-shield-halved"></i>
-      </div>
       <div class="notif-btn" onclick="goPage('notifications')" id="notifBtn">
         <i class="fas fa-bell" style="font-size:16px"></i>
         <div class="notif-dot" id="notifDot"></div>
@@ -1613,13 +1609,13 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 
 <!-- RECEIPT MODAL -->
 <div class="mover" id="moReceipt">
-  <div class="mbox">
+  <div class="mbox" style="max-height:92vh">
     <div class="mbar"></div>
-    <div class="mhdr">
-      <h3><i class="fas fa-receipt" style="margin-left:7px;color:var(--dark)"></i>پسووڵەی مامەڵە</h3>
+    <div class="mhdr" style="position:sticky;top:0;background:var(--w);z-index:10;padding-bottom:14px;margin-bottom:0;border-bottom:1px solid var(--b1)">
+      <h3 style="display:flex;align-items:center;gap:8px"><i class="fas fa-receipt" style="color:var(--bl)"></i>پسووڵەی مامەڵە</h3>
       <button class="mclose" onclick="closeMo('moReceipt')"><i class="fas fa-xmark"></i></button>
     </div>
-    <div id="receiptContent"></div>
+    <div id="receiptContent" style="padding-top:16px"></div>
   </div>
 </div>
 
@@ -2240,11 +2236,8 @@ function goPage(p){
 }
 
 async function loadProfile(){
-  const{data}=await sb.from('profiles').select('full_name,email,avatar_b64,is_admin').eq('id',cu.id).single();
+  const{data}=await sb.from('profiles').select('full_name,email,avatar_b64').eq('id',cu.id).single();
   const name=data?.full_name||cu.email.split('@')[0];
-  // نیشانەی ئادمین
-  const adminBtn=document.getElementById('adminPanelBtn');
-  if(adminBtn) adminBtn.style.display=data?.is_admin?'flex':'none';
   document.getElementById('profName').textContent=name;
   // ناوی کەسەکە لە topbar
   const topbarName=document.getElementById('topbarName');
@@ -4221,85 +4214,160 @@ async function setupDatabase(){
 
 // ═══ RECEIPT / INVOICE MODAL ═══
 function showReceipt(t){
-  const mn={fib:'FIB Bank',fastpay:'FastPay',kcard:'ZainCash'};
+  const mn={fib:'FIB Bank',fastpay:'FastPay',kcard:'ZainCash / K-Card'};
   const appIco={fib:'fas fa-university',fastpay:'fas fa-bolt',kcard:'fas fa-credit-card'};
-  const appColor={fib:'#1b5e20',fastpay:'#c62828',kcard:'#f57f17'};
-  const appBg={fib:'#e8f5e9',fastpay:'#fce4ec',kcard:'#fff9c4'};
+  const appGrad={
+    fib:'linear-gradient(135deg,#1b5e20,#2e7d32)',
+    fastpay:'linear-gradient(135deg,#b71c1c,#c62828)',
+    kcard:'linear-gradient(135deg,#e65100,#f57c00)'
+  };
   const smMap={
-    pending:  {txt:'چاوەڕوان',    bg:'rgba(217,119,6,.1)', color:'var(--yw)', ico:'fas fa-clock'},
-    approved: {txt:'پەسەندکرا',   bg:'rgba(22,163,74,.1)', color:'var(--gr)', ico:'fas fa-check-circle'},
-    rejected: {txt:'ڕەتکرا',      bg:'rgba(220,38,38,.08)',color:'var(--rd)', ico:'fas fa-times-circle'},
-    active:   {txt:'چالاک',       bg:'rgba(22,163,74,.1)', color:'var(--gr)', ico:'fas fa-play-circle'},
-    completed:{txt:'تەواوبوو',    bg:'rgba(37,99,235,.08)',color:'var(--bl)', ico:'fas fa-flag-checkered'},
-    paused:   {txt:'وەستاوە',     bg:'rgba(139,149,168,.1)',color:'var(--mt)',ico:'fas fa-pause-circle'},
+    pending:  {txt:'چاوەڕوان',  bg:'rgba(217,119,6,.1)', color:'#d97706',  ico:'fas fa-clock',          line:'rgba(217,119,6,.3)'},
+    approved: {txt:'پەسەندکرا', bg:'rgba(22,163,74,.1)', color:'#16a34a',  ico:'fas fa-check-circle',   line:'rgba(22,163,74,.3)'},
+    rejected: {txt:'ڕەتکرا',   bg:'rgba(220,38,38,.08)',color:'#dc2626',  ico:'fas fa-times-circle',   line:'rgba(220,38,38,.25)'},
+    active:   {txt:'چالاک',    bg:'rgba(22,163,74,.1)', color:'#16a34a',  ico:'fas fa-play-circle',    line:'rgba(22,163,74,.3)'},
+    completed:{txt:'تەواوبوو', bg:'rgba(37,99,235,.08)',color:'#2563eb',  ico:'fas fa-flag-checkered', line:'rgba(37,99,235,.25)'},
+    spent:    {txt:'خەرجکرا',  bg:'rgba(220,38,38,.06)',color:'#dc2626',  ico:'fas fa-arrow-up-long',  line:'rgba(220,38,38,.2)'},
   };
 
-  const isDeposit=t.kind==='deposit'||t.method!==undefined;
-  const amount=parseFloat(t.amount||t.budget||0);
-  const date=new Date(t.date||t.created_at);
-  const dateStr=date.toLocaleDateString('ku')+' — '+date.toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
-  const st=smMap[t.status]||smMap.pending;
-  const txId='#'+(t.id||'').toString().slice(0,8).toUpperCase();
-  const accentColor=isDeposit?'var(--gr)':'var(--rd)';
-  const accentBg=isDeposit?'rgba(22,163,74,.08)':'rgba(220,38,38,.06)';
-  const accentBorder=isDeposit?'rgba(22,163,74,.2)':'rgba(220,38,38,.15)';
+  const isDeposit = t.kind==='deposit' || (t.method !== undefined && t.kind !== 'refund');
+  const isRefund  = t.kind==='refund';
+  const isSpend   = t.kind==='spend';
+  const amount    = parseFloat(t.amount||t.budget||0);
+  const date      = new Date(t.date||t.created_at);
+  const dateStr   = date.toLocaleDateString('ku',{year:'numeric',month:'long',day:'numeric'});
+  const timeStr   = date.toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
+  const st        = smMap[t.status]||smMap.pending;
+  const txId      = (t.deposit_number ? '#'+t.deposit_number : ('#'+(t.id||'').toString().slice(0,8).toUpperCase()));
+  const accentColor = isDeposit?'#16a34a': isRefund?'#16a34a':'#dc2626';
+  const accentBg    = isDeposit||isRefund?'rgba(22,163,74,.1)':'rgba(220,38,38,.08)';
+  const accentBorder= isDeposit||isRefund?'rgba(22,163,74,.25)':'rgba(220,38,38,.2)';
+  const heroGrad    = isDeposit?'linear-gradient(145deg,#0f2417,#1c3a28)':
+                      isRefund ?'linear-gradient(145deg,#0f2417,#1c3a28)':
+                                'linear-gradient(145deg,#150b1e,#1c1030)';
 
-  // سەرەوەی ئایکۆنی ئەپ بۆ deposit
-  const appSection=isDeposit&&t.method?`
-    <div style="display:flex;align-items:center;gap:10px;background:${appBg[t.method]||'var(--bg)'};border-radius:12px;padding:10px 14px;margin-bottom:10px">
-      <div style="width:36px;height:36px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;color:${appColor[t.method]||'var(--dark)'}">
-        <i class="${appIco[t.method]||'fas fa-wallet'}"></i>
+  // ── parse note for sender info ──
+  let senderPhone='', senderName='', noteText='';
+  if(t.note){
+    const parts=t.note.split('|').map(s=>s.trim());
+    parts.forEach(p=>{
+      if(p.startsWith('ژمارەی نێرەر:')) senderPhone=p.replace('ژمارەی نێرەر:','').trim();
+      else if(p.startsWith('ناوی هەژمار:')) senderName=p.replace('ناوی هەژمار:','').trim();
+      else if(p.startsWith('تێبینی:')) noteText=p.replace('تێبینی:','').trim();
+      else if(!p.includes(':')) noteText=p;
+    });
+  }
+
+  // ── timeline steps ──
+  const timelineSteps = isDeposit ? [
+    {ico:'fas fa-paper-plane', lbl:'داواکاری نێردرا',      done:true,  color:'#6366f1'},
+    {ico:'fas fa-magnifying-glass', lbl:'وردبینی ئادمین',  done:t.status!=='pending', color:'#d97706'},
+    {ico:t.status==='approved'?'fas fa-check-circle':t.status==='rejected'?'fas fa-times-circle':'fas fa-clock',
+      lbl:t.status==='approved'?'پەسەندکرا — باڵانس زیادکرا':t.status==='rejected'?'ڕەتکرا':'چاوەڕوانی پەسەندکردن',
+      done:t.status==='approved'||t.status==='rejected',
+      color:t.status==='approved'?'#16a34a':t.status==='rejected'?'#dc2626':'#8b95a8'},
+  ] : isRefund ? [
+    {ico:'fas fa-times-circle',   lbl:'ڕیکلام ڕەتکرا',         done:true, color:'#dc2626'},
+    {ico:'fas fa-rotate-left',    lbl:'گەڕانەوەی خۆکاری پارە', done:true, color:'#16a34a'},
+    {ico:'fas fa-wallet',         lbl:'باڵانس نوێکرایەوە',     done:true, color:'#6366f1'},
+  ] : [
+    {ico:'fas fa-paper-plane',    lbl:'ڕیکلام نێردرا',          done:true, color:'#6366f1'},
+    {ico:'fas fa-dollar-sign',    lbl:'$'+amount.toFixed(2)+' کەم کرایەوە', done:true, color:'#dc2626'},
+    {ico:'fas fa-clock',          lbl:'چاوەڕوانی ئادمین',       done:false, color:'#d97706'},
+  ];
+
+  const timelineHtml = timelineSteps.map((step,i)=>`
+    <div style="display:flex;align-items:flex-start;gap:12px;position:relative">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0;flex-shrink:0">
+        <div style="width:32px;height:32px;border-radius:50%;background:${step.done?step.color+'22':'rgba(139,149,168,.1)'};border:2px solid ${step.done?step.color:'rgba(139,149,168,.2)'};display:flex;align-items:center;justify-content:center;font-size:12px;color:${step.done?step.color:'#8b95a8'};transition:all .3s">
+          <i class="${step.ico}"></i>
+        </div>
+        ${i<timelineSteps.length-1?`<div style="width:2px;height:22px;background:${step.done?step.color+'44':'rgba(139,149,168,.15)'};margin:3px 0;border-radius:2px"></div>`:''}
       </div>
-      <div>
-        <div style="font-size:12px;color:var(--mt)">ئەپی پارەدان</div>
-        <div style="font-size:14px;font-weight:800;color:var(--dark)">${mn[t.method]||'—'}</div>
+      <div style="padding-top:6px;flex:1">
+        <div style="font-size:12.5px;font-weight:700;color:${step.done?'var(--dark)':'#8b95a8'}">${step.lbl}</div>
       </div>
-    </div>`:
-    `<div style="background:var(--bg);border-radius:12px;padding:10px 14px;margin-bottom:10px;font-size:13px;color:var(--dark);font-weight:700">
-      <i class="fas fa-bullhorn" style="margin-left:7px;color:var(--mt)"></i>${t.label||t.title||'ڕیکلام'}
-    </div>`;
+    </div>`).join('');
+
+  // ── receipt image ──
+  const rcptHtml = (t.receipt_b64||t.receipt_url)?`
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;color:var(--mt);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:5px">
+        <i class="fas fa-image" style="color:var(--bl)"></i>وەسڵی پارەدان
+      </div>
+      <div style="border-radius:14px;overflow:hidden;border:1.5px solid var(--b1);position:relative">
+        <img src="${t.receipt_b64||t.receipt_url}" style="width:100%;display:block;max-height:200px;object-fit:cover" onclick="this.style.maxHeight=this.style.maxHeight?'':'200px'" />
+        <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);border-radius:8px;padding:4px 10px;font-size:10px;color:#fff;font-weight:600">
+          <i class="fas fa-expand" style="margin-left:4px;font-size:9px"></i>کلیک بکە بۆ گەورەکردن
+        </div>
+      </div>
+    </div>`:'' ;
+
+  // ── detail rows ──
+  const detailRows = [
+    isDeposit&&t.method ? {ico:appIco[t.method]||'fas fa-wallet', l:'ئەپی پارەدان', v:`<span style="font-weight:800;color:var(--dark)">${mn[t.method]||t.method}</span>`, grad:appGrad[t.method]||null} : null,
+    {ico:'fas fa-hashtag',     l:'ژمارەی مامەڵە',  v:`<span style="font-family:monospace;font-size:12px;background:var(--bg);padding:2px 8px;border-radius:6px;border:1px solid var(--b1);direction:ltr;display:inline-block">${txId}</span>`},
+    {ico:'fas fa-calendar',    l:'بەروار',          v:`${dateStr}`},
+    {ico:'fas fa-clock',       l:'کات',             v:timeStr},
+    {ico:'fas fa-user',        l:'بەکارهێنەر',      v:document.getElementById('profName')?.textContent||'—'},
+    senderPhone ? {ico:'fas fa-phone',  l:'ژمارەی نێرەر',  v:`<span style="direction:ltr;display:inline-block;font-family:monospace">${senderPhone}</span>`} : null,
+    senderName  ? {ico:'fas fa-id-card',l:'ناوی هەژمار',   v:senderName} : null,
+    noteText    ? {ico:'fas fa-note-sticky',l:'تێبینی',    v:noteText} : null,
+  ].filter(Boolean);
+
+  const detailHtml = detailRows.map((r,i,arr)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;${i<arr.length-1?'border-bottom:1px solid var(--b1)':''}">
+      <div style="width:30px;height:30px;border-radius:9px;background:${r.grad||'var(--bg)'};${r.grad?'':' border:1px solid var(--b1);'}display:flex;align-items:center;justify-content:center;font-size:12px;color:${r.grad?'#fff':'var(--mt)'};flex-shrink:0">
+        <i class="${r.ico}"></i>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:var(--mt);margin-bottom:2px">${r.l}</div>
+        <div style="font-size:13px;font-weight:700;color:var(--dark);word-break:break-word">${r.v}</div>
+      </div>
+    </div>`).join('');
 
   document.getElementById('receiptContent').innerHTML=`
-    <!-- سەرەوەی پسووڵە -->
-    <div style="background:linear-gradient(135deg,var(--dark),#2e3a50);border-radius:18px;padding:22px 20px;text-align:center;margin-bottom:18px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:-20px;left:-20px;width:80px;height:80px;background:rgba(255,255,255,.05);border-radius:50%"></div>
-      <div style="position:absolute;bottom:-15px;right:-15px;width:60px;height:60px;background:rgba(255,255,255,.04);border-radius:50%"></div>
-      <div style="font-size:11px;color:rgba(255,255,255,.5);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Proxo Ads — پسووڵەی مامەڵە</div>
-      <div style="width:56px;height:56px;border-radius:50%;background:${accentBg};border:2px solid ${accentBorder};display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;color:${accentColor}">
-        <i class="fas ${isDeposit?'fa-arrow-down-long':'fa-arrow-up-long'}"></i>
+    <!-- ═══ هيرۆ ═══ -->
+    <div style="background:${heroGrad};border-radius:20px;padding:24px 20px 20px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:${accentColor}18;border-radius:50%"></div>
+      <div style="position:absolute;bottom:-20px;left:-20px;width:70px;height:70px;background:${accentColor}10;border-radius:50%"></div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;position:relative">PROXO ADS · پسووڵەی مامەڵە</div>
+      <!-- ئایکۆن -->
+      <div style="width:60px;height:60px;border-radius:50%;background:${accentBg};border:2px solid ${accentBorder};display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;color:${accentColor};position:relative;box-shadow:0 0 24px ${accentColor}30">
+        <i class="fas ${isDeposit?'fa-arrow-down-long':isRefund?'fa-rotate-left':'fa-arrow-up-long'}"></i>
       </div>
-      <div style="font-size:32px;font-weight:900;color:#fff;direction:ltr">${isDeposit?'+':'-'}$${amount.toFixed(2)}</div>
-      <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:6px">${isDeposit?'زیادکردنی باڵانس':'خەرجکردنی باڵانس'}</div>
-      <!-- باری مامەڵە -->
-      <div style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:6px 14px;border-radius:20px;background:${st.bg};border:1px solid ${accentBorder}">
+      <!-- بڕ -->
+      <div style="font-size:36px;font-weight:900;color:#fff;letter-spacing:-1px;direction:ltr;position:relative">
+        ${isSpend?'-':'+'}$${amount.toFixed(2)}
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:5px;position:relative">
+        ${isDeposit?'زیادکردنی باڵانس':isRefund?'گەڕانەوەی پارە':'خەرجکردنی باڵانس'}
+      </div>
+      <!-- badge -->
+      <div style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:7px 16px;border-radius:30px;background:${st.bg};border:1px solid ${accentBorder};position:relative">
         <i class="${st.ico}" style="font-size:11px;color:${st.color}"></i>
         <span style="font-size:12px;font-weight:700;color:${st.color}">${st.txt}</span>
       </div>
     </div>
 
-    <!-- وردەکاریەکان -->
-    <div style="background:var(--bg);border:1px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:16px">
-      ${appSection}
-      <div style="border-top:1px solid var(--b1)">
-        ${[
-          {ico:'fas fa-calendar',   l:'بەروار و کات',   v:dateStr},
-          {ico:'fas fa-hashtag',    l:'ژمارەی مامەڵە',  v:`<span style="font-family:monospace;font-size:11px;background:var(--bg);padding:2px 8px;border-radius:6px;border:1px solid var(--b1)">${txId}</span>`},
-          {ico:'fas fa-user',       l:'بەکارهێنەر',     v:document.getElementById('profName')?.textContent||'—'},
-        ].map((r,i,a)=>`
-          <div style="display:flex;align-items:center;gap:10px;padding:13px 14px;${i<a.length-1?'border-bottom:1px solid var(--b1)':''}">
-            <div style="width:30px;height:30px;border-radius:9px;background:var(--w);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mt);flex-shrink:0">
-              <i class="${r.ico}"></i>
-            </div>
-            <div style="flex:1">
-              <div style="font-size:10px;color:var(--mt);margin-bottom:1px">${r.l}</div>
-              <div style="font-size:13px;font-weight:700;color:var(--dark)">${r.v}</div>
-            </div>
-          </div>`).join('')}
-      </div>
+    <!-- ═══ وردەکاری ═══ -->
+    <div style="background:var(--w);border:1.5px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:14px">
+      ${detailHtml}
     </div>
 
-    <!-- دووگمەی داخستن -->
-    <button onclick="closeMo('moReceipt')" style="width:100%;padding:14px;background:var(--dark);color:#fff;border:none;border-radius:14px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(28,35,51,.2)">
+    <!-- ═══ وەسڵ ═══ -->
+    ${rcptHtml}
+
+    <!-- ═══ تایم‌لاین ═══ -->
+    <div style="background:var(--bg);border:1px solid var(--b1);border-radius:16px;padding:16px;margin-bottom:16px">
+      <div style="font-size:11px;color:var(--mt);font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:5px">
+        <i class="fas fa-timeline" style="color:var(--bl)"></i>مێژووی مامەڵە
+      </div>
+      ${timelineHtml}
+    </div>
+
+    <!-- ═══ داخستن ═══ -->
+    <button onclick="closeMo('moReceipt')" style="width:100%;padding:15px;background:var(--dark);color:#fff;border:none;border-radius:15px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(28,35,51,.2)">
       <i class="fas fa-check"></i> باشە، داخە
     </button>`;
 
@@ -4316,7 +4384,7 @@ async function loadTxHistory(){
   const{data:deposits}=await sb.from('pa_transactions').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
   const{data:ads}=await sb.from('pa_ads').select('id,title,budget,created_at,ad_number,status').eq('user_id',cu.id).order('created_at',{ascending:false});
   const{data:coinTxs}=await sb.from('pa_coin_transactions').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
-console.log('ads data:', ads);
+
 
   const mn={fib:'FIB',fastpay:'FastPay',kcard:'K-Card/ZainCash'};
 
@@ -4404,36 +4472,39 @@ function renderTxHistory(){
       ?`+$${t.usd_amount.toFixed(2)}`
       :`${amtPrefix}$${t.amount.toFixed(2)}`;
 
-    // ژێر-ناو — تەنها یەک ڕیز
+    // ژێر-ناو
     let sub='';
     if(isCoinExchange) sub=`🪙 ${t.coins_amount.toLocaleString()} کۆین`;
-    else if(isSpend) sub='ڕیکلام';
-    else if(isRefund&&t.note) sub=t.note;
+    else if(isSpend) sub='ڕیکلام #'+(t.label||'').replace('New Ad ','');
+    else if(isRefund&&t.note) sub=t.note.substring(0,40);
 
-    // دۆخ badge بۆ داواکاریەکانی زیادکردن و گەڕانەوە
+    // دۆخ badge
     let statusBadge='';
-    if(!isSpend && !isCoinExchange){
+    if(!isSpend&&!isCoinExchange){
       const sMap={
-        pending:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.25)"><i class="fas fa-clock" style="font-size:8px"></i> چاوەڕوان</span>`,
-        approved:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.25)"><i class="fas fa-check" style="font-size:8px"></i> پەسەندکرا</span>`,
-        rejected:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2)"><i class="fas fa-xmark" style="font-size:8px"></i> ڕەتکرا</span>`,
+        pending:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.25)"><i class="fas fa-clock" style="font-size:7px"></i> چاوەڕوان</span>`,
+        approved:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.25)"><i class="fas fa-check" style="font-size:7px"></i> پەسەندکرا</span>`,
+        rejected:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2)"><i class="fas fa-xmark" style="font-size:7px"></i> ڕەتکرا</span>`,
       };
       statusBadge=sMap[t.status]||sMap.pending;
     }
 
-    return`<div class="tx-item" style="cursor:pointer;padding:12px 0" onclick="${isCoinExchange?'':('showReceipt('+JSON.stringify(t)+')')}">
-      <div class="tx-ico" style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">
+    return`<div class="tx-item" style="cursor:pointer;padding:12px 4px;margin:-1px -4px;border-radius:12px;transition:background .15s" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''" onclick="${isCoinExchange?'':('showReceipt('+JSON.stringify(t)+')')}">
+      <div style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">
         <i class="fas ${icoName}"></i>
       </div>
       <div class="tx-info" style="flex:1;min-width:0">
         <div class="tx-lbl" style="font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>
-        <div style="font-size:11px;color:var(--mt);margin-top:2px;display:flex;align-items:center;gap:5px">
+        <div style="font-size:11px;color:var(--mt);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
           <span>${dateStr}</span>
-          ${sub?`<span style="color:var(--mt2)">·</span><span>${sub}</span>`:''}
+          ${sub?`<span style="color:var(--b2)">·</span><span style="color:var(--mt2)">${sub}</span>`:''}
         </div>
         ${statusBadge?`<div style="margin-top:5px">${statusBadge}</div>`:''}
       </div>
-      <div style="font-size:14px;font-weight:700;color:${amtColor};font-family:'Inter',sans-serif;flex-shrink:0">${amtText}</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <div style="font-size:14px;font-weight:800;color:${amtColor};font-family:'Inter',sans-serif;letter-spacing:-.3px">${amtText}</div>
+        ${!isCoinExchange?`<i class="fas fa-chevron-left" style="font-size:10px;color:var(--mt)"></i>`:''}
+      </div>
     </div>`;
   }).join('');
 }
@@ -4705,79 +4776,3 @@ async function checkDbReady(){
     SET balance = balance - p_amount
     WHERE user_id = p_user_id AND balance >= p_amount;
     IF NOT FOUND THEN
-      RAISE EXCEPTION 'موازەنەت بەسنییە';
-    END IF;
-  END;
-  $$ LANGUAGE plpgsql SECURITY DEFINER;
-  */
-
-  ══════════════════════════════════════════════════════════════════════
-  ٦. RLS بۆ هەموو جەدوەلەکان
-  ══════════════════════════════════════════════════════════════════════
-  -- pa_wallets
-  ALTER TABLE pa_wallets ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Own wallet only" ON pa_wallets FOR ALL USING (auth.uid() = user_id);
-  
-  -- pa_ads
-  ALTER TABLE pa_ads ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Own ads only" ON pa_ads FOR ALL USING (auth.uid() = user_id);
-  
-  -- pa_transactions
-  ALTER TABLE pa_transactions ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Own transactions only" ON pa_transactions FOR ALL USING (auth.uid() = user_id);
-  
-  -- pa_support
-  ALTER TABLE pa_support ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Own support msgs" ON pa_support FOR ALL USING (auth.uid() = user_id);
-  
-  -- proxolink_cards
-  ALTER TABLE proxolink_cards ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Own cards only" ON proxolink_cards FOR ALL USING (auth.uid() = user_id);
-  
-  ══════════════════════════════════════════════════════════════════════
-  ٧. Storage Bucket بۆ وەسڵەکان
-  ══════════════════════════════════════════════════════════════════════
-  -- لە Supabase Dashboard → Storage → New Bucket:
-  -- Bucket Name: receipts
-  -- Public: true (یان false ئەگەر پرایڤەت دەتەوێت)
-  
-  -- Storage Policy:
-  CREATE POLICY "Users upload own receipts"
-  ON storage.objects FOR INSERT
-  TO authenticated
-  WITH CHECK (bucket_id = 'receipts' AND (storage.foldername(name))[1] = 'receipts' AND auth.uid()::text = (storage.foldername(name))[2]);
-  
-  CREATE POLICY "Public read receipts"
-  ON storage.objects FOR SELECT
-  TO authenticated
-  USING (bucket_id = 'receipts');
-  
-======================================================================= -->
-
-
-<!-- 
-══════════════════════════════════════════════════════
-SQL بۆ Supabase — جێبەجێ بکە لە SQL Editor
-══════════════════════════════════════════════════════
-
--- جەدوەلی referral codes
-CREATE TABLE IF NOT EXISTS pa_referrals (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  referrer_id UUID REFERENCES auth.users(id) NOT NULL,
-  referred_id UUID REFERENCES auth.users(id),
-  ref_code TEXT UNIQUE NOT NULL,
-  used_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
-CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
-
--- ref_code زیاد بکە بۆ profiles
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
-
-══════════════════════════════════════════════════════ -->
-</body>
-</html>
