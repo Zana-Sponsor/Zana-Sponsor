@@ -1978,21 +1978,27 @@ async function doAuth(){
       }
       cu=newUser;
       // ── AUTO REFERRAL ─────────────────────────────────────────
+      // FIX 1: تەنها ئەگەر کۆد لە localStorage هەبوو بانگی RPC بکە
       const refCode=localStorage.getItem('proxo_ref');
       if(refCode){
         try{
-          const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{p_new_user_id:cu.id,p_ref_code:refCode});
+          // FIX 2: هەر دوو data و error وەربگرە
+          const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
+            p_new_user_id:cu.id,
+            p_ref_code:refCode
+          });
+          // FIX 5: کۆد پاک بکەرەوە پاش کۆتاییهێنان — سەرکەوتن یان شکست
+          localStorage.removeItem('proxo_ref');
+          // FIX 2: تەنها ئەگەر SQL فەنکشن ok:true گەڕاندەوە پەیام نیشان بدە
           if(!rErr && rData?.ok===true){
-            // کۆد دروستبوو و کۆین زیادکرا ✅
-            localStorage.removeItem('proxo_ref');
-            await boot(); // بار بکە پێش نیشاندانی پەیام تا بالانسەکە نوێ بێت
-            await loadCoins(); // دووبارە کۆینەکان بار بکەرەوە
-            showToast('🎉 ٥٠ کۆینت وەرگرت بە بانگێشت!','ok');
+            // FIX 3: boot() ئەمەش ئەکات — بەڵام کۆین نوێ بار بکەرەوە دواتر
+            await boot();
+            // FIX 4: دووبارە loadCoins() بانگ بکە تا ٥٠ کۆین دەستەکەوت نیشان بدرێت
+            await loadCoins();
+            showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
             return; // boot() پێشتر بانگکرا، دووبارە مەبانگکە
-          } else {
-            // کۆد نادروست، self-refer، یان پێشتر وەرگیراوە — بەبێ دەنگ تێپەڕ بکە
-            localStorage.removeItem('proxo_ref'); // کۆدی نادروست پاک بکەرەوە
           }
+          // FIX 3: کۆد نادروست / self-refer / duplicate — بەبێ پەیام تێپەڕ بکە
         }catch(_){/* silent */}
       }
       // ──────────────────────────────────────────────────────────
@@ -4705,11 +4711,4 @@ async function checkDbReady(){
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
     type TEXT NOT NULL DEFAULT 'general',
     title TEXT,
-    body TEXT,
-    is_read BOOLEAN DEFAULT FALSE,
-    related_id UUID,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-  );
-  ALTER TABLE pa_notifications ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Users read own notifications" ON pa_notifications
-    FOR ALL USING (auth.ui
+    bod
