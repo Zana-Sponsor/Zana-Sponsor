@@ -4066,48 +4066,49 @@ function renderTxHistory(){
     return;
   }
 
-  const statusMap={pending:'sb-p چاوەڕوانی',approved:'sb-ok پەسەندکرا',rejected:'sb-no ڕەتکرایەوە',active:'sb-ok پەسەندکرا',completed:'sb-ok تەواوبوو',paused:'sb-p وەستا',spent:'sb-no بڕدرا'};
-
   list.innerHTML=filtered.map(t=>{
-    const isDeposit=t.kind==='deposit';
     const isRefund=t.kind==='refund';
     const isSpend=t.kind==='spend';
     const isCoinExchange=t.kind==='coin_exchange';
-    const[sc,sl]=(statusMap[t.status]||'sb-p —').split(' ');
-    const dateStr=new Date(t.date).toLocaleDateString('ku')+' — '+new Date(t.date).toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
 
-    // رەنگ و ئایکۆن
-    let icoClass='tx-in', icoName='fa-arrow-down-long', amtColor='var(--gr)', amtPrefix='+';
-    if(isSpend){icoClass='tx-out';icoName='fa-arrow-up-long';amtColor='var(--rd)';amtPrefix='-';}
-    if(isRefund){icoClass='tx-in';icoName='fa-rotate-left';amtColor='var(--gr)';amtPrefix='+';}
-    if(isCoinExchange){icoClass='tx-in';icoName='fa-coins';amtColor='#d97706';amtPrefix='+';}
+    let icoName='fa-arrow-down-long', amtColor='var(--gr)', amtPrefix='+';
+    let icoBg='rgba(22,163,74,.08)', icoBorder='rgba(22,163,74,.15)', icoColor='var(--gr)';
+    if(isSpend){icoName='fa-arrow-up-long';amtColor='var(--rd)';amtPrefix='-';icoBg='rgba(220,38,38,.06)';icoBorder='rgba(220,38,38,.12)';icoColor='var(--rd)';}
+    if(isRefund){icoName='fa-rotate-left';}
+    if(isCoinExchange){icoName='fa-coins';amtColor='#d97706';amtPrefix='+';icoBg='rgba(245,158,11,.1)';icoBorder='rgba(245,158,11,.25)';icoColor='#d97706';}
 
-    // ئەگەر گەڕانەوەی پارەبوو، تێبینی ئادمین پیشان بدە
-    const refundBadge=isRefund?`<span style="font-size:10px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr);padding:2px 7px;border-radius:6px;margin-right:4px"><i class="fas fa-rotate-left" style="font-size:8px"></i> گەڕانەوە</span>`:'';
-    // بادجی تایبەتی کۆین گۆڕین
-    const coinExchangeBadge=isCoinExchange?`<span style="font-size:10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#d97706;padding:2px 7px;border-radius:6px;margin-right:4px">🪙 کۆین گۆڕین</span>`:'';
-    const noteRow=t.note?`<div style="font-size:10px;color:var(--mt2);margin-top:2px;display:flex;align-items:center;gap:3px"><i class="fas fa-note-sticky" style="font-size:8px;opacity:.6"></i>${t.note}</div>`:'';
-    const adRow=t.ad_number?`<div style="font-size:10px;color:var(--mt2);margin-top:1px;display:flex;align-items:center;gap:3px"><i class="fas fa-rectangle-ad" style="font-size:8px;opacity:.6"></i>ڕیکلام #${t.ad_number}</div>`:'';
-    // ڕیزی تایبەتی کۆین گۆڕین
-    const coinRow=isCoinExchange?`<div style="font-size:10px;color:#b45309;margin-top:2px;display:flex;align-items:center;gap:3px"><span style="font-size:10px">🪙</span>${t.coins_amount.toLocaleString()} کۆین گۆڕدرا</div>`:'';
+    // ناو کورت
+    let label=t.label||'—';
+    if(isCoinExchange) label='کۆین گۆڕدرا بۆ بالانس';
+    else if(isRefund) label='گەڕانەوەی پارە'+(t.ad_number?' #'+t.ad_number:'');
 
-    // بڕ نیشاندان
-    const amtDisplay=isCoinExchange
-      ?`<div style="text-align:left"><div style="font-size:14px;font-weight:800;color:${amtColor};direction:ltr">+$${t.usd_amount.toFixed(2)}</div><div style="font-size:10px;color:#b45309;direction:ltr">🪙 ${t.coins_amount.toLocaleString()}</div></div>`
-      :`<div class="tx-amt" style="color:${amtColor}">${amtPrefix}$${t.amount.toFixed(2)}</div>`;
+    // بەروار — تەنها کات و بەروار، بەبێ زیادە
+    const d=new Date(t.date);
+    const dateStr=d.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit'})+' · '+d.toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
 
-    return`<div class="tx-item" style="cursor:pointer" onclick="${isCoinExchange?'':('showReceipt('+JSON.stringify(t)+')')}">
-      <div class="tx-ico ${icoClass}" ${isRefund?'style="background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.15)"':isCoinExchange?'style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#d97706"':''}>
+    // بڕ
+    const amtText=isCoinExchange
+      ?`+$${t.usd_amount.toFixed(2)}`
+      :`${amtPrefix}$${t.amount.toFixed(2)}`;
+
+    // ژێر-ناو — تەنها یەک ڕیز
+    let sub='';
+    if(isCoinExchange) sub=`🪙 ${t.coins_amount.toLocaleString()} کۆین`;
+    else if(isSpend) sub='ڕیکلام';
+    else if(isRefund&&t.note) sub=t.note;
+
+    return`<div class="tx-item" style="cursor:pointer;padding:12px 0" onclick="${isCoinExchange?'':('showReceipt('+JSON.stringify(t)+')')}">
+      <div class="tx-ico" style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">
         <i class="fas ${icoName}"></i>
       </div>
-      <div class="tx-info">
-        <div class="tx-lbl">${coinExchangeBadge}${refundBadge}${t.label}</div>
-        ${adRow}${coinRow}${noteRow}
-        ${!isRefund&&!isCoinExchange&&t.deposit_number?`<div style="font-size:10px;color:var(--mt2);margin-top:1px;display:flex;align-items:center;gap:3px"><i class="fas fa-receipt" style="font-size:8px;opacity:.6"></i>DEP-#${t.deposit_number}</div>`:''}
-        <div class="tx-sub">${dateStr}</div>
-        <span class="sbadge ${sc}">${sl}</span>
+      <div class="tx-info" style="flex:1;min-width:0">
+        <div class="tx-lbl" style="font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>
+        <div style="font-size:11px;color:var(--mt);margin-top:2px;display:flex;align-items:center;gap:5px">
+          <span>${dateStr}</span>
+          ${sub?`<span style="color:var(--mt2)">·</span><span>${sub}</span>`:''}
+        </div>
       </div>
-      ${amtDisplay}
+      <div style="font-size:14px;font-weight:700;color:${amtColor};font-family:'Inter',sans-serif;flex-shrink:0">${amtText}</div>
     </div>`;
   }).join('');
 }
