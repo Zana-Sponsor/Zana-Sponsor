@@ -289,48 +289,33 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 .pl-contact-hdr{font-size:11.5px;color:#8b5cf6;display:flex;align-items:center;gap:6px;font-weight:700;}
 .plat-field-row{display:flex;flex-direction:column;}
 .plat-field-lbl{font-size:11px;color:var(--mt);font-weight:700;margin-bottom:5px;margin-top:12px;text-align:right;}
-.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
-.style-card{border-radius:16px;padding:14px 10px;cursor:pointer;border:2px solid var(--b1);text-align:center;transition:all .25s;position:relative;overflow:hidden;}
-.style-card.on{border-color:var(--dark);}
-.style-card .sc-name{font-size:12px;font-weight:700;color:var(--dark);margin-top:8px;}
-.style-card .sc-sub{font-size:10px;color:var(--mt);margin-top:2px;}
-.style-card .sc-chk{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;background:var(--dark);display:none;align-items:center;justify-content:center;font-size:9px;color:#fff;}
-.style-card.on .sc-chk{display:flex;}
-/* ── Style Card: DARK preview ── */
-.sc-dark-wrap{border-radius:10px;overflow:hidden;min-height:64px;background:#0d1021;position:relative;}
-.sc-dark-header{height:28px;background:linear-gradient(135deg,#7b2fd4,#c855e0);position:relative;}
-.sc-dark-header::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:10px;background:#0d1021;border-radius:50% 50% 0 0 / 10px 10px 0 0;}
-.sc-dark-av{width:20px;height:20px;border-radius:50%;background:#c855e0;border:2px solid #0d1021;position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);z-index:2;}
-.sc-dark-body{padding:14px 6px 5px;display:flex;flex-direction:column;gap:3px;}
-.sc-dark-line{height:3px;border-radius:3px;background:rgba(255,255,255,.15);}
-
-/* ── Style Card: LIGHT preview ── */
-.sc-light-wrap{border-radius:10px;overflow:hidden;min-height:64px;background:#fff;border:1px solid rgba(0,0,0,.07);position:relative;}
-.sc-light-header{height:28px;background:linear-gradient(135deg,#7b2fd4,#c855e0);position:relative;}
-.sc-light-header::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:10px;background:#fff;border-radius:50% 50% 0 0 / 10px 10px 0 0;}
-.sc-light-av{width:20px;height:20px;border-radius:50%;background:#c855e0;border:2px solid #fff;position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);z-index:2;}
-.sc-light-body{padding:14px 6px 5px;display:flex;flex-direction:column;gap:3px;}
-.sc-light-line{height:3px;border-radius:3px;background:rgba(0,0,0,.1);}
-
-/* ── Style Card: CLASSIC preview ── */
-.sc-classic-wrap{border-radius:10px;overflow:hidden;min-height:64px;background:#f5f5f5;border:1px solid rgba(0,0,0,.07);}
-.sc-classic-header{height:28px;background:linear-gradient(135deg,#667eea,#764ba2);position:relative;}
-.sc-classic-header::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:10px;background:#f5f5f5;border-radius:50% 50% 0 0 / 10px 10px 0 0;}
-.sc-classic-av{width:20px;height:20px;border-radius:50%;background:#8b5cf6;border:2px solid #f5f5f5;position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);z-index:2;}
-.sc-classic-body{padding:14px 6px 5px;display:flex;flex-direction:column;gap:3px;}
-.sc-classic-line{height:3px;border-radius:3px;background:rgba(0,0,0,.12);}
-
-/* legacy — ناکارێت بەڵام پارێزراوە بۆ دڵنیابوون */
-.sc-minimal{background:#fff;border:1px solid var(--b1);border-radius:12px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
-.sc-minimal-inner{display:flex;align-items:center;gap:6px;}
-.sc-minimal-av{width:24px;height:24px;border-radius:50%;background:var(--b1);}
-.sc-minimal-lines{display:flex;flex-direction:column;gap:3px;}
-.sc-minimal-line1{height:3px;width:35px;border-radius:2px;background:var(--b2);}
-.sc-minimal-line2{height:2px;width:25px;border-radius:2px;background:var(--b1);}
-.sc-gradient{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:12px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
-.sc-gradient-inner{text-align:center;}
-.sc-gradient-av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.3);margin:0 auto 4px;}
-.sc-gradient-line{height:3px;border-radius:2px;background:rgba(255,255,255,.4);width:40px;margin:2px auto;}
+/* ══ STYLE SELECTOR — کۆپی ڕاستەقینە لە ProxoLink ══ */
+.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-bottom:14px;}
+.style-opt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 6px;border-radius:14px;border:2px solid var(--b1);background:var(--bg);cursor:pointer;user-select:none;transition:all .2s;position:relative;}
+.style-opt:hover{border-color:var(--b2);}
+.style-opt.sel{border-color:var(--dark);background:rgba(28,35,51,.05);}
+.style-opt.sel::after{content:'';position:absolute;top:6px;left:7px;width:7px;height:7px;border-radius:50%;background:var(--dark);}
+.style-preview{width:100%;height:68px;border-radius:9px;overflow:hidden;position:relative;flex-shrink:0;}
+/* Dark */
+.prev-dark{background:#0d1021;border:1px solid rgba(255,255,255,.08);}
+.prev-dark .prev-grad{height:34px;border-radius:6px 6px 0 0;position:relative;}
+.prev-dark .prev-grad::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:12px;background:#0d1021;border-radius:50% 50% 0 0/12px 12px 0 0;}
+.prev-dark .prev-circle{width:20px;height:20px;border-radius:50%;background:#a860d0;border:2px solid #0d1021;position:absolute;top:22px;left:50%;transform:translateX(-50%);}
+.prev-dark .prev-lines{padding:24px 6px 4px;display:flex;flex-direction:column;gap:3px;}
+.prev-dark .prev-line{height:3px;border-radius:3px;background:rgba(255,255,255,.12);}
+/* Light */
+.prev-light{background:#fff;border:1px solid rgba(0,0,0,.08);}
+.prev-light .prev-grad{height:34px;border-radius:6px 6px 0 0;position:relative;}
+.prev-light .prev-grad::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:12px;background:#fff;border-radius:50% 50% 0 0/12px 12px 0 0;}
+.prev-light .prev-circle{width:20px;height:20px;border-radius:50%;background:#a860d0;border:2px solid #fff;position:absolute;top:22px;left:50%;transform:translateX(-50%);}
+.prev-light .prev-lines{padding:24px 6px 4px;display:flex;flex-direction:column;gap:3px;}
+.prev-light .prev-line{height:3px;border-radius:3px;background:rgba(0,0,0,.1);}
+/* Classic */
+.prev-classic{background:#f5f5f5;border:1px solid rgba(0,0,0,.08);padding:6px 5px;display:flex;flex-direction:column;justify-content:center;gap:3px;}
+.prev-classic-btn{height:11px;border-radius:20px;width:88%;margin:0 auto;}
+/* Label */
+.style-name{font-size:11px;color:var(--mt);text-align:center;font-weight:700;}
+.style-opt.sel .style-name{color:var(--dark);}
 .theme-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
 .theme-dot{width:34px;height:34px;border-radius:50%;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;border:3px solid transparent;}
 .theme-dot.on{border-color:var(--dark);transform:scale(1.1);}
@@ -909,46 +894,40 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         <div class="plform-lbl">ستایل</div>
         <div class="style-grid">
 
-          <!-- Dark -->
-          <div class="style-card on" data-style="dark" onclick="pickStyle(this)">
-            <div class="sc-chk"><i class="fas fa-check"></i></div>
-            <div class="sc-dark-wrap">
-              <div class="sc-dark-header"><div class="sc-dark-av"></div></div>
-              <div class="sc-dark-body">
-                <div class="sc-dark-line"></div>
-                <div class="sc-dark-line" style="width:60%;margin:0 auto;opacity:.5"></div>
+          <!-- 🌑 Dark -->
+          <div class="style-opt sel" id="opt_dark" onclick="pickStyle(this,'dark')">
+            <div class="style-preview prev-dark">
+              <div class="prev-grad" id="prev_dark_grad" style="background:linear-gradient(to right,#5b1fa8,#c855e0)"></div>
+              <div class="prev-circle"></div>
+              <div class="prev-lines">
+                <div class="prev-line" style="width:55%;margin:0 auto"></div>
+                <div class="prev-line" style="width:80%;margin:0 auto"></div>
               </div>
             </div>
-            <div class="sc-name">Dark</div>
-            <div class="sc-sub">تاریک</div>
+            <span class="style-name">🌑 شەو</span>
           </div>
 
-          <!-- Light -->
-          <div class="style-card" data-style="light" onclick="pickStyle(this)">
-            <div class="sc-chk"><i class="fas fa-check"></i></div>
-            <div class="sc-light-wrap">
-              <div class="sc-light-header"><div class="sc-light-av"></div></div>
-              <div class="sc-light-body">
-                <div class="sc-light-line"></div>
-                <div class="sc-light-line" style="width:60%;margin:0 auto;opacity:.5"></div>
+          <!-- ☀️ Light -->
+          <div class="style-opt" id="opt_light" onclick="pickStyle(this,'light')">
+            <div class="style-preview prev-light">
+              <div class="prev-grad" id="prev_light_grad" style="background:linear-gradient(to right,#5b1fa8,#c855e0)"></div>
+              <div class="prev-circle"></div>
+              <div class="prev-lines">
+                <div class="prev-line" style="width:55%;margin:0 auto"></div>
+                <div class="prev-line" style="width:80%;margin:0 auto"></div>
               </div>
             </div>
-            <div class="sc-name">Light</div>
-            <div class="sc-sub">ڕووناک</div>
+            <span class="style-name">☀️ ڕۆژ</span>
           </div>
 
-          <!-- Classic -->
-          <div class="style-card" data-style="classic" onclick="pickStyle(this)">
-            <div class="sc-chk"><i class="fas fa-check"></i></div>
-            <div class="sc-classic-wrap" style="position:relative;">
-              <div class="sc-classic-header"><div class="sc-classic-av"></div></div>
-              <div class="sc-classic-body">
-                <div class="sc-classic-line"></div>
-                <div class="sc-classic-line" style="width:60%;margin:0 auto;opacity:.5"></div>
-              </div>
+          <!-- 📋 Classic -->
+          <div class="style-opt" id="opt_classic" onclick="pickStyle(this,'classic')">
+            <div class="style-preview prev-classic" id="prev_classic_inner">
+              <div class="prev-classic-btn" id="prev_classic_btn1" style="background:#25d366"></div>
+              <div class="prev-classic-btn" id="prev_classic_btn2" style="background:#7360F2"></div>
+              <div class="prev-classic-btn" id="prev_classic_btn3" style="background:#e03030"></div>
             </div>
-            <div class="sc-name">Classic</div>
-            <div class="sc-sub">کلاسیک</div>
+            <span class="style-name">📋 کلاسیک</span>
           </div>
 
         </div>
@@ -2578,9 +2557,10 @@ const THEME_COLORS={
 };
 
 
-function pickStyle(el){
-  document.querySelectorAll('#plFormView .style-card').forEach(x=>x.classList.remove('on'));
-  el.classList.add('on');plStyle=el.dataset.style;
+function pickStyle(el, style){
+  document.querySelectorAll('#plFormView .style-opt').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  plStyle = style || el.dataset.style || 'dark';
   updatePLPreview();
 }
 
