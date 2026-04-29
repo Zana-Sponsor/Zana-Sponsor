@@ -2005,7 +2005,8 @@ async function doAuth(){
     if(aMode==='login'){
       const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
       if(error)throw error;
-      cu=data.user;boot();
+      cu=data.user;
+      await boot();
     } else {
       const name=document.getElementById('authName').value.trim()||email.split('@')[0];
       const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
@@ -2017,56 +2018,37 @@ async function doAuth(){
         else{showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');return;}
       }
       cu=newUser;
-      // ══ AUTO REFERRAL — definitive fix ═══════════════════════
+      // ══ AUTO REFERRAL ══
       const refCode=localStorage.getItem('proxo_ref');
       let referralSuccess=false;
       if(refCode){
         try{
           const deviceId=getDeviceFingerprint();
-          console.log('[Referral] Attempting to apply code:', refCode, 'device:', deviceId);
+          console.log('[Referral] Attempting code:', refCode, 'device:', deviceId);
           const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
             p_new_user_id:cu.id,
             p_ref_code:refCode,
             p_device_id:deviceId
           });
-          
-          if(!rErr && rData?.ok===true){
+          if(!rErr&&rData?.ok===true){
             referralSuccess=true;
             localStorage.removeItem('proxo_ref');
-            console.log('[Referral] RPC Success!');
-          }else{
+            console.log('[Referral] Success!');
+          } else {
             const errMsg=rErr?.message||rData?.msg||'';
-            if(errMsg.includes('device')||errMsg.includes('دیوایس')){
+            if(errMsg.includes('دیوایس')||errMsg.toLowerCase().includes('device')){
               showToast('⚠️ ئەم دیوایسە پێشتر خەڵاتی بانگێشتکردنی وەرگرتووە','err');
             }
-            console.error('[Referral] RPC failed:', rErr || rData?.msg);
+            console.error('[Referral] Failed:', rErr||rData?.msg);
           }
-        }catch(e){
-          console.error('[Referral] Exception:', e);
-        }
+        }catch(re){ console.error('[Referral] Exception:', re); }
       }
-      
-      // Ensure everything is settled before booting
-      if(referralSuccess) {
-          await new Promise(r=>setTimeout(r,2000));
-          console.log('[Referral] Waiting for DB sync...');
-      }
-      
       await boot();
-      
       if(referralSuccess){
-        // Force multiple reloads to ensure UI is updated
-        setTimeout(async () => {
-            await loadCoins();
-            console.log('[Referral] UI Refreshed');
-        }, 500);
-        setTimeout(async () => {
-            await loadCoins();
-        }, 2000);
-        showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
+        setTimeout(async()=>{ await loadCoins();
+          showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
+        },800);
       }
-      return;
-      // ═════════════════════════════════════════════════════════
     }
   }catch(e){
     const m={'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە','Email already registered':'پێشتر تۆمارکراوە','User already registered':'پێشتر تۆمارکراوە'};
@@ -2115,17 +2097,25 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.addEventListener('click',e=>{
     if(!e.target.closest('.asset-select-wrap'))closeAssetDropdown();
   });
-  sb.auth.getSession().then(({data:{session}})=>{
-    if(session?.user){cu=session.user;boot();}
+  // ── یەک جار boot() دەکرێت — flag بۆ ڕێگری لە دووجار بوون
+  let _booted=false;
+  sb.auth.getSession().then(async({data:{session}})=>{
+    if(session?.user){
+      cu=session.user;
+      _booted=true;
+      await boot();
+    }
   });
-  sb.auth.onAuthStateChange(async(_,s)=>{
-    if(s?.user&&!cu){
+  sb.auth.onAuthStateChange(async(event,s)=>{
+    if(s?.user){
+      const prevCu=cu;
       cu=s.user;
-      // ══ Google OAuth — بانگێشتکردن بۆ بەکارهێنەرانی Google ══
+      // ── Google OAuth callback (SIGNED_IN یان TOKEN_REFRESHED) ──
       const isGoogleUser=s.user.app_metadata?.provider==='google'||
         (s.user.identities||[]).some(id=>id.provider==='google');
       const refCode=localStorage.getItem('proxo_ref');
-      if(isGoogleUser&&refCode){
+      // تەنها کاتێ کە بەکارهێنەر نوێ چووەژوورەوە (نەک token refresh)
+      if(isGoogleUser && refCode && event==='SIGNED_IN'){
         try{
           const deviceId=getDeviceFingerprint();
           console.log('[Referral/Google] Attempting code:', refCode, 'device:', deviceId);
@@ -2136,22 +2126,24 @@ document.addEventListener('DOMContentLoaded',()=>{
           });
           if(!rErr&&rData?.ok===true){
             localStorage.removeItem('proxo_ref');
-            await boot();
-            setTimeout(async()=>{ await loadCoins(); },600);
-            showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
+            console.log('[Referral/Google] Success!');
+            if(!_booted){_booted=true;await boot();}
+            setTimeout(async()=>{ await loadCoins();
+              showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
+            },800);
             return;
           } else {
             const errMsg=rErr?.message||rData?.msg||'';
-            if(errMsg.includes('device')||errMsg.includes('دیوایس')){
-              showToast('⚠️ ئەم دیوایسە پێشتر خەڵاتی بانگێشتکردنی وەرگرتووە','err');
+            if(errMsg.includes('دیوایس')||errMsg.toLowerCase().includes('device')){
+              setTimeout(()=>showToast('⚠️ ئەم دیوایسە پێشتر خەڵاتی بانگێشتکردنی وەرگرتووە','err'),600);
             }
             console.error('[Referral/Google] Failed:', rErr||rData?.msg);
           }
         }catch(e){ console.error('[Referral/Google]',e); }
       }
-      boot();
+      if(!_booted){_booted=true;await boot();}
     }
-    else if(!s){cu=null;showAuth();}
+    else if(!s){cu=null;_booted=false;showAuth();}
   });
 });
 
@@ -2170,7 +2162,6 @@ async function boot(){
   goPage('home');
   checkDbReady(); // چێکردنەوەی ئایا فەنکشنی داتابەیس دانراوە
   loadReferralSection();
-  checkAndApplyRef();
   // ═══ ٥. CHECK NOTIFICATIONS ═══
   checkNotifBell();
   // Real-time notifications listener
@@ -4770,4 +4761,6 @@ function showReceipt(t){
     </div>
 
     <!-- ═══ داخستن ═══ -->
-    <button onclick="closeMo('moReceipt')" style="width:100%;padding:15px;background:var(--dark);color:#fff;border:none;border-radius:15px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:
+    <button onclick="closeMo('moReceipt')" style="width:100%;padding:15px;background:var(--dark);color:#fff;border:none;border-radius:15px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(28,35,51,.2)">
+      <i class="fas fa-check"></i> باشە، داخە
+    </button>`;
