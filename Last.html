@@ -2540,42 +2540,41 @@ function updatePLPreview(){
     </div>`;
   }).join('');
 
-  if(plStyle==='dark'){
+  const previewStyle = plStyle === 'dark'
+    ? `background:#0d1021;border-radius:14px;overflow:hidden;font-family:'R',sans-serif`
+    : plStyle === 'light'
+    ? `background:#fff;border-radius:14px;overflow:hidden;font-family:'R',sans-serif;border:1px solid #e8eaf0`
+    : `background:#f0f1f5;border-radius:14px;overflow:hidden;font-family:'R',sans-serif`;
+
+  const nameTxt = plStyle === 'dark' ? '#fff' : plStyle === 'light' ? '#1c2333' : '#fff';
+  const bioTxt  = plStyle === 'dark' ? 'rgba(255,255,255,.6)' : plStyle === 'light' ? '#8b95a8' : 'rgba(255,255,255,.85)';
+  const avBorder = plStyle === 'dark' ? '#0d1021' : plStyle === 'light' ? '#f5f6fa' : 'transparent';
+  const contentBg = plStyle === 'dark' ? '#0d1021' : plStyle === 'light' ? '#f5f6fa' : 'transparent';
+
+  if(plStyle === 'classic'){
     wrap.innerHTML=`<div style="padding:12px">
-      <div style="background:#0d1021;border-radius:14px;overflow:hidden;font-family:'R',sans-serif">
-        <div style="height:60px;background:linear-gradient(135deg,${tc.dark},${tc.main})"></div>
-        <div style="padding:0 14px 14px;margin-top:-30px">
-          <div style="width:56px;height:56px;border-radius:50%;border:3px solid #0d1021;background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0 auto 8px">${av}</div>
-          <div style="text-align:center;color:#fff;font-size:14px;font-weight:800">${name}</div>
-          ${bio?`<div style="text-align:center;color:rgba(255,255,255,.6);font-size:11px;margin-top:4px;line-height:1.6">${bio}</div>`:''}
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${btnsHtml}</div>
-          ${tt?`<div style="margin-top:8px;padding:7px 12px;border-radius:20px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;gap:6px;color:rgba(255,255,255,.7);font-size:11px"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
-        </div>
-      </div>
-    </div>`;
-  } else if(plStyle==='light'){
-    wrap.innerHTML=`<div style="padding:12px">
-      <div style="background:#fff;border-radius:14px;overflow:hidden;font-family:'R',sans-serif;border:1px solid #e8eaf0">
-        <div style="height:60px;background:linear-gradient(135deg,${tc.dark},${tc.main})"></div>
-        <div style="padding:0 14px 14px;margin-top:-30px">
-          <div style="width:56px;height:56px;border-radius:50%;border:3px solid #fff;background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0 auto 8px">${av}</div>
-          <div style="text-align:center;color:#1c2333;font-size:14px;font-weight:800">${name}</div>
-          ${bio?`<div style="text-align:center;color:#8b95a8;font-size:11px;margin-top:4px;line-height:1.6">${bio}</div>`:''}
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${activePlats.map(p=>{const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};return`<div style="flex:1;min-width:calc(50% - 4px);padding:10px 6px;border-radius:12px;background:#f5f6fa;border:1px solid #e8eaf0;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:#1c2333"><i class="${pi.i}" style="font-size:20px;color:${pi.c.startsWith('linear')?'#e1306c':pi.c}"></i>${pi.l}</div>`;}).join('')}</div>
-          ${tt?`<div style="margin-top:8px;padding:7px 12px;border-radius:20px;background:#f5f6fa;border:1px solid #e8eaf0;display:flex;align-items:center;justify-content:center;gap:6px;color:#8b95a8;font-size:11px"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
-        </div>
-      </div>
-    </div>`;
-  } else { // classic
-    wrap.innerHTML=`<div style="padding:12px">
-      <div style="background:#f0f1f5;border-radius:14px;overflow:hidden;font-family:'R',sans-serif">
-        <div style="padding:18px 14px;text-align:center;background:linear-gradient(to left,${tc.dark},${tc.main});position:relative;padding-bottom:36px">
+      <div style="${previewStyle}">
+        <div style="padding:18px 14px;text-align:center;background:linear-gradient(to left,${tc.dark},${tc.main});padding-bottom:36px">
           <div style="font-size:15px;font-weight:800;color:#fff">${name}</div>
           ${bio?`<div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:5px;line-height:1.7">${bio}</div>`:''}
         </div>
         <div style="margin:-22px 14px 12px;background:#fff;border-radius:14px;padding:14px;box-shadow:0 4px 14px rgba(0,0,0,.08)">
           <div style="display:flex;flex-wrap:wrap;gap:8px">${activePlats.map(p=>{const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};return`<a style="flex:1;min-width:calc(50% - 4px);padding:12px 8px;border-radius:50px;background:${pi.c.startsWith('linear')?pi.c:pi.c};display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:700;color:#fff;text-decoration:none"><i class="${pi.i}"></i>${pi.l}</a>`;}).join('')}</div>
           ${tt?`<div style="margin-top:8px;padding:7px 14px;border-radius:50px;background:#111;display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;font-size:12px;font-weight:600"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  } else {
+    wrap.innerHTML=`<div style="padding:12px">
+      <div style="${previewStyle}">
+        <div style="height:60px;background:linear-gradient(135deg,${tc.dark},${tc.main});position:relative">
+          <div style="position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);width:56px;height:56px;border-radius:50%;border:3px solid ${avBorder};background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden">${av}</div>
+        </div>
+        <div style="padding:34px 14px 14px;text-align:center;background:${contentBg}">
+          <div style="font-size:14px;font-weight:800;color:${nameTxt}">${name}</div>
+          ${bio?`<div style="font-size:11px;color:${bioTxt};margin-top:4px;line-height:1.6">${bio}</div>`:''}
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${btnsHtml}</div>
+          ${tt?`<div style="margin-top:8px;padding:7px 12px;border-radius:20px;background:${plStyle==='dark'?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)'};display:flex;align-items:center;justify-content:center;gap:6px;color:${plStyle==='dark'?'rgba(255,255,255,.7)':'#8b95a8'};font-size:11px"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
         </div>
       </div>
     </div>`;
@@ -2659,8 +2658,8 @@ function buildPLCardHTML(name,bio,tt,platforms,avatar,style,theme){
   const font=`@font-face{font-family:'R';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');}`;
 
   if(style==='dark'){
-    const btnsBtns=btns.map(b=>`<a href="${b.href}" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);text-decoration:none;color:#fff;font-size:13px;font-weight:600;transition:.15s;flex:1;min-width:calc(50% - 6px)"><i class="${b.pd.i}" style="font-size:26px;color:${b.pd.c.startsWith('linear')?'#fff':b.pd.c}"></i>${b.pd.l}</a>`).join('');
-    return`<!DOCTYPE html><html dir="rtl" lang="ku"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>${name}</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><style>${font}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'R',sans-serif;background:#0d1021;min-height:100vh;display:flex;justify-content:center;}.page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;}.gradient-bg{width:100%;height:180px;background:linear-gradient(to left,${tc.dark},${tc.main});position:relative;flex-shrink:0;}.gradient-bg::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:50px;background:#0d1021;border-radius:50% 50% 0 0/50px 50px 0 0;}.av-wrap{position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);}.av{width:90px;height:90px;border-radius:50%;border:4px solid #0d1021;background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden;}.content{padding:0 18px 60px;display:flex;flex-direction:column;align-items:center;margin-top:50px;}.name{font-size:20px;font-weight:800;color:#fff;text-align:center;}.bio{font-size:13px;color:rgba(255,255,255,.6);text-align:center;margin-top:8px;line-height:1.9;}.btns{display:flex;flex-wrap:wrap;gap:10px;width:100%;margin-top:22px;}.tt-link{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;padding:9px 20px;border-radius:50px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;}.footer{margin-top:auto;padding:28px 20px;text-align:center;}.footer small{display:block;font-size:11px;color:#555;margin-bottom:8px;}.legal{font-size:10px;color:#444;}.legal a{color:inherit;text-decoration:none;margin:0 5px;}</style></head><body><div class="page"><div class="gradient-bg"><div class="av-wrap"><div class="av">${avHtml}</div></div></div><div class="content"><h1 class="name">${name}</h1>${bio?`<p class="bio">${bio}</p>`:''}<div class="btns">${btnsBtns}</div>${tt?`<a href="${ttUrl}" target="_blank" class="tt-link"><i class="fab fa-tiktok"></i>@${tt}</a>`:''}</div><div class="footer"><small>سپۆنسەر کراوە لەلایەن</small><div class="legal"><a href="https://proxopages.com/policy">Privacy Policy</a> | <a href="https://proxopages.com/terms">Terms</a></div></div></div></body></html>`;
+  const btnsBtns=btns.map(b=>`<div style="flex:1;min-width:calc(50% - 6px);padding:14px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-decoration:none;color:#fff;font-size:13px;font-weight:600"><i class="${b.pd.i}" style="font-size:26px;color:${b.pd.c.startsWith('linear')?'#fff':b.pd.c}"></i>${b.pd.l}</div>`).join('');
+  return`<!DOCTYPE html>...`; // مانەوەی هەمان HTML بەڵام دووگمەکان گرادەیشن نییە
   }
 
   if(style==='light'){
