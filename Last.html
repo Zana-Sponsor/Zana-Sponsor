@@ -25,11 +25,24 @@
   --mt:#8b95a8;--mt2:#6b7585;
   --tx:#1c2333;
 }
-body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
-/* scroll performance */
-#app{will-change:scroll-position;}
-.pg,.ad-card,.home-card,.tx-item,.plist-item,.notif-item{contain:content;}
-.topbar,.bnav{will-change:transform;}
+body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:none;}
+/* ══ SCROLL PERFORMANCE ══ */
+/* GPU layer بۆ ئەلێمەنتە fixed و sticky ەکان */
+.topbar{transform:translateZ(0);}
+.bnav{transform:translateZ(0);}
+/* هەموو پەڕەکان — contain بۆ کەمکردنەوەی reflow */
+.pg{contain:layout style;}
+/* کارتەکان — contain بۆ بڕینی render tree */
+.ad-card,.home-card,.tx-item,.plist-item,.notif-item,.tut-card,.asset-card,.proxo-card{contain:layout style;transform:translateZ(0);}
+/* sidebar و modal scroll */
+.sidebar-body{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.mbox{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.chat-body{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.asset-dropdown{-webkit-overflow-scrolling:touch;}
+/* فلتەر scroll ئەفقی */
+.ads-filter{-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;}
+/* دووگمەکان — touch-action بۆ کەمکردنی delay */
+button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-action:manipulation;}
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
