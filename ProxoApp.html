@@ -1822,7 +1822,11 @@ function shareRefLink(){
 
 async function checkAndApplyRef(){
   const params = new URLSearchParams(window.location.search);
-  const ref = params.get('ref');
+  let ref = params.get('ref');
+  // ئەگەر لە URL نەبوو، بگەڕێ بۆ ئەوەی لە signup ذەخیرەکراوە
+  if(!ref){
+    try{ref = sessionStorage.getItem('_proxo_ref');}catch(e){}
+  }
   if(!ref) return;
 
   // ── پاراستن ١: ref کۆد دەبێت شێوەی دروست هەبێت
@@ -1857,10 +1861,15 @@ async function checkAndApplyRef(){
   // ئەگەر insert سەرکەوت نەبوو (duplicate یان هەر هەڵەیەک) — هیچ کۆینێک نەدە
   if(insErr) return;
 
-  // ── تەنها ئێستا کۆین بدە — لە ڕێگەی RPC فەنکشن (security definer)
+  // ── کۆین بدە بە referrer (ئەو کەسەی لینکەکەی شێواند)
   await sb.rpc('award_referral_coins', { p_referrer_id: referrerId, p_amount: 50 });
 
-  // ── URL پاک بکەرەوە
+  // ── کۆین بدە بە referred user (ئەو کەسەی تۆمار کرد بە لینکەکە)
+  await addCoins(50, 'بۆنوسی بانگێشتنامە — بانگێشتراوی خێرا');
+  showToast('🎉 50 کۆینت وەرگرت بۆ تۆمارکردن بە بانگێشتنامە!', 'ok');
+
+  // ── sessionStorage و URL پاک بکەرەوە
+  try{sessionStorage.removeItem('_proxo_ref');}catch(e){}
   window.history.replaceState({}, '', window.location.pathname);
 }
 
@@ -1973,6 +1982,11 @@ async function doAuth(){
       cu=data.user;boot();
     } else {
       const name=document.getElementById('authName').value.trim()||email.split('@')[0];
+      // ذەخیرەی ref کۆد پێش signup (چونکە دوای تۆمار کردن URL پاک دەبێت)
+      const _refParam = new URLSearchParams(window.location.search).get('ref');
+      if(_refParam && /^PRX-[A-Z0-9]{8}$/.test(_refParam)){
+        try{sessionStorage.setItem('_proxo_ref', _refParam);}catch(e){}
+      }
       const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
       if(error)throw error;
       if(data.session){cu=data.user;boot();}
@@ -4676,23 +4690,4 @@ async function checkDbReady(){
     const btn=document.getElementById('setupDbBtn');
     if(btn){
       if(ready){
-        btn.style.display='none'; // فەنکشنەکە هەیە، دووگمە شاری بکە
-      } else {
-        btn.style.display='flex'; // نییە، پیشان بدە
-      }
-    }
-  }catch(e){/* بێدەنگ */}
-}
-</script>
-
-<!-- =====================================================================
-  SQL SCRIPTS (کۆمێنت — بۆ ڕێنمایی ئەدمین)
-  
-  ══════════════════════════════════════════════════════════════════════
-  ١. جەدوەلی pa_assets
-  ══════════════════════════════════════════════════════════════════════
-  CREATE TABLE pa_assets (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    name TEXT NOT NULL,
-    asset_type TEXT NOT NULL CHECK (asset_type IN ('whatsapp','insta
+        btn.style.display
