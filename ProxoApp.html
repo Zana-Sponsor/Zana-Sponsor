@@ -74,9 +74,6 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .abtn{width:100%;padding:17px;background:var(--dark);color:#fff;border:none;border-radius:14px;font-family:'R',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 4px 16px rgba(28,35,51,.25);transition:opacity .2s;}
 .abtn:active{opacity:.9;}
 .abtn:disabled{opacity:.5;pointer-events:none;}
-.amsg{font-size:12.5px;text-align:center;padding:11px 14px;border-radius:11px;display:none;margin-top:10px;}
-.amsg.ok{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr);}
-.amsg.err{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:var(--rd);}
 /* Google login */
 .auth-divider{display:flex;align-items:center;gap:10px;margin:14px 0;}
 .auth-divider-line{flex:1;height:1px;background:var(--b1);}
@@ -85,6 +82,9 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .gbtn:active{background:var(--bg);}
 .gbtn:disabled{opacity:.5;pointer-events:none;}
 .gbtn svg{width:18px;height:18px;flex-shrink:0;}
+.amsg{font-size:12.5px;text-align:center;padding:11px 14px;border-radius:11px;display:none;margin-top:10px;}
+.amsg.ok{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr);}
+.amsg.err{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:var(--rd);}
 
 /* ══ OFFLINE BANNER ══ */
 #offlineBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:var(--rd);color:#fff;font-size:13px;font-family:'R',sans-serif;text-align:center;padding:10px 16px;font-weight:700;}
@@ -1962,54 +1962,27 @@ async function doGoogleAuth(){
 
 // ══ Device Fingerprint بۆ پارێزانی بانگێشت ══
 function getDeviceFingerprint(){
-  // ئامێزی چەندین نیشانە بۆ جیاکردنەوەی مۆبایل
   const canvas=document.createElement('canvas');
   const ctx=canvas.getContext('2d');
-  ctx.textBaseline='top';
-  ctx.font='14px Arial';
-  ctx.fillText('device_fp',2,2);
-  const canvasFP=canvas.toDataURL().slice(-20);
-  const raw=[
-    navigator.userAgent,
-    navigator.language||'',
-    screen.colorDepth,
-    screen.width+'x'+screen.height,
-    new Date().getTimezoneOffset(),
-    navigator.hardwareConcurrency||'',
-    navigator.maxTouchPoints||'',
-    canvasFP
-  ].join('|');
-  // hash ساده
-  let h=0;
-  for(let i=0;i<raw.length;i++){h=((h<<5)-h)+raw.charCodeAt(i);h|=0;}
+  ctx.textBaseline='top';ctx.font='14px Arial';ctx.fillText('fp',2,2);
+  const cfp=canvas.toDataURL().slice(-16);
+  const raw=[navigator.userAgent,navigator.language||'',screen.colorDepth,screen.width+'x'+screen.height,new Date().getTimezoneOffset(),navigator.hardwareConcurrency||'',navigator.maxTouchPoints||'',cfp].join('|');
+  let h=0;for(let i=0;i<raw.length;i++){h=((h<<5)-h)+raw.charCodeAt(i);h|=0;}
   return 'dfp_'+Math.abs(h).toString(36);
 }
-
 async function checkDeviceAlreadyRewarded(refCode){
-  // پشکنین ئایا ئەم ئامێرە پێشتر بانگێشت وەرگرتووە
   const fp=getDeviceFingerprint();
-  const storageKey='proxo_ref_used_'+refCode.toLowerCase();
-  // پشکنینی localStorage
-  if(localStorage.getItem(storageKey)==='1') return true;
-  // پشکنینی database — ئایا record هەیە بۆ ئەم device fingerprint
+  const sk='proxo_ref_used_'+refCode.toLowerCase();
+  if(localStorage.getItem(sk)==='1')return true;
   try{
-    const{data}=await sb.from('pa_ref_devices')
-      .select('id')
-      .eq('device_fp',fp)
-      .eq('ref_code',refCode)
-      .maybeSingle();
-    return !!data;
-  }catch(e){ return false; }
+    const{data}=await sb.from('pa_ref_devices').select('id').eq('device_fp',fp).eq('ref_code',refCode).maybeSingle();
+    return!!data;
+  }catch(e){return false;}
 }
-
 async function markDeviceAsRewarded(refCode){
   const fp=getDeviceFingerprint();
-  const storageKey='proxo_ref_used_'+refCode.toLowerCase();
-  localStorage.setItem(storageKey,'1');
-  // تۆمارکردن لە database
-  try{
-    await sb.from('pa_ref_devices').insert({device_fp:fp,ref_code:refCode}).select();
-  }catch(e){ /* بێدەنگ — جەدوەلەکە ئەگەر نەبوو کێشەیەک نییە */ }
+  localStorage.setItem('proxo_ref_used_'+refCode.toLowerCase(),'1');
+  try{await sb.from('pa_ref_devices').insert({device_fp:fp,ref_code:refCode});}catch(e){}
 }
 
 
@@ -2024,7 +1997,7 @@ async function doAuth(){
     if(aMode==='login'){
       const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
       if(error)throw error;
-      cu=data.user;boot();
+      cu=data.user;await boot();
     } else {
       const name=document.getElementById('authName').value.trim()||email.split('@')[0];
       const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
@@ -2041,30 +2014,26 @@ async function doAuth(){
       let referralSuccess=false;
       if(refCode){
         try{
-          // ✅ پشکنین: ئایا ئەم ئامێرە پێشتر پاداشت وەرگرتووە؟
-          const alreadyRewarded = await checkDeviceAlreadyRewarded(refCode);
+          const alreadyRewarded=await checkDeviceAlreadyRewarded(refCode);
           if(alreadyRewarded){
             console.warn('[Referral] Device already rewarded — skipping');
             localStorage.removeItem('proxo_ref');
-          } else {
-            console.log('[Referral] Attempting to apply code:', refCode);
+          }else{
             const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
               p_new_user_id:cu.id,
               p_ref_code:refCode
             });
-            
-            if(!rErr && rData?.ok===true){
+            if(!rErr&&rData?.ok===true){
               referralSuccess=true;
               await markDeviceAsRewarded(refCode);
               localStorage.removeItem('proxo_ref');
-              console.log('[Referral] RPC Success!');
             }else{
-              console.error('[Referral] RPC failed:', rErr || rData?.msg);
+              console.error('[Referral] RPC failed:',rErr||rData?.msg);
               localStorage.removeItem('proxo_ref');
             }
           }
         }catch(e){
-          console.error('[Referral] Exception:', e);
+          console.error('[Referral] Exception:',e);
         }
       }
       
@@ -2152,12 +2121,12 @@ async function boot(){
   document.getElementById('authWrap').style.display='none';
   document.getElementById('app').style.display='flex';
   document.getElementById('bnav').style.display='block';
-  await ensureWallet();
-  await ensureCoinsWallet();
-  await loadBal();
-  await loadCoins();
-  loadProfile();
-  loadMyCards();
+  try{ await ensureWallet(); }catch(e){ console.warn('[boot] ensureWallet failed:',e.message); }
+  try{ await ensureCoinsWallet(); }catch(e){ console.warn('[boot] ensureCoinsWallet failed:',e.message); }
+  try{ await loadBal(); }catch(e){ console.warn('[boot] loadBal failed:',e.message); }
+  try{ await loadCoins(); }catch(e){ console.warn('[boot] loadCoins failed:',e.message); }
+  try{ loadProfile(); }catch(e){ console.warn('[boot] loadProfile failed:',e.message); }
+  try{ loadMyCards(); }catch(e){ console.warn('[boot] loadMyCards failed:',e.message); }
   goPage('home');
   checkDbReady(); // چێکردنەوەی ئایا فەنکشنی داتابەیس دانراوە
   loadReferralSection();
@@ -3624,7 +3593,7 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
 SQL بۆ Supabase — جێبەجێ بکە لە SQL Editor
 ══════════════════════════════════════════════════════
 
--- جەدوەلی پارێزانی ئامێر — بۆ ڕێگری لە دووبارە وەرگرتنی پاداشت
+-- جەدوەلی پارێزانی ئامێر بۆ بانگێشتکردن
 CREATE TABLE IF NOT EXISTS pa_ref_devices (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   device_fp TEXT NOT NULL,
@@ -3633,8 +3602,8 @@ CREATE TABLE IF NOT EXISTS pa_ref_devices (
   UNIQUE(device_fp, ref_code)
 );
 ALTER TABLE pa_ref_devices ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can insert ref device" ON pa_ref_devices FOR INSERT WITH CHECK (true);
-CREATE POLICY "Anyone can read ref device" ON pa_ref_devices FOR SELECT USING (true);
+CREATE POLICY "Insert ref device" ON pa_ref_devices FOR INSERT WITH CHECK (true);
+CREATE POLICY "Select ref device" ON pa_ref_devices FOR SELECT USING (true);
 
 -- جەدوەلی referral codes
 CREATE TABLE IF NOT EXISTS pa_referrals (
@@ -4737,4 +4706,16 @@ async function loadTxHistory(){
     method:t.method,
     ad_number:t.ad_number||null,
     note:t.note||null,
-    deposit_number:t.deposit_numb
+    deposit_number:t.deposit_number||null,
+  }));
+
+  const spendItems=(ads||[]).map(a=>({
+    id:a.id,
+    kind:'spend',
+    label:'New Ad '+(a.ad_number||'—'),
+    amount:parseFloat(a.budget),
+    status:'spent',
+    date:a.created_at
+  }));
+
+  // کۆین گۆڕین — تەنها ئەوانەی amount منفی (گۆڕینەوە بۆ بال
