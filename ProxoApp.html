@@ -2045,16 +2045,16 @@ async function boot(){
   document.getElementById('authWrap').style.display='none';
   document.getElementById('app').style.display='flex';
   document.getElementById('bnav').style.display='block';
-  await ensureWallet();
-  await ensureCoinsWallet();
-  await loadBal();
-  await loadCoins();
+  try{ await ensureWallet(); }catch(e){ console.warn('ensureWallet:',e); }
+  try{ await ensureCoinsWallet(); }catch(e){ console.warn('ensureCoinsWallet:',e); }
+  try{ await loadBal(); }catch(e){ console.warn('loadBal:',e); }
+  try{ await loadCoins(); }catch(e){ console.warn('loadCoins:',e); }
   loadProfile();
   loadMyCards();
   goPage('home');
-  checkDbReady(); // چێکردنەوەی ئایا فەنکشنی داتابەیس دانراوە
+  checkDbReady();
   loadReferralSection();
-  checkAndApplyRef();
+  try{ await checkAndApplyRef(); }catch(e){ console.warn('checkAndApplyRef:',e); }
   // ═══ ٥. CHECK NOTIFICATIONS ═══
   checkNotifBell();
   // Real-time notifications listener
@@ -4685,9 +4685,4 @@ function startReviewCountdown(totalSec){
 async function checkDbReady(){
   try{
     const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
-    // ئەگەر invalid_budget هاتەوە = فەنکشنەکە هەیە
-    const ready=error?.message?.includes('invalid_budget')||error?.message?.includes('بودجە');
-    const btn=document.getElementById('setupDbBtn');
-    if(btn){
-      if(ready){
-        btn.style.display
+    // ئەگەر invalid_budget هاتەوە = 
