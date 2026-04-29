@@ -1981,10 +1981,17 @@ async function doAuth(){
       const refCode=localStorage.getItem('proxo_ref');
       if(refCode){
         try{
-          const{error:rErr}=await sb.rpc('handle_auto_referral',{p_new_user_id:cu.id,p_ref_code:refCode});
-          if(!rErr){
+          const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{p_new_user_id:cu.id,p_ref_code:refCode});
+          if(!rErr && rData?.ok===true){
+            // کۆد دروستبوو و کۆین زیادکرا ✅
             localStorage.removeItem('proxo_ref');
-            showToast('🎉 کۆینی ڕیفێرال وەرگیرا!','ok');
+            await boot(); // بار بکە پێش نیشاندانی پەیام تا بالانسەکە نوێ بێت
+            await loadCoins(); // دووبارە کۆینەکان بار بکەرەوە
+            showToast('🎉 ٥٠ کۆینت وەرگرت بە بانگێشت!','ok');
+            return; // boot() پێشتر بانگکرا، دووبارە مەبانگکە
+          } else {
+            // کۆد نادروست، self-refer، یان پێشتر وەرگیراوە — بەبێ دەنگ تێپەڕ بکە
+            localStorage.removeItem('proxo_ref'); // کۆدی نادروست پاک بکەرەوە
           }
         }catch(_){/* silent */}
       }
@@ -4705,18 +4712,4 @@ async function checkDbReady(){
   );
   ALTER TABLE pa_notifications ENABLE ROW LEVEL SECURITY;
   CREATE POLICY "Users read own notifications" ON pa_notifications
-    FOR ALL USING (auth.uid() = user_id);
-  
-  ══════════════════════════════════════════════════════════════════════
-  ٣. تریگەری ئاگاداری کاتێک ئەدمین ستاتۆس گۆڕی
-  ══════════════════════════════════════════════════════════════════════
-  CREATE OR REPLACE FUNCTION notify_ad_status_change()
-  RETURNS TRIGGER AS $$
-  DECLARE
-    notif_type TEXT;
-    notif_title TEXT;
-    notif_body TEXT;
-    v_meta JSONB;
-  BEGIN
-    IF OLD.status IS DISTINCT FROM NEW.status THEN
-      v_meta := jsonb
+    FOR ALL USING (auth.ui
