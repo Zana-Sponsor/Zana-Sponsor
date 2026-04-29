@@ -402,7 +402,10 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="pg" id="pgUsers">
       <div class="sec-hdr">
         <h3>هەموو بەکارهێنەران</h3>
-        <div class="act-btn gr" onclick="openAddBalance()"><i class="fas fa-plus"></i> زیادکردنی باڵانس</div>
+        <div style="display:flex;gap:8px">
+          <div class="act-btn rd" onclick="openDeductBalance('','')"><i class="fas fa-minus"></i> وەرگرتنی باڵانس</div>
+          <div class="act-btn gr" onclick="openAddBalance()"><i class="fas fa-plus"></i> زیادکردنی باڵانس</div>
+        </div>
       </div>
       <div class="tbl-wrap">
         <div class="tbl-filter">
@@ -424,7 +427,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
         <div class="tbl-filter">
           <input class="tbl-search" id="depSearch" placeholder="گەڕان..." oninput="filterDeps()">
           <div class="chip on" data-df="all" onclick="filterDeps(this)">هەموو</div>
-          <div class="chip yw on" data-df="pending" onclick="filterDeps(this)">چاوەڕوان</div>
+          <div class="chip yw" data-df="pending" onclick="filterDeps(this)">چاوەڕوان</div>
           <div class="chip gr" data-df="approved" onclick="filterDeps(this)">پەسەندکراو</div>
           <div class="chip rd" data-df="rejected" onclick="filterDeps(this)">ڕەتکراو</div>
         </div>
@@ -570,7 +573,20 @@ tr:hover td{background:rgba(28,35,51,.015);}
     </div>
     <input type="hidden" id="addBalUserId">
     <label class="modal-lbl">بەکارهێنەر</label>
-    <input class="minp" type="text" id="addBalUserName" readonly style="background:var(--bg);color:var(--mt2)">
+    <div id="addBalUserPickerWrap">
+      <input class="minp" type="text" id="addBalUserSearch" placeholder="گەڕان بە ناو یان ئیمەیل..." oninput="searchAddBalUser(this.value)" style="margin-bottom:6px">
+      <div id="addBalUserResults" style="background:var(--bg);border:1.5px solid var(--b1);border-radius:12px;max-height:160px;overflow-y:auto;display:none"></div>
+    </div>
+    <div id="addBalUserSelected" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;background:rgba(22,163,74,.07);border:1.5px solid rgba(22,163,74,.2);border-radius:12px;padding:10px 14px;margin-bottom:4px">
+        <div class="mini-av" id="addBalSelectedAv" style="background:var(--gr)">?</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:700;color:var(--dark)" id="addBalSelectedName">—</div>
+          <div style="font-size:11px;color:var(--mt);direction:ltr" id="addBalSelectedEmail">—</div>
+        </div>
+        <div class="act-btn rd" style="padding:5px 10px;font-size:11px" onclick="clearAddBalUser()"><i class="fas fa-xmark"></i></div>
+      </div>
+    </div>
     <label class="modal-lbl">بڕ (دۆلار)</label>
     <input class="minp" type="number" id="addBalAmt" placeholder="0.00" min="0.01" step="0.01" dir="ltr">
     <label class="modal-lbl">تێبینی (ئۆپشنی)</label>
@@ -587,7 +603,20 @@ tr:hover td{background:rgba(28,35,51,.015);}
     </div>
     <input type="hidden" id="deductUserId">
     <label class="modal-lbl">بەکارهێنەر</label>
-    <input class="minp" type="text" id="deductUserName" readonly style="background:var(--bg);color:var(--mt2)">
+    <div id="deductUserPickerWrap">
+      <input class="minp" type="text" id="deductUserSearch" placeholder="گەڕان بە ناو یان ئیمەیل..." oninput="searchDeductUser(this.value)" style="margin-bottom:6px">
+      <div id="deductUserResults" style="background:var(--bg);border:1.5px solid var(--b1);border-radius:12px;max-height:160px;overflow-y:auto;display:none"></div>
+    </div>
+    <div id="deductUserSelected" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;background:rgba(220,38,38,.06);border:1.5px solid rgba(220,38,38,.18);border-radius:12px;padding:10px 14px;margin-bottom:4px">
+        <div class="mini-av" id="deductSelectedAv" style="background:var(--rd)">?</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:700;color:var(--dark)" id="deductSelectedName">—</div>
+          <div style="font-size:11px;color:var(--mt);direction:ltr" id="deductSelectedEmail">—</div>
+        </div>
+        <div class="act-btn rd" style="padding:5px 10px;font-size:11px" onclick="clearDeductUser()"><i class="fas fa-xmark"></i></div>
+      </div>
+    </div>
     <label class="modal-lbl">بڕ (دۆلار)</label>
     <input class="minp" type="number" id="deductBalAmt" placeholder="0.00" min="0.01" step="0.01" dir="ltr">
     <label class="modal-lbl">هۆکار</label>
@@ -949,24 +978,120 @@ async function toggleBan(uid,isBanned){
 // ══ BALANCE ══
 function openAddBalance(){
   document.getElementById('addBalUserId').value='';
-  document.getElementById('addBalUserName').value='بەکارهێنەرێک هەڵبژێرە';
   document.getElementById('addBalAmt').value='';
   document.getElementById('addBalNote').value='';
+  document.getElementById('addBalUserSearch').value='';
+  document.getElementById('addBalUserResults').style.display='none';
+  document.getElementById('addBalUserResults').innerHTML='';
+  document.getElementById('addBalUserPickerWrap').style.display='block';
+  document.getElementById('addBalUserSelected').style.display='none';
   openMo('moAddBalance');
 }
 function openAddBalanceUser(uid,name){
   document.getElementById('addBalUserId').value=uid;
-  document.getElementById('addBalUserName').value=name;
   document.getElementById('addBalAmt').value='';
   document.getElementById('addBalNote').value='';
+  document.getElementById('addBalUserPickerWrap').style.display='none';
+  document.getElementById('addBalUserSelected').style.display='block';
+  const u=allUsers.find(x=>x.id===uid);
+  document.getElementById('addBalSelectedName').textContent=name;
+  document.getElementById('addBalSelectedEmail').textContent=u?.email||'—';
+  document.getElementById('addBalSelectedAv').textContent=(name||'?')[0].toUpperCase();
   openMo('moAddBalance');
 }
+function clearAddBalUser(){
+  document.getElementById('addBalUserId').value='';
+  document.getElementById('addBalUserSelected').style.display='none';
+  document.getElementById('addBalUserPickerWrap').style.display='block';
+  document.getElementById('addBalUserSearch').value='';
+  document.getElementById('addBalUserResults').innerHTML='';
+  document.getElementById('addBalUserResults').style.display='none';
+}
+function searchAddBalUser(q){
+  const res=document.getElementById('addBalUserResults');
+  if(!q.trim()){res.style.display='none';res.innerHTML='';return;}
+  const matches=allUsers.filter(u=>
+    (u.full_name||'').toLowerCase().includes(q.toLowerCase())||
+    (u.email||'').toLowerCase().includes(q.toLowerCase())
+  ).slice(0,8);
+  if(!matches.length){res.innerHTML='<div style="padding:10px 14px;font-size:12px;color:var(--mt)">هیچ بەکارهێنەرێک نەدۆزرایەوە</div>';res.style.display='block';return;}
+  res.innerHTML=matches.map(u=>`
+    <div onclick="selectAddBalUser('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}','${(u.email||'').replace(/'/g,"\\'")}','${(u.avatar_b64?'1':'0')}')"
+      style="display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--b1);transition:background .15s"
+      onmouseover="this.style.background='rgba(22,163,74,.06)'" onmouseout="this.style.background=''">
+      <div class="mini-av" style="background:var(--dark);flex-shrink:0">${u.avatar_b64?`<img src="${u.avatar_b64}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(u.full_name||u.email||'?')[0].toUpperCase()}</div>
+      <div style="overflow:hidden">
+        <div style="font-size:13px;font-weight:700;color:var(--dark)">${u.full_name||'بێ ناو'}</div>
+        <div style="font-size:11px;color:var(--mt);direction:ltr">${u.email||'—'}</div>
+      </div>
+      <div style="margin-right:auto;font-size:11px;font-weight:700;color:var(--gr)">$${parseFloat(u.pa_wallets?.balance||0).toFixed(2)}</div>
+    </div>`).join('');
+  res.style.display='block';
+}
+function selectAddBalUser(uid,name,email,hasAvatar){
+  document.getElementById('addBalUserId').value=uid;
+  document.getElementById('addBalUserPickerWrap').style.display='none';
+  document.getElementById('addBalUserSelected').style.display='block';
+  document.getElementById('addBalSelectedName').textContent=name;
+  document.getElementById('addBalSelectedEmail').textContent=email;
+  document.getElementById('addBalSelectedAv').textContent=(name||'?')[0].toUpperCase();
+}
 function openDeductBalance(uid,name){
-  document.getElementById('deductUserId').value=uid;
-  document.getElementById('deductUserName').value=name;
+  document.getElementById('deductUserId').value=uid||'';
   document.getElementById('deductBalAmt').value='';
   document.getElementById('deductBalNote').value='';
+  if(uid){
+    const u=allUsers.find(x=>x.id===uid);
+    document.getElementById('deductUserPickerWrap').style.display='none';
+    document.getElementById('deductUserSelected').style.display='block';
+    document.getElementById('deductSelectedName').textContent=name;
+    document.getElementById('deductSelectedEmail').textContent=u?.email||'—';
+    document.getElementById('deductSelectedAv').textContent=(name||'?')[0].toUpperCase();
+  } else {
+    document.getElementById('deductUserSearch').value='';
+    document.getElementById('deductUserResults').innerHTML='';
+    document.getElementById('deductUserResults').style.display='none';
+    document.getElementById('deductUserPickerWrap').style.display='block';
+    document.getElementById('deductUserSelected').style.display='none';
+  }
   openMo('moDeductBalance');
+}
+function clearDeductUser(){
+  document.getElementById('deductUserId').value='';
+  document.getElementById('deductUserSelected').style.display='none';
+  document.getElementById('deductUserPickerWrap').style.display='block';
+  document.getElementById('deductUserSearch').value='';
+  document.getElementById('deductUserResults').innerHTML='';
+  document.getElementById('deductUserResults').style.display='none';
+}
+function searchDeductUser(q){
+  const res=document.getElementById('deductUserResults');
+  if(!q.trim()){res.style.display='none';res.innerHTML='';return;}
+  const matches=allUsers.filter(u=>
+    (u.full_name||'').toLowerCase().includes(q.toLowerCase())||
+    (u.email||'').toLowerCase().includes(q.toLowerCase())
+  ).slice(0,8);
+  if(!matches.length){res.innerHTML='<div style="padding:10px 14px;font-size:12px;color:var(--mt)">هیچ بەکارهێنەرێک نەدۆزرایەوە</div>';res.style.display='block';return;}
+  res.innerHTML=matches.map(u=>`
+    <div onclick="selectDeductUser('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}','${(u.email||'').replace(/'/g,"\\'")}')"
+      style="display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--b1);transition:background .15s"
+      onmouseover="this.style.background='rgba(220,38,38,.05)'" onmouseout="this.style.background=''">
+      <div class="mini-av" style="background:var(--dark);flex-shrink:0">${u.avatar_b64?`<img src="${u.avatar_b64}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(u.full_name||u.email||'?')[0].toUpperCase()}</div>
+      <div style="overflow:hidden">
+        <div style="font-size:13px;font-weight:700;color:var(--dark)">${u.full_name||'بێ ناو'}</div>
+        <div style="font-size:11px;color:var(--mt);direction:ltr">${u.email||'—'}</div>
+      </div>
+      <div style="margin-right:auto;font-size:11px;font-weight:700;color:var(--gr)">$${parseFloat(u.pa_wallets?.balance||0).toFixed(2)}</div>
+    </div>`).join('');
+  res.style.display='block';
+}
+function selectDeductUser(uid,name,email){
+  document.getElementById('deductUserId').value=uid;
+  document.getElementById('deductUserPickerWrap').style.display='none';
+  document.getElementById('deductUserSelected').style.display='block';
+  document.getElementById('deductSelectedName').textContent=name;
+  document.getElementById('deductSelectedEmail').textContent=email;
+  document.getElementById('deductSelectedAv').textContent=(name||'?')[0].toUpperCase();
 }
 
 async function confirmAddBalance(){
