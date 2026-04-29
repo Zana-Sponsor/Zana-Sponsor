@@ -25,33 +25,7 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 /* ══ UPDATE PROFILE FORM ══ */
 .phone-wrap{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .phone-flag{padding:12px 14px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;font-size:15px;flex-shrink:0;}
-/* Preview Modal */
-.prev-modal-overlay {
-  position:fixed; inset:0; background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(10px); display:none;
-  justify-content:center; align-items:center; z-index:9999;
-}
-.prev-modal-overlay.active { display:flex; }
-.prev-modal-inner {
-  width:92%; max-width:400px;
-  background:#0d1021; border-radius:32px;
-  border:1px solid rgba(255,255,255,0.1);
-  overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.8);
-}
-.prev-modal-bar {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 18px; background:var(--w);
-  border-bottom:1px solid var(--b1);
-}
-.prev-modal-bar span { font-size:13px; color:var(--mt); }
-.prev-modal-close {
-  width:30px; height:30px; border-radius:50%;
-  background:var(--bg); border:1px solid var(--b1);
-  color:var(--mt); cursor:pointer; font-size:14px;
-  display:flex; align-items:center; justify-content:center;
-}
-iframe#dashPreviewFrame { width:100%; height:560px; border:none; display:block; }
-  
+
 /* ══ AUTH ══ */
 #authWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--w);}
 .auth-inner{width:100%;max-width:400px;}
@@ -2540,41 +2514,42 @@ function updatePLPreview(){
     </div>`;
   }).join('');
 
-  const previewStyle = plStyle === 'dark'
-    ? `background:#0d1021;border-radius:14px;overflow:hidden;font-family:'R',sans-serif`
-    : plStyle === 'light'
-    ? `background:#fff;border-radius:14px;overflow:hidden;font-family:'R',sans-serif;border:1px solid #e8eaf0`
-    : `background:#f0f1f5;border-radius:14px;overflow:hidden;font-family:'R',sans-serif`;
-
-  const nameTxt = plStyle === 'dark' ? '#fff' : plStyle === 'light' ? '#1c2333' : '#fff';
-  const bioTxt  = plStyle === 'dark' ? 'rgba(255,255,255,.6)' : plStyle === 'light' ? '#8b95a8' : 'rgba(255,255,255,.85)';
-  const avBorder = plStyle === 'dark' ? '#0d1021' : plStyle === 'light' ? '#f5f6fa' : 'transparent';
-  const contentBg = plStyle === 'dark' ? '#0d1021' : plStyle === 'light' ? '#f5f6fa' : 'transparent';
-
-  if(plStyle === 'classic'){
+  if(plStyle==='dark'){
     wrap.innerHTML=`<div style="padding:12px">
-      <div style="${previewStyle}">
-        <div style="padding:18px 14px;text-align:center;background:linear-gradient(to left,${tc.dark},${tc.main});padding-bottom:36px">
+      <div style="background:#0d1021;border-radius:14px;overflow:hidden;font-family:'R',sans-serif">
+        <div style="height:60px;background:linear-gradient(135deg,${tc.dark},${tc.main})"></div>
+        <div style="padding:0 14px 14px;margin-top:-30px">
+          <div style="width:56px;height:56px;border-radius:50%;border:3px solid #0d1021;background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0 auto 8px">${av}</div>
+          <div style="text-align:center;color:#fff;font-size:14px;font-weight:800">${name}</div>
+          ${bio?`<div style="text-align:center;color:rgba(255,255,255,.6);font-size:11px;margin-top:4px;line-height:1.6">${bio}</div>`:''}
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${btnsHtml}</div>
+          ${tt?`<div style="margin-top:8px;padding:7px 12px;border-radius:20px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;gap:6px;color:rgba(255,255,255,.7);font-size:11px"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  } else if(plStyle==='light'){
+    wrap.innerHTML=`<div style="padding:12px">
+      <div style="background:#fff;border-radius:14px;overflow:hidden;font-family:'R',sans-serif;border:1px solid #e8eaf0">
+        <div style="height:60px;background:linear-gradient(135deg,${tc.dark},${tc.main})"></div>
+        <div style="padding:0 14px 14px;margin-top:-30px">
+          <div style="width:56px;height:56px;border-radius:50%;border:3px solid #fff;background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0 auto 8px">${av}</div>
+          <div style="text-align:center;color:#1c2333;font-size:14px;font-weight:800">${name}</div>
+          ${bio?`<div style="text-align:center;color:#8b95a8;font-size:11px;margin-top:4px;line-height:1.6">${bio}</div>`:''}
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${activePlats.map(p=>{const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};return`<div style="flex:1;min-width:calc(50% - 4px);padding:10px 6px;border-radius:12px;background:#f5f6fa;border:1px solid #e8eaf0;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:#1c2333"><i class="${pi.i}" style="font-size:20px;color:${pi.c.startsWith('linear')?'#e1306c':pi.c}"></i>${pi.l}</div>`;}).join('')}</div>
+          ${tt?`<div style="margin-top:8px;padding:7px 12px;border-radius:20px;background:#f5f6fa;border:1px solid #e8eaf0;display:flex;align-items:center;justify-content:center;gap:6px;color:#8b95a8;font-size:11px"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  } else { // classic
+    wrap.innerHTML=`<div style="padding:12px">
+      <div style="background:#f0f1f5;border-radius:14px;overflow:hidden;font-family:'R',sans-serif">
+        <div style="padding:18px 14px;text-align:center;background:linear-gradient(to left,${tc.dark},${tc.main});position:relative;padding-bottom:36px">
           <div style="font-size:15px;font-weight:800;color:#fff">${name}</div>
           ${bio?`<div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:5px;line-height:1.7">${bio}</div>`:''}
         </div>
         <div style="margin:-22px 14px 12px;background:#fff;border-radius:14px;padding:14px;box-shadow:0 4px 14px rgba(0,0,0,.08)">
           <div style="display:flex;flex-wrap:wrap;gap:8px">${activePlats.map(p=>{const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};return`<a style="flex:1;min-width:calc(50% - 4px);padding:12px 8px;border-radius:50px;background:${pi.c.startsWith('linear')?pi.c:pi.c};display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:700;color:#fff;text-decoration:none"><i class="${pi.i}"></i>${pi.l}</a>`;}).join('')}</div>
           ${tt?`<div style="margin-top:8px;padding:7px 14px;border-radius:50px;background:#111;display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;font-size:12px;font-weight:600"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
-        </div>
-      </div>
-    </div>`;
-  } else {
-    wrap.innerHTML=`<div style="padding:12px">
-      <div style="${previewStyle}">
-        <div style="height:60px;background:linear-gradient(135deg,${tc.dark},${tc.main});position:relative">
-          <div style="position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);width:56px;height:56px;border-radius:50%;border:3px solid ${avBorder};background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden">${av}</div>
-        </div>
-        <div style="padding:34px 14px 14px;text-align:center;background:${contentBg}">
-          <div style="font-size:14px;font-weight:800;color:${nameTxt}">${name}</div>
-          ${bio?`<div style="font-size:11px;color:${bioTxt};margin-top:4px;line-height:1.6">${bio}</div>`:''}
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${btnsHtml}</div>
-          ${tt?`<div style="margin-top:8px;padding:7px 12px;border-radius:20px;background:${plStyle==='dark'?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)'};display:flex;align-items:center;justify-content:center;gap:6px;color:${plStyle==='dark'?'rgba(255,255,255,.7)':'#8b95a8'};font-size:11px"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
         </div>
       </div>
     </div>`;
@@ -2658,8 +2633,8 @@ function buildPLCardHTML(name,bio,tt,platforms,avatar,style,theme){
   const font=`@font-face{font-family:'R';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');}`;
 
   if(style==='dark'){
-  const btnsBtns=btns.map(b=>`<div style="flex:1;min-width:calc(50% - 6px);padding:14px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-decoration:none;color:#fff;font-size:13px;font-weight:600"><i class="${b.pd.i}" style="font-size:26px;color:${b.pd.c.startsWith('linear')?'#fff':b.pd.c}"></i>${b.pd.l}</div>`).join('');
-  return`<!DOCTYPE html>...`; // مانەوەی هەمان HTML بەڵام دووگمەکان گرادەیشن نییە
+    const btnsBtns=btns.map(b=>`<a href="${b.href}" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);text-decoration:none;color:#fff;font-size:13px;font-weight:600;transition:.15s;flex:1;min-width:calc(50% - 6px)"><i class="${b.pd.i}" style="font-size:26px;color:${b.pd.c.startsWith('linear')?'#fff':b.pd.c}"></i>${b.pd.l}</a>`).join('');
+    return`<!DOCTYPE html><html dir="rtl" lang="ku"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>${name}</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><style>${font}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'R',sans-serif;background:#0d1021;min-height:100vh;display:flex;justify-content:center;}.page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;}.gradient-bg{width:100%;height:180px;background:linear-gradient(to left,${tc.dark},${tc.main});position:relative;flex-shrink:0;}.gradient-bg::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:50px;background:#0d1021;border-radius:50% 50% 0 0/50px 50px 0 0;}.av-wrap{position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);}.av{width:90px;height:90px;border-radius:50%;border:4px solid #0d1021;background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden;}.content{padding:0 18px 60px;display:flex;flex-direction:column;align-items:center;margin-top:50px;}.name{font-size:20px;font-weight:800;color:#fff;text-align:center;}.bio{font-size:13px;color:rgba(255,255,255,.6);text-align:center;margin-top:8px;line-height:1.9;}.btns{display:flex;flex-wrap:wrap;gap:10px;width:100%;margin-top:22px;}.tt-link{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;padding:9px 20px;border-radius:50px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;}.footer{margin-top:auto;padding:28px 20px;text-align:center;}.footer small{display:block;font-size:11px;color:#555;margin-bottom:8px;}.legal{font-size:10px;color:#444;}.legal a{color:inherit;text-decoration:none;margin:0 5px;}</style></head><body><div class="page"><div class="gradient-bg"><div class="av-wrap"><div class="av">${avHtml}</div></div></div><div class="content"><h1 class="name">${name}</h1>${bio?`<p class="bio">${bio}</p>`:''}<div class="btns">${btnsBtns}</div>${tt?`<a href="${ttUrl}" target="_blank" class="tt-link"><i class="fab fa-tiktok"></i>@${tt}</a>`:''}</div><div class="footer"><small>سپۆنسەر کراوە لەلایەن</small><div class="legal"><a href="https://proxopages.com/policy">Privacy Policy</a> | <a href="https://proxopages.com/terms">Terms</a></div></div></div></body></html>`;
   }
 
   if(style==='light'){
@@ -2691,6 +2666,7 @@ async function loadProxoCards(){
       </div>
       <div style="display:flex;gap:7px">
         ${c.html_content?`<div onclick="previewCard('${c.id}')" style="width:32px;height:32px;border-radius:10px;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--mt)"><i class="fas fa-eye"></i></div>`:''}
+        ${c.html_content?`<div id="tgbtn_${c.id}" onclick="sendCardToTelegram('${c.id}')" style="width:32px;height:32px;border-radius:10px;background:rgba(0,136,204,.08);border:1px solid rgba(0,136,204,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:#29a8eb"><i class="fab fa-telegram"></i></div>`:''}
         <div onclick="deleteCard('${c.id}')" style="width:32px;height:32px;border-radius:10px;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--rd)"><i class="fas fa-trash"></i></div>
       </div>
     </div>`).join('');
@@ -2701,20 +2677,62 @@ async function loadProxoCards(){
 function previewCard(id){
   const c=myCards.find(x=>x.id===id);
   if(!c||!c.html_content)return;
-  document.getElementById('prevModalTitle').textContent = c.name || 'پێشبینی';
-  const blob = new Blob([c.html_content], { type:'text/html' });
-  document.getElementById('dashPreviewFrame').src = URL.createObjectURL(blob);
-  document.getElementById('prevModalOverlay').classList.add('active');
+  const w=window.open('','_blank');
+  if(w)w.document.write(c.html_content);
 }
-function closePrevModal(){
-  document.getElementById('prevModalOverlay').classList.remove('active');
-  document.getElementById('dashPreviewFrame').src = '';
-}
+
 async function deleteCard(id){
   if(!confirm('دڵنیایت لە سڕینەوەی کەرەستەکە؟'))return;
   await sb.from('proxolink_cards').delete().eq('id',id);
   showToast('سڕایەوە');
   loadProxoCards();
+}
+
+// ── ناردنی کارت بۆ تیلیگرام (هەمان سیستەمی ProxoLink) ──
+async function sendCardToTelegram(id){
+  const btn=document.getElementById('tgbtn_'+id);
+  if(btn){btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';btn.style.pointerEvents='none';}
+  const c=myCards.find(x=>x.id===id);
+  if(!c||!c.html_content){
+    if(btn){btn.innerHTML='<i class="fab fa-telegram"></i>';btn.style.pointerEvents='';}
+    showToast('هیچ HTML نییە','err');return;
+  }
+  try{
+    // فۆرمات کردنی HTML بۆ خوێندنەوەی ئاسانتر
+    let formatted=c.html_content;
+    try{
+      // لۆد کردنی js-beautify ئەگەر بارنەکراوە
+      if(!window.html_beautify){
+        await new Promise((res,rej)=>{
+          const s=document.createElement('script');
+          s.src='https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify-html.min.js';
+          s.onload=res;s.onerror=rej;
+          document.head.appendChild(s);
+        });
+      }
+      if(window.html_beautify){
+        formatted=window.html_beautify(c.html_content,{indent_size:2,wrap_line_length:0,preserve_newlines:false,end_with_newline:true});
+      }
+    }catch(_){}
+    const safeName=(c.name||'proxolink').replace(/[^a-zA-Z0-9\u0600-\u06FF\s_-]/g,'').replace(/\s+/g,'_')||'proxolink';
+    const filename=safeName+'.html';
+    const blob=new Blob([formatted],{type:'text/html'});
+    const file=new File([blob],filename,{type:'text/html'});
+    const formData=new FormData();
+    formData.append('chat_id',TG_CHAT_ASSET);
+    formData.append('document',file,filename);
+    const caption='🔗 ProxoLink\n👤 '+(c.name||'—')+'\n#'+(c.card_number||'—')+'\n📄 فایلی HTML ئامادەیە';
+    formData.append('caption',caption);
+    const res=await fetch('https://api.telegram.org/bot'+TG_TOKEN_ASSET+'/sendDocument',{method:'POST',body:formData});
+    const json=await res.json();
+    if(!json.ok)throw new Error(json.description||'Telegram error');
+    showToast('✅ فایلەکە بۆ تیلیگرام نێردرا!');
+    if(btn){btn.innerHTML='<i class="fas fa-check"></i>';btn.style.color='#22c55e';}
+    setTimeout(()=>{if(btn){btn.innerHTML='<i class="fab fa-telegram"></i>';btn.style.color='#29a8eb';btn.style.pointerEvents='';}},2500);
+  }catch(e){
+    showToast('❌ هەڵە ڕوویدا','err');
+    if(btn){btn.innerHTML='<i class="fab fa-telegram"></i>';btn.style.pointerEvents='';}
+  }
 }
 
 // ═══ ٥. NOTIFICATIONS ═══
@@ -3370,18 +3388,6 @@ async function checkDbReady(){
   TO authenticated
   USING (bucket_id = 'receipts');
   
-  <!-- Preview Modal -->
-<div class="prev-modal-overlay" id="prevModalOverlay">
-  <div class="prev-modal-inner">
-    <div class="prev-modal-bar">
-      <span id="prevModalTitle">پێشبینی</span>
-      <button class="prev-modal-close" onclick="closePrevModal()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <iframe id="dashPreviewFrame" title="preview"></iframe>
-  </div>
-</div>
 ======================================================================= -->
 
 
