@@ -25,7 +25,33 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 /* ══ UPDATE PROFILE FORM ══ */
 .phone-wrap{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .phone-flag{padding:12px 14px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;font-size:15px;flex-shrink:0;}
-
+/* Preview Modal */
+.prev-modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(10px); display:none;
+  justify-content:center; align-items:center; z-index:9999;
+}
+.prev-modal-overlay.active { display:flex; }
+.prev-modal-inner {
+  width:92%; max-width:400px;
+  background:#0d1021; border-radius:32px;
+  border:1px solid rgba(255,255,255,0.1);
+  overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.8);
+}
+.prev-modal-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 18px; background:var(--w);
+  border-bottom:1px solid var(--b1);
+}
+.prev-modal-bar span { font-size:13px; color:var(--mt); }
+.prev-modal-close {
+  width:30px; height:30px; border-radius:50%;
+  background:var(--bg); border:1px solid var(--b1);
+  color:var(--mt); cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+}
+iframe#dashPreviewFrame { width:100%; height:560px; border:none; display:block; }
+  
 /* ══ AUTH ══ */
 #authWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--w);}
 .auth-inner{width:100%;max-width:400px;}
@@ -2676,10 +2702,15 @@ async function loadProxoCards(){
 function previewCard(id){
   const c=myCards.find(x=>x.id===id);
   if(!c||!c.html_content)return;
-  const w=window.open('','_blank');
-  if(w)w.document.write(c.html_content);
+  document.getElementById('prevModalTitle').textContent = c.name || 'پێشبینی';
+  const blob = new Blob([c.html_content], { type:'text/html' });
+  document.getElementById('dashPreviewFrame').src = URL.createObjectURL(blob);
+  document.getElementById('prevModalOverlay').classList.add('active');
 }
-
+function closePrevModal(){
+  document.getElementById('prevModalOverlay').classList.remove('active');
+  document.getElementById('dashPreviewFrame').src = '';
+}
 async function deleteCard(id){
   if(!confirm('دڵنیایت لە سڕینەوەی کەرەستەکە؟'))return;
   await sb.from('proxolink_cards').delete().eq('id',id);
@@ -3340,6 +3371,18 @@ async function checkDbReady(){
   TO authenticated
   USING (bucket_id = 'receipts');
   
+  <!-- Preview Modal -->
+<div class="prev-modal-overlay" id="prevModalOverlay">
+  <div class="prev-modal-inner">
+    <div class="prev-modal-bar">
+      <span id="prevModalTitle">پێشبینی</span>
+      <button class="prev-modal-close" onclick="closePrevModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <iframe id="dashPreviewFrame" title="preview"></iframe>
+  </div>
+</div>
 ======================================================================= -->
 
 
