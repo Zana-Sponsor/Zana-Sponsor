@@ -289,33 +289,27 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 .pl-contact-hdr{font-size:11.5px;color:#8b5cf6;display:flex;align-items:center;gap:6px;font-weight:700;}
 .plat-field-row{display:flex;flex-direction:column;}
 .plat-field-lbl{font-size:11px;color:var(--mt);font-weight:700;margin-bottom:5px;margin-top:12px;text-align:right;}
-/* ══ STYLE SELECTOR — کۆپی ڕاستەقینە لە ProxoLink ══ */
-.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-bottom:14px;}
-.style-opt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 6px;border-radius:14px;border:2px solid var(--b1);background:var(--bg);cursor:pointer;user-select:none;transition:all .2s;position:relative;}
-.style-opt:hover{border-color:var(--b2);}
-.style-opt.sel{border-color:var(--dark);background:rgba(28,35,51,.05);}
-.style-opt.sel::after{content:'';position:absolute;top:6px;left:7px;width:7px;height:7px;border-radius:50%;background:var(--dark);}
-.style-preview{width:100%;height:68px;border-radius:9px;overflow:hidden;position:relative;flex-shrink:0;}
-/* Dark */
-.prev-dark{background:#0d1021;border:1px solid rgba(255,255,255,.08);}
-.prev-dark .prev-grad{height:34px;border-radius:6px 6px 0 0;position:relative;}
-.prev-dark .prev-grad::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:12px;background:#0d1021;border-radius:50% 50% 0 0/12px 12px 0 0;}
-.prev-dark .prev-circle{width:20px;height:20px;border-radius:50%;background:#a860d0;border:2px solid #0d1021;position:absolute;top:22px;left:50%;transform:translateX(-50%);}
-.prev-dark .prev-lines{padding:24px 6px 4px;display:flex;flex-direction:column;gap:3px;}
-.prev-dark .prev-line{height:3px;border-radius:3px;background:rgba(255,255,255,.12);}
-/* Light */
-.prev-light{background:#fff;border:1px solid rgba(0,0,0,.08);}
-.prev-light .prev-grad{height:34px;border-radius:6px 6px 0 0;position:relative;}
-.prev-light .prev-grad::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:12px;background:#fff;border-radius:50% 50% 0 0/12px 12px 0 0;}
-.prev-light .prev-circle{width:20px;height:20px;border-radius:50%;background:#a860d0;border:2px solid #fff;position:absolute;top:22px;left:50%;transform:translateX(-50%);}
-.prev-light .prev-lines{padding:24px 6px 4px;display:flex;flex-direction:column;gap:3px;}
-.prev-light .prev-line{height:3px;border-radius:3px;background:rgba(0,0,0,.1);}
-/* Classic */
-.prev-classic{background:#f5f5f5;border:1px solid rgba(0,0,0,.08);padding:6px 5px;display:flex;flex-direction:column;justify-content:center;gap:3px;}
-.prev-classic-btn{height:11px;border-radius:20px;width:88%;margin:0 auto;}
-/* Label */
-.style-name{font-size:11px;color:var(--mt);text-align:center;font-weight:700;}
-.style-opt.sel .style-name{color:var(--dark);}
+.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.style-card{border-radius:16px;padding:14px 10px;cursor:pointer;border:2px solid var(--b1);text-align:center;transition:all .25s;position:relative;overflow:hidden;}
+.style-card.on{border-color:var(--dark);}
+.style-card .sc-name{font-size:12px;font-weight:700;color:var(--dark);margin-top:8px;}
+.style-card .sc-sub{font-size:10px;color:var(--mt);margin-top:2px;}
+.style-card .sc-chk{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;background:var(--dark);display:none;align-items:center;justify-content:center;font-size:9px;color:#fff;}
+.style-card.on .sc-chk{display:flex;}
+.sc-classic{background:linear-gradient(135deg,#1c2333 0%,#2e3a50 100%);border-radius:12px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
+.sc-classic-inner{text-align:center;}
+.sc-classic-av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);margin:0 auto 4px;}
+.sc-classic-line{height:3px;border-radius:2px;background:rgba(255,255,255,.3);width:40px;margin:2px auto;}
+.sc-minimal{background:#fff;border:1px solid var(--b1);border-radius:12px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
+.sc-minimal-inner{display:flex;align-items:center;gap:6px;}
+.sc-minimal-av{width:24px;height:24px;border-radius:50%;background:var(--b1);}
+.sc-minimal-lines{display:flex;flex-direction:column;gap:3px;}
+.sc-minimal-line1{height:3px;width:35px;border-radius:2px;background:var(--b2);}
+.sc-minimal-line2{height:2px;width:25px;border-radius:2px;background:var(--b1);}
+.sc-gradient{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:12px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
+.sc-gradient-inner{text-align:center;}
+.sc-gradient-av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.3);margin:0 auto 4px;}
+.sc-gradient-line{height:3px;border-radius:2px;background:rgba(255,255,255,.4);width:40px;margin:2px auto;}
 .theme-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
 .theme-dot{width:34px;height:34px;border-radius:50%;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;border:3px solid transparent;}
 .theme-dot.on{border-color:var(--dark);transform:scale(1.1);}
@@ -893,43 +887,21 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         <div class="sec-div"></div>
         <div class="plform-lbl">ستایل</div>
         <div class="style-grid">
-
-          <!-- 🌑 Dark -->
-          <div class="style-opt sel" id="opt_dark" onclick="pickStyle(this,'dark')">
-            <div class="style-preview prev-dark">
-              <div class="prev-grad" id="prev_dark_grad" style="background:linear-gradient(to right,#5b1fa8,#c855e0)"></div>
-              <div class="prev-circle"></div>
-              <div class="prev-lines">
-                <div class="prev-line" style="width:55%;margin:0 auto"></div>
-                <div class="prev-line" style="width:80%;margin:0 auto"></div>
-              </div>
-            </div>
-            <span class="style-name">🌑 شەو</span>
+          <div class="style-card on" data-style="dark" onclick="pickStyle(this)">
+            <div class="sc-chk"><i class="fas fa-check"></i></div>
+            <div class="sc-classic"><div class="sc-classic-inner"><div class="sc-classic-av"></div><div class="sc-classic-line"></div><div class="sc-classic-line" style="width:28px;opacity:.6"></div></div></div>
+            <div class="sc-name">Dark</div><div class="sc-sub">تاریک</div>
           </div>
-
-          <!-- ☀️ Light -->
-          <div class="style-opt" id="opt_light" onclick="pickStyle(this,'light')">
-            <div class="style-preview prev-light">
-              <div class="prev-grad" id="prev_light_grad" style="background:linear-gradient(to right,#5b1fa8,#c855e0)"></div>
-              <div class="prev-circle"></div>
-              <div class="prev-lines">
-                <div class="prev-line" style="width:55%;margin:0 auto"></div>
-                <div class="prev-line" style="width:80%;margin:0 auto"></div>
-              </div>
-            </div>
-            <span class="style-name">☀️ ڕۆژ</span>
+          <div class="style-card" data-style="light" onclick="pickStyle(this)">
+            <div class="sc-chk"><i class="fas fa-check"></i></div>
+            <div class="sc-minimal"><div class="sc-minimal-inner"><div class="sc-minimal-av"></div><div class="sc-minimal-lines"><div class="sc-minimal-line1"></div><div class="sc-minimal-line2"></div></div></div></div>
+            <div class="sc-name">Light</div><div class="sc-sub">ڕووناک</div>
           </div>
-
-          <!-- 📋 Classic -->
-          <div class="style-opt" id="opt_classic" onclick="pickStyle(this,'classic')">
-            <div class="style-preview prev-classic" id="prev_classic_inner">
-              <div class="prev-classic-btn" id="prev_classic_btn1" style="background:#25d366"></div>
-              <div class="prev-classic-btn" id="prev_classic_btn2" style="background:#7360F2"></div>
-              <div class="prev-classic-btn" id="prev_classic_btn3" style="background:#e03030"></div>
-            </div>
-            <span class="style-name">📋 کلاسیک</span>
+          <div class="style-card" data-style="classic" onclick="pickStyle(this)">
+            <div class="sc-chk"><i class="fas fa-check"></i></div>
+            <div class="sc-gradient"><div class="sc-gradient-inner"><div class="sc-gradient-av"></div><div class="sc-gradient-line"></div><div class="sc-gradient-line" style="width:28px;opacity:.6"></div></div></div>
+            <div class="sc-name">Classic</div><div class="sc-sub">کلاسیک</div>
           </div>
-
         </div>
 
         <!-- تەم -->
@@ -2557,10 +2529,9 @@ const THEME_COLORS={
 };
 
 
-function pickStyle(el, style){
-  document.querySelectorAll('#plFormView .style-opt').forEach(x=>x.classList.remove('sel'));
-  el.classList.add('sel');
-  plStyle = style || el.dataset.style || 'dark';
+function pickStyle(el){
+  document.querySelectorAll('#plFormView .style-card').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');plStyle=el.dataset.style;
   updatePLPreview();
 }
 
@@ -2828,7 +2799,7 @@ document.addEventListener('DOMContentLoaded',function(){
     else if(waIdx>1){const wa=btns.splice(waIdx,1)[0];btns.splice(1,0,wa);}
     const count=btns.length;
     let gridHTML='',belowGrid='';
-    const mkBtn=(b,shine)=>`<a id="${b.id}" class="btn${shine?' shine-active':''}">${b.label}<i class="${b.icon}"></i></a>`;
+    const mkBtn=(b,shine)=>`<a id="${b.id}" class="btn${shine?' shine-active':''}" style="background:${b.bg}"><i class="${b.icon}"></i>${b.label}</a>`;
     if(count===1){
       gridHTML='';
       belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[0],true)}</div>`;
@@ -2842,7 +2813,7 @@ document.addEventListener('DOMContentLoaded',function(){
       gridHTML=btns.map((b,i)=>mkBtn(b,i===1)).join('');
       belowGrid=`<div class="tt-wrap"><a href="${ttUrl}" target="_blank" class="tt-badge"><span>@${tt}</span><i class="fab fa-tiktok"></i></a></div>`;
     }
-    const btnColors=btns.map(b=>`#${b.id}{background:${b.bg};}`).join('');
+    const btnColors='';
     return head(name)+`
 body{font-family:'Inter','Rabar_021',sans-serif;background:#0d1021;display:flex;justify-content:center;min-height:100vh;}
 .page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;align-items:center;background:#0d1021;}
@@ -2854,10 +2825,9 @@ body{font-family:'Inter','Rabar_021',sans-serif;background:#0d1021;display:flex;
 .name{font-size:19px;font-weight:600;color:#fff;text-align:center;position:relative;top:-25px;margin-bottom:-10px;}
 .desc{font-size:14px;color:#EDEDED;line-height:2;text-align:center;margin-top:18px;padding:0 6px;white-space:pre-line;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:40px;}
-.btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 8px 15px;border-radius:18px;font-size:14px;font-weight:bold;color:#fff;min-height:88px;cursor:pointer;text-decoration:none;overflow:hidden;transition:transform .13s;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);}
+.btn{position:relative;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;padding:16px 12px;border-radius:50px;font-size:15px;font-weight:bold;color:#fff;cursor:pointer;text-decoration:none;overflow:hidden;transition:transform .13s;}
 .btn:active{transform:scale(.96);}
-.btn i{font-size:28px;}
-#wa i{font-size:25px;}#vb i{font-size:22px;}#tg i{font-size:22px;}#ig i{font-size:22px;}#ph i{font-size:20px;}#as i{font-size:20px;}
+.btn i{font-size:22px;}
 .three-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:10px;align-items:center;}
 .tt-pill{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:90px;background:rgba(255,255,255,.03);backdrop-filter:blur(5px);color:#fff;text-decoration:none;font-family:'Rabar_021',sans-serif;font-size:13.5px;font-weight:600;position:relative;border:1px solid rgba(255,255,255,.1);width:100%;box-sizing:border-box;}
 .tt-pill::before{content:'';position:absolute;inset:-1px;border-radius:90px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.7;}
@@ -2906,7 +2876,7 @@ ${modalHTML}
     else if(waIdx>1){const wa=btns.splice(waIdx,1)[0];btns.splice(1,0,wa);}
     const count=btns.length;
     let gridHTML='',belowGrid='';
-    const mkBtn=(b,shine)=>`<a id="${b.id}" class="btn${shine?' shine-active':''}">${b.label}<i class="${b.icon}"></i></a>`;
+    const mkBtn=(b,shine)=>`<a id="${b.id}" class="btn${shine?' shine-active':''}" style="background:${b.bg}"><i class="${b.icon}"></i>${b.label}</a>`;
     if(count===1){
       gridHTML='';
       belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[0],true)}</div>`;
@@ -2920,7 +2890,7 @@ ${modalHTML}
       gridHTML=btns.map((b,i)=>mkBtn(b,i===1)).join('');
       belowGrid=`<div class="tt-wrap"><a href="${ttUrl}" target="_blank" class="tt-badge"><span>@${tt}</span><i class="fab fa-tiktok"></i></a></div>`;
     }
-    const btnColors=btns.map(b=>`#${b.id}{background:${b.bg};}`).join('');
+    const btnColors='';
     return head(name)+`
 body{font-family:'Inter','Rabar_021',sans-serif;background:#f0f0f0;display:flex;justify-content:center;min-height:100vh;}
 .page{width:100%;max-width:430px;background:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
@@ -2932,10 +2902,9 @@ body{font-family:'Inter','Rabar_021',sans-serif;background:#f0f0f0;display:flex;
 .name{font-size:19px;font-weight:600;color:#111;text-align:center;position:relative;top:-25px;margin-bottom:-10px;}
 .desc{font-size:14px;color:#333;line-height:2;text-align:center;margin-top:18px;padding:0 6px;white-space:pre-line;}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:40px;}
-.btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 8px 15px;border-radius:18px;font-size:14px;font-weight:bold;color:#fff;min-height:88px;cursor:pointer;text-decoration:none;overflow:hidden;transition:transform .13s;background:#888;box-shadow:0 4px 14px rgba(0,0,0,.15);}
+.btn{position:relative;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;padding:16px 12px;border-radius:50px;font-size:15px;font-weight:bold;color:#fff;cursor:pointer;text-decoration:none;overflow:hidden;transition:transform .13s;}
 .btn:active{transform:scale(.96);}
-.btn i{font-size:28px;}
-#wa i{font-size:25px;}#vb i{font-size:22px;}#tg i{font-size:22px;}#ig i{font-size:22px;}#ph i{font-size:20px;}#as i{font-size:20px;}
+.btn i{font-size:22px;}
 .three-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:10px;align-items:center;}
 .tt-pill{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:90px;background:rgba(255,255,255,.06);color:#111;text-decoration:none;font-family:'Rabar_021',sans-serif;font-size:13.5px;font-weight:600;position:relative;border:1px solid rgba(0,0,0,.12);width:100%;box-sizing:border-box;}
 .tt-pill::before{content:'';position:absolute;inset:-1px;border-radius:90px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.65;}
