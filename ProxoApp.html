@@ -799,25 +799,109 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
         هەر <span style="font-family:'R',sans-serif;direction:ltr;unicode-bidi:embed">50</span> کۆین = <span style="font-family:'R',sans-serif;direction:ltr;unicode-bidi:embed">$0.50</span> · کەمترین <span style="font-family:'R',sans-serif;direction:ltr;unicode-bidi:embed">500</span> کۆین بۆ گۆڕانەوە
       </div>
     </div>
-    <!-- بانگێشتکردن -->
-    <div class="pcard" id="referralCard">
-      <div class="pcard-hdr">
-        <div class="pcard-hdr-left"><i class="fas fa-gift" style="color:#d97706"></i> بانگێشتکردنی هاوڕێ</div>
-        <span style="font-size:11px;color:var(--gr);font-weight:700" id="refEarnedLbl"></span>
+    <!-- ══ AFFILIATE / REFERRAL DASHBOARD ══ -->
+    <div class="pcard" id="referralCard" style="padding:0;overflow:hidden;border-radius:18px;">
+
+      <!-- Header banner -->
+      <div style="background:linear-gradient(135deg,var(--dark) 0%,#2e3a50 100%);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:13px;font-weight:900;color:#fff;margin-bottom:3px;">
+            <i class="fas fa-handshake-simple" style="margin-left:7px;color:#fbbf24"></i>بەرنامەی ئەفیلیەت
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,.55);">هاوڕێ بانگێشت بکە — کۆین وەربگرە</div>
+        </div>
+        <div style="background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:800;color:#fbbf24;">
+          <span id="refEarnedLbl">+100 🪙 / کەس</span>
+        </div>
       </div>
-      <div style="font-size:12.5px;color:var(--mt);margin-bottom:14px;line-height:1.8">
-        هاوڕێیەکت بانگێشت بکە — کاتێک خۆی تۆمار کرد <b style="color:var(--dark)">+100 🪙 کۆین</b> وەردەگریت
+
+      <!-- Rules -->
+      <div style="padding:16px 20px 0;">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase;">چۆنیەتی کارکردن</div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:16px;">
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--tx);line-height:1.65;">
+            <div style="min-width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#6366f1);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:800;margin-top:1px;flex-shrink:0;">١</div>
+            <span>لینکی تایبەتت کۆپی بکە و لە سۆشیاڵ میدیا، یوتیوب، یان مەسیجەکانت بنوێنە.</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--tx);line-height:1.65;">
+            <div style="min-width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#6366f1);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:800;margin-top:1px;flex-shrink:0;">٢</div>
+            <span>هەر کەسێک لە ڕێگەی لینکەکەت تۆمار بکات، <b style="color:var(--dark)">+100 🪙 کۆین</b> بۆ هەژمارەکەت زیاد دەبێت.</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--tx);line-height:1.65;">
+            <div style="min-width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#6366f1);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:800;margin-top:1px;flex-shrink:0;">٣</div>
+            <span>کۆینەکانت دەتوانیت بیگۆڕیتەوە بۆ بالانسی دۆلار و لەناو پرۆکسۆ خەرج بکەیت.</span>
+          </div>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;padding:12px 14px;margin-bottom:12px">
-        <div style="flex:1;font-size:13px;font-weight:700;color:var(--dark);direction:ltr;text-align:left;font-family:'R',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="refLinkDisp">چوارچێوەکردن...</div>
-        <button onclick="copyRefLink()" style="padding:7px 13px;background:var(--dark);color:#fff;border:none;border-radius:10px;font-family:'R',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0" id="refCopyBtn">
-          <i class="fas fa-copy" style="margin-left:4px"></i>کۆپی
+
+      <!-- Divider -->
+      <div style="height:1px;background:var(--b1);margin:0 20px;"></div>
+
+      <!-- Referral link table -->
+      <div style="padding:14px 20px;">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase;">لینکی ئەفیلیەتی تۆ</div>
+        <div style="background:var(--bg);border:1.5px solid var(--b1);border-radius:14px;overflow:hidden;margin-bottom:10px;">
+          <!-- Table header -->
+          <div style="display:grid;grid-template-columns:1fr auto auto;background:rgba(28,35,51,.04);border-bottom:1px solid var(--b1);padding:9px 14px;gap:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--mt);">لینکی ئەفیلیەت</div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);text-align:center;">ڕێژەی کۆین</div>
+            <div style="font-size:11px;font-weight:700;color:var(--mt);text-align:center;">کەمترین</div>
+          </div>
+          <!-- Table row -->
+          <div style="display:grid;grid-template-columns:1fr auto auto;padding:12px 14px;gap:12px;align-items:center;">
+            <div style="font-size:12px;font-weight:700;color:var(--dark);direction:ltr;text-align:left;font-family:'Inter',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="refLinkDisp">بارکردن...</div>
+            <div style="text-align:center;">
+              <span style="background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr);font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;">100 🪙</span>
+            </div>
+            <div style="text-align:center;">
+              <span style="font-weight:800;color:#d97706;font-family:'Inter',sans-serif;font-size:12px;">500 🪙</span>
+            </div>
+          </div>
+        </div>
+        <!-- Copy button -->
+        <button onclick="copyRefLink()" id="refCopyBtn" style="width:100%;padding:13px;background:var(--dark);color:#fff;border:none;border-radius:13px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;transition:opacity .2s;">
+          <i class="fas fa-copy"></i>کۆپیکردنی لینک
+        </button>
+        <!-- Share button -->
+        <button onclick="shareRefLink()" style="width:100%;padding:12px;background:var(--bg);border:1.5px solid var(--b2);border-radius:13px;color:var(--dark);font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
+          <i class="fas fa-share-nodes"></i>هاوبەشکردن
         </button>
       </div>
-      <button onclick="shareRefLink()" style="width:100%;padding:12px;background:var(--bg);border:1.5px solid var(--b2);border-radius:12px;color:var(--dark);font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
-        <i class="fas fa-share-nodes"></i>هاوبەشکردن
-      </button>
+
+      <!-- Divider -->
+      <div style="height:1px;background:var(--b1);margin:0 20px;"></div>
+
+      <!-- Stats grid -->
+      <div style="padding:14px 20px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:.5px;margin-bottom:12px;text-transform:uppercase;">ئامارەکان</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <!-- Total visits -->
+          <div style="background:var(--bg);border:1px solid var(--b1);border-radius:13px;padding:13px;text-align:center;">
+            <div style="font-size:22px;font-weight:900;color:var(--bl);font-family:'Inter',sans-serif;line-height:1;" id="refStatVisits">—</div>
+            <div style="font-size:11px;color:var(--mt);margin-top:5px;font-weight:600;">کۆی سەردان</div>
+          </div>
+          <!-- Registrations -->
+          <div style="background:var(--bg);border:1px solid var(--b1);border-radius:13px;padding:13px;text-align:center;">
+            <div style="font-size:22px;font-weight:900;color:var(--dark);font-family:'Inter',sans-serif;line-height:1;" id="refStatRegs">—</div>
+            <div style="font-size:11px;color:var(--mt);margin-top:5px;font-weight:600;">تۆمارکراوان</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <!-- Successful -->
+          <div style="background:rgba(22,163,74,.04);border:1px solid rgba(22,163,74,.15);border-radius:13px;padding:13px;text-align:center;">
+            <div style="font-size:22px;font-weight:900;color:var(--gr);font-family:'Inter',sans-serif;line-height:1;" id="refStatSuccess">—</div>
+            <div style="font-size:11px;color:var(--mt);margin-top:5px;font-weight:600;">کامیابەکان</div>
+          </div>
+          <!-- Total coins earned -->
+          <div style="background:rgba(217,119,6,.04);border:1px solid rgba(245,158,11,.2);border-radius:13px;padding:13px;text-align:center;">
+            <div style="font-size:22px;font-weight:900;color:#d97706;font-family:'Inter',sans-serif;line-height:1;" id="refStatCoins">—</div>
+            <div style="font-size:11px;color:var(--mt);margin-top:5px;font-weight:600;">🪙 کۆی کۆین</div>
+          </div>
+        </div>
+      </div>
+
     </div>
+    <!-- ══ END AFFILIATE DASHBOARD ══ -->
 
     <div class="pcard">
       <div class="pcard-hdr"><div class="pcard-hdr-left"><i class="fas fa-gear"></i> ڕێکخستنەکان</div></div>
@@ -1669,19 +1753,6 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
      JAVASCRIPT
 ====================================================================== -->
 <script>
-// ══ IMMEDIATE REFERRAL CAPTURE — هەمیشە یەکەم شت جێبەجێ دەبێت ══
-// پێش هەر چێژێک دیکە، کۆدی ref لە URL وەردەگیرێت و ذخیرە دەکرێت
-(function immediateRefCapture(){
-  try{
-    const ref=new URLSearchParams(window.location.search).get('ref')
-           || new URLSearchParams(window.location.hash.replace('#','?')).get('ref');
-    if(ref&&ref.trim()){
-      localStorage.setItem('proxo_ref',ref.trim().toUpperCase());
-      window.history.replaceState({},document.title,window.location.pathname);
-    }
-  }catch(e){}
-})();
-// ════════════════════════════════════════════════════════════════
 const SB_URL='https://cojchkwssmasiejcgvbk.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvamNoa3dzc21hc2llamNndmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTE1MTIsImV4cCI6MjA5Mjg4NzUxMn0.RCALy3wpKHGAkmXWcBqEb_QFEUmh6ErdRbfrBmagvtw';
   
@@ -1797,23 +1868,40 @@ function genRefCode(userId){
 
 async function loadReferralSection(){
   const code = genRefCode(cu.id);
-  const link = `${window.location.origin}${window.location.pathname}?ref=${code}`;
+  const link = `${window.location.origin}${window.location.pathname}#ref=${code}`;
   document.getElementById('refLinkDisp').textContent = link;
 
-  // ژمارەی بانگێشتکراوان
-  const {data} = await sb.from('pa_referrals').select('id').eq('referrer_id', cu.id).not('referred_id','is',null);
-  const count = data?.length || 0;
-  const el = document.getElementById('refEarnedLbl');
-  if(el && count > 0) el.textContent = `${count} کەس · +${count*100} 🪙`;
+  // بارکردنی ئامارەکان لە pa_referrals
+  const {data} = await sb.from('pa_referrals').select('id,referred_id').eq('referrer_id', cu.id);
+  const totalRegs   = data?.length || 0;
+  const successful  = data?.filter(r => r.referred_id !== null).length || 0;
+  const totalCoins  = successful * 100;
+
+  // نوێکردنەوەی ئامارەکانی داشبۆرد
+  const visits  = document.getElementById('refStatVisits');
+  const regs    = document.getElementById('refStatRegs');
+  const success = document.getElementById('refStatSuccess');
+  const coins   = document.getElementById('refStatCoins');
+  if(visits)  visits.textContent  = totalRegs;
+  if(regs)    regs.textContent    = totalRegs;
+  if(success) success.textContent = successful;
+  if(coins)   coins.textContent   = totalCoins.toLocaleString();
+
+  // بەرگی سەرەوە
+  const earnedLbl = document.getElementById('refEarnedLbl');
+  if(earnedLbl && successful > 0)
+    earnedLbl.textContent = `${successful} کەس · +${totalCoins} 🪙`;
 }
 
 function copyRefLink(){
   const link = document.getElementById('refLinkDisp').textContent;
   navigator.clipboard.writeText(link).then(()=>{
+    showToast('✅ لینکەکە کۆپیکرا','ok');
     const btn = document.getElementById('refCopyBtn');
-    btn.innerHTML = '<i class="fas fa-check" style="margin-left:4px"></i>کۆپیکرا';
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i>کۆپیکرا';
     btn.style.background = 'var(--gr)';
-    setTimeout(()=>{btn.innerHTML='<i class="fas fa-copy" style="margin-left:4px"></i>کۆپی';btn.style.background='var(--dark)';},2000);
+    setTimeout(()=>{btn.innerHTML=orig;btn.style.background='var(--dark)';},2000);
   }).catch(()=> showToast('دووبارە هەوڵ بدەرەوە','err'));
 }
 
@@ -1981,8 +2069,6 @@ async function doAuth(){
             console.log('[Referral] RPC ok — force-updating UI to 50 coins');
             // STEP 2: Immediate DOM injection before boot() runs
             updateCoinsBadge(50);
-            // فۆرس-نوێکردنەوەی هەموو ئەلێمەنتەکانی کۆین لە DOM — دەستی
-            document.querySelectorAll('.sidebar-bal-val, .bal-num').forEach(el=>el.innerText='50');
           }else{
             console.log('[Referral] RPC returned:',rData,'err:',rErr);
           }
@@ -2026,12 +2112,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   checkOnline();
   // ── REFERRAL CAPTURE ──────────────────────────────────────────
   (function captureReferral(){
-    // ?ref= (query string) یان #ref= (hash) — هەر کام هاتبێت
-    const ref=new URLSearchParams(window.location.search).get('ref')
-           || new URLSearchParams(window.location.hash.replace('#','?')).get('ref');
+    const params=new URLSearchParams(window.location.search);
+    const ref=params.get('ref');
     if(ref&&ref.trim()){
       const code=ref.trim().toUpperCase();
+      // تەنها ذخیرە بکە — پاکردنەوەی URL دواخستەوە تا checkAndApplyRef() نەخوێنێتەوە
       localStorage.setItem('proxo_ref',code);
+      // URL فەوری پاک بکەرەوە تا checkAndApplyRef() کۆد دووبارە نەپرۆسێنێت
       window.history.replaceState({},document.title,window.location.pathname);
     }
   })();
@@ -4576,134 +4663,4 @@ function renderTxHistory(){
 
     const _txKey = t.id+'_'+filtered.indexOf(t);
     _txMap[_txKey]=t;
-    return`<div class="tx-item" style="cursor:pointer;padding:12px 4px;margin:-1px -4px;border-radius:12px;transition:background .15s" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''" onclick="${isCoinExchange?'':('showReceipt(_txMap[\''+_txKey+'\'])')}">
-      <div style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">
-        <i class="fas ${icoName}"></i>
-      </div>
-      <div class="tx-info" style="flex:1;min-width:0">
-        <div class="tx-lbl" style="font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>
-        <div style="font-size:11px;color:var(--mt);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-          <span>${dateStr}</span>
-          ${sub?`<span style="color:var(--b2)">·</span><span style="color:var(--mt2)">${sub}</span>`:''}
-        </div>
-        ${statusBadge?`<div style="margin-top:5px">${statusBadge}</div>`:''}
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <div style="font-size:14px;font-weight:800;color:${amtColor};font-family:'Inter',sans-serif;letter-spacing:-.3px">${amtText}</div>
-        ${!isCoinExchange?`<i class="fas fa-chevron-left" style="font-size:10px;color:var(--mt)"></i>`:''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-
-
-// ═══ DEPOSIT REVIEW COUNTDOWN ═══
-let _cdInterval = null;
-
-function startReviewCountdown(totalSec){
-  totalSec = totalSec || 300; // 5 خولەک
-  const banner  = document.getElementById('reviewCountdownBanner');
-  const timerEl = document.getElementById('cdTimerNum');
-  const progBar = document.getElementById('cdProgressBar');
-  const line1   = document.getElementById('cdLine1');
-  const step2   = document.getElementById('cdStep2');
-  const step2Ico= document.getElementById('cdStep2Ico');
-  const cdTitle = document.getElementById('cdTitle');
-  const cdSub   = document.getElementById('cdSub');
-  const cdIco   = document.getElementById('cdIcoWrap');
-
-  if(!banner) return;
-  banner.style.display = 'block';
-  if(_cdInterval) clearInterval(_cdInterval);
-
-  let remaining = totalSec;
-
-  function tick(){
-    remaining--;
-    if(remaining < 0){
-      clearInterval(_cdInterval);
-      // تەواوبوو — چووە وردبینی
-      timerEl.textContent = '0:00';
-      timerEl.style.color = '#facc15';
-      progBar.style.width = '0%';
-      progBar.style.background = 'linear-gradient(90deg,#d97706,#facc15)';
-      line1.style.width = '100%';
-      line1.style.background = '#facc15';
-      step2.style.color = '#facc15';
-      step2Ico.style.background = 'rgba(250,204,21,.15)';
-      step2Ico.style.borderColor = '#facc15';
-      step2Ico.style.color = '#facc15';
-      cdTitle.textContent = 'داواکاریەکەت چووە وردبینی ئادمین ✅';
-      cdSub.innerHTML = 'ئادمین لە <strong style="color:rgba(255,255,255,.75)">ناوماوەی ١ کاتژمێر</strong>دا وەڵام دەداتەوە';
-      cdIco.textContent = '🔍';
-      cdIco.style.background = 'rgba(250,204,21,.15)';
-      cdIco.style.borderColor = 'rgba(250,204,21,.35)';
-      // بانەرەکە دوای ١٠ چرکە بشارەوە
-      setTimeout(()=>{
-        if(banner) banner.style.opacity='0';
-        banner.style.transition='opacity .5s';
-        setTimeout(()=>{banner.style.display='none';banner.style.opacity='';banner.style.transition='';},600);
-      }, 10000);
-      return;
-    }
-    const m = Math.floor(remaining/60);
-    const s = remaining % 60;
-    timerEl.textContent = m+':'+(s<10?'0':'')+s;
-    const pct = (remaining/totalSec)*100;
-    progBar.style.width = pct+'%';
-    // لاین ١ — دوای ٣٠ چرکەی یەکەم پر دەبێت
-    const line1Pct = Math.min(100, ((totalSec-remaining)/30)*100);
-    line1.style.width = line1Pct+'%';
-    // ڕەنگی کاتژمێر گۆڕان بەپێی ماوەی مایەوە
-    if(remaining < 60){ timerEl.style.color='#fb923c'; progBar.style.background='linear-gradient(90deg,#ea580c,#fb923c)'; }
-    else if(remaining < 120){ timerEl.style.color='#facc15'; progBar.style.background='linear-gradient(90deg,#d97706,#facc15)'; }
-    else { timerEl.style.color='#4ade80'; progBar.style.background='linear-gradient(90deg,#16a34a,#4ade80)'; }
-  }
-
-  tick(); // یەکەم تیک خێرا
-  _cdInterval = setInterval(tick, 1000);
-}
-
-async function checkDbReady(){
-  try{
-    const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
-    // ئەگەر invalid_budget هاتەوە = فەنکشنەکە هەیە
-    const ready=error?.message?.includes('invalid_budget')||error?.message?.includes('بودجە');
-    const btn=document.getElementById('setupDbBtn');
-    if(btn){
-      if(ready){
-        btn.style.display='none'; // فەنکشنەکە هەیە، دووگمە شاری بکە
-      } else {
-        btn.style.display='flex'; // نییە، پیشان بدە
-      }
-    }
-  }catch(e){/* بێدەنگ */}
-}
-</script>
-
-<!-- =====================================================================
-  SQL SCRIPTS (کۆمێنت — بۆ ڕێنمایی ئەدمین)
-  
-  ══════════════════════════════════════════════════════════════════════
-  ١. جەدوەلی pa_assets
-  ══════════════════════════════════════════════════════════════════════
-  CREATE TABLE pa_assets (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    name TEXT NOT NULL,
-    asset_type TEXT NOT NULL CHECK (asset_type IN ('whatsapp','instagram','phone','telegram','link')),
-    value TEXT NOT NULL,
-    note TEXT,
-    style TEXT DEFAULT 'classic',  -- نوێ: ستایلی کارت (classic, light, gradient)
-    created_at TIMESTAMPTZ DEFAULT NOW()
-  );
-  -- ئەگەر جەدوەلەکەت پێشتر هەیە، ئەم ستوونە زیاد بکە:
-  -- ALTER TABLE pa_assets ADD COLUMN IF NOT EXISTS style TEXT DEFAULT 'classic';
-  ALTER TABLE pa_assets ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Users manage own assets" ON pa_assets
-    FOR ALL USING (auth.uid() = user_id);
-  
-  ══════════════════════════════════════════════════════════════════════
-  ٢. جەدوەلی pa_notifications
-  ════════════════════════════════════════════════════════
+    retu
