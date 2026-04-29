@@ -2047,7 +2047,6 @@ async function boot(){
   loadProfile();
   loadMyCards();
   goPage('home');
-  checkDbReady(); // چێکردنەوەی ئایا فەنکشنی داتابەیس دانراوە
   loadReferralSection();
   checkAndApplyRef();
   // ═══ ٥. CHECK NOTIFICATIONS ═══
@@ -4731,4 +4730,6 @@ function _showTransferFound(box,data){
     :'<div style="width:46px;height:46px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff">'+initials+'</div>';
 
   box.innerHTML='<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(22,163,74,.04)">'
-   
+    +avatarHtml
+    +'<div style="flex:1;min-width:0">'
+    +'<di
