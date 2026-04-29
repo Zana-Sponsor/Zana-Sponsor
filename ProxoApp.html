@@ -1815,48 +1815,23 @@ function shareRefLink(){
 }
 
 async function checkAndApplyRef(){
-  const params = new URLSearchParams(window.location.search);
-  const ref = params.get('ref');
-  if(!ref) return;
+  // ── این فانکشن ئێستا تەنها بۆ بەکارهێنەرانی تۆماربووی پێشوو کارئەکات ──
+  // بۆ تۆمارکردنی نوێ، handle_auto_referral RPC لە doAuth() دەیکاتەوە
+  // URL پێشتر لە captureReferral() پاکدەکرێتەوە، ئەمەش نابەستێتەوە بە ?ref=
+  const ref = localStorage.getItem('proxo_ref');
+  if(!ref) return; // نەبوو — هیچ نەکە
 
-  // ── پاراستن ١: ref کۆد دەبێت شێوەی دروست هەبێت
-  if(!/^PRX-[A-Z0-9]{8}$/.test(ref)) return;
-
-  // ── پاراستن ٢: ئایا ئەم بەکارهێنەرە پێشتر ref بەکارهێناوە؟
-  const {data: existing} = await sb.from('pa_referrals').select('id').eq('referred_id', cu.id).maybeSingle();
-  if(existing) return;
-
-  // ── referrer بدۆزەرەوە لە UUID
-  const codeBody = ref.replace('PRX-','').toLowerCase();
-  const {data: refProfile} = await sb.from('profiles').select('id').ilike('id', codeBody + '%').maybeSingle();
-  const referrerId = refProfile?.id || null;
-
-  // ── پاراستن ٣: referrer دەبێت هەبێت و خۆی نەبێت
-  if(!referrerId || referrerId === cu.id) return;
-
-  // ── پاراستن ٤: INSERT تەنها — ئەگەر پێشتر هەبوو error دەدات و دەوەستێت
-  const {error: insErr} = await sb.from('pa_referrals').insert({
-    referrer_id: referrerId,
-    referred_id: cu.id,
-    ref_code: ref,
-    used_at: new Date().toISOString()
-  });
-
-  // ئەگەر insert سەرکەوت نەبوو (duplicate یان هەر هەڵەیەک) — هیچ کۆینێک نەدە
-  if(insErr) return;
-
-  // ── تەنها ئێستا کۆین بدە — insert سەرکەوتبوو یەکجارێک
-  const {data: refCoins} = await sb.from('pa_coins').select('coins_balance').eq('user_id', referrerId).single();
-  const newBal = (parseInt(refCoins?.coins_balance||0)) + 100;
-  await sb.from('pa_coins').update({coins_balance: newBal}).eq('user_id', referrerId);
-  await sb.from('pa_coin_transactions').insert({
-    user_id: referrerId, amount: 100,
-    reason: 'بانگێشتکردنی بەکارهێنەری نوێ',
-    balance_after: newBal
-  });
-
-  // ── URL پاک بکەرەوە
-  window.history.replaceState({}, '', window.location.pathname);
+  // ئایا ئەم بەکارهێنەرە پێشتر لە ڕێگەی RPC جایزەی وەرگرتووە؟
+  // (RPC referred_id لە pa_referrals دادەنێت)
+  const {data: existing} = await sb.from('pa_referrals')
+    .select('id').eq('referred_id', cu.id).maybeSingle();
+  if(existing){
+    // پێشتر پرۆسێنراوە — localStorage پاک بکەرەوە و دەرچوو
+    localStorage.removeItem('proxo_ref');
+    return;
+  }
+  // ئەگەر هێشتا پرۆسێنرانەبوو (تۆمارکردنی کۆن بەبێ RPC) — بەبێ دەنگ بەجێبهێڵە
+  // localStorage دەمێنێتەوە تا doAuth() ی نوێ پرۆسێیبکات
 }
 
 let sb, cu=null, aMode='login';
@@ -1977,7 +1952,7 @@ async function doAuth(){
         else{showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');return;}
       }
       cu=newUser;
-      // ══ AUTO REFERRAL — force-update fix ════════════════════
+      // ══ AUTO REFERRAL — definitive fix ═══════════════════════
       const refCode=localStorage.getItem('proxo_ref');
       let referralSuccess=false;
       if(refCode){
@@ -1990,19 +1965,23 @@ async function doAuth(){
           localStorage.removeItem('proxo_ref');
           if(!rErr && rData?.ok===true){
             referralSuccess=true;
-            console.log('Force-updating UI to 50 coins');
-            // STEP 2: Immediate DOM injection — user sees 50 before anything loads
+            console.log('[Referral] RPC ok — force-updating UI to 50 coins');
+            // STEP 2: Immediate DOM injection before boot() runs
             updateCoinsBadge(50);
-            // STEP 3: No global currentCoins exists — updateCoinsBadge() IS the state
+          }else{
+            console.log('[Referral] RPC returned:',rData,'err:',rErr);
           }
-        }catch(_){localStorage.removeItem('proxo_ref');}
+        }catch(e){
+          localStorage.removeItem('proxo_ref');
+          console.log('[Referral] RPC exception:',e);
+        }
       }
-      // STEP 4: 1000ms grace period — Supabase secondary indexes settle
+      // STEP 3: 1000ms grace — Supabase replication settles
       if(referralSuccess) await new Promise(r=>setTimeout(r,1000));
-      // STEP 5: boot() — builds full UI, internally calls loadCoins()
+      // STEP 4: boot() — builds full UI, internally calls loadCoins()
       await boot();
       if(referralSuccess){
-        // STEP 6: loadCoins() re-reads DB after boot to confirm real balance
+        // STEP 5: Re-read DB after boot to get confirmed balance
         await loadCoins();
         showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
       }
@@ -2035,7 +2014,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     const params=new URLSearchParams(window.location.search);
     const ref=params.get('ref');
     if(ref&&ref.trim()){
-      localStorage.setItem('proxo_ref',ref.trim().toUpperCase());
+      const code=ref.trim().toUpperCase();
+      // تەنها ذخیرە بکە — پاکردنەوەی URL دواخستەوە تا checkAndApplyRef() نەخوێنێتەوە
+      localStorage.setItem('proxo_ref',code);
+      // URL فەوری پاک بکەرەوە تا checkAndApplyRef() کۆد دووبارە نەپرۆسێنێت
       window.history.replaceState({},document.title,window.location.pathname);
     }
   })();
@@ -4712,4 +4694,20 @@ async function checkDbReady(){
   ٢. جەدوەلی pa_notifications
   ══════════════════════════════════════════════════════════════════════
   CREATE TABLE pa_notifications (
-    id UUID DEFAULT gen_rand
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    type TEXT NOT NULL DEFAULT 'general',
+    title TEXT,
+    body TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    related_id UUID,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  ALTER TABLE pa_notifications ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Users read own notifications" ON pa_notifications
+    FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٣. تریگەری ئاگاداری کاتێک ئەدمین ستاتۆس گۆڕی
+  ══════════════════════════════════════════════════════════════════════
+  CREATE OR 
