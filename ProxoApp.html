@@ -1787,17 +1787,11 @@ async function loadReferralSection(){
   const link = `${window.location.origin}${window.location.pathname}?ref=${code}`;
   document.getElementById('refLinkDisp').textContent = link;
 
-  // ── دڵنیابەرەوە کە ref_code لە profiles ذەخیرەکراوە (چارەسەری گەورە)
-  const {data: pData} = await sb.from('profiles').select('ref_code').eq('id', cu.id).single();
-  if(!pData?.ref_code){
-    await sb.from('profiles').update({ref_code: code}).eq('id', cu.id);
-  }
-
   // ژمارەی بانگێشتکراوان
   const {data} = await sb.from('pa_referrals').select('id').eq('referrer_id', cu.id).not('referred_id','is',null);
   const count = data?.length || 0;
   const el = document.getElementById('refEarnedLbl');
-  if(el) el.textContent = count > 0 ? `${count} کەس · +${count*50} 🪙` : '٠ کەس هێشتا';
+  if(el && count > 0) el.textContent = `${count} کەس · +${count*100} 🪙`;
 }
 
 function copyRefLink(){
@@ -1822,11 +1816,7 @@ function shareRefLink(){
 
 async function checkAndApplyRef(){
   const params = new URLSearchParams(window.location.search);
-  let ref = params.get('ref');
-  // ئەگەر لە URL نەبوو، بگەڕێ بۆ ئەوەی لە signup ذەخیرەکراوە
-  if(!ref){
-    try{ref = sessionStorage.getItem('_proxo_ref');}catch(e){}
-  }
+  const ref = params.get('ref');
   if(!ref) return;
 
   // ── پاراستن ١: ref کۆد دەبێت شێوەی دروست هەبێت
@@ -1836,19 +1826,13 @@ async function checkAndApplyRef(){
   const {data: existing} = await sb.from('pa_referrals').select('id').eq('referred_id', cu.id).maybeSingle();
   if(existing) return;
 
-  // ── referrer بدۆزەرەوە بە ref_code لە profiles
-  // چارەسەری گەورە: بەجێ ilike بەسەر UUID، ref_code ی profiles بەکاربهێنە
-  const {data: refProfile} = await sb.from('profiles').select('id').eq('ref_code', ref).maybeSingle();
+  // ── referrer بدۆزەرەوە لە UUID
+  const codeBody = ref.replace('PRX-','').toLowerCase();
+  const {data: refProfile} = await sb.from('profiles').select('id').ilike('id', codeBody + '%').maybeSingle();
   const referrerId = refProfile?.id || null;
 
   // ── پاراستن ٣: referrer دەبێت هەبێت و خۆی نەبێت
   if(!referrerId || referrerId === cu.id) return;
-
-  // ── دڵنیابەرەوە کە pa_coins هەژمار هەیە بۆ referred user (بۆ ئەوەی بەمزووانە ensureCoinsWallet هاتبێت)
-  await sb.from('pa_coins').upsert(
-    {user_id: cu.id, coins_balance: 0},
-    {onConflict: 'user_id', ignoreDuplicates: true}
-  );
 
   // ── پاراستن ٤: INSERT تەنها — ئەگەر پێشتر هەبوو error دەدات و دەوەستێت
   const {error: insErr} = await sb.from('pa_referrals').insert({
@@ -1861,15 +1845,17 @@ async function checkAndApplyRef(){
   // ئەگەر insert سەرکەوت نەبوو (duplicate یان هەر هەڵەیەک) — هیچ کۆینێک نەدە
   if(insErr) return;
 
-  // ── کۆین بدە بە referrer (ئەو کەسەی لینکەکەی شێواند)
-  await sb.rpc('award_referral_coins', { p_referrer_id: referrerId, p_amount: 50 });
+  // ── تەنها ئێستا کۆین بدە — insert سەرکەوتبوو یەکجارێک
+  const {data: refCoins} = await sb.from('pa_coins').select('coins_balance').eq('user_id', referrerId).single();
+  const newBal = (parseInt(refCoins?.coins_balance||0)) + 100;
+  await sb.from('pa_coins').update({coins_balance: newBal}).eq('user_id', referrerId);
+  await sb.from('pa_coin_transactions').insert({
+    user_id: referrerId, amount: 100,
+    reason: 'بانگێشتکردنی بەکارهێنەری نوێ',
+    balance_after: newBal
+  });
 
-  // ── کۆین بدە بە referred user (ئەو کەسەی تۆمار کرد بە لینکەکە)
-  await addCoins(50, 'بۆنوسی بانگێشتنامە — بانگێشتراوی خێرا');
-  showToast('🎉 50 کۆینت وەرگرت بۆ تۆمارکردن بە بانگێشتنامە!', 'ok');
-
-  // ── sessionStorage و URL پاک بکەرەوە
-  try{sessionStorage.removeItem('_proxo_ref');}catch(e){}
+  // ── URL پاک بکەرەوە
   window.history.replaceState({}, '', window.location.pathname);
 }
 
@@ -1982,19 +1968,28 @@ async function doAuth(){
       cu=data.user;boot();
     } else {
       const name=document.getElementById('authName').value.trim()||email.split('@')[0];
-      // ذەخیرەی ref کۆد پێش signup (چونکە دوای تۆمار کردن URL پاک دەبێت)
-      const _refParam = new URLSearchParams(window.location.search).get('ref');
-      if(_refParam && /^PRX-[A-Z0-9]{8}$/.test(_refParam)){
-        try{sessionStorage.setItem('_proxo_ref', _refParam);}catch(e){}
-      }
       const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
       if(error)throw error;
-      if(data.session){cu=data.user;boot();}
-      else{
+      let newUser=data.user;
+      if(!data.session){
         const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
-        if(!le&&ld.session){cu=ld.user;boot();}
-        else showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');
+        if(!le&&ld?.session){newUser=ld.user;}
+        else{showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');return;}
       }
+      cu=newUser;
+      // ── AUTO REFERRAL ─────────────────────────────────────────
+      const refCode=localStorage.getItem('proxo_ref');
+      if(refCode){
+        try{
+          const{error:rErr}=await sb.rpc('handle_auto_referral',{p_new_user_id:cu.id,p_ref_code:refCode});
+          if(!rErr){
+            localStorage.removeItem('proxo_ref');
+            showToast('🎉 کۆینی ڕیفێرال وەرگیرا!','ok');
+          }
+        }catch(_){/* silent */}
+      }
+      // ──────────────────────────────────────────────────────────
+      boot();
     }
   }catch(e){
     const m={'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە','Email already registered':'پێشتر تۆمارکراوە','User already registered':'پێشتر تۆمارکراوە'};
@@ -2017,6 +2012,16 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.addEventListener('touchmove',()=>{},{passive:true});
   document.addEventListener('wheel',()=>{},{passive:true});
   checkOnline();
+  // ── REFERRAL CAPTURE ──────────────────────────────────────────
+  (function captureReferral(){
+    const params=new URLSearchParams(window.location.search);
+    const ref=params.get('ref');
+    if(ref&&ref.trim()){
+      localStorage.setItem('proxo_ref',ref.trim().toUpperCase());
+      window.history.replaceState({},document.title,window.location.pathname);
+    }
+  })();
+  // ──────────────────────────────────────────────────────────────
   sb=window.supabase.createClient(SB_URL,SB_KEY);
   const n=new Date();
   document.getElementById('todayLbl').textContent='New Ad '+n.toLocaleDateString('en-GB').replace(/\//g,'/');
@@ -2045,16 +2050,16 @@ async function boot(){
   document.getElementById('authWrap').style.display='none';
   document.getElementById('app').style.display='flex';
   document.getElementById('bnav').style.display='block';
-  try{ await ensureWallet(); }catch(e){ console.warn('ensureWallet:',e); }
-  try{ await ensureCoinsWallet(); }catch(e){ console.warn('ensureCoinsWallet:',e); }
-  try{ await loadBal(); }catch(e){ console.warn('loadBal:',e); }
-  try{ await loadCoins(); }catch(e){ console.warn('loadCoins:',e); }
+  await ensureWallet();
+  await ensureCoinsWallet();
+  await loadBal();
+  await loadCoins();
   loadProfile();
   loadMyCards();
   goPage('home');
-  checkDbReady();
+  checkDbReady(); // چێکردنەوەی ئایا فەنکشنی داتابەیس دانراوە
   loadReferralSection();
-  try{ await checkAndApplyRef(); }catch(e){ console.warn('checkAndApplyRef:',e); }
+  checkAndApplyRef();
   // ═══ ٥. CHECK NOTIFICATIONS ═══
   checkNotifBell();
   // Real-time notifications listener
@@ -3527,30 +3532,8 @@ CREATE TABLE IF NOT EXISTS pa_referrals (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
--- پۆلیسییەکانی نوێ (پۆلیسییەکانی کۆن DROP بکە ئەگەر پێشتر دانراون):
--- DROP POLICY IF EXISTS "Own referrals" ON pa_referrals;
--- DROP POLICY IF EXISTS "Check ref code" ON pa_referrals;
-CREATE POLICY "Referrer read own" ON pa_referrals FOR SELECT USING (auth.uid() = referrer_id OR auth.uid() = referred_id);
-CREATE POLICY "Referred user insert" ON pa_referrals FOR INSERT WITH CHECK (auth.uid() = referred_id);
--- pa_coins: بەکارهێنەری تر بتوانێت کۆینی referrer نوێ بکاتەوە
--- DROP POLICY IF EXISTS "Users manage own coins" ON pa_coins;
-CREATE POLICY "Users manage own coins" ON pa_coins FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Allow referral coins update" ON pa_coins FOR UPDATE USING (true) WITH CHECK (true);
-
--- ═══ فەنکشنی خەیرخوازانەی کۆین بۆ referrer (SECURITY DEFINER = RLS تێپەڕدەکات) ═══
-CREATE OR REPLACE FUNCTION award_referral_coins(p_referrer_id UUID, p_amount INT DEFAULT 50)
-RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER AS $$
-DECLARE v_new_bal INT;
-BEGIN
-  INSERT INTO pa_coins(user_id, coins_balance)
-    VALUES(p_referrer_id, p_amount)
-    ON CONFLICT(user_id)
-    DO UPDATE SET coins_balance = pa_coins.coins_balance + p_amount;
-  SELECT coins_balance INTO v_new_bal FROM pa_coins WHERE user_id = p_referrer_id;
-  INSERT INTO pa_coin_transactions(user_id, amount, reason, balance_after)
-    VALUES(p_referrer_id, p_amount, 'بانگێشتکردنی بەکارهێنەری نوێ', v_new_bal);
-END;
-$$;
+CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
+CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
 
 -- ref_code زیاد بکە بۆ profiles
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
@@ -3804,15 +3787,8 @@ CREATE TABLE IF NOT EXISTS pa_referrals (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
--- پۆلیسییەکانی نوێ (پۆلیسییەکانی کۆن DROP بکە ئەگەر پێشتر دانراون):
--- DROP POLICY IF EXISTS "Own referrals" ON pa_referrals;
--- DROP POLICY IF EXISTS "Check ref code" ON pa_referrals;
-CREATE POLICY "Referrer read own" ON pa_referrals FOR SELECT USING (auth.uid() = referrer_id OR auth.uid() = referred_id);
-CREATE POLICY "Referred user insert" ON pa_referrals FOR INSERT WITH CHECK (auth.uid() = referred_id);
--- pa_coins: بەکارهێنەری تر بتوانێت کۆینی referrer نوێ بکاتەوە
--- DROP POLICY IF EXISTS "Users manage own coins" ON pa_coins;
-CREATE POLICY "Users manage own coins" ON pa_coins FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Allow referral coins update" ON pa_coins FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
+CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
 
 -- ref_code زیاد بکە بۆ profiles
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
@@ -4036,15 +4012,8 @@ CREATE TABLE IF NOT EXISTS pa_referrals (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
--- پۆلیسییەکانی نوێ (پۆلیسییەکانی کۆن DROP بکە ئەگەر پێشتر دانراون):
--- DROP POLICY IF EXISTS "Own referrals" ON pa_referrals;
--- DROP POLICY IF EXISTS "Check ref code" ON pa_referrals;
-CREATE POLICY "Referrer read own" ON pa_referrals FOR SELECT USING (auth.uid() = referrer_id OR auth.uid() = referred_id);
-CREATE POLICY "Referred user insert" ON pa_referrals FOR INSERT WITH CHECK (auth.uid() = referred_id);
--- pa_coins: بەکارهێنەری تر بتوانێت کۆینی referrer نوێ بکاتەوە
--- DROP POLICY IF EXISTS "Users manage own coins" ON pa_coins;
-CREATE POLICY "Users manage own coins" ON pa_coins FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Allow referral coins update" ON pa_coins FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
+CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
 
 -- ref_code زیاد بکە بۆ profiles
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
@@ -4685,4 +4654,69 @@ function startReviewCountdown(totalSec){
 async function checkDbReady(){
   try{
     const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
-    // ئەگەر invalid_budget هاتەوە = 
+    // ئەگەر invalid_budget هاتەوە = فەنکشنەکە هەیە
+    const ready=error?.message?.includes('invalid_budget')||error?.message?.includes('بودجە');
+    const btn=document.getElementById('setupDbBtn');
+    if(btn){
+      if(ready){
+        btn.style.display='none'; // فەنکشنەکە هەیە، دووگمە شاری بکە
+      } else {
+        btn.style.display='flex'; // نییە، پیشان بدە
+      }
+    }
+  }catch(e){/* بێدەنگ */}
+}
+</script>
+
+<!-- =====================================================================
+  SQL SCRIPTS (کۆمێنت — بۆ ڕێنمایی ئەدمین)
+  
+  ══════════════════════════════════════════════════════════════════════
+  ١. جەدوەلی pa_assets
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_assets (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    name TEXT NOT NULL,
+    asset_type TEXT NOT NULL CHECK (asset_type IN ('whatsapp','instagram','phone','telegram','link')),
+    value TEXT NOT NULL,
+    note TEXT,
+    style TEXT DEFAULT 'classic',  -- نوێ: ستایلی کارت (classic, light, gradient)
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  -- ئەگەر جەدوەلەکەت پێشتر هەیە، ئەم ستوونە زیاد بکە:
+  -- ALTER TABLE pa_assets ADD COLUMN IF NOT EXISTS style TEXT DEFAULT 'classic';
+  ALTER TABLE pa_assets ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Users manage own assets" ON pa_assets
+    FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٢. جەدوەلی pa_notifications
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_notifications (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    type TEXT NOT NULL DEFAULT 'general',
+    title TEXT,
+    body TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    related_id UUID,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  ALTER TABLE pa_notifications ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Users read own notifications" ON pa_notifications
+    FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٣. تریگەری ئاگاداری کاتێک ئەدمین ستاتۆس گۆڕی
+  ══════════════════════════════════════════════════════════════════════
+  CREATE OR REPLACE FUNCTION notify_ad_status_change()
+  RETURNS TRIGGER AS $$
+  DECLARE
+    notif_type TEXT;
+    notif_title TEXT;
+    notif_body TEXT;
+    v_meta JSONB;
+  BEGIN
+    IF OLD.status IS DISTINCT FROM NEW.status THEN
+      v_meta := jsonb
