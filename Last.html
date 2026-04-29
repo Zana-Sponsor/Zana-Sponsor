@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Proxo App</title>
+<title>Proxo Ads</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -1034,6 +1034,7 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
       <div class="fchip" data-txf="deposit" onclick="filterTxHistory(this)">زیادکردن</div>
       <div class="fchip" data-txf="spend" onclick="filterTxHistory(this)">خەرجکردن</div>
       <div class="fchip" data-txf="refund" onclick="filterTxHistory(this)"><i class="fas fa-rotate-left" style="font-size:10px"></i> گەڕانەوە</div>
+      <div class="fchip" data-txf="coins" onclick="filterTxHistory(this)" style="border-color:rgba(245,158,11,.4);color:#b45309">🪙 کۆین</div>
     </div>
 
     <div class="pcard" id="txHistoryPanel">
@@ -1770,7 +1771,8 @@ async function boot(){
   await loadBal();
   await loadCoins();
   loadProfile();
-  // Check for any rejections that happened while user was offline
+  // Check for rejections on boot (runs once; loadMyAds also calls this but the
+  // Supabase guard in checkAndDeductRejectedCoins prevents any double-deduction)
   sb.from('pa_ads').select('id,status,ad_number').eq('user_id',cu.id).then(({data})=>{
     checkAndDeductRejectedCoins(data||[]);
   });
@@ -1841,19 +1843,37 @@ async function doLogout(){
 // ════════════════════════════════════════════════
 // PROXO COINS — Complete System
 // ════════════════════════════════════════════════
-// ══ PROXO COINS — Rejection Deduction (localStorage guard) ══
-const processedRejections = new Set(
-  JSON.parse(localStorage.getItem('proxo_rejected_ids') || '[]')
-);
+// ══ PROXO COINS — Rejection Deduction (Supabase guard — never deducts twice) ══
+// Source of truth is pa_coin_transactions in the DB, not localStorage.
+// We load which ad IDs already have a deduction record, then only process new ones.
 
 async function checkAndDeductRejectedCoins(ads){
-  for(const ad of ads){
-    if(ad.status==='rejected' && !processedRejections.has(ad.id)){
-      processedRejections.add(ad.id);
-      // Persist so we never deduct twice, even across sessions
-      try{localStorage.setItem('proxo_rejected_ids',JSON.stringify([...processedRejections]));}catch(e){}
-      await addCoins(-COINS_PER_AD,'ڕیکلامی ڕەتکراو #'+(ad.ad_number||''));
-      showToast('ڕیکلامی #'+(ad.ad_number||'—')+' ڕەتکرا — 50 🪙 کەمکرایەوە','err');
+  const rejectedAds = ads.filter(a => a.status === 'rejected');
+  if(!rejectedAds.length) return;
+
+  // Fetch all existing deduction records from DB (amount < 0 = deduction)
+  const{data:existing} = await sb
+    .from('pa_coin_transactions')
+    .select('reason')
+    .eq('user_id', cu.id)
+    .lt('amount', 0);
+
+  // Build set of already-deducted ad_numbers using simple string includes
+  // reason format: 'ڕیکلامی ڕەتکراو #123456'
+  const alreadyDeducted = new Set(
+    (existing||[]).map(r => {
+      const reason = r.reason||'';
+      const idx = reason.indexOf('#');
+      return idx !== -1 ? reason.slice(idx + 1).trim() : null;
+    }).filter(Boolean)
+  );
+
+  for(const ad of rejectedAds){
+    const adNum = String(ad.ad_number||'');
+    if(adNum && !alreadyDeducted.has(adNum)){
+      alreadyDeducted.add(adNum);
+      await addCoins(-COINS_PER_AD, 'ڕیکلامی ڕەتکراو #' + adNum);
+      showToast('ڕیکلامی #' + adNum + ' ڕەتکرا — 50 🪙 کەمکرایەوە', 'err');
     }
   }
 }
@@ -1901,6 +1921,13 @@ async function addCoins(amount, reason){
   const current=parseInt(data?.coins_balance||0);
   const newBal=Math.max(0, current+amount);
   await sb.from('pa_wallets').update({coins_balance:newBal}).eq('user_id',cu.id);
+  // Log every coin event so it shows in transaction history
+  await sb.from('pa_coin_transactions').insert({
+    user_id:      cu.id,
+    amount:       amount,
+    reason:       reason||'',
+    balance_after:newBal
+  }).maybeSingle();
   updateCoinsBadge(newBal);
   return newBal;
 }
@@ -1957,7 +1984,13 @@ async function exchangeCoins(){
       coins_balance:coinsLeft,
       balance:newWalBal
     }).eq('user_id',cu.id);
-    // Log wallet transaction
+    // Log coin deduction in coin history
+    await sb.from('pa_coin_transactions').insert({
+      user_id:cu.id, amount:-coinsToUse,
+      reason:'گۆڕانەوە بۆ بالانس — $'+dollarsToAdd,
+      balance_after:coinsLeft
+    }).maybeSingle();
+    // Log wallet credit in transaction history
     await sb.from('pa_transactions').insert({
       user_id:cu.id, amount:dollarsToAdd,
       type:'deposit', note:'گۆڕانەوەی '+coinsToUse+' کۆین پرۆکسۆ'
@@ -3995,9 +4028,11 @@ async function loadTxHistory(){
   const list=document.getElementById('txHistoryList');
   list.innerHTML='<div style="text-align:center;padding:20px;color:var(--mt)"><i class="fas fa-circle-notch fa-spin"></i></div>';
 
-  const{data:deposits}=await sb.from('pa_transactions').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
-  const{data:ads}=await sb.from('pa_ads').select('id,title,budget,created_at,ad_number,status').eq('user_id',cu.id).order('created_at',{ascending:false});
-console.log('ads data:', ads);
+  const[{data:deposits},{data:ads},{data:coinTxs}]=await Promise.all([
+    sb.from('pa_transactions').select('*').eq('user_id',cu.id).order('created_at',{ascending:false}),
+    sb.from('pa_ads').select('id,title,budget,created_at,ad_number,status').eq('user_id',cu.id).order('created_at',{ascending:false}),
+    sb.from('pa_coin_transactions').select('*').eq('user_id',cu.id).order('created_at',{ascending:false})
+  ]);
 
   const mn={fib:'FIB',fastpay:'FastPay',kcard:'K-Card/ZainCash'};
 
@@ -4025,7 +4060,19 @@ console.log('ads data:', ads);
     date:a.created_at
   }));
 
-  allTxHistory=[...depositItems,...spendItems].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  // Coin transactions — each has amount (+ or -) and reason
+  const coinItems=(coinTxs||[]).map(c=>({
+    id:'coin_'+c.id,
+    kind:'coins',
+    label: c.reason||'کۆین',
+    amount: Math.abs(c.amount),
+    coins_amount: c.amount,       // raw signed value
+    balance_after: c.balance_after,
+    status: c.amount>0?'earned':'deducted',
+    date: c.created_at,
+  }));
+
+  allTxHistory=[...depositItems,...spendItems,...coinItems].sort((a,b)=>new Date(b.date)-new Date(a.date));
   renderTxHistory();
 }
 
@@ -4053,15 +4100,42 @@ function renderTxHistory(){
     const isDeposit=t.kind==='deposit';
     const isRefund=t.kind==='refund';
     const isSpend=t.kind==='spend';
+    const isCoins=t.kind==='coins';
     const[sc,sl]=(statusMap[t.status]||'sb-p —').split(' ');
     const dateStr=new Date(t.date).toLocaleDateString('ku')+' — '+new Date(t.date).toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
 
-    // رەنگ و ئایکۆن
+    // ── Coin transaction row ──────────────────────────────
+    if(isCoins){
+      const earned=t.coins_amount>0;
+      const coinIcoBg=earned?'rgba(245,158,11,.1)':'rgba(220,38,38,.07)';
+      const coinIcoBorder=earned?'rgba(245,158,11,.3)':'rgba(220,38,38,.2)';
+      const coinAmtColor=earned?'#b45309':'var(--rd)';
+      const coinPrefix=earned?'+':'−';
+      const coinBadgeBg=earned?'rgba(245,158,11,.08)':'rgba(220,38,38,.06)';
+      const coinBadgeBorder=earned?'rgba(245,158,11,.25)':'rgba(220,38,38,.18)';
+      const coinBadgeColor=earned?'#b45309':'var(--rd)';
+      const coinBadgeTxt=earned?'کۆین وەرگیرا':'کۆین کەمکرایەوە';
+      return\`<div class="tx-item">
+        <div class="tx-ico" style="background:\${coinIcoBg};border:1px solid \${coinIcoBorder};font-size:18px">🪙</div>
+        <div class="tx-info">
+          <div class="tx-lbl">\${t.label}</div>
+          <div style="margin-top:3px">
+            <span style="font-size:10px;background:\${coinBadgeBg};border:1px solid \${coinBadgeBorder};color:\${coinBadgeColor};padding:2px 8px;border-radius:6px;font-weight:700">\${coinBadgeTxt}</span>
+          </div>
+          \${t.balance_after!=null?\`<div style="font-size:10px;color:var(--mt2);margin-top:2px;display:flex;align-items:center;gap:3px"><i class="fas fa-coins" style="font-size:8px;opacity:.6"></i>باڵانسی کۆینی پاش مامەڵە: \${t.balance_after} 🪙</div>\`:''}
+          <div class="tx-sub">\${dateStr}</div>
+        </div>
+        <div class="tx-amt" style="color:\${coinAmtColor};\${earned?'':''}">
+          \${coinPrefix}\${Math.abs(t.coins_amount)} 🪙
+        </div>
+      </div>\`;
+    }
+
+    // ── Regular (deposit / spend / refund) row ────────────
     let icoClass='tx-in', icoName='fa-arrow-down-long', amtColor='var(--gr)', amtPrefix='+';
     if(isSpend){icoClass='tx-out';icoName='fa-arrow-up-long';amtColor='var(--rd)';amtPrefix='-';}
     if(isRefund){icoClass='tx-in';icoName='fa-rotate-left';amtColor='var(--gr)';amtPrefix='+';}
 
-    // ئەگەر گەڕانەوەی پارەبوو، تێبینی ئادمین پیشان بدە
     const refundBadge=isRefund?`<span style="font-size:10px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr);padding:2px 7px;border-radius:6px;margin-right:4px"><i class="fas fa-rotate-left" style="font-size:8px"></i> گەڕانەوە</span>`:'';
     const noteRow=t.note?`<div style="font-size:10px;color:var(--mt2);margin-top:2px;display:flex;align-items:center;gap:3px"><i class="fas fa-note-sticky" style="font-size:8px;opacity:.6"></i>${t.note}</div>`:'';
     const adRow=t.ad_number?`<div style="font-size:10px;color:var(--mt2);margin-top:1px;display:flex;align-items:center;gap:3px"><i class="fas fa-rectangle-ad" style="font-size:8px;opacity:.6"></i>ڕیکلام #${t.ad_number}</div>`:'';
