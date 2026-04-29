@@ -1264,7 +1264,7 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
       </div>
       <div class="coins-info-item">
         <div class="coins-info-ico" style="background:rgba(220,38,38,.08);color:var(--rd)"><i class="fas fa-circle-minus"></i></div>
-        <div>ئەگەر ئەدمین ڕیکلامەکەت ڕەتکردەوە، <strong>٥٠ کۆین</strong> کەم دەکرێتەوە.</div>
+        <div>ئەگەر ئەدمین ڕیکلامەکەت ڕەتکردەوە، <strong>٥٠ کۆین</strong> کەم دەکرێتەوە (یان $٠.٥٠ لە بالانس).</div>
       </div>
       <div class="coins-info-item">
         <div class="coins-info-ico" style="background:rgba(37,99,235,.08);color:var(--bl)"><i class="fas fa-repeat"></i></div>
@@ -1790,12 +1790,13 @@ async function boot(){
     })
     .subscribe();
 
-  // Proxo Coins: listen for ad status → rejected, deduct coins
+  // Proxo Coins: +50 on submit, -50 on rejection
   sb.channel('coins_ads_'+cu.id)
     .on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads',filter:`user_id=eq.${cu.id}`},(payload)=>{
       if(payload.new?.status==='rejected' && payload.old?.status!=='rejected'){
         addCoins(-COINS_PER_AD,'ڕیکلامی ڕەتکراو — کۆین کەمکرایەوە').then(()=>{
           showToast('ڕیکلامەکەت ڕەتکرا — 50 🪙 کۆین کەمکرایەوە','err');
+          loadBal();
         });
       }
     })
@@ -1893,20 +1894,39 @@ function updateCoinsBadge(coins){
 }
 
 async function addCoins(amount, reason){
-  // Read current balance
   const{data}=await sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single();
   const current=parseInt(data?.coins_balance||0);
-  const newBal=Math.max(0, current+amount);
-  await sb.from('pa_coins').update({coins_balance:newBal}).eq('user_id',cu.id);
-  // Log in coin_transactions table
-  await sb.from('pa_coin_transactions').insert({
-    user_id: cu.id,
-    amount:  amount,
-    reason:  reason||'',
-    balance_after: newBal
-  }).maybeSingle();
-  updateCoinsBadge(newBal);
-  return newBal;
+
+  if(amount<0){
+    // کەمکردنەوە — ئەگەر کۆینی هەبوو لێی بکە، ئەگەر نەبوو $0.50 لە بالانس بکەرەوە
+    const deduct=Math.abs(amount);
+    if(current>=deduct){
+      // کۆین بەسە — لێی بکە
+      const newBal=current-deduct;
+      await sb.from('pa_coins').update({coins_balance:newBal}).eq('user_id',cu.id);
+      await sb.from('pa_coin_transactions').insert({user_id:cu.id,amount,reason:reason||'',balance_after:newBal}).maybeSingle();
+      updateCoinsBadge(newBal);
+      return newBal;
+    } else {
+      // کۆین بەسنییە — $0.50 لە بالانس کەم بکە
+      const usdPenalty=parseFloat((deduct*COINS_TO_USD).toFixed(2));
+      const{data:wd}=await sb.from('pa_wallets').select('balance').eq('user_id',cu.id).single();
+      const curBal=parseFloat(wd?.balance||0);
+      const newWalBal=Math.max(0,curBal-usdPenalty);
+      await sb.from('pa_wallets').update({balance:newWalBal}).eq('user_id',cu.id);
+      await sb.from('pa_coin_transactions').insert({user_id:cu.id,amount,reason:(reason||'')+' (بالانس)',balance_after:current}).maybeSingle();
+      updateCoinsBadge(current);
+      await loadBal();
+      return current;
+    }
+  } else {
+    // زیادکردن — ئاسایی
+    const newBal=current+amount;
+    await sb.from('pa_coins').update({coins_balance:newBal}).eq('user_id',cu.id);
+    await sb.from('pa_coin_transactions').insert({user_id:cu.id,amount,reason:reason||'',balance_after:newBal}).maybeSingle();
+    updateCoinsBadge(newBal);
+    return newBal;
+  }
 }
 
 function openCoinsModal(){
