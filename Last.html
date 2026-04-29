@@ -1790,14 +1790,14 @@ async function boot(){
     })
     .subscribe();
 
-  // Proxo Coins: +50 on submit, -50 on rejection
+  // Proxo Coins: سەرڤەر کۆین کەم دەکاتەوە — JS تەنها UI نوێ دەکاتەوە
   sb.channel('coins_ads_'+cu.id)
     .on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads',filter:`user_id=eq.${cu.id}`},(payload)=>{
       if(payload.new?.status==='rejected' && payload.old?.status!=='rejected'){
-        addCoins(-COINS_PER_AD,'ڕیکلامی ڕەتکراو — کۆین کەمکرایەوە').then(()=>{
-          showToast('ڕیکلامەکەت ڕەتکرا — 50 🪙 کۆین کەمکرایەوە','err');
-          loadBal();
-        });
+        // کۆین و بالانس نوێ بکەرەوە لە داتابەیس
+        loadCoins();
+        loadBal();
+        showToast('ڕیکلامەکەت ڕەتکرا — 50 🪙 کۆین کەمکرایەوە','err');
       }
     })
     .subscribe();
@@ -4225,7 +4225,16 @@ async function checkDbReady(){
           INSERT INTO pa_transactions(user_id,amount,kind,status,ad_number,note)
             VALUES(NEW.user_id, NEW.budget, 'refund', 'approved', NEW.ad_number,
               'گەڕانەوەی خۆکار — ڕیکلام #'||COALESCE(NEW.ad_number::TEXT,''));
-          -- ٣. ئاگاداری تایبەت بۆ گەڕانەوە
+          -- ٣. کەمکردنەوەی ٥٠ کۆین لە pa_coins (ئەگەر کۆین هەبوو)
+          UPDATE pa_coins
+            SET coins_balance = GREATEST(0, coins_balance - 50)
+            WHERE user_id = NEW.user_id;
+          -- ٤. تۆمارکردنی مامەڵەی کۆین
+          INSERT INTO pa_coin_transactions(user_id, amount, reason, balance_after)
+            SELECT NEW.user_id, -50, 'ڕیکلامی ڕەتکراو — کۆین کەمکرایەوە #'||COALESCE(NEW.ad_number::TEXT,''),
+              GREATEST(0, coins_balance - 50)
+            FROM pa_coins WHERE user_id = NEW.user_id;
+          -- ٥. ئاگاداری تایبەت بۆ گەڕانەوە
           INSERT INTO pa_notifications(user_id,type,title,body,related_id,meta)
             VALUES(NEW.user_id,'refund_rejected_ad',
               'پارەی ڕیکلامی ڕەتکراوت گەڕایەوە 💸',
