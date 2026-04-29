@@ -1976,12 +1976,22 @@ async function doAuth(){
       }
       
       // Ensure everything is settled before booting
-      if(referralSuccess) await new Promise(r=>setTimeout(r,1500));
+      if(referralSuccess) {
+          await new Promise(r=>setTimeout(r,2000));
+          console.log('[Referral] Waiting for DB sync...');
+      }
       
       await boot();
       
       if(referralSuccess){
-        await loadCoins(); // Refresh UI with new balance
+        // Force multiple reloads to ensure UI is updated
+        setTimeout(async () => {
+            await loadCoins();
+            console.log('[Referral] UI Refreshed');
+        }, 500);
+        setTimeout(async () => {
+            await loadCoins();
+        }, 2000);
         showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
       }
       return;
