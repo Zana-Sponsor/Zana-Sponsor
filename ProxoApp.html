@@ -77,6 +77,14 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .amsg{font-size:12.5px;text-align:center;padding:11px 14px;border-radius:11px;display:none;margin-top:10px;}
 .amsg.ok{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr);}
 .amsg.err{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:var(--rd);}
+/* Google login */
+.auth-divider{display:flex;align-items:center;gap:10px;margin:14px 0;}
+.auth-divider-line{flex:1;height:1px;background:var(--b1);}
+.auth-divider-txt{font-size:11px;color:var(--mt);font-weight:600;white-space:nowrap;}
+.gbtn{width:100%;padding:15px;background:var(--w);color:var(--dark);border:1.5px solid var(--b1);border-radius:14px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .2s;margin-bottom:4px;}
+.gbtn:active{background:var(--bg);}
+.gbtn:disabled{opacity:.5;pointer-events:none;}
+.gbtn svg{width:18px;height:18px;flex-shrink:0;}
 
 /* ══ OFFLINE BANNER ══ */
 #offlineBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:var(--rd);color:#fff;font-size:13px;font-family:'R',sans-serif;text-align:center;padding:10px 16px;font-weight:700;}
@@ -550,6 +558,11 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       <button class="abtn" id="authBtn" onclick="doAuth()">
         <i class="fas fa-arrow-left"></i>
         <span id="authBtnTxt">چوونەژوورەوە</span>
+      </button>
+      <div class="auth-divider"><div class="auth-divider-line"></div><div class="auth-divider-txt">یان</div><div class="auth-divider-line"></div></div>
+      <button class="gbtn" id="googleBtn" onclick="doGoogleAuth()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        چوونەژوورەوە بە گووگڵ
       </button>
       <div class="amsg" id="authMsg"></div>
     </div>
@@ -1929,6 +1942,77 @@ function switchTab(m){
   document.getElementById('authBtnTxt').textContent=m==='login'?'چوونەژوورەوە':'تۆمارکردن';
   document.getElementById('authMsg').style.display='none';
 }
+// ══ گووگڵ چوونەژوورەوە ══
+async function doGoogleAuth(){
+  const btn=document.getElementById('googleBtn');
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> چاوەڕوانبە...';
+  try{
+    const{data,error}=await sb.auth.signInWithOAuth({
+      provider:'google',
+      options:{redirectTo:window.location.href}
+    });
+    if(error)throw error;
+  }catch(e){
+    showAmsg('کێشە لە چوونەژوورەوە بە گووگڵ: '+e.message,'err');
+    btn.disabled=false;
+    btn.innerHTML='<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;flex-shrink:0"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>چوونەژوورەوە بە گووگڵ';
+  }
+}
+
+// ══ Device Fingerprint بۆ پارێزانی بانگێشت ══
+function getDeviceFingerprint(){
+  // ئامێزی چەندین نیشانە بۆ جیاکردنەوەی مۆبایل
+  const canvas=document.createElement('canvas');
+  const ctx=canvas.getContext('2d');
+  ctx.textBaseline='top';
+  ctx.font='14px Arial';
+  ctx.fillText('device_fp',2,2);
+  const canvasFP=canvas.toDataURL().slice(-20);
+  const raw=[
+    navigator.userAgent,
+    navigator.language||'',
+    screen.colorDepth,
+    screen.width+'x'+screen.height,
+    new Date().getTimezoneOffset(),
+    navigator.hardwareConcurrency||'',
+    navigator.maxTouchPoints||'',
+    canvasFP
+  ].join('|');
+  // hash ساده
+  let h=0;
+  for(let i=0;i<raw.length;i++){h=((h<<5)-h)+raw.charCodeAt(i);h|=0;}
+  return 'dfp_'+Math.abs(h).toString(36);
+}
+
+async function checkDeviceAlreadyRewarded(refCode){
+  // پشکنین ئایا ئەم ئامێرە پێشتر بانگێشت وەرگرتووە
+  const fp=getDeviceFingerprint();
+  const storageKey='proxo_ref_used_'+refCode.toLowerCase();
+  // پشکنینی localStorage
+  if(localStorage.getItem(storageKey)==='1') return true;
+  // پشکنینی database — ئایا record هەیە بۆ ئەم device fingerprint
+  try{
+    const{data}=await sb.from('pa_ref_devices')
+      .select('id')
+      .eq('device_fp',fp)
+      .eq('ref_code',refCode)
+      .maybeSingle();
+    return !!data;
+  }catch(e){ return false; }
+}
+
+async function markDeviceAsRewarded(refCode){
+  const fp=getDeviceFingerprint();
+  const storageKey='proxo_ref_used_'+refCode.toLowerCase();
+  localStorage.setItem(storageKey,'1');
+  // تۆمارکردن لە database
+  try{
+    await sb.from('pa_ref_devices').insert({device_fp:fp,ref_code:refCode}).select();
+  }catch(e){ /* بێدەنگ — جەدوەلەکە ئەگەر نەبوو کێشەیەک نییە */ }
+}
+
+
 async function doAuth(){
   const email=document.getElementById('authEmail').value.trim();
   const pass=document.getElementById('authPass').value;
@@ -1952,23 +2036,32 @@ async function doAuth(){
         else{showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');return;}
       }
       cu=newUser;
-      // ══ AUTO REFERRAL — definitive fix ═══════════════════════
+      // ══ AUTO REFERRAL — محافظت با device fingerprint ═══════════════════════
       const refCode=localStorage.getItem('proxo_ref');
       let referralSuccess=false;
       if(refCode){
         try{
-          console.log('[Referral] Attempting to apply code:', refCode);
-          const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
-            p_new_user_id:cu.id,
-            p_ref_code:refCode
-          });
-          
-          if(!rErr && rData?.ok===true){
-            referralSuccess=true;
+          // ✅ پشکنین: ئایا ئەم ئامێرە پێشتر پاداشت وەرگرتووە؟
+          const alreadyRewarded = await checkDeviceAlreadyRewarded(refCode);
+          if(alreadyRewarded){
+            console.warn('[Referral] Device already rewarded — skipping');
             localStorage.removeItem('proxo_ref');
-            console.log('[Referral] RPC Success!');
-          }else{
-            console.error('[Referral] RPC failed:', rErr || rData?.msg);
+          } else {
+            console.log('[Referral] Attempting to apply code:', refCode);
+            const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
+              p_new_user_id:cu.id,
+              p_ref_code:refCode
+            });
+            
+            if(!rErr && rData?.ok===true){
+              referralSuccess=true;
+              await markDeviceAsRewarded(refCode);
+              localStorage.removeItem('proxo_ref');
+              console.log('[Referral] RPC Success!');
+            }else{
+              console.error('[Referral] RPC failed:', rErr || rData?.msg);
+              localStorage.removeItem('proxo_ref');
+            }
           }
         }catch(e){
           console.error('[Referral] Exception:', e);
@@ -3531,6 +3624,18 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
 SQL بۆ Supabase — جێبەجێ بکە لە SQL Editor
 ══════════════════════════════════════════════════════
 
+-- جەدوەلی پارێزانی ئامێر — بۆ ڕێگری لە دووبارە وەرگرتنی پاداشت
+CREATE TABLE IF NOT EXISTS pa_ref_devices (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  device_fp TEXT NOT NULL,
+  ref_code TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(device_fp, ref_code)
+);
+ALTER TABLE pa_ref_devices ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can insert ref device" ON pa_ref_devices FOR INSERT WITH CHECK (true);
+CREATE POLICY "Anyone can read ref device" ON pa_ref_devices FOR SELECT USING (true);
+
 -- جەدوەلی referral codes
 CREATE TABLE IF NOT EXISTS pa_referrals (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -4632,253 +4737,4 @@ async function loadTxHistory(){
     method:t.method,
     ad_number:t.ad_number||null,
     note:t.note||null,
-    deposit_number:t.deposit_number||null,
-  }));
-
-  const spendItems=(ads||[]).map(a=>({
-    id:a.id,
-    kind:'spend',
-    label:'New Ad '+(a.ad_number||'—'),
-    amount:parseFloat(a.budget),
-    status:'spent',
-    date:a.created_at
-  }));
-
-  // کۆین گۆڕین — تەنها ئەوانەی amount منفی (گۆڕینەوە بۆ بالانس)
-  const coinExchangeItems=(coinTxs||[]).filter(c=>parseInt(c.amount)<0&&(c.reason||'').includes('گۆڕانەوە')).map(c=>({
-    id:c.id,
-    kind:'coin_exchange',
-    label:c.reason||'گۆڕانەوەی کۆین بۆ بالانس',
-    coins_amount:Math.abs(parseInt(c.amount)),
-    usd_amount:parseFloat((Math.abs(parseInt(c.amount))*COINS_TO_USD).toFixed(2)),
-    amount:parseFloat((Math.abs(parseInt(c.amount))*COINS_TO_USD).toFixed(2)),
-    status:'approved',
-    date:c.created_at,
-    balance_after:c.balance_after||0,
-  }));
-
-  allTxHistory=[...depositItems,...spendItems,...coinExchangeItems].sort((a,b)=>new Date(b.date)-new Date(a.date));
-  _txMap={}; allTxHistory.forEach((t,i)=>{_txMap[t.id+'_'+i]=t;});
-  renderTxHistory();
-}
-
-function filterTxHistory(el){
-  document.querySelectorAll('[data-txf]').forEach(x=>x.classList.remove('on'));
-  el.classList.add('on');
-  txFilterMode=el.dataset.txf;
-  renderTxHistory();
-}
-
-function renderTxHistory(){
-  const list=document.getElementById('txHistoryList');
-  const filtered=txFilterMode==='all'?allTxHistory
-    :txFilterMode==='deposit'?allTxHistory.filter(t=>t.kind==='deposit'||t.kind==='refund')
-    :allTxHistory.filter(t=>t.kind===txFilterMode);
-
-  if(!filtered.length){
-    list.innerHTML='<div style="text-align:center;padding:24px;color:var(--mt);font-size:13px"><i class="fas fa-inbox" style="font-size:28px;display:block;margin-bottom:10px;opacity:.3"></i>هیچ مامەڵەیەک نەدۆزرایەوە</div>';
-    return;
-  }
-
-  list.innerHTML=filtered.map(t=>{
-    const isRefund=t.kind==='refund';
-    const isSpend=t.kind==='spend';
-    const isCoinExchange=t.kind==='coin_exchange';
-
-    let icoName='fa-arrow-down-long', amtColor='var(--gr)', amtPrefix='+';
-    let icoBg='rgba(22,163,74,.08)', icoBorder='rgba(22,163,74,.15)', icoColor='var(--gr)';
-    if(isSpend){icoName='fa-arrow-up-long';amtColor='var(--rd)';amtPrefix='-';icoBg='rgba(220,38,38,.06)';icoBorder='rgba(220,38,38,.12)';icoColor='var(--rd)';}
-    if(isRefund){icoName='fa-rotate-left';}
-    if(isCoinExchange){icoName='fa-coins';amtColor='#d97706';amtPrefix='+';icoBg='rgba(245,158,11,.1)';icoBorder='rgba(245,158,11,.25)';icoColor='#d97706';}
-
-    // ناو کورت
-    let label=t.label||'—';
-    if(isCoinExchange) label='کۆین گۆڕدرا بۆ بالانس';
-    else if(isRefund) label='گەڕانەوەی پارە'+(t.ad_number?' #'+t.ad_number:'');
-
-    // بەروار — تەنها کات و بەروار، بەبێ زیادە
-    const d=new Date(t.date);
-    const dateStr=d.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit'})+' · '+d.toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
-
-    // بڕ
-    const amtText=isCoinExchange
-      ?`+$${t.usd_amount.toFixed(2)}`
-      :`${amtPrefix}$${t.amount.toFixed(2)}`;
-
-    // ژێر-ناو
-    let sub='';
-    if(isCoinExchange) sub=`🪙 ${t.coins_amount.toLocaleString()} کۆین`;
-    else if(isSpend) sub='ڕیکلام #'+(t.label||'').replace('New Ad ','');
-    else if(isRefund&&t.note) sub=t.note.substring(0,40);
-
-    // دۆخ badge
-    let statusBadge='';
-    if(!isSpend&&!isCoinExchange){
-      const sMap={
-        pending:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.25)"><i class="fas fa-clock" style="font-size:7px"></i> چاوەڕوان</span>`,
-        approved:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.25)"><i class="fas fa-check" style="font-size:7px"></i> پەسەندکرا</span>`,
-        rejected:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2)"><i class="fas fa-xmark" style="font-size:7px"></i> ڕەتکرا</span>`,
-      };
-      statusBadge=sMap[t.status]||sMap.pending;
-    }
-
-    const _txKey = t.id+'_'+filtered.indexOf(t);
-    _txMap[_txKey]=t;
-    return`<div class="tx-item" style="cursor:pointer;padding:12px 4px;margin:-1px -4px;border-radius:12px;transition:background .15s" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''" onclick="${isCoinExchange?'':('showReceipt(_txMap[\''+_txKey+'\'])')}">
-      <div style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">
-        <i class="fas ${icoName}"></i>
-      </div>
-      <div class="tx-info" style="flex:1;min-width:0">
-        <div class="tx-lbl" style="font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>
-        <div style="font-size:11px;color:var(--mt);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-          <span>${dateStr}</span>
-          ${sub?`<span style="color:var(--b2)">·</span><span style="color:var(--mt2)">${sub}</span>`:''}
-        </div>
-        ${statusBadge?`<div style="margin-top:5px">${statusBadge}</div>`:''}
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <div style="font-size:14px;font-weight:800;color:${amtColor};font-family:'Inter',sans-serif;letter-spacing:-.3px">${amtText}</div>
-        ${!isCoinExchange?`<i class="fas fa-chevron-left" style="font-size:10px;color:var(--mt)"></i>`:''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-
-
-// ═══ DEPOSIT REVIEW COUNTDOWN ═══
-let _cdInterval = null;
-
-function startReviewCountdown(totalSec){
-  totalSec = totalSec || 300; // 5 خولەک
-  const banner  = document.getElementById('reviewCountdownBanner');
-  const timerEl = document.getElementById('cdTimerNum');
-  const progBar = document.getElementById('cdProgressBar');
-  const line1   = document.getElementById('cdLine1');
-  const step2   = document.getElementById('cdStep2');
-  const step2Ico= document.getElementById('cdStep2Ico');
-  const cdTitle = document.getElementById('cdTitle');
-  const cdSub   = document.getElementById('cdSub');
-  const cdIco   = document.getElementById('cdIcoWrap');
-
-  if(!banner) return;
-  banner.style.display = 'block';
-  if(_cdInterval) clearInterval(_cdInterval);
-
-  let remaining = totalSec;
-
-  function tick(){
-    remaining--;
-    if(remaining < 0){
-      clearInterval(_cdInterval);
-      // تەواوبوو — چووە وردبینی
-      timerEl.textContent = '0:00';
-      timerEl.style.color = '#facc15';
-      progBar.style.width = '0%';
-      progBar.style.background = 'linear-gradient(90deg,#d97706,#facc15)';
-      line1.style.width = '100%';
-      line1.style.background = '#facc15';
-      step2.style.color = '#facc15';
-      step2Ico.style.background = 'rgba(250,204,21,.15)';
-      step2Ico.style.borderColor = '#facc15';
-      step2Ico.style.color = '#facc15';
-      cdTitle.textContent = 'داواکاریەکەت چووە وردبینی ئادمین ✅';
-      cdSub.innerHTML = 'ئادمین لە <strong style="color:rgba(255,255,255,.75)">ناوماوەی ١ کاتژمێر</strong>دا وەڵام دەداتەوە';
-      cdIco.textContent = '🔍';
-      cdIco.style.background = 'rgba(250,204,21,.15)';
-      cdIco.style.borderColor = 'rgba(250,204,21,.35)';
-      // بانەرەکە دوای ١٠ چرکە بشارەوە
-      setTimeout(()=>{
-        if(banner) banner.style.opacity='0';
-        banner.style.transition='opacity .5s';
-        setTimeout(()=>{banner.style.display='none';banner.style.opacity='';banner.style.transition='';},600);
-      }, 10000);
-      return;
-    }
-    const m = Math.floor(remaining/60);
-    const s = remaining % 60;
-    timerEl.textContent = m+':'+(s<10?'0':'')+s;
-    const pct = (remaining/totalSec)*100;
-    progBar.style.width = pct+'%';
-    // لاین ١ — دوای ٣٠ چرکەی یەکەم پر دەبێت
-    const line1Pct = Math.min(100, ((totalSec-remaining)/30)*100);
-    line1.style.width = line1Pct+'%';
-    // ڕەنگی کاتژمێر گۆڕان بەپێی ماوەی مایەوە
-    if(remaining < 60){ timerEl.style.color='#fb923c'; progBar.style.background='linear-gradient(90deg,#ea580c,#fb923c)'; }
-    else if(remaining < 120){ timerEl.style.color='#facc15'; progBar.style.background='linear-gradient(90deg,#d97706,#facc15)'; }
-    else { timerEl.style.color='#4ade80'; progBar.style.background='linear-gradient(90deg,#16a34a,#4ade80)'; }
-  }
-
-  tick(); // یەکەم تیک خێرا
-  _cdInterval = setInterval(tick, 1000);
-}
-
-async function checkDbReady(){
-  try{
-    const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
-    // ئەگەر invalid_budget هاتەوە = فەنکشنەکە هەیە
-    const ready=error?.message?.includes('invalid_budget')||error?.message?.includes('بودجە');
-    const btn=document.getElementById('setupDbBtn');
-    if(btn){
-      if(ready){
-        btn.style.display='none'; // فەنکشنەکە هەیە، دووگمە شاری بکە
-      } else {
-        btn.style.display='flex'; // نییە، پیشان بدە
-      }
-    }
-  }catch(e){/* بێدەنگ */}
-}
-</script>
-
-<!-- =====================================================================
-  SQL SCRIPTS (کۆمێنت — بۆ ڕێنمایی ئەدمین)
-  
-  ══════════════════════════════════════════════════════════════════════
-  ١. جەدوەلی pa_assets
-  ══════════════════════════════════════════════════════════════════════
-  CREATE TABLE pa_assets (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    name TEXT NOT NULL,
-    asset_type TEXT NOT NULL CHECK (asset_type IN ('whatsapp','instagram','phone','telegram','link')),
-    value TEXT NOT NULL,
-    note TEXT,
-    style TEXT DEFAULT 'classic',  -- نوێ: ستایلی کارت (classic, light, gradient)
-    created_at TIMESTAMPTZ DEFAULT NOW()
-  );
-  -- ئەگەر جەدوەلەکەت پێشتر هەیە، ئەم ستوونە زیاد بکە:
-  -- ALTER TABLE pa_assets ADD COLUMN IF NOT EXISTS style TEXT DEFAULT 'classic';
-  ALTER TABLE pa_assets ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Users manage own assets" ON pa_assets
-    FOR ALL USING (auth.uid() = user_id);
-  
-  ══════════════════════════════════════════════════════════════════════
-  ٢. جەدوەلی pa_notifications
-  ══════════════════════════════════════════════════════════════════════
-  CREATE TABLE pa_notifications (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    type TEXT NOT NULL DEFAULT 'general',
-    title TEXT,
-    body TEXT,
-    is_read BOOLEAN DEFAULT FALSE,
-    related_id UUID,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-  );
-  ALTER TABLE pa_notifications ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Users read own notifications" ON pa_notifications
-    FOR ALL USING (auth.uid() = user_id);
-  
-  ══════════════════════════════════════════════════════════════════════
-  ٣. تریگەری ئاگاداری کاتێک ئەدمین ستاتۆس گۆڕی
-  ══════════════════════════════════════════════════════════════════════
-  CREATE OR REPLACE FUNCTION notify_ad_status_change()
-  RETURNS TRIGGER AS $$
-  DECLARE
-    notif_type TEXT;
-    notif_title TEXT;
-    notif_body TEXT;
-    v_meta JSONB;
-  BEGIN
-    IF OLD.status IS DISTINCT FROM NEW.status THEN
-      v_meta := jsonb
+    deposit_number:t.deposit_numb
