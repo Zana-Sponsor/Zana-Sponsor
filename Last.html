@@ -567,6 +567,10 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       </div>
     </div>
     <div class="topbar-right">
+      <!-- Admin Panel button — visible only for admins -->
+      <div id="adminPanelBtn" onclick="window.open('Admin-Panel.html','_blank')" title="پانێڵی ئادمین" style="display:none;width:34px;height:34px;border-radius:50%;background:var(--dark);border:none;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:14px;flex-shrink:0;box-shadow:0 2px 8px rgba(28,35,51,.3);">
+        <i class="fas fa-shield-halved"></i>
+      </div>
       <div class="notif-btn" onclick="goPage('notifications')" id="notifBtn">
         <i class="fas fa-bell" style="font-size:16px"></i>
         <div class="notif-dot" id="notifDot"></div>
@@ -2236,8 +2240,11 @@ function goPage(p){
 }
 
 async function loadProfile(){
-  const{data}=await sb.from('profiles').select('full_name,email,avatar_b64').eq('id',cu.id).single();
+  const{data}=await sb.from('profiles').select('full_name,email,avatar_b64,is_admin').eq('id',cu.id).single();
   const name=data?.full_name||cu.email.split('@')[0];
+  // نیشانەی ئادمین
+  const adminBtn=document.getElementById('adminPanelBtn');
+  if(adminBtn) adminBtn.style.display=data?.is_admin?'flex':'none';
   document.getElementById('profName').textContent=name;
   // ناوی کەسەکە لە topbar
   const topbarName=document.getElementById('topbarName');
@@ -4403,6 +4410,17 @@ function renderTxHistory(){
     else if(isSpend) sub='ڕیکلام';
     else if(isRefund&&t.note) sub=t.note;
 
+    // دۆخ badge بۆ داواکاریەکانی زیادکردن و گەڕانەوە
+    let statusBadge='';
+    if(!isSpend && !isCoinExchange){
+      const sMap={
+        pending:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.25)"><i class="fas fa-clock" style="font-size:8px"></i> چاوەڕوان</span>`,
+        approved:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.25)"><i class="fas fa-check" style="font-size:8px"></i> پەسەندکرا</span>`,
+        rejected:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2)"><i class="fas fa-xmark" style="font-size:8px"></i> ڕەتکرا</span>`,
+      };
+      statusBadge=sMap[t.status]||sMap.pending;
+    }
+
     return`<div class="tx-item" style="cursor:pointer;padding:12px 0" onclick="${isCoinExchange?'':('showReceipt('+JSON.stringify(t)+')')}">
       <div class="tx-ico" style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">
         <i class="fas ${icoName}"></i>
@@ -4413,6 +4431,7 @@ function renderTxHistory(){
           <span>${dateStr}</span>
           ${sub?`<span style="color:var(--mt2)">·</span><span>${sub}</span>`:''}
         </div>
+        ${statusBadge?`<div style="margin-top:5px">${statusBadge}</div>`:''}
       </div>
       <div style="font-size:14px;font-weight:700;color:${amtColor};font-family:'Inter',sans-serif;flex-shrink:0">${amtText}</div>
     </div>`;
