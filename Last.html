@@ -1790,11 +1790,12 @@ async function boot(){
     })
     .subscribe();
 
-  // Proxo Coins: سەرڤەر کۆین کەم دەکاتەوە — JS تەنها UI نوێ دەکاتەوە
+  // Proxo Coins: کاتێک ڕیکلام ڕەتدەکرێت — 50 کۆین کەم بکەرەوە
   sb.channel('coins_ads_'+cu.id)
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads',filter:`user_id=eq.${cu.id}`},(payload)=>{
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads',filter:`user_id=eq.${cu.id}`},async(payload)=>{
       if(payload.new?.status==='rejected' && payload.old?.status!=='rejected'){
-        // کۆین و بالانس نوێ بکەرەوە لە داتابەیس
+        // کۆین کەم بکە (ئەگەر کۆین بەسنەبوو $0.50 لە بالانس کەم دەکات)
+        await addCoins(-COINS_PER_AD, 'ڕەتکردنەوەی ڕیکلام #'+(payload.new?.ad_number||''));
         loadCoins();
         loadBal();
         showToast('ڕیکلامەکەت ڕەتکرا — 50 🪙 کۆین کەمکرایەوە','err');
