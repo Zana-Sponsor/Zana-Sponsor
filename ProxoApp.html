@@ -799,109 +799,25 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
         هەر <span style="font-family:'R',sans-serif;direction:ltr;unicode-bidi:embed">50</span> کۆین = <span style="font-family:'R',sans-serif;direction:ltr;unicode-bidi:embed">$0.50</span> · کەمترین <span style="font-family:'R',sans-serif;direction:ltr;unicode-bidi:embed">500</span> کۆین بۆ گۆڕانەوە
       </div>
     </div>
-    <!-- ══ AFFILIATE / REFERRAL DASHBOARD ══ -->
-    <div class="pcard" id="referralCard" style="padding:0;overflow:hidden;border-radius:18px;">
-
-      <!-- Header banner -->
-      <div style="background:linear-gradient(135deg,var(--dark) 0%,#2e3a50 100%);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;">
-        <div>
-          <div style="font-size:13px;font-weight:900;color:#fff;margin-bottom:3px;">
-            <i class="fas fa-handshake-simple" style="margin-left:7px;color:#fbbf24"></i>بەرنامەی ئەفیلیەت
-          </div>
-          <div style="font-size:11px;color:rgba(255,255,255,.55);">هاوڕێ بانگێشت بکە — کۆین وەربگرە</div>
-        </div>
-        <div style="background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:800;color:#fbbf24;">
-          <span id="refEarnedLbl">+100 🪙 / کەس</span>
-        </div>
+    <!-- بانگێشتکردن -->
+    <div class="pcard" id="referralCard">
+      <div class="pcard-hdr">
+        <div class="pcard-hdr-left"><i class="fas fa-gift" style="color:#d97706"></i> بانگێشتکردنی هاوڕێ</div>
+        <span style="font-size:11px;color:var(--gr);font-weight:700" id="refEarnedLbl"></span>
       </div>
-
-      <!-- Rules -->
-      <div style="padding:16px 20px 0;">
-        <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase;">چۆنیەتی کارکردن</div>
-        <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:16px;">
-          <div style="display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--tx);line-height:1.65;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#6366f1);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:800;margin-top:1px;flex-shrink:0;">١</div>
-            <span>لینکی تایبەتت کۆپی بکە و لە سۆشیاڵ میدیا، یوتیوب، یان مەسیجەکانت بنوێنە.</span>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--tx);line-height:1.65;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#6366f1);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:800;margin-top:1px;flex-shrink:0;">٢</div>
-            <span>هەر کەسێک لە ڕێگەی لینکەکەت تۆمار بکات، <b style="color:var(--dark)">+100 🪙 کۆین</b> بۆ هەژمارەکەت زیاد دەبێت.</span>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--tx);line-height:1.65;">
-            <div style="min-width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#6366f1);display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:800;margin-top:1px;flex-shrink:0;">٣</div>
-            <span>کۆینەکانت دەتوانیت بیگۆڕیتەوە بۆ بالانسی دۆلار و لەناو پرۆکسۆ خەرج بکەیت.</span>
-          </div>
-        </div>
+      <div style="font-size:12.5px;color:var(--mt);margin-bottom:14px;line-height:1.8">
+        هاوڕێیەکت بانگێشت بکە — کاتێک خۆی تۆمار کرد <b style="color:var(--dark)">+100 🪙 کۆین</b> وەردەگریت
       </div>
-
-      <!-- Divider -->
-      <div style="height:1px;background:var(--b1);margin:0 20px;"></div>
-
-      <!-- Referral link table -->
-      <div style="padding:14px 20px;">
-        <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase;">لینکی ئەفیلیەتی تۆ</div>
-        <div style="background:var(--bg);border:1.5px solid var(--b1);border-radius:14px;overflow:hidden;margin-bottom:10px;">
-          <!-- Table header -->
-          <div style="display:grid;grid-template-columns:1fr auto auto;background:rgba(28,35,51,.04);border-bottom:1px solid var(--b1);padding:9px 14px;gap:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--mt);">لینکی ئەفیلیەت</div>
-            <div style="font-size:11px;font-weight:700;color:var(--mt);text-align:center;">ڕێژەی کۆین</div>
-            <div style="font-size:11px;font-weight:700;color:var(--mt);text-align:center;">کەمترین</div>
-          </div>
-          <!-- Table row -->
-          <div style="display:grid;grid-template-columns:1fr auto auto;padding:12px 14px;gap:12px;align-items:center;">
-            <div style="font-size:12px;font-weight:700;color:var(--dark);direction:ltr;text-align:left;font-family:'Inter',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="refLinkDisp">بارکردن...</div>
-            <div style="text-align:center;">
-              <span style="background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr);font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;">100 🪙</span>
-            </div>
-            <div style="text-align:center;">
-              <span style="font-weight:800;color:#d97706;font-family:'Inter',sans-serif;font-size:12px;">500 🪙</span>
-            </div>
-          </div>
-        </div>
-        <!-- Copy button -->
-        <button onclick="copyRefLink()" id="refCopyBtn" style="width:100%;padding:13px;background:var(--dark);color:#fff;border:none;border-radius:13px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;transition:opacity .2s;">
-          <i class="fas fa-copy"></i>کۆپیکردنی لینک
-        </button>
-        <!-- Share button -->
-        <button onclick="shareRefLink()" style="width:100%;padding:12px;background:var(--bg);border:1.5px solid var(--b2);border-radius:13px;color:var(--dark);font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
-          <i class="fas fa-share-nodes"></i>هاوبەشکردن
+      <div style="display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;padding:12px 14px;margin-bottom:12px">
+        <div style="flex:1;font-size:13px;font-weight:700;color:var(--dark);direction:ltr;text-align:left;font-family:'R',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="refLinkDisp">چوارچێوەکردن...</div>
+        <button onclick="copyRefLink()" style="padding:7px 13px;background:var(--dark);color:#fff;border:none;border-radius:10px;font-family:'R',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0" id="refCopyBtn">
+          <i class="fas fa-copy" style="margin-left:4px"></i>کۆپی
         </button>
       </div>
-
-      <!-- Divider -->
-      <div style="height:1px;background:var(--b1);margin:0 20px;"></div>
-
-      <!-- Stats grid -->
-      <div style="padding:14px 20px 18px;">
-        <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:.5px;margin-bottom:12px;text-transform:uppercase;">ئامارەکان</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-          <!-- Total visits -->
-          <div style="background:var(--bg);border:1px solid var(--b1);border-radius:13px;padding:13px;text-align:center;">
-            <div style="font-size:22px;font-weight:900;color:var(--bl);font-family:'Inter',sans-serif;line-height:1;" id="refStatVisits">—</div>
-            <div style="font-size:11px;color:var(--mt);margin-top:5px;font-weight:600;">کۆی سەردان</div>
-          </div>
-          <!-- Registrations -->
-          <div style="background:var(--bg);border:1px solid var(--b1);border-radius:13px;padding:13px;text-align:center;">
-            <div style="font-size:22px;font-weight:900;color:var(--dark);font-family:'Inter',sans-serif;line-height:1;" id="refStatRegs">—</div>
-            <div style="font-size:11px;color:var(--mt);margin-top:5px;font-weight:600;">تۆمارکراوان</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <!-- Successful -->
-          <div style="background:rgba(22,163,74,.04);border:1px solid rgba(22,163,74,.15);border-radius:13px;padding:13px;text-align:center;">
-            <div style="font-size:22px;font-weight:900;color:var(--gr);font-family:'Inter',sans-serif;line-height:1;" id="refStatSuccess">—</div>
-            <div style="font-size:11px;color:var(--mt);margin-top:5px;font-weight:600;">کامیابەکان</div>
-          </div>
-          <!-- Total coins earned -->
-          <div style="background:rgba(217,119,6,.04);border:1px solid rgba(245,158,11,.2);border-radius:13px;padding:13px;text-align:center;">
-            <div style="font-size:22px;font-weight:900;color:#d97706;font-family:'Inter',sans-serif;line-height:1;" id="refStatCoins">—</div>
-            <div style="font-size:11px;color:var(--mt);margin-top:5px;font-weight:600;">🪙 کۆی کۆین</div>
-          </div>
-        </div>
-      </div>
-
+      <button onclick="shareRefLink()" style="width:100%;padding:12px;background:var(--bg);border:1.5px solid var(--b2);border-radius:12px;color:var(--dark);font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
+        <i class="fas fa-share-nodes"></i>هاوبەشکردن
+      </button>
     </div>
-    <!-- ══ END AFFILIATE DASHBOARD ══ -->
 
     <div class="pcard">
       <div class="pcard-hdr"><div class="pcard-hdr-left"><i class="fas fa-gear"></i> ڕێکخستنەکان</div></div>
@@ -1868,40 +1784,23 @@ function genRefCode(userId){
 
 async function loadReferralSection(){
   const code = genRefCode(cu.id);
-  const link = `${window.location.origin}${window.location.pathname}#ref=${code}`;
+  const link = `${window.location.origin}${window.location.pathname}?ref=${code}`;
   document.getElementById('refLinkDisp').textContent = link;
 
-  // بارکردنی ئامارەکان لە pa_referrals
-  const {data} = await sb.from('pa_referrals').select('id,referred_id').eq('referrer_id', cu.id);
-  const totalRegs   = data?.length || 0;
-  const successful  = data?.filter(r => r.referred_id !== null).length || 0;
-  const totalCoins  = successful * 100;
-
-  // نوێکردنەوەی ئامارەکانی داشبۆرد
-  const visits  = document.getElementById('refStatVisits');
-  const regs    = document.getElementById('refStatRegs');
-  const success = document.getElementById('refStatSuccess');
-  const coins   = document.getElementById('refStatCoins');
-  if(visits)  visits.textContent  = totalRegs;
-  if(regs)    regs.textContent    = totalRegs;
-  if(success) success.textContent = successful;
-  if(coins)   coins.textContent   = totalCoins.toLocaleString();
-
-  // بەرگی سەرەوە
-  const earnedLbl = document.getElementById('refEarnedLbl');
-  if(earnedLbl && successful > 0)
-    earnedLbl.textContent = `${successful} کەس · +${totalCoins} 🪙`;
+  // ژمارەی بانگێشتکراوان
+  const {data} = await sb.from('pa_referrals').select('id').eq('referrer_id', cu.id).not('referred_id','is',null);
+  const count = data?.length || 0;
+  const el = document.getElementById('refEarnedLbl');
+  if(el && count > 0) el.textContent = `${count} کەس · +${count*100} 🪙`;
 }
 
 function copyRefLink(){
   const link = document.getElementById('refLinkDisp').textContent;
   navigator.clipboard.writeText(link).then(()=>{
-    showToast('✅ لینکەکە کۆپیکرا','ok');
     const btn = document.getElementById('refCopyBtn');
-    const orig = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-check"></i>کۆپیکرا';
+    btn.innerHTML = '<i class="fas fa-check" style="margin-left:4px"></i>کۆپیکرا';
     btn.style.background = 'var(--gr)';
-    setTimeout(()=>{btn.innerHTML=orig;btn.style.background='var(--dark)';},2000);
+    setTimeout(()=>{btn.innerHTML='<i class="fas fa-copy" style="margin-left:4px"></i>کۆپی';btn.style.background='var(--dark)';},2000);
   }).catch(()=> showToast('دووبارە هەوڵ بدەرەوە','err'));
 }
 
@@ -3641,6 +3540,83 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
 
+-- ══════════════════════════════════════════════════════════════════
+-- فەنکشنی handle_auto_referral
+-- دەبێت لە Supabase SQL Editor جێبەجێ بکرێت
+-- ══════════════════════════════════════════════════════════════════
+CREATE OR REPLACE FUNCTION handle_auto_referral(
+  p_new_user_id UUID,
+  p_ref_code    TEXT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER          -- دەستوەری ئەدمین بۆ نووسینی با pa_coins
+SET search_path = public
+AS $$
+DECLARE
+  v_referral     RECORD;
+  v_current_bal  INTEGER := 0;
+  v_new_bal      INTEGER;
+  v_reward       INTEGER := 50;   -- کۆینی دیاری بۆ بەکارهێنەری نوێ
+BEGIN
+
+  -- ١. کۆدی ref دیاریکردن
+  SELECT * INTO v_referral
+  FROM   pa_referrals
+  WHERE  ref_code = UPPER(TRIM(p_ref_code))
+    AND  referred_id IS NULL        -- هێشتا بەکارنەهاتووە
+  LIMIT 1
+  FOR UPDATE SKIP LOCKED;          -- جیاکردنی race condition
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'invalid_or_used_code');
+  END IF;
+
+  -- ٢. بەکارهێنەری نوێ نابێت خودی referrer بێت
+  IF v_referral.referrer_id = p_new_user_id THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'self_referral');
+  END IF;
+
+  -- ٣. ئایا ئەم بەکارهێنەرە پێشتر جایزەی وەرگرتووە؟
+  IF EXISTS (
+    SELECT 1 FROM pa_referrals
+    WHERE referred_id = p_new_user_id
+  ) THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'already_referred');
+  END IF;
+
+  -- ٤. pa_referrals نوێبکەرەوە
+  UPDATE pa_referrals
+  SET    referred_id = p_new_user_id,
+         used_at     = NOW()
+  WHERE  id = v_referral.id;
+
+  -- ٥. pa_coins ی بەکارهێنەری نوێ دروست بکە / نوێبکەرەوە
+  INSERT INTO pa_coins (user_id, coins_balance)
+  VALUES (p_new_user_id, v_reward)
+  ON CONFLICT (user_id)
+  DO UPDATE SET coins_balance = pa_coins.coins_balance + v_reward
+  RETURNING coins_balance INTO v_new_bal;
+
+  -- ٦. تۆمار بکە لە pa_coin_transactions بۆ audit
+  INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
+  VALUES (
+    p_new_user_id,
+    v_reward,
+    'جایزەی بانگێشت — کۆدی ' || UPPER(TRIM(p_ref_code)),
+    v_new_bal
+  );
+
+  RETURN jsonb_build_object('ok', true, 'coins_awarded', v_reward, 'new_balance', v_new_bal);
+
+EXCEPTION WHEN OTHERS THEN
+  RETURN jsonb_build_object('ok', false, 'reason', SQLERRM);
+END;
+$$;
+
+-- دەستوەر بدە بە anon role کە فەنکشنەکەی بانگ بکات
+GRANT EXECUTE ON FUNCTION handle_auto_referral(UUID, TEXT) TO anon, authenticated;
+
 ══════════════════════════════════════════════════════ -->
 </body>`);
   p.push('</html>');
@@ -3896,6 +3872,83 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
 
+-- ══════════════════════════════════════════════════════════════════
+-- فەنکشنی handle_auto_referral
+-- دەبێت لە Supabase SQL Editor جێبەجێ بکرێت
+-- ══════════════════════════════════════════════════════════════════
+CREATE OR REPLACE FUNCTION handle_auto_referral(
+  p_new_user_id UUID,
+  p_ref_code    TEXT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER          -- دەستوەری ئەدمین بۆ نووسینی با pa_coins
+SET search_path = public
+AS $$
+DECLARE
+  v_referral     RECORD;
+  v_current_bal  INTEGER := 0;
+  v_new_bal      INTEGER;
+  v_reward       INTEGER := 50;   -- کۆینی دیاری بۆ بەکارهێنەری نوێ
+BEGIN
+
+  -- ١. کۆدی ref دیاریکردن
+  SELECT * INTO v_referral
+  FROM   pa_referrals
+  WHERE  ref_code = UPPER(TRIM(p_ref_code))
+    AND  referred_id IS NULL        -- هێشتا بەکارنەهاتووە
+  LIMIT 1
+  FOR UPDATE SKIP LOCKED;          -- جیاکردنی race condition
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'invalid_or_used_code');
+  END IF;
+
+  -- ٢. بەکارهێنەری نوێ نابێت خودی referrer بێت
+  IF v_referral.referrer_id = p_new_user_id THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'self_referral');
+  END IF;
+
+  -- ٣. ئایا ئەم بەکارهێنەرە پێشتر جایزەی وەرگرتووە؟
+  IF EXISTS (
+    SELECT 1 FROM pa_referrals
+    WHERE referred_id = p_new_user_id
+  ) THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'already_referred');
+  END IF;
+
+  -- ٤. pa_referrals نوێبکەرەوە
+  UPDATE pa_referrals
+  SET    referred_id = p_new_user_id,
+         used_at     = NOW()
+  WHERE  id = v_referral.id;
+
+  -- ٥. pa_coins ی بەکارهێنەری نوێ دروست بکە / نوێبکەرەوە
+  INSERT INTO pa_coins (user_id, coins_balance)
+  VALUES (p_new_user_id, v_reward)
+  ON CONFLICT (user_id)
+  DO UPDATE SET coins_balance = pa_coins.coins_balance + v_reward
+  RETURNING coins_balance INTO v_new_bal;
+
+  -- ٦. تۆمار بکە لە pa_coin_transactions بۆ audit
+  INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
+  VALUES (
+    p_new_user_id,
+    v_reward,
+    'جایزەی بانگێشت — کۆدی ' || UPPER(TRIM(p_ref_code)),
+    v_new_bal
+  );
+
+  RETURN jsonb_build_object('ok', true, 'coins_awarded', v_reward, 'new_balance', v_new_bal);
+
+EXCEPTION WHEN OTHERS THEN
+  RETURN jsonb_build_object('ok', false, 'reason', SQLERRM);
+END;
+$$;
+
+-- دەستوەر بدە بە anon role کە فەنکشنەکەی بانگ بکات
+GRANT EXECUTE ON FUNCTION handle_auto_referral(UUID, TEXT) TO anon, authenticated;
+
 ══════════════════════════════════════════════════════ -->
 </body>`);
   p.push('</html>');
@@ -4120,6 +4173,83 @@ CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
+
+-- ══════════════════════════════════════════════════════════════════
+-- فەنکشنی handle_auto_referral
+-- دەبێت لە Supabase SQL Editor جێبەجێ بکرێت
+-- ══════════════════════════════════════════════════════════════════
+CREATE OR REPLACE FUNCTION handle_auto_referral(
+  p_new_user_id UUID,
+  p_ref_code    TEXT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER          -- دەستوەری ئەدمین بۆ نووسینی با pa_coins
+SET search_path = public
+AS $$
+DECLARE
+  v_referral     RECORD;
+  v_current_bal  INTEGER := 0;
+  v_new_bal      INTEGER;
+  v_reward       INTEGER := 50;   -- کۆینی دیاری بۆ بەکارهێنەری نوێ
+BEGIN
+
+  -- ١. کۆدی ref دیاریکردن
+  SELECT * INTO v_referral
+  FROM   pa_referrals
+  WHERE  ref_code = UPPER(TRIM(p_ref_code))
+    AND  referred_id IS NULL        -- هێشتا بەکارنەهاتووە
+  LIMIT 1
+  FOR UPDATE SKIP LOCKED;          -- جیاکردنی race condition
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'invalid_or_used_code');
+  END IF;
+
+  -- ٢. بەکارهێنەری نوێ نابێت خودی referrer بێت
+  IF v_referral.referrer_id = p_new_user_id THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'self_referral');
+  END IF;
+
+  -- ٣. ئایا ئەم بەکارهێنەرە پێشتر جایزەی وەرگرتووە؟
+  IF EXISTS (
+    SELECT 1 FROM pa_referrals
+    WHERE referred_id = p_new_user_id
+  ) THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'already_referred');
+  END IF;
+
+  -- ٤. pa_referrals نوێبکەرەوە
+  UPDATE pa_referrals
+  SET    referred_id = p_new_user_id,
+         used_at     = NOW()
+  WHERE  id = v_referral.id;
+
+  -- ٥. pa_coins ی بەکارهێنەری نوێ دروست بکە / نوێبکەرەوە
+  INSERT INTO pa_coins (user_id, coins_balance)
+  VALUES (p_new_user_id, v_reward)
+  ON CONFLICT (user_id)
+  DO UPDATE SET coins_balance = pa_coins.coins_balance + v_reward
+  RETURNING coins_balance INTO v_new_bal;
+
+  -- ٦. تۆمار بکە لە pa_coin_transactions بۆ audit
+  INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
+  VALUES (
+    p_new_user_id,
+    v_reward,
+    'جایزەی بانگێشت — کۆدی ' || UPPER(TRIM(p_ref_code)),
+    v_new_bal
+  );
+
+  RETURN jsonb_build_object('ok', true, 'coins_awarded', v_reward, 'new_balance', v_new_bal);
+
+EXCEPTION WHEN OTHERS THEN
+  RETURN jsonb_build_object('ok', false, 'reason', SQLERRM);
+END;
+$$;
+
+-- دەستوەر بدە بە anon role کە فەنکشنەکەی بانگ بکات
+GRANT EXECUTE ON FUNCTION handle_auto_referral(UUID, TEXT) TO anon, authenticated;
 
 ══════════════════════════════════════════════════════ -->
 </body>`);
@@ -4656,11 +4786,4 @@ function renderTxHistory(){
       const sMap={
         pending:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.25)"><i class="fas fa-clock" style="font-size:7px"></i> چاوەڕوان</span>`,
         approved:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.25)"><i class="fas fa-check" style="font-size:7px"></i> پەسەندکرا</span>`,
-        rejected:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2)"><i class="fas fa-xmark" style="font-size:7px"></i> ڕەتکرا</span>`,
-      };
-      statusBadge=sMap[t.status]||sMap.pending;
-    }
-
-    const _txKey = t.id+'_'+filtered.indexOf(t);
-    _txMap[_txKey]=t;
-    retu
+        rejected:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-
