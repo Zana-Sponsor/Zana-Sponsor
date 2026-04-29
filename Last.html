@@ -46,6 +46,12 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 @keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+/* ══ RULES ══ */
+.rule-item{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--dark);padding:5px 0;line-height:1.6;}
+.rule-item i{color:var(--bl);font-size:10px;margin-top:4px;flex-shrink:0;}
+.rule-item.red i{color:var(--rd);}
+.rule-item.red{color:var(--rd);}
+.rule-item b{font-weight:800;}
 /* ══ UPDATE PROFILE FORM ══ */
 .phone-wrap{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .phone-flag{padding:12px 14px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;font-size:15px;flex-shrink:0;}
@@ -649,6 +655,98 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       <i class="fas fa-chevron-left home-card-arr"></i>
     </div>
     <div style="height:8px"></div>
+
+    <!-- یاسا و ڕێسا -->
+    <div class="slbl" style="margin-top:20px"><i class="fas fa-scale-balanced" style="margin-left:5px"></i>یاسا و ڕێسا</div>
+
+    <!-- بارکردنی باڵانس -->
+    <div style="background:var(--w);border:1px solid var(--b1);border-radius:18px;overflow:hidden;margin-bottom:10px">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.rule-chev').style.transform=this.nextElementSibling.style.display==='block'?'rotate(90deg)':''">
+        <div style="width:38px;height:38px;border-radius:12px;background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-wallet" style="color:var(--bl);font-size:15px"></i></div>
+        <div style="flex:1;font-size:14px;font-weight:700;color:var(--dark)">یاسای بارکردنی باڵانس</div>
+        <i class="fas fa-chevron-left rule-chev" style="color:var(--mt);font-size:13px;transition:transform .2s"></i>
+      </div>
+      <div style="display:none;padding:0 16px 16px">
+        <div style="height:1px;background:var(--b1);margin-bottom:14px"></div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>کەمترین بڕی بارکردن <b>$5</b> دۆلارە</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>پارەدان تەنها لەڕێگەی <b>FIB، FastPay، ZainCash/K-Card</b></div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>دوای ناردنی وەسڵ، ئەدمین لە ناوماوەی <b>١ کاتژمێر</b> پەسەند دەکات</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>وەسڵی درووست و ئاشکرا ناردن پێویستە — وەسڵی ناڕوون ڕەتدەکرێتەوە</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>نرخی گۆڕین: <b>$1 = ١٨٠٠ دینار</b></div>
+        <div class="rule-item red"><i class="fas fa-triangle-exclamation"></i>پارەدانی دووجار ناگەڕێتەوە — پێش ناردن دڵنیابە</div>
+      </div>
+    </div>
+
+    <!-- ڕیکلام -->
+    <div style="background:var(--w);border:1px solid var(--b1);border-radius:18px;overflow:hidden;margin-bottom:10px">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.rule-chev').style.transform=this.nextElementSibling.style.display==='block'?'rotate(90deg)':''">
+        <div style="width:38px;height:38px;border-radius:12px;background:rgba(28,35,51,.06);border:1px solid rgba(28,35,51,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-rectangle-ad" style="color:var(--dark);font-size:15px"></i></div>
+        <div style="flex:1;font-size:14px;font-weight:700;color:var(--dark)">یاسای ڕیکلامەکان</div>
+        <i class="fas fa-chevron-left rule-chev" style="color:var(--mt);font-size:13px;transition:transform .2s"></i>
+      </div>
+      <div style="display:none;padding:0 16px 16px">
+        <div style="height:1px;background:var(--b1);margin-bottom:14px"></div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>کەمترین بودجەی ڕیکلام بۆ یەک ڕۆژ <b>$5</b> دۆلارە</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>دوای ناردن ئەدمین لە ناوماوەی <b>٢٤ کاتژمێر</b> پەسەند یان ڕەتی دەکاتەوە</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>کاتێک ڕیکلام پەسەند دەکرێت باڵانسەکەت کەم دەکرێتەوە و دەستپێک دەکات</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>کاتێک ڕیکلام ڕەتدەکرێت <b>باڵانسەکەت دەگەڕێتەوە</b> و ٥٠ کۆین کەم دەکرێت</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>ئامرازەکەت (ProxoLink) دەبێت پێش ناردنی ڕیکلام ئامادە بێت</div>
+        <div class="rule-item red"><i class="fas fa-triangle-exclamation"></i>ناوەڕۆکی ڕیکلام دەبێت لەگەڵ یاسای تیکتۆک بگونجێت — ناوەڕۆکی نالێبوردنی ڕەتدەکرێتەوە</div>
+        <div class="rule-item red"><i class="fas fa-triangle-exclamation"></i>ئەگەر ڤیدیۆکەت دەرنەکەوت یان هەڵەیەکی تەکنیکی هەبوو پەیوەند بە ئەدمین بکە</div>
+      </div>
+    </div>
+
+    <!-- پرۆکسۆ کۆین -->
+    <div style="background:var(--w);border:1px solid var(--b1);border-radius:18px;overflow:hidden;margin-bottom:10px">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.rule-chev').style.transform=this.nextElementSibling.style.display==='block'?'rotate(90deg)':''">
+        <div style="width:38px;height:38px;border-radius:12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px">🪙</div>
+        <div style="flex:1;font-size:14px;font-weight:700;color:var(--dark)">یاسای کۆینی پرۆکسۆ</div>
+        <i class="fas fa-chevron-left rule-chev" style="color:var(--mt);font-size:13px;transition:transform .2s"></i>
+      </div>
+      <div style="display:none;padding:0 16px 16px">
+        <div style="height:1px;background:var(--b1);margin-bottom:14px"></div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>هەر ناردنی ڕیکلامێک <b>+٥٠ کۆین</b> پاداشت وەردەگریت</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>هەر ڕەتکردنەوەی ڕیکلامێک <b>-٥٠ کۆین</b> کەم دەکرێتەوە</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>ئەگەر کۆینت بەسنەبوو، <b>$٠.٥٠</b> لە باڵانست کەم دەکرێت</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>کەمترین بۆ گۆڕانەوە <b>٥٠٠ کۆین</b> کە هاوتای <b>$٥</b> دۆلارە</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>کۆینەکان تەنها بۆ باڵانس گۆڕانەوە دەبن — کاشێک ناکرێن</div>
+      </div>
+    </div>
+
+    <!-- ئامرازەکان ProxoLink -->
+    <div style="background:var(--w);border:1px solid var(--b1);border-radius:18px;overflow:hidden;margin-bottom:10px">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.rule-chev').style.transform=this.nextElementSibling.style.display==='block'?'rotate(90deg)':''">
+        <div style="width:38px;height:38px;border-radius:12px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-link" style="color:#6366f1;font-size:15px"></i></div>
+        <div style="flex:1;font-size:14px;font-weight:700;color:var(--dark)">یاسای ئامرازەکان (ProxoLink)</div>
+        <i class="fas fa-chevron-left rule-chev" style="color:var(--mt);font-size:13px;transition:transform .2s"></i>
+      </div>
+      <div style="display:none;padding:0 16px 16px">
+        <div style="height:1px;background:var(--b1);margin-bottom:14px"></div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>هەر ئەکاونتێک دەتوانێت <b>زۆر ئامراز</b> دروست بکات</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>ئامرازەکە دەبێت ژمارەی ڕاستەقینە و کارکردنی هەبێت</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>دەتوانیت ئامرازەکانت بگۆڕیت یان بیسڕیتەوە هەر کاتێک</div>
+        <div class="rule-item red"><i class="fas fa-triangle-exclamation"></i>ژمارەی درووستکراو یان ناکارا بەکار مەهێنە — هەسابەکەت دادەخرێت</div>
+      </div>
+    </div>
+
+    <!-- ئەکاونت و پشتیوانی -->
+    <div style="background:var(--w);border:1px solid var(--b1);border-radius:18px;overflow:hidden;margin-bottom:10px">
+      <div style="padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.rule-chev').style.transform=this.nextElementSibling.style.display==='block'?'rotate(90deg)':''">
+        <div style="width:38px;height:38px;border-radius:12px;background:rgba(22,163,74,.07);border:1px solid rgba(22,163,74,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-shield-halved" style="color:var(--gr);font-size:15px"></i></div>
+        <div style="flex:1;font-size:14px;font-weight:700;color:var(--dark)">یاسای ئەکاونت و پشتیوانی</div>
+        <i class="fas fa-chevron-left rule-chev" style="color:var(--mt);font-size:13px;transition:transform .2s"></i>
+      </div>
+      <div style="display:none;padding:0 16px 16px">
+        <div style="height:1px;background:var(--b1);margin-bottom:14px"></div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>هەر بەکارهێنەرێک <b>تەنها یەک ئەکاونت</b> مافی هەیە</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>ئیمەیلت نابێت بگۆڕدرێت دوای تۆمارکردن</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>ئەگەر پرسیارت هەبوو لە بەشی پشتیوانی یان واتساپ پەیوەند بکە</div>
+        <div class="rule-item"><i class="fas fa-circle-dot"></i>کاتی وەڵامدانەوە لە پشتیوانی: <b>٩ بەیانی — ١٢ شەو</b></div>
+        <div class="rule-item red"><i class="fas fa-triangle-exclamation"></i>دزینی ئەکاونتی کەسانی تر یان بەکارهێنانی هەرزەکارانە — هەسابەکەت دادەخرێت</div>
+      </div>
+    </div>
+
+    <div style="height:14px"></div>
   </div>
 
   <!-- PROFILE -->
@@ -1078,74 +1176,16 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       <h2><i class="fas fa-graduation-cap" style="margin-left:8px"></i>فێرکارییەکان</h2>
       <p>ئامۆژگاری و ڤیدیۆکانی سیستەمەکە لێرەن تا ئەسانتر بتوانی کار بکەیت</p>
     </div>
-    <div style="height:16px"></div>
 
-    <div class="tut-section-title"><i class="fas fa-play-circle" style="margin-left:6px;color:var(--rd)"></i>ڤیدیۆی فێرکاری</div>
-
-    <div class="tut-card" onclick="openTutVideo('https://www.youtube.com/watch?v=example1')">
-      <div class="tut-thumb" style="background:linear-gradient(135deg,#1c2333,#2e3a50)">
-        <div class="tut-play"><i class="fas fa-play"></i></div>
-        <div class="tut-badge"><i class="fas fa-clock"></i> 5:30</div>
+    <!-- قفڵی فێرکاری -->
+    <div style="background:var(--w);border:1.5px dashed var(--b2);border-radius:20px;padding:40px 24px;text-align:center;margin-bottom:14px">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--bg);border:1.5px solid var(--b1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px;color:var(--mt)">
+        <i class="fas fa-lock"></i>
       </div>
-      <div class="tut-info">
-        <div class="tut-title">چۆن سپۆنسەری نوێ دروست بکەیت</div>
-        <div class="tut-meta"><i class="fas fa-eye"></i> فێرکاری یەکەم &nbsp;·&nbsp; <i class="fas fa-star" style="color:var(--yw)"></i> پێشنیارکراو</div>
-      </div>
-    </div>
-
-    <div class="tut-card" onclick="openTutVideo('https://www.youtube.com/watch?v=example2')">
-      <div class="tut-thumb" style="background:linear-gradient(135deg,#2563eb,#1d4ed8)">
-        <div class="tut-play"><i class="fas fa-play"></i></div>
-        <div class="tut-badge"><i class="fas fa-clock"></i> 3:15</div>
-      </div>
-      <div class="tut-info">
-        <div class="tut-title">چۆن کەرەستەی پەیوەندی زیاد بکەیت</div>
-        <div class="tut-meta"><i class="fas fa-eye"></i> فێرکاری دووەم</div>
-      </div>
-    </div>
-
-    <div class="tut-card" onclick="openTutVideo('https://www.youtube.com/watch?v=example3')">
-      <div class="tut-thumb" style="background:linear-gradient(135deg,#16a34a,#15803d)">
-        <div class="tut-play"><i class="fas fa-play"></i></div>
-        <div class="tut-badge"><i class="fas fa-clock"></i> 4:45</div>
-      </div>
-      <div class="tut-info">
-        <div class="tut-title">چۆن باڵانس بارکەیت</div>
-        <div class="tut-meta"><i class="fas fa-eye"></i> فێرکاری سێیەم</div>
-      </div>
-    </div>
-
-    <div class="tut-section-title" style="margin-top:20px"><i class="fas fa-book-open" style="margin-left:6px;color:var(--bl)"></i>ڕێنمایی خێرا</div>
-
-    <div class="tut-guide-card">
-      <div class="tut-guide-ico" style="background:rgba(37,99,235,.1);color:var(--bl)"><i class="fas fa-rectangle-ad"></i></div>
-      <div class="tut-guide-info">
-        <h4>دروستکردنی ڕیکلام</h4>
-        <p>هەموو مەرحەلەکانی دروستکردنی کەمپینێکی ئەفزای تیکتۆک</p>
-      </div>
-    </div>
-
-    <div class="tut-guide-card">
-      <div class="tut-guide-ico" style="background:rgba(22,163,74,.1);color:var(--gr)"><i class="fas fa-layer-group"></i></div>
-      <div class="tut-guide-info">
-        <h4>بەڕێوەبردنی کەرەستەکان</h4>
-        <p>چۆن ژمارەکانت و ئاکاونتی سۆشیاڵ میدیاکانت پاشەکەوت بکەیت</p>
-      </div>
-    </div>
-
-    <div class="tut-guide-card">
-      <div class="tut-guide-ico" style="background:rgba(217,119,6,.08);color:var(--yw)"><i class="fas fa-wallet"></i></div>
-      <div class="tut-guide-info">
-        <h4>بارکردنی باڵانس</h4>
-        <p>ڕێنمایی بۆ پارەدان لەڕێگەی FIB، FastPay و ZainCash</p>
-      </div>
-    </div>
-
-    <div class="tut-guide-card" onclick="openWA()" style="cursor:pointer">
-      <div class="tut-guide-ico" style="background:rgba(22,163,74,.1);color:var(--gr)"><i class="fab fa-whatsapp"></i></div>
-      <div class="tut-guide-info">
-        <h4>پرسیارت هەیە؟</h4>
-        <p>ڕاستەوخۆ لەگەڵ تیمی پشتیوانی گفتوگۆ بکە — هەمیشە ئامادەین</p>
+      <div style="font-size:16px;font-weight:800;color:var(--dark);margin-bottom:8px">بەشی فێرکاری قفڵدراوە</div>
+      <div style="font-size:13px;color:var(--mt);line-height:1.8;margin-bottom:20px">ئەم بەشە تازەکارییەکانی فێرکاری و ڤیدیۆی رێنماییت پێدەکات.<br>بۆ دەستڕاگەیشتن پەیوەند بە ئەدمین بکە.</div>
+      <div onclick="openWA()" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--dark);color:#fff;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer">
+        <i class="fab fa-whatsapp"></i>پەیوەندی لەگەڵ ئەدمین
       </div>
     </div>
     <div style="height:14px"></div>
