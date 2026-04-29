@@ -1782,27 +1782,22 @@ function genRefCode(userId){
   return 'PRX-' + userId.replace(/-/g,'').substring(0,8).toUpperCase();
 }
 
-async function ensureRefCode(){
-  // ref_code پاشەکەوت بکە لە profiles ئەگەر نەبوو
-  try{
-    const code = genRefCode(cu.id);
-    const {data} = await sb.from('profiles').select('ref_code').eq('id', cu.id).single();
-    if(!data?.ref_code){
-      await sb.from('profiles').update({ref_code: code}).eq('id', cu.id);
-    }
-  }catch(e){ /* بێدەنگ — ئەگەر ستوونەکە نەبوو */ }
-}
-
 async function loadReferralSection(){
   const code = genRefCode(cu.id);
   const link = `${window.location.origin}${window.location.pathname}?ref=${code}`;
   document.getElementById('refLinkDisp').textContent = link;
 
+  // ── دڵنیابەرەوە کە ref_code لە profiles ذەخیرەکراوە (چارەسەری گەورە)
+  const {data: pData} = await sb.from('profiles').select('ref_code').eq('id', cu.id).single();
+  if(!pData?.ref_code){
+    await sb.from('profiles').update({ref_code: code}).eq('id', cu.id);
+  }
+
   // ژمارەی بانگێشتکراوان
   const {data} = await sb.from('pa_referrals').select('id').eq('referrer_id', cu.id).not('referred_id','is',null);
   const count = data?.length || 0;
   const el = document.getElementById('refEarnedLbl');
-  if(el && count > 0) el.textContent = `${count} کەس · +${count*50} 🪙`;
+  if(el) el.textContent = count > 0 ? `${count} کەس · +${count*50} 🪙` : '٠ کەس هێشتا';
 }
 
 function copyRefLink(){
@@ -1835,44 +1830,21 @@ async function checkAndApplyRef(){
 
   // ── پاراستن ٢: ئایا ئەم بەکارهێنەرە پێشتر ref بەکارهێناوە؟
   const {data: existing} = await sb.from('pa_referrals').select('id').eq('referred_id', cu.id).maybeSingle();
-  if(existing){
-    // URL پاک بکەرەوە تەنها
-    window.history.replaceState({}, '', window.location.pathname);
-    return;
-  }
+  if(existing) return;
 
-  // ── referrer بدۆزەرەوە لە ref_code ستوونی profiles
-  // (ref_code ستوونێکی جیا پێویستە: ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;)
-  const codeBody = ref.replace('PRX-','').toUpperCase();
-
-  // رێکاری ١: بگەرێ لە ref_code ستوون (پێشنیار)
-  let referrerId = null;
-  const {data: refByCode} = await sb.from('profiles')
-    .select('id')
-    .eq('ref_code', ref)
-    .maybeSingle();
-
-  if(refByCode?.id){
-    referrerId = refByCode.id;
-  } else {
-    // رێکاری ٢: بگەرێ لە UUID — ڕاستەوخۆ بە 8 پیتی یەکەمی UUID بێ dash
-    // UUID شێوەکەیەتی: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-    // codeBody = 8 پیتی یەکەم بێ dash
-    const {data: allProfiles} = await sb.from('profiles').select('id');
-    if(allProfiles){
-      const match = allProfiles.find(p => {
-        const stripped = p.id.replace(/-/g,'').substring(0,8).toUpperCase();
-        return stripped === codeBody;
-      });
-      referrerId = match?.id || null;
-    }
-  }
+  // ── referrer بدۆزەرەوە بە ref_code لە profiles
+  // چارەسەری گەورە: بەجێ ilike بەسەر UUID، ref_code ی profiles بەکاربهێنە
+  const {data: refProfile} = await sb.from('profiles').select('id').eq('ref_code', ref).maybeSingle();
+  const referrerId = refProfile?.id || null;
 
   // ── پاراستن ٣: referrer دەبێت هەبێت و خۆی نەبێت
-  if(!referrerId || referrerId === cu.id){
-    window.history.replaceState({}, '', window.location.pathname);
-    return;
-  }
+  if(!referrerId || referrerId === cu.id) return;
+
+  // ── دڵنیابەرەوە کە pa_coins هەژمار هەیە بۆ referred user (بۆ ئەوەی بەمزووانە ensureCoinsWallet هاتبێت)
+  await sb.from('pa_coins').upsert(
+    {user_id: cu.id, coins_balance: 0},
+    {onConflict: 'user_id', ignoreDuplicates: true}
+  );
 
   // ── پاراستن ٤: INSERT تەنها — ئەگەر پێشتر هەبوو error دەدات و دەوەستێت
   const {error: insErr} = await sb.from('pa_referrals').insert({
@@ -1883,37 +1855,10 @@ async function checkAndApplyRef(){
   });
 
   // ئەگەر insert سەرکەوت نەبوو (duplicate یان هەر هەڵەیەک) — هیچ کۆینێک نەدە
-  if(insErr){
-    window.history.replaceState({}, '', window.location.pathname);
-    return;
-  }
+  if(insErr) return;
 
-  // ── کۆین بدە بۆ referrer — لە ڕێگەی RPC فەنکشن (security definer)
-  const {error: rpcErr} = await sb.rpc('award_referral_coins', { p_referrer_id: referrerId, p_amount: 50 });
-
-  // ── ئەگەر RPC نەبوو، ڕاستەوخۆ UPDATE بکە (fallback)
-  if(rpcErr){
-    console.warn('RPC award_referral_coins failed, using fallback:', rpcErr.message);
-    const {data: refCoins} = await sb.from('pa_coins').select('coins_balance').eq('user_id', referrerId).single();
-    const curCoins = parseInt(refCoins?.coins_balance || 0);
-    await sb.from('pa_coins').upsert(
-      {user_id: referrerId, coins_balance: curCoins + 50},
-      {onConflict: 'user_id'}
-    );
-    await sb.from('pa_coin_transactions').insert({
-      user_id: referrerId,
-      amount: 50,
-      reason: 'بانگێشتکردنی بەکارهێنەری نوێ (fallback)',
-      balance_after: curCoins + 50
-    }).maybeSingle();
-  }
-
-  // ── 50 کۆین بدە بۆ referree (بەکارهێنەری نوێ) — پاداشتی تۆمارکردن بە ref
-  await addCoins(50, 'تۆمارکردن بە بانگێشتنامە — پاداشت 🎉');
-  showToast('🎉 بانگێشتنامەکەت پەسەندکرا! +50 🪙 کۆینت وەرگرت','ok');
-
-  // ── loadCoins بکەرەوە تا badge نوێ بکرێتەوە
-  await loadCoins();
+  // ── تەنها ئێستا کۆین بدە — لە ڕێگەی RPC فەنکشن (security definer)
+  await sb.rpc('award_referral_coins', { p_referrer_id: referrerId, p_amount: 50 });
 
   // ── URL پاک بکەرەوە
   window.history.replaceState({}, '', window.location.pathname);
@@ -2088,7 +2033,6 @@ async function boot(){
   document.getElementById('bnav').style.display='block';
   await ensureWallet();
   await ensureCoinsWallet();
-  await ensureRefCode();
   await loadBal();
   await loadCoins();
   loadProfile();
@@ -4709,4 +4653,46 @@ function startReviewCountdown(totalSec){
     const m = Math.floor(remaining/60);
     const s = remaining % 60;
     timerEl.textContent = m+':'+(s<10?'0':'')+s;
- 
+    const pct = (remaining/totalSec)*100;
+    progBar.style.width = pct+'%';
+    // لاین ١ — دوای ٣٠ چرکەی یەکەم پر دەبێت
+    const line1Pct = Math.min(100, ((totalSec-remaining)/30)*100);
+    line1.style.width = line1Pct+'%';
+    // ڕەنگی کاتژمێر گۆڕان بەپێی ماوەی مایەوە
+    if(remaining < 60){ timerEl.style.color='#fb923c'; progBar.style.background='linear-gradient(90deg,#ea580c,#fb923c)'; }
+    else if(remaining < 120){ timerEl.style.color='#facc15'; progBar.style.background='linear-gradient(90deg,#d97706,#facc15)'; }
+    else { timerEl.style.color='#4ade80'; progBar.style.background='linear-gradient(90deg,#16a34a,#4ade80)'; }
+  }
+
+  tick(); // یەکەم تیک خێرا
+  _cdInterval = setInterval(tick, 1000);
+}
+
+async function checkDbReady(){
+  try{
+    const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
+    // ئەگەر invalid_budget هاتەوە = فەنکشنەکە هەیە
+    const ready=error?.message?.includes('invalid_budget')||error?.message?.includes('بودجە');
+    const btn=document.getElementById('setupDbBtn');
+    if(btn){
+      if(ready){
+        btn.style.display='none'; // فەنکشنەکە هەیە، دووگمە شاری بکە
+      } else {
+        btn.style.display='flex'; // نییە، پیشان بدە
+      }
+    }
+  }catch(e){/* بێدەنگ */}
+}
+</script>
+
+<!-- =====================================================================
+  SQL SCRIPTS (کۆمێنت — بۆ ڕێنمایی ئەدمین)
+  
+  ══════════════════════════════════════════════════════════════════════
+  ١. جەدوەلی pa_assets
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_assets (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    name TEXT NOT NULL,
+    asset_type TEXT NOT NULL CHECK (asset_type IN ('whatsapp','insta
