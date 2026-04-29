@@ -1977,29 +1977,30 @@ async function doAuth(){
         else{showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');return;}
       }
       cu=newUser;
-      // ══ AUTO REFERRAL — strict sequence ══════════════════════
+      // ══ AUTO REFERRAL — definitive fix ═══════════════════════
       const refCode=localStorage.getItem('proxo_ref');
       let referralSuccess=false;
       if(refCode){
         try{
-          // STEP 1 ── RPC یەکەم: دڵنیابوون SQL تەواو بووە
+          // STEP 1 — await RPC: SQL must fully commit before we continue
           const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
             p_new_user_id:cu.id,
             p_ref_code:refCode
           });
           localStorage.removeItem('proxo_ref');
           if(!rErr && rData?.ok===true) referralSuccess=true;
-          // STEP 2 ── کچکەی کووتا: supabase replication تەواو بێت
-          await new Promise(r=>setTimeout(r,500));
         }catch(_){localStorage.removeItem('proxo_ref');}
       }
-      // STEP 3 ── boot() دوای RPC: ensureCoinsWallet+loadCoins
-      // ئێستا ڕیزی pa_coins پێشتر لەلایەن SQL دروستکراوە و 50 کۆینی تێدایە
+      // STEP 2 — 1500ms delay only when referral succeeded
+      if(referralSuccess) await new Promise(r=>setTimeout(r,1500));
+      // STEP 3 — boot(): builds UI, wallet, runs loadCoins() internally
       await boot();
       if(referralSuccess){
-        // STEP 4 ── دووبارە loadCoins() بانگ بکە تا badge نوێترین ژمارە نیشان بدات
+        // STEP 4a — Force direct DOM update immediately (no DB round-trip)
+        updateCoinsBadge(50);
+        // STEP 4b — Fetch fresh value from DB to confirm real balance
         await loadCoins();
-        // STEP 5 ── پەیامی سەرکەوتن دوای نوێکردنەوەی UI
+        // STEP 5 — Toast only after UI is confirmed updated
         showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
       }
       return;
@@ -4710,7 +4711,4 @@ async function checkDbReady(){
   CREATE TABLE pa_notifications (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    type TEXT NOT NULL DEFAULT 'general',
-    title TEXT,
-    body TEXT,
-    is_read BOOL
+    type TEXT NOT NULL DEFAULT 'ge
