@@ -289,6 +289,36 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .rcpt-prev-wrap{background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:14px;text-align:center;margin-top:10px;}
 .rcpt-prev-wrap img{max-width:100%;border-radius:8px;border:1px solid var(--b1);}
 </style>
+<!-- ══ SQL SETUP NOTICE ══
+بۆ ئەوەی پانێڵی ئادمین بە تەواوی کار بکات، ئەم SQL ە لە Supabase SQL Editor ئەجرا بکە:
+
+CREATE OR REPLACE FUNCTION admin_add_balance(p_user_id UUID, p_amount NUMERIC, p_note TEXT DEFAULT '')
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  INSERT INTO pa_wallets(user_id,balance) VALUES(p_user_id,0)
+    ON CONFLICT(user_id) DO NOTHING;
+  UPDATE pa_wallets SET balance=balance+p_amount, updated_at=NOW() WHERE user_id=p_user_id;
+  INSERT INTO pa_transactions(user_id,amount,kind,status,note) VALUES(p_user_id,p_amount,'deposit','approved',p_note);
+END; $$;
+
+CREATE OR REPLACE FUNCTION admin_deduct_balance(p_user_id UUID, p_amount NUMERIC, p_note TEXT DEFAULT '')
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  UPDATE pa_wallets SET balance=GREATEST(0,balance-p_amount), updated_at=NOW() WHERE user_id=p_user_id;
+  INSERT INTO pa_transactions(user_id,amount,kind,status,note) VALUES(p_user_id,p_amount,'spend','approved',p_note);
+END; $$;
+
+REVOKE ALL ON FUNCTION admin_add_balance FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION admin_add_balance TO authenticated;
+REVOKE ALL ON FUNCTION admin_deduct_balance FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION admin_deduct_balance TO authenticated;
+
+-- RLS بۆ profiles (ئادمین بتوانێت هەموو بخوێنێتەوە)
+CREATE POLICY "Admin read all profiles" ON profiles FOR SELECT USING (
+  EXISTS(SELECT 1 FROM profiles WHERE id=auth.uid() AND is_admin=true)
+);
+-- ══ END SQL SETUP ══ -->
+
 </head>
 <body>
 
@@ -381,6 +411,17 @@ tr:hover td{background:rgba(28,35,51,.015);}
 
     <!-- ══ DASHBOARD ══ -->
     <div class="pg on" id="pgDashboard">
+      <!-- Setup Notice -->
+      <div id="setupNoticeBox" style="display:none;align-items:flex-start;gap:12px;background:linear-gradient(135deg,#7f1d1d,#991b1b);border-radius:16px;padding:16px 18px;margin-bottom:16px">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">⚠️</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:4px">RPC Functions دانەنراون</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.75);line-height:1.8">
+            بۆ ئەوەی پەسەندکردن و زیادکردنی باڵانس کار بکات، تکایە SQL ی ناو کۆمێنتی سەروو فایلەکە لە Supabase SQL Editor ئەجرا بکە.
+          </div>
+          <button onclick="this.closest('#setupNoticeBox').style.display='none'" style="margin-top:8px;padding:6px 14px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:8px;color:#fff;font-family:'R',sans-serif;font-size:12px;cursor:pointer">پاش ئەمە داخستن</button>
+        </div>
+      </div>
       <div class="stats-row" id="statsRow">
         <div class="stat-card"><div class="stat-ico dark"><i class="fas fa-users"></i></div><div class="stat-info"><div class="stat-val" id="stUsers">—</div><div class="stat-lbl">کۆی بەکارهێنەران</div></div></div>
         <div class="stat-card"><div class="stat-ico gr"><i class="fas fa-dollar-sign"></i></div><div class="stat-info"><div class="stat-val" id="stBalance">—</div><div class="stat-lbl">کۆی باڵانس</div></div></div>
@@ -744,10 +785,12 @@ async function doLogout(){
 }
 
 // ══ SHOW APP ══
-function showApp(){
+async function showApp(){
   document.getElementById('authWrap').style.display='none';
   document.getElementById('main').classList.add('show');
-  const name=adminUser.email.split('@')[0];
+  // پرۆفایلی ئادمین بارکە
+  const{data:adminProf}=await sb.from('profiles').select('full_name,avatar_b64').eq('id',adminUser.id).single();
+  const name=adminProf?.full_name||adminUser.email.split('@')[0];
   document.getElementById('sbAv').textContent=name[0].toUpperCase();
   document.getElementById('sbAdminName').textContent=name;
   loadDashboard();
@@ -791,7 +834,19 @@ function setupRealtime(){
 }
 
 // ══ DASHBOARD ══
-async function loadDashboard(){loadDashboardStats();loadDashDeposits();}
+async function loadDashboard(){
+  loadDashboardStats();
+  loadDashDeposits();
+  checkAdminSetup();
+}
+
+async function checkAdminSetup(){
+  // چێکردنەوەی RPC
+  const{error}=await sb.rpc('admin_add_balance',{p_user_id:'00000000-0000-0000-0000-000000000000',p_amount:0,p_note:'test'});
+  const rpcOk=!error||error.message.includes('not found')||error.message.includes('no rows')||error.message.includes('violates')||error.message.includes('uuid');
+  const box=document.getElementById('setupNoticeBox');
+  if(box) box.style.display=rpcOk?'none':'flex';
+}
 
 async function loadDashboardStats(){
   const[{count:users},{data:wallets},{data:pendDeps},{data:ads},{data:banned},{data:coins}]=await Promise.all([
@@ -836,8 +891,34 @@ async function loadDashDeposits(){
 
 // ══ USERS ══
 async function loadUsers(){
-  const{data}=await sb.from('profiles').select('*,pa_wallets(balance),pa_coins(coins_balance)').order('created_at',{ascending:false});
-  allUsers=data||[];renderUsers();
+  // ١. پرۆفایلەکان بار بکە
+  const{data:profs,error:profErr}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
+  if(profErr){
+    console.error('profiles error:',profErr.message);
+    // RLS کێشە — پیامی ئاشکرا
+    if(profErr.message.includes('permission')||profErr.message.includes('policy')||profErr.code==='PGRST301'||profErr.code==='42501'){
+      showToast('❌ RLS کێشە: ئادمین مافی خوێندنەوەی profiles نییەتی — SQL Setup ئەجرا بکە','rd');
+      document.getElementById('setupNoticeBox').style.display='flex';
+    } else {
+      showToast('هەڵە: '+profErr.message,'rd');
+    }
+    allUsers=[];renderUsers();return;
+  }
+  if(!profs?.length){allUsers=[];renderUsers();return;}
+  // ٢. جزدانەکان و کۆینەکان بار بکە
+  const uids=profs.map(p=>p.id);
+  const[{data:wallets},{data:coins}]=await Promise.all([
+    sb.from('pa_wallets').select('user_id,balance').in('user_id',uids),
+    sb.from('pa_coins').select('user_id,coins_balance').in('user_id',uids),
+  ]);
+  const wMap={};(wallets||[]).forEach(w=>{wMap[w.user_id]=w;});
+  const cMap={};(coins||[]).forEach(c=>{cMap[c.user_id]=c;});
+  allUsers=profs.map(p=>({
+    ...p,
+    pa_wallets:wMap[p.id]||{balance:0},
+    pa_coins:cMap[p.id]||{coins_balance:0},
+  }));
+  renderUsers();
 }
 
 function filterUsers(el){
@@ -962,13 +1043,19 @@ async function confirmAddBalance(){
   const note=document.getElementById('addBalNote').value.trim()||'زیادکردنی ئادمین';
   if(!uid){showToast('بەکارهێنەرێک هەڵبژێرە','rd');return;}
   if(!amt||amt<=0){showToast('بڕ داخل بکە','rd');return;}
+  // ١. upsert wallet
   await sb.from('pa_wallets').upsert({user_id:uid,balance:0},{onConflict:'user_id',ignoreDuplicates:true});
-  const{data:wallet}=await sb.from('pa_wallets').select('balance').eq('user_id',uid).single();
-  const newBal=parseFloat(wallet?.balance||0)+amt;
-  const{error}=await sb.from('pa_wallets').update({balance:newBal,updated_at:new Date().toISOString()}).eq('user_id',uid);
-  if(error){showToast('هەڵە: '+error.message,'rd');return;}
-  await sb.from('pa_transactions').insert({user_id:uid,amount:amt,type:'deposit',status:'approved',note:'ئادمین: '+note});
-  await sb.from('pa_notifications').insert({user_id:uid,type:'balance_added',title:'باڵانست زیادکرا 💰',body:`ئادمین $${amt.toFixed(2)} زیادی کرد بۆ باڵانسەکەت.`,is_read:false});
+  // ٢. RPC بۆ زیادکردنی بالانس (SECURITY DEFINER)
+  const{error}=await sb.rpc('admin_add_balance',{p_user_id:uid,p_amount:amt,p_note:'ئادمین: '+note});
+  if(error){
+    // Fallback: ئەگەر RPC نەبوو، ڕاستەوخۆ هەوڵ بدە
+    const{data:w}=await sb.from('pa_wallets').select('balance').eq('user_id',uid).single();
+    const newBal=parseFloat(w?.balance||0)+amt;
+    const{error:e2}=await sb.from('pa_wallets').update({balance:newBal,updated_at:new Date().toISOString()}).eq('user_id',uid);
+    if(e2){showToast('هەڵە: '+e2.message+' — تکایە RPC دانابنێ','rd');return;}
+    await sb.from('pa_transactions').insert({user_id:uid,amount:amt,kind:'deposit',status:'approved',note:'ئادمین: '+note});
+    await sb.from('pa_notifications').insert({user_id:uid,type:'balance_added',title:'باڵانست زیادکرا 💰',body:`ئادمین $${amt.toFixed(2)} زیادی کرد بۆ باڵانسەکەت.`,is_read:false});
+  }
   showToast('✅ $'+amt.toFixed(2)+' زیادکرا','gr');
   closeMo('moAddBalance');loadUsers();loadDashboardStats();
 }
@@ -979,12 +1066,18 @@ async function confirmDeductBalance(){
   const note=document.getElementById('deductBalNote').value.trim()||'وەرگرتنی ئادمین';
   if(!uid){showToast('بەکارهێنەرێک هەڵبژێرە','rd');return;}
   if(!amt||amt<=0){showToast('بڕ داخل بکە','rd');return;}
+  // چێکردنەوە
   const{data:wallet}=await sb.from('pa_wallets').select('balance').eq('user_id',uid).single();
   const cur=parseFloat(wallet?.balance||0);
-  if(cur<amt){showToast('باڵانسی بەکارهێنەر بەسنییە','rd');return;}
-  const{error}=await sb.from('pa_wallets').update({balance:cur-amt,updated_at:new Date().toISOString()}).eq('user_id',uid);
-  if(error){showToast('هەڵە: '+error.message,'rd');return;}
-  await sb.from('pa_transactions').insert({user_id:uid,amount:amt,type:'withdrawal',status:'approved',note:'ئادمین: '+note});
+  if(cur<amt){showToast('باڵانسی بەکارهێنەر بەسنییە ($'+cur.toFixed(2)+' مایەوە)','rd');return;}
+  // RPC
+  const{error:rpcErr}=await sb.rpc('admin_deduct_balance',{p_user_id:uid,p_amount:amt,p_note:'ئادمین: '+note});
+  if(rpcErr){
+    // Fallback
+    const{error:wErr}=await sb.from('pa_wallets').update({balance:cur-amt,updated_at:new Date().toISOString()}).eq('user_id',uid);
+    if(wErr){showToast('هەڵەی wallet: '+wErr.message,'rd');return;}
+    await sb.from('pa_transactions').insert({user_id:uid,amount:amt,kind:'spend',status:'approved',note:'ئادمین: '+note});
+  }
   showToast('✅ $'+amt.toFixed(2)+' وەرگیرا','gr');
   closeMo('moDeductBalance');loadUsers();loadDashboardStats();
 }
@@ -1059,10 +1152,19 @@ function showDepDetail(d){
 async function approveDeposit(id,userId,amount){
   confirm2('پەسەندکردنی پارەدان',`ئایا دەتەوێت $${parseFloat(amount).toFixed(2)} زیاد بکەیت؟`,
     'fas fa-check-circle','var(--gr)',async()=>{
-      await sb.from('pa_transactions').update({status:'approved'}).eq('id',id);
-      await sb.from('pa_wallets').upsert({user_id:userId,balance:0},{onConflict:'user_id',ignoreDuplicates:true});
-      const{data:w}=await sb.from('pa_wallets').select('balance').eq('user_id',userId).single();
-      await sb.from('pa_wallets').update({balance:parseFloat(w?.balance||0)+parseFloat(amount),updated_at:new Date().toISOString()}).eq('user_id',userId);
+      // ١. تراناکشن approved بکە
+      const{error:txErr}=await sb.from('pa_transactions').update({status:'approved'}).eq('id',id);
+      if(txErr){showToast('هەڵە: '+txErr.message,'rd');return;}
+      // ٢. RPC بۆ زیادکردنی بالانس
+      const{error:rpcErr}=await sb.rpc('admin_add_balance',{p_user_id:userId,p_amount:parseFloat(amount),p_note:'پەسەندکردنی پارەدان #'+id});
+      if(rpcErr){
+        // Fallback ئەگەر RPC نەبوو
+        await sb.from('pa_wallets').upsert({user_id:userId,balance:0},{onConflict:'user_id',ignoreDuplicates:true});
+        const{data:w}=await sb.from('pa_wallets').select('balance').eq('user_id',userId).single();
+        const{error:wErr}=await sb.from('pa_wallets').update({balance:parseFloat(w?.balance||0)+parseFloat(amount),updated_at:new Date().toISOString()}).eq('user_id',userId);
+        if(wErr){showToast('هەڵەی wallet: '+wErr.message+' (RPC نەبوو)','rd');return;}
+      }
+      // ٣. ئاگاداری بنێرە
       await sb.from('pa_notifications').insert({user_id:userId,type:'deposit_approved',title:'پارەدانت پەسەندکرا ✅',body:`$${parseFloat(amount).toFixed(2)} زیادکرا بۆ باڵانسەکەت.`,is_read:false});
       showToast('✅ پارەدان پەسەندکرا','gr');
       loadDeposits();loadDashboardStats();
