@@ -1845,19 +1845,8 @@ async function checkAndApplyRef(){
   // ئەگەر insert سەرکەوت نەبوو (duplicate یان هەر هەڵەیەک) — هیچ کۆینێک نەدە
   if(insErr) return;
 
-  // ── تەنها ئێستا کۆین بدە — insert سەرکەوتبوو یەکجارێک
-  const {data: refCoins} = await sb.from('pa_coins').select('coins_balance').eq('user_id', referrerId).maybeSingle();
-  const newBal = (parseInt(refCoins?.coins_balance||0)) + 50;
-  // upsert: ئەگەر row نەبوو دروستی بکە، ئەگەر بوو نوێیبکەرەوە
-  await sb.from('pa_coins').upsert(
-    {user_id: referrerId, coins_balance: newBal},
-    {onConflict: 'user_id'}
-  );
-  await sb.from('pa_coin_transactions').insert({
-    user_id: referrerId, amount: 50,
-    reason: 'بانگێشتکردنی بەکارهێنەری نوێ',
-    balance_after: newBal
-  });
+  // ── تەنها ئێستا کۆین بدە — لە ڕێگەی RPC فەنکشن (security definer)
+  await sb.rpc('award_referral_coins', { p_referrer_id: referrerId, p_amount: 50 });
 
   // ── URL پاک بکەرەوە
   window.history.replaceState({}, '', window.location.pathname);
@@ -3512,8 +3501,30 @@ CREATE TABLE IF NOT EXISTS pa_referrals (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
-CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
+-- پۆلیسییەکانی نوێ (پۆلیسییەکانی کۆن DROP بکە ئەگەر پێشتر دانراون):
+-- DROP POLICY IF EXISTS "Own referrals" ON pa_referrals;
+-- DROP POLICY IF EXISTS "Check ref code" ON pa_referrals;
+CREATE POLICY "Referrer read own" ON pa_referrals FOR SELECT USING (auth.uid() = referrer_id OR auth.uid() = referred_id);
+CREATE POLICY "Referred user insert" ON pa_referrals FOR INSERT WITH CHECK (auth.uid() = referred_id);
+-- pa_coins: بەکارهێنەری تر بتوانێت کۆینی referrer نوێ بکاتەوە
+-- DROP POLICY IF EXISTS "Users manage own coins" ON pa_coins;
+CREATE POLICY "Users manage own coins" ON pa_coins FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Allow referral coins update" ON pa_coins FOR UPDATE USING (true) WITH CHECK (true);
+
+-- ═══ فەنکشنی خەیرخوازانەی کۆین بۆ referrer (SECURITY DEFINER = RLS تێپەڕدەکات) ═══
+CREATE OR REPLACE FUNCTION award_referral_coins(p_referrer_id UUID, p_amount INT DEFAULT 50)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE v_new_bal INT;
+BEGIN
+  INSERT INTO pa_coins(user_id, coins_balance)
+    VALUES(p_referrer_id, p_amount)
+    ON CONFLICT(user_id)
+    DO UPDATE SET coins_balance = pa_coins.coins_balance + p_amount;
+  SELECT coins_balance INTO v_new_bal FROM pa_coins WHERE user_id = p_referrer_id;
+  INSERT INTO pa_coin_transactions(user_id, amount, reason, balance_after)
+    VALUES(p_referrer_id, p_amount, 'بانگێشتکردنی بەکارهێنەری نوێ', v_new_bal);
+END;
+$$;
 
 -- ref_code زیاد بکە بۆ profiles
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
@@ -3767,8 +3778,15 @@ CREATE TABLE IF NOT EXISTS pa_referrals (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
-CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
+-- پۆلیسییەکانی نوێ (پۆلیسییەکانی کۆن DROP بکە ئەگەر پێشتر دانراون):
+-- DROP POLICY IF EXISTS "Own referrals" ON pa_referrals;
+-- DROP POLICY IF EXISTS "Check ref code" ON pa_referrals;
+CREATE POLICY "Referrer read own" ON pa_referrals FOR SELECT USING (auth.uid() = referrer_id OR auth.uid() = referred_id);
+CREATE POLICY "Referred user insert" ON pa_referrals FOR INSERT WITH CHECK (auth.uid() = referred_id);
+-- pa_coins: بەکارهێنەری تر بتوانێت کۆینی referrer نوێ بکاتەوە
+-- DROP POLICY IF EXISTS "Users manage own coins" ON pa_coins;
+CREATE POLICY "Users manage own coins" ON pa_coins FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Allow referral coins update" ON pa_coins FOR UPDATE USING (true) WITH CHECK (true);
 
 -- ref_code زیاد بکە بۆ profiles
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
@@ -3992,8 +4010,15 @@ CREATE TABLE IF NOT EXISTS pa_referrals (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
-CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
+-- پۆلیسییەکانی نوێ (پۆلیسییەکانی کۆن DROP بکە ئەگەر پێشتر دانراون):
+-- DROP POLICY IF EXISTS "Own referrals" ON pa_referrals;
+-- DROP POLICY IF EXISTS "Check ref code" ON pa_referrals;
+CREATE POLICY "Referrer read own" ON pa_referrals FOR SELECT USING (auth.uid() = referrer_id OR auth.uid() = referred_id);
+CREATE POLICY "Referred user insert" ON pa_referrals FOR INSERT WITH CHECK (auth.uid() = referred_id);
+-- pa_coins: بەکارهێنەری تر بتوانێت کۆینی referrer نوێ بکاتەوە
+-- DROP POLICY IF EXISTS "Users manage own coins" ON pa_coins;
+CREATE POLICY "Users manage own coins" ON pa_coins FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Allow referral coins update" ON pa_coins FOR UPDATE USING (true) WITH CHECK (true);
 
 -- ref_code زیاد بکە بۆ profiles
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
@@ -4670,51 +4695,4 @@ async function checkDbReady(){
   CREATE POLICY "Users manage own assets" ON pa_assets
     FOR ALL USING (auth.uid() = user_id);
   
-  ══════════════════════════════════════════════════════════════════════
-  ٢. جەدوەلی pa_notifications
-  ══════════════════════════════════════════════════════════════════════
-  CREATE TABLE pa_notifications (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    type TEXT NOT NULL DEFAULT 'general',
-    title TEXT,
-    body TEXT,
-    is_read BOOLEAN DEFAULT FALSE,
-    related_id UUID,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-  );
-  ALTER TABLE pa_notifications ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Users read own notifications" ON pa_notifications
-    FOR ALL USING (auth.uid() = user_id);
-  
-  ══════════════════════════════════════════════════════════════════════
-  ٣. تریگەری ئاگاداری کاتێک ئەدمین ستاتۆس گۆڕی
-  ══════════════════════════════════════════════════════════════════════
-  CREATE OR REPLACE FUNCTION notify_ad_status_change()
-  RETURNS TRIGGER AS $$
-  DECLARE
-    notif_type TEXT;
-    notif_title TEXT;
-    notif_body TEXT;
-    v_meta JSONB;
-  BEGIN
-    IF OLD.status IS DISTINCT FROM NEW.status THEN
-      v_meta := jsonb_build_object('ad_number', NEW.ad_number, 'ad_title', NEW.title);
-      CASE NEW.status
-        WHEN 'active' THEN
-          notif_type := 'ad_active';
-          notif_title := 'ڕیکلامت چالاکبوو 🟢';
-          notif_body  := 'ڕیکلامەکەت دەستیپێکرد و ئێستا لە تیکتۆک پیشاندەدرێت.';
-        WHEN 'approved' THEN
-          notif_type := 'ad_approved';
-          notif_title := 'ڕیکلامت پەسەندکرا ✅';
-          notif_body  := 'داواکاریەکەت پەسەندکرا و بەم زووانە دەستیپێدەکات.';
-        WHEN 'rejected' THEN
-          notif_type := 'ad_rejected';
-          notif_title := 'ڕیکلامت ڕەتکرا ❌';
-          notif_body  := COALESCE('هۆکاری ڕەتکردن: ' || NEW.reject_reason, 'ڕیکلامەکەت ڕەتکرا.');
-          -- ═══ گەڕانەوەی خۆکاری پارە کاتی ڕەتکردن ═══
-          -- ١. گەڕاندنەوەی بالانس
-          UPDATE pa_wallets
-            SET balance=balance+NEW.budget, updated_at=NOW()
-            WHERE user_id=NEW
+  ══════════════════════════════════════════════════════════
