@@ -790,7 +790,7 @@ function showApp(){
   const name=adminUser.email.split('@')[0];
   document.getElementById('sbAv').textContent=name[0].toUpperCase();
   document.getElementById('sbAdminName').textContent=name;
-  loadDashboard();
+  goPage('dashboard');
   setupRealtime();
 }
 
@@ -876,8 +876,16 @@ async function loadDashDeposits(){
 
 // ══ USERS ══
 async function loadUsers(){
-  const{data}=await sb.from('profiles').select('*,pa_wallets(balance),pa_coins(coins_balance)').order('created_at',{ascending:false});
-  allUsers=data||[];renderUsers();
+  try{
+    // هەوڵ بدە بەکارهێنەران بار بکەیت بە email
+    const{data,error}=await sb.from('profiles').select('*,pa_wallets(balance),pa_coins(coins_balance)').order('created_at',{ascending:false});
+    if(error){showToast('هەڵەی بارکردنی بەکارهێنەران: '+error.message,'rd');allUsers=[];renderUsers();return;}
+    allUsers=data||[];
+    renderUsers();
+  }catch(e){
+    console.error('loadUsers error:',e);
+    allUsers=[];renderUsers();
+  }
 }
 
 function filterUsers(el){
@@ -892,9 +900,16 @@ function renderUsers(q=''){
   let list=allUsers;
   if(userFilter==='active')list=list.filter(u=>!u.is_banned);
   if(userFilter==='banned')list=list.filter(u=>u.is_banned);
-  if(q)list=list.filter(u=>(u.full_name||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q));
+  if(q)list=list.filter(u=>(u.full_name||'').toLowerCase().includes(q)||(u.email||u.id||'').toLowerCase().includes(q));
   const wrap=document.getElementById('usersTableWrap');
-  if(!list.length){wrap.innerHTML='<div class="empty"><i class="fas fa-users-slash"></i><p>هیچ بەکارهێنەرێک نەدۆزرایەوە</p></div>';return;}
+  if(!list.length){
+    if(allUsers.length===0){
+      wrap.innerHTML='<div class="empty"><i class="fas fa-users-slash"></i><p>هیچ بەکارهێنەرێک نەدۆزرایەوە</p><p style="font-size:11px;margin-top:8px;color:var(--mt)">دڵنیابە جەدوەلی profiles لە Supabase هەیە</p></div>';
+    } else {
+      wrap.innerHTML='<div class="empty"><i class="fas fa-users-slash"></i><p>هیچ بەکارهێنەرێک نەدۆزرایەوە</p></div>';
+    }
+    return;
+  }
   wrap.innerHTML=`<table>
     <thead><tr><th>#</th><th>بەکارهێنەر</th><th>باڵانس</th><th>کۆین</th><th>باری</th><th>بەروار</th><th>کردارەکان</th></tr></thead>
     <tbody>${list.map((u,i)=>`<tr>
@@ -1300,12 +1315,30 @@ async function confirmReject(){
   const reason=document.getElementById('rejectReasonTxt').value.trim();
   if(!reason){showToast('هۆکار بنووسە','rd');return;}
   if(type==='deposit'){
-    await sb.from('pa_transactions').update({status:'rejected',reject_reason:reason}).eq('id',id);
+    // هەوڵ بدە بە reject_reason، ئەگەر شکستی هێنا بەبێ ئەو فیلدە هەوڵ بدە
+    let res=await sb.from('pa_transactions').update({status:'rejected',reject_reason:reason}).eq('id',id);
+    if(res.error){
+      // فیلدی reject_reason نەبوو، تەنها status نوێ بکەرەوە
+      res=await sb.from('pa_transactions').update({status:'rejected',note:'ڕەتکرا: '+reason}).eq('id',id);
+      if(res.error){showToast('هەڵە: '+res.error.message,'rd');return;}
+    }
     const dep=allDeposits.find(d=>d.id===id);
-    if(dep)await sb.from('pa_notifications').insert({user_id:dep.user_id,type:'deposit_rejected',title:'پارەدانت ڕەتکرا ❌',body:'هۆکار: '+reason,is_read:false});
+    if(dep){
+      await sb.from('pa_notifications').insert({
+        user_id:dep.user_id,
+        type:'deposit_rejected',
+        title:'پارەدانت ڕەتکرا ❌',
+        body:'هۆکار: '+reason,
+        is_read:false
+      });
+    }
     loadDeposits();
   } else {
-    await sb.from('pa_ads').update({status:'rejected',reject_reason:reason}).eq('id',id);
+    let res=await sb.from('pa_ads').update({status:'rejected',reject_reason:reason}).eq('id',id);
+    if(res.error){
+      res=await sb.from('pa_ads').update({status:'rejected'}).eq('id',id);
+      if(res.error){showToast('هەڵە: '+res.error.message,'rd');return;}
+    }
     loadAds();
   }
   closeMo('moRejectReason');
