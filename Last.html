@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Proxo Ads</title>
+<title>Proxo App</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -1770,6 +1770,10 @@ async function boot(){
   await loadBal();
   await loadCoins();
   loadProfile();
+  // Check for any rejections that happened while user was offline
+  sb.from('pa_ads').select('id,status,ad_number').eq('user_id',cu.id).then(({data})=>{
+    checkAndDeductRejectedCoins(data||[]);
+  });
   loadMyCards();
   goPage('home');
   checkDbReady(); // چێکردنەوەی ئایا فەنکشنی داتابەیس دانراوە
@@ -1782,16 +1786,6 @@ async function boot(){
     })
     .subscribe();
 
-  // Proxo Coins: listen for ad status → rejected, deduct coins
-  sb.channel('coins_ads_'+cu.id)
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads',filter:`user_id=eq.${cu.id}`},(payload)=>{
-      if(payload.new?.status==='rejected' && payload.old?.status!=='rejected'){
-        addCoins(-COINS_PER_AD,'ڕیکلامی ڕەتکراو — کۆین کەمکرایەوە').then(()=>{
-          showToast('ڕیکلامەکەت ڕەتکرا — 50 🪙 کۆین کەمکرایەوە','err');
-        });
-      }
-    })
-    .subscribe();
 }
 
 // ═══ SIDEBAR ═══
@@ -1847,20 +1841,37 @@ async function doLogout(){
 // ════════════════════════════════════════════════
 // PROXO COINS — Complete System
 // ════════════════════════════════════════════════
+// ══ PROXO COINS — Rejection Deduction (localStorage guard) ══
+const processedRejections = new Set(
+  JSON.parse(localStorage.getItem('proxo_rejected_ids') || '[]')
+);
+
+async function checkAndDeductRejectedCoins(ads){
+  for(const ad of ads){
+    if(ad.status==='rejected' && !processedRejections.has(ad.id)){
+      processedRejections.add(ad.id);
+      // Persist so we never deduct twice, even across sessions
+      try{localStorage.setItem('proxo_rejected_ids',JSON.stringify([...processedRejections]));}catch(e){}
+      await addCoins(-COINS_PER_AD,'ڕیکلامی ڕەتکراو #'+(ad.ad_number||''));
+      showToast('ڕیکلامی #'+(ad.ad_number||'—')+' ڕەتکرا — 50 🪙 کەمکرایەوە','err');
+    }
+  }
+}
+
 const COINS_PER_AD    = 50;
 const COINS_MIN_EXCHANGE = 500;
 const COINS_TO_USD    = 0.01; // 1 coin = $0.01, so 50 coins = $0.50
 
 async function ensureCoinsWallet(){
-  // upsert a row in pa_coins (coins_balance column)
-  await sb.from('pa_coins').upsert(
-    {user_id:cu.id, coins_balance:0},
+  // coins_balance lives inside pa_wallets (ALTER TABLE pa_wallets ADD COLUMN IF NOT EXISTS coins_balance INT DEFAULT 0)
+  await sb.from('pa_wallets').upsert(
+    {user_id:cu.id, balance:0, coins_balance:0},
     {onConflict:'user_id', ignoreDuplicates:true}
   );
 }
 
 async function loadCoins(){
-  const{data,error}=await sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single();
+  const{data,error}=await sb.from('pa_wallets').select('coins_balance').eq('user_id',cu.id).single();
   if(error&&error.code!=='PGRST116') return 0;
   const coins=parseInt(data?.coins_balance||0);
   updateCoinsBadge(coins);
@@ -1885,24 +1896,17 @@ function updateCoinsBadge(coins){
 }
 
 async function addCoins(amount, reason){
-  // Read current balance
-  const{data}=await sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single();
+  // Read current coins from pa_wallets
+  const{data}=await sb.from('pa_wallets').select('coins_balance').eq('user_id',cu.id).single();
   const current=parseInt(data?.coins_balance||0);
   const newBal=Math.max(0, current+amount);
-  await sb.from('pa_coins').update({coins_balance:newBal}).eq('user_id',cu.id);
-  // Log in coin_transactions table
-  await sb.from('pa_coin_transactions').insert({
-    user_id: cu.id,
-    amount:  amount,
-    reason:  reason||'',
-    balance_after: newBal
-  }).maybeSingle();
+  await sb.from('pa_wallets').update({coins_balance:newBal}).eq('user_id',cu.id);
   updateCoinsBadge(newBal);
   return newBal;
 }
 
 function openCoinsModal(){
-  sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single().then(({data})=>{
+  sb.from('pa_wallets').select('coins_balance').eq('user_id',cu.id).single().then(({data})=>{
     const coins=parseInt(data?.coins_balance||0);
     const usdVal=(coins*COINS_TO_USD).toFixed(2);
     const progress=Math.min(100,(coins/COINS_MIN_EXCHANGE)*100);
@@ -1936,7 +1940,7 @@ function openCoinsModal(){
 
 async function exchangeCoins(){
   const btn=document.getElementById('coinsExchangeBtn');
-  const{data}=await sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single();
+  const{data}=await sb.from('pa_wallets').select('coins_balance,balance').eq('user_id',cu.id).single();
   const coins=parseInt(data?.coins_balance||0);
   if(coins<COINS_MIN_EXCHANGE){showToast('٥٠٠ کۆین پێویستە','err');return;}
 
@@ -1944,26 +1948,22 @@ async function exchangeCoins(){
   btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> گۆڕانەوە...';
 
   try{
-    const dollarsToAdd=parseFloat((coins*COINS_TO_USD).toFixed(2));
-    // Deduct all coins
-    await sb.from('pa_coins').update({coins_balance:0}).eq('user_id',cu.id);
-    // Add to wallet
-    const{data:wd}=await sb.from('pa_wallets').select('balance').eq('user_id',cu.id).single();
-    const newWalBal=parseFloat(wd?.balance||0)+dollarsToAdd;
-    await sb.from('pa_wallets').update({balance:newWalBal}).eq('user_id',cu.id);
-    // Log coin transaction
-    await sb.from('pa_coin_transactions').insert({
-      user_id:cu.id, amount:-coins,
-      reason:'گۆڕانەوە بۆ بالانس — $'+dollarsToAdd,
-      balance_after:0
-    }).maybeSingle();
+    const coinsToUse=(Math.floor(coins/COINS_MIN_EXCHANGE))*COINS_MIN_EXCHANGE;
+    const dollarsToAdd=parseFloat((coinsToUse*COINS_TO_USD).toFixed(2));
+    const coinsLeft=coins-coinsToUse;
+    const newWalBal=parseFloat(data?.balance||0)+dollarsToAdd;
+    // Single atomic UPDATE — deduct coins + credit balance together
+    await sb.from('pa_wallets').update({
+      coins_balance:coinsLeft,
+      balance:newWalBal
+    }).eq('user_id',cu.id);
     // Log wallet transaction
     await sb.from('pa_transactions').insert({
       user_id:cu.id, amount:dollarsToAdd,
-      type:'deposit', note:'گۆڕانەوەی '+coins+' کۆین پرۆکسۆ'
+      type:'deposit', note:'گۆڕانەوەی '+coinsToUse+' کۆین پرۆکسۆ'
     }).maybeSingle();
 
-    updateCoinsBadge(0);
+    updateCoinsBadge(coinsLeft);
     await loadBal();
     closeMo('moCoins');
     showToast('✅ $'+dollarsToAdd+' زیادکرا بۆ بالانسەکەت!','ok');
@@ -2635,7 +2635,10 @@ async function submitAd(){
 let allAds=[],filterStatus='all';
 async function loadMyAds(){
   const{data}=await sb.from('pa_ads').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
-  allAds=data||[];renderAds();
+  allAds=data||[];
+  // Deduct coins for any rejected ads not yet processed
+  await checkAndDeductRejectedCoins(allAds);
+  renderAds();
 }
 function filterAds(el){
   document.querySelectorAll('#adsFilter .fchip').forEach(x=>x.classList.remove('on'));
