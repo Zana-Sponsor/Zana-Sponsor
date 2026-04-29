@@ -1957,50 +1957,34 @@ async function doAuth(){
       let referralSuccess=false;
       if(refCode){
         try{
-          // ── PHONE ANTI-CHEAT ──────────────────────────────────
-          // ئەگەر بەکارهێنەر ژمارەی تەلەفۆن داوە، چێک بکە کە
-          // ئەو ژمارەیە پێشتر جایزەی referral وەرنەگرتووە
-          const phoneVal=(document.getElementById('updPhoneInp')?.value||'').trim();
-          let phoneBlocked=false;
-          if(phoneVal){
-            // گەڕان بۆ profiles کە ئەم phone و referral_rewarded=true هەیان
-            const{data:phoneDup}=await sb
-              .from('profiles')
-              .select('id')
-              .eq('phone',phoneVal)
-              .eq('referral_rewarded',true)
-              .neq('id',cu.id)
-              .maybeSingle();
-            if(phoneDup){
-              phoneBlocked=true;
-              localStorage.removeItem('proxo_ref');
-              console.warn('[Referral] Phone already used for bonus — blocked');
-              showToast('⚠️ ئەم ژمارەی تەلەفۆنە پێشتر جایزەی بانگێشتی وەرگرتووە','err');
-            }
-          }
-          // ─────────────────────────────────────────────────────
-          if(!phoneBlocked){
-            // STEP 1: await RPC — blocks until SQL fully commits
-            const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
-              p_new_user_id:cu.id,
-              p_ref_code:refCode
-            });
+          // ── DEVICE ANTI-CHEAT ─────────────────────────────────
+          // کێی بەکارهێنەر لە localStorage ذخیرە دەکرێت —
+          // ئەگەر ئەم مۆبایلە پێشتر جایزەی وەرگرتووە، بلۆک دەکرێت
+          const DEVICE_KEY='proxo_dev_claimed';
+          const alreadyClaimed=localStorage.getItem(DEVICE_KEY);
+          if(alreadyClaimed){
             localStorage.removeItem('proxo_ref');
-            if(!rErr && rData?.ok===true){
-              referralSuccess=true;
-              console.log('[Referral] RPC ok — force-updating UI to 50 coins');
-              // STEP 2: Immediate DOM injection before boot() runs
-              updateCoinsBadge(50);
-              // نیشان بدە کە ئەم ژمارەی تەلەفۆنە جایزەی وەرگرتووە
-              if(phoneVal){
-                await sb.from('profiles')
-                  .update({referral_rewarded:true,phone:phoneVal})
-                  .eq('id',cu.id);
-              }
-            }else{
-              console.log('[Referral] RPC returned:',rData,'err:',rErr);
-            }
+            console.warn('[Referral] Device already claimed bonus — blocked');
+            showToast('⚠️ ئەم مۆبایلە پێشتر جایزەی بانگێشتی وەرگرتووە','err');
+          } else {
+          // ─────────────────────────────────────────────────────
+          // STEP 1: await RPC — blocks until SQL fully commits
+          const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
+            p_new_user_id:cu.id,
+            p_ref_code:refCode
+          });
+          localStorage.removeItem('proxo_ref');
+          if(!rErr && rData?.ok===true){
+            referralSuccess=true;
+            // نیشانەی ئەم مۆبایلە کە جایزەی وەرگرتووە ذخیرە بکە
+            localStorage.setItem(DEVICE_KEY,'1');
+            console.log('[Referral] RPC ok — force-updating UI to 50 coins');
+            // STEP 2: Immediate DOM injection before boot() runs
+            updateCoinsBadge(50);
+          }else{
+            console.log('[Referral] RPC returned:',rData,'err:',rErr);
           }
+          } // end device check
         }catch(e){
           localStorage.removeItem('proxo_ref');
           console.log('[Referral] RPC exception:',e);
@@ -2041,22 +2025,21 @@ document.addEventListener('DOMContentLoaded',()=>{
   checkOnline();
   // ── REFERRAL CAPTURE ──────────────────────────────────────────
   (function captureReferral(){
-    // ── 1) ?ref=CODE  (query string — ئاسایی)
+    // ١) ?ref=CODE — ئاسایی (کاتێک سێرڤەر redirect ناکات)
     const params=new URLSearchParams(window.location.search);
     let ref=params.get('ref');
 
-    // ── 2) #ref=CODE  (hash — کاتێک سێرڤەر ?ref= دەسڕێتەوە)
+    // ٢) #ref=CODE — هاش بەکارهێنان (کاتێک سێرڤەر ?ref= دەسڕێتەوە، # دەمێنێتەوە)
     if(!ref){
-      const hash=window.location.hash; // e.g. "#ref=PRX-ABCD1234"
-      const hashParams=new URLSearchParams(hash.startsWith('#')?hash.slice(1):hash);
+      const hash=window.location.hash; // وێنە: "#ref=PRX-ABCD1234"
+      const hashParams=new URLSearchParams(hash.startsWith('#') ? hash.slice(1) : hash);
       ref=hashParams.get('ref')||null;
     }
 
     if(ref&&ref.trim()){
       const code=ref.trim().toUpperCase();
-      // تەنها ذخیرە بکە — پاکردنەوەی URL دواخستەوە تا checkAndApplyRef() نەخوێنێتەوە
       localStorage.setItem('proxo_ref',code);
-      // URL و hash فەوری پاک بکەرەوە تا کۆد دووبارە نەپرۆسێنرێت
+      // هەم query string هەم hash پاک بکەرەوە
       window.history.replaceState({},document.title,window.location.pathname);
     }
   })();
@@ -3579,12 +3562,6 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
 
--- ══ PHONE ANTI-CHEAT ══
--- ستوونی referral_rewarded — دیاری دەکات ئایا ئەم بەکارهێنەرە جایزەی referral وەرگرتووە
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS referral_rewarded BOOLEAN DEFAULT FALSE;
--- ئایندێکس بۆ گەڕانی خێرا
-CREATE INDEX IF NOT EXISTS idx_profiles_phone_rewarded ON profiles(phone) WHERE referral_rewarded = TRUE;
-
 ══════════════════════════════════════════════════════ -->
 </body>`);
   p.push('</html>');
@@ -3840,12 +3817,6 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
 
--- ══ PHONE ANTI-CHEAT ══
--- ستوونی referral_rewarded — دیاری دەکات ئایا ئەم بەکارهێنەرە جایزەی referral وەرگرتووە
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS referral_rewarded BOOLEAN DEFAULT FALSE;
--- ئایندێکس بۆ گەڕانی خێرا
-CREATE INDEX IF NOT EXISTS idx_profiles_phone_rewarded ON profiles(phone) WHERE referral_rewarded = TRUE;
-
 ══════════════════════════════════════════════════════ -->
 </body>`);
   p.push('</html>');
@@ -4070,12 +4041,6 @@ CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
-
--- ══ PHONE ANTI-CHEAT ══
--- ستوونی referral_rewarded — دیاری دەکات ئایا ئەم بەکارهێنەرە جایزەی referral وەرگرتووە
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS referral_rewarded BOOLEAN DEFAULT FALSE;
--- ئایندێکس بۆ گەڕانی خێرا
-CREATE INDEX IF NOT EXISTS idx_profiles_phone_rewarded ON profiles(phone) WHERE referral_rewarded = TRUE;
 
 ══════════════════════════════════════════════════════ -->
 </body>`);
@@ -4700,4 +4665,47 @@ function startReviewCountdown(totalSec){
     line1.style.width = line1Pct+'%';
     // ڕەنگی کاتژمێر گۆڕان بەپێی ماوەی مایەوە
     if(remaining < 60){ timerEl.style.color='#fb923c'; progBar.style.background='linear-gradient(90deg,#ea580c,#fb923c)'; }
-    else if(remaining < 120){ timerEl.style.color='#facc15'; progBar.style.background='linear-gradient(90deg
+    else if(remaining < 120){ timerEl.style.color='#facc15'; progBar.style.background='linear-gradient(90deg,#d97706,#facc15)'; }
+    else { timerEl.style.color='#4ade80'; progBar.style.background='linear-gradient(90deg,#16a34a,#4ade80)'; }
+  }
+
+  tick(); // یەکەم تیک خێرا
+  _cdInterval = setInterval(tick, 1000);
+}
+
+async function checkDbReady(){
+  try{
+    const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
+    // ئەگەر invalid_budget هاتەوە = فەنکشنەکە هەیە
+    const ready=error?.message?.includes('invalid_budget')||error?.message?.includes('بودجە');
+    const btn=document.getElementById('setupDbBtn');
+    if(btn){
+      if(ready){
+        btn.style.display='none'; // فەنکشنەکە هەیە، دووگمە شاری بکە
+      } else {
+        btn.style.display='flex'; // نییە، پیشان بدە
+      }
+    }
+  }catch(e){/* بێدەنگ */}
+}
+</script>
+
+<!-- =====================================================================
+  SQL SCRIPTS (کۆمێنت — بۆ ڕێنمایی ئەدمین)
+  
+  ══════════════════════════════════════════════════════════════════════
+  ١. جەدوەلی pa_assets
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_assets (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    name TEXT NOT NULL,
+    asset_type TEXT NOT NULL CHECK (asset_type IN ('whatsapp','instagram','phone','telegram','link')),
+    value TEXT NOT NULL,
+    note TEXT,
+    style TEXT DEFAULT 'classic',  -- نوێ: ستایلی کارت (classic, light, gradient)
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  -- ئەگەر جەدوەلەکەت پێشتر هەیە، ئەم ستوونە زیاد بکە:
+  -- ALTER TABLE pa_assets ADD COLUMN IF NOT EXISTS style TEXT DEFAULT 'classic';
+  ALTER TABLE
