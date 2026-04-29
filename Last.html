@@ -9,13 +9,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-@font-face{font-family:'R';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');}
+/* فۆنتی Rabar بۆ کوردی و عەرەبی */
+@font-face{font-family:'R';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');unicode-range:U+0600-06FF,U+FB50-FDFF,U+FE70-FEFF,U+0020-002F,U+003A-0040,U+005B-0060,U+007B-007E,U+0041-005A,U+0061-007A;}
+/* فۆنتی Inter بۆ ژمارەکان و نیشانەی دراو */
+@font-face{font-family:'R';src:local('Inter'),url('https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2') format('woff2');unicode-range:U+0030-0039,U+002E,U+002C,U+0025,U+0024,U+002B,U+002D;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-/* ژمارە و پیتی ئینگلیزی بە Inter */
-[dir=ltr],input[type=email],input[type=password],input[type=url],input[type=number],input[type=tel],input[type=date],input[type=time],.bal-num,.hbal span,.hcoins .coin-amt,.coins-modal-bal,.coins-value-row span:last-child,.tx-amt,.ad-num,.meth-num,.topbar-brand,.auth-brand h1,.sidebar-bal-val,.sidebar-email,.prof-email{font-family:'Inter',sans-serif !important;}
-.bal-num{font-weight:700 !important;}
-.hbal span,.hcoins .coin-amt,.sidebar-bal-val{font-weight:600 !important;}
-.topbar-brand{font-weight:700 !important;}
 :root{
   --bg:#f5f6fa;--w:#fff;--card:#fff;
   --b1:#e8eaf0;--b2:#d0d4de;
