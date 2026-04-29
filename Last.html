@@ -293,6 +293,16 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 .theme-dot.on{border-color:var(--dark);transform:scale(1.1);}
 .theme-dot i{font-size:12px;color:#fff;display:none;}
 .theme-dot.on i{display:block;}
+  
+/* ══ LIVE PREVIEW — PHONE SHELL ══ */
+.pl-phone-shell{width:100%;max-width:280px;background:#0d1021;border-radius:32px;border:2px solid rgba(255,255,255,.12);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);margin:0 auto;display:none;}
+.pl-phone-notch{width:80px;height:20px;background:#080b18;border-radius:0 0 12px 12px;margin:0 auto;}
+.pl-phone-frame{width:100%;height:520px;border:none;display:block;border-radius:0 0 30px 30px;}
+.pl-preview-empty{text-align:center;padding:30px;color:var(--mt);font-size:12px;}
+.tg-status-box{margin-top:14px;padding:11px 14px;border-radius:13px;font-size:12px;display:none;line-height:1.7;}
+.tg-status-box.ok{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr);}
+.tg-status-box.err{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:var(--rd);}
+.tg-status-box.loading{background:var(--bg);border:1px solid var(--b1);color:var(--mt);}
 
 /* ══ NOTIFICATIONS PAGE ══ */
 .notif-item{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-bottom:1px solid var(--b1);}
@@ -782,7 +792,7 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         <input class="finp" style="margin:0" type="time" id="adTime">
       </div>
 
-      <button class="submit-btn" id="submitBtn" onclick="submitAd()">
+      <button class="submit-btn" id="plSubmitBtn" onclick="submitPLCard()">
         <i class="fas fa-paper-plane"></i>
         ناردنی داواکاری
       </button>
@@ -903,13 +913,18 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         </div>
 
         <!-- Live Preview -->
-        <div class="plform-lbl" style="margin-top:16px"><i class="fas fa-eye" style="margin-left:5px;color:var(--bl)"></i>پێشبینی زیندوو</div>
-        <div id="plLivePreview" style="border:1.5px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:16px;background:var(--bg);min-height:80px;display:flex;align-items:center;justify-content:center">
-          <div style="text-align:center;padding:20px;color:var(--mt);font-size:12px">
-            <i class="fas fa-link" style="font-size:22px;display:block;margin-bottom:8px;opacity:.3"></i>
-            ناو بنووسە تا پێشبینی ببینیت
-          </div>
-        </div>
+<div class="plform-lbl" style="margin-top:16px"><i class="fas fa-eye" style="margin-left:5px;color:var(--bl)"></i>پێشبینی زیندوو</div>
+<div style="display:flex;justify-content:center;margin-bottom:16px">
+  <div id="plPhoneShell" class="pl-phone-shell">
+    <div class="pl-phone-notch"></div>
+    <iframe id="plPreviewFrame" class="pl-phone-frame" title="preview"></iframe>
+  </div>
+  <div id="plPreviewEmpty" class="pl-preview-empty">
+    <i class="fas fa-mobile-screen" style="font-size:28px;display:block;margin-bottom:8px;opacity:.3"></i>
+    ناو بنووسە تا پێشبینی ببینیت
+  </div>
+</div>
+<div class="tg-status-box" id="plTgStatus"></div>
 
         <button class="submit-btn" onclick="submitPLCard()">
           <i class="fas fa-bolt"></i>دروستکردنی کەرەستە
@@ -2415,6 +2430,10 @@ function showPLForm(){
 function hidePLForm(){
   document.getElementById('plListView').style.display='block';
   document.getElementById('plFormView').style.display='none';
+  document.getElementById('plPhoneShell').style.display='none';
+  document.getElementById('plPreviewEmpty').style.display='block';
+  document.getElementById('plTgStatus').style.display='none';
+  document.getElementById('plTgStatus').className='tg-status-box';
 }
 // ═══ PROXOLINK BUILDER ═══
 let plLogoB64='', plStyle='dark', plTheme='purple';
@@ -2489,16 +2508,22 @@ function loadPlLogo(inp){
 }
 
 function updatePLPreview(){
-  const wrap=document.getElementById('plLivePreview');
-  if(!wrap)return;
   const name=document.getElementById('plBrandName')?.value.trim()||'';
+  const shell=document.getElementById('plPhoneShell');
+  const empty=document.getElementById('plPreviewEmpty');
+  const frame=document.getElementById('plPreviewFrame');
+  if(!name){shell.style.display='none';empty.style.display='block';return;}
+  shell.style.display='block';empty.style.display='none';
   const bio=document.getElementById('plDesc')?.value.trim()||'';
   const tt=document.getElementById('plTT')?.value.trim().replace(/^@/,'')||'';
-
-  if(!name){
-    wrap.innerHTML=`<div style="text-align:center;padding:20px;color:var(--mt);font-size:12px"><i class="fas fa-link" style="font-size:22px;display:block;margin-bottom:8px;opacity:.3"></i>ناو بنووسە تا پێشبینی ببینیت</div>`;
-    return;
-  }
+  const platforms={};
+  plActivePlatforms.forEach(p=>{const v=document.getElementById('plat_'+p)?.value.trim();if(v)platforms[p]=v;});
+  const html=buildPLCardHTML(name,bio,tt,platforms,plLogoB64,plStyle,plTheme);
+  const blob=new Blob([html],{type:'text/html'});
+  if(frame._prevURL)URL.revokeObjectURL(frame._prevURL);
+  frame._prevURL=URL.createObjectURL(blob);
+  frame.src=frame._prevURL;
+}
 
   const tc=THEME_COLORS[plTheme]||THEME_COLORS.purple;
   const av=plLogoB64?`<img src="${plLogoB64}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
@@ -2564,48 +2589,35 @@ async function submitPLCard(){
   if(!name){showToast('ناو بنووسە','err');return;}
   if(!tt){showToast('ناوی تیکتۆک بنووسە','err');return;}
   if((plStyle==='dark'||plStyle==='light')&&!plLogoB64){showToast('وێنەی پرۆفایل پێویستە بۆ ستایلی '+plStyle,'err');return;}
-
   const platforms={};
-  plActivePlatforms.forEach(p=>{
-    const v=document.getElementById('plat_'+p)?.value.trim();
-    if(v)platforms[p]=v;
-  });
+  plActivePlatforms.forEach(p=>{const v=document.getElementById('plat_'+p)?.value.trim();if(v)platforms[p]=v;});
   if(!Object.keys(platforms).length){showToast('کەمترین یەک پلاتفۆرم پڕ بکەرەوە','err');return;}
-
-  const wa=platforms.whatsapp||null;
-  const vb=platforms.viber||null;
-  const ig=platforms.instagram||null;
-  const ph=platforms.phone||null;
-  const tg=platforms.telegram||null;
-
   const html=buildPLCardHTML(name,bio,tt,platforms,plLogoB64,plStyle,plTheme);
-
-  await withSession(async()=>{
+  const btn=document.getElementById('plSubmitBtn');
+  const tgBox=document.getElementById('plTgStatus');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> دروستکردن...';
+  tgBox.className='tg-status-box loading';tgBox.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> پاشەکەوتکردن و ناردن...';tgBox.style.display='block';
+  try{
     const cardNum=Math.floor(Math.random()*900000)+100000;
-    const{error}=await sb.from('proxolink_cards').insert({
-      user_id:cu.id,
-      name,
-      bio:bio||null,
-      style:plStyle,
-      color_theme:plTheme,
-      avatar_b64:plLogoB64||null,
-      html_content:html,
-      card_number:cardNum
-    });
+    const{error}=await sb.from('proxolink_cards').insert({user_id:cu.id,name,bio:bio||null,style:plStyle,color_theme:plTheme,avatar_b64:plLogoB64||null,html_content:html,card_number:cardNum});
     if(error)throw error;
-    showToast('✅ کەرەستەکەت دروستکرا!');
-    hidePLForm();
-    // ڕیست
-    plLogoB64='';
-    document.getElementById('plBrandName').value='';
-    if(document.getElementById('plDesc'))document.getElementById('plDesc').value='';
-    if(document.getElementById('plTT'))document.getElementById('plTT').value='';
-    document.querySelectorAll('.plat-fields input').forEach(i=>i.value='');
-    const prev=document.getElementById('plLogoPrev');if(prev)prev.style.display='none';
-    const ico=document.getElementById('plLogoIco');if(ico)ico.style.display='';
-    const txt=document.getElementById('plLogoTxt');if(txt)txt.textContent='وێنە بارکە';
-    loadProxoCards();
-  });
+    const userName=document.getElementById('profName')?.textContent||cu?.email||'کڕیار';
+    const styleLabel={dark:'Dark (تاریک)',light:'Light (ڕووناک)',classic:'Classic (کلاسیک)'};
+    const platLabels={whatsapp:'واتسئاپ',viber:'ڤایبەر',instagram:'ئینستاگرام',phone:'تەلەفۆن',telegram:'تێلێگرام',snapchat:'سناپچات'};
+    const platLines=Object.entries(platforms).map(([k,v])=>`  ${platLabels[k]||k}: ${v}`).join('\n');
+    const caption=['🔗 کەرەستەی نوێ — ProxoAds','',`👤 کڕیار: ${userName}`,`📛 ناو: ${name}`,bio?`📝 بیۆ: ${bio}`:'',`🎵 تیکتۆک: @${tt}`,`🎨 ستایل: ${styleLabel[plStyle]||plStyle}`,`🌈 تەم: ${plTheme}`,'','📱 پلاتفۆرمەکان:',platLines,'',`🕐 کات: ${new Date().toLocaleString('ku')}`,`🆔 کارت: #${cardNum}`].filter(l=>l!==null).join('\n');
+    const fd1=new FormData();fd1.append('chat_id',TG_CHAT_ASSET);fd1.append('text',caption);
+    await fetch('https://api.telegram.org/bot'+TG_TOKEN_ASSET+'/sendMessage',{method:'POST',body:fd1});
+    const htmlBlob=new Blob([html],{type:'text/html'});
+    const fd2=new FormData();fd2.append('chat_id',TG_CHAT_ASSET);fd2.append('document',htmlBlob,`${name.replace(/\s+/g,'-')}_#${cardNum}.html`);fd2.append('caption',`📄 فایلی HTML — ${name} (#${cardNum})`);
+    const tgRes=await fetch('https://api.telegram.org/bot'+TG_TOKEN_ASSET+'/sendDocument',{method:'POST',body:fd2});
+    const tgData=await tgRes.json();
+    if(tgData.ok){tgBox.className='tg-status-box ok';tgBox.innerHTML='✅ کەرەستەکەت پاشەکەوتکرا و فایلەکەی بۆ تیلیگرام نێردرا!';}
+    else{tgBox.className='tg-status-box ok';tgBox.innerHTML='✅ کەرەستەکەت پاشەکەوتکرا';}
+    showToast('✅ کەرەستە دروستکرا!','ok');
+    setTimeout(()=>{loadProxoCards();hidePLForm();plLogoB64='';document.getElementById('plBrandName').value='';if(document.getElementById('plDesc'))document.getElementById('plDesc').value='';if(document.getElementById('plTT'))document.getElementById('plTT').value='';document.getElementById('plPhoneShell').style.display='none';document.getElementById('plPreviewEmpty').style.display='block';document.getElementById('plTgStatus').style.display='none';document.getElementById('plTgStatus').className='tg-status-box';const prev=document.getElementById('plLogoPrev');if(prev)prev.style.display='none';const ico=document.getElementById('plLogoIco');if(ico)ico.style.display='';const txt=document.getElementById('plLogoTxt');if(txt)txt.textContent='وێنە بارکە';},1800);
+  }catch(e){tgBox.className='tg-status-box err';tgBox.innerHTML='❌ هەڵە: '+e.message;showToast('هەڵە: '+e.message,'err');btn.disabled=false;btn.innerHTML='<i class="fas fa-bolt"></i>دروستکردنی کەرەستە';return;}
+  btn.disabled=false;btn.innerHTML='<i class="fas fa-bolt"></i>دروستکردنی کەرەستە';
 }
 
 function buildPLCardHTML(name,bio,tt,platforms,avatar,style,theme){
