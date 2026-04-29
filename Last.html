@@ -1177,6 +1177,50 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       <div class="pg-title">مێژووی مامەڵەکان</div>
     </div>
 
+    <!-- ── کاوتداون بانەر ── -->
+    <div id="reviewCountdownBanner" style="display:none;margin-bottom:14px">
+      <div style="background:linear-gradient(135deg,#0f2218,#1a3a28);border:1.5px solid rgba(22,163,74,.3);border-radius:18px;padding:16px 18px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-15px;left:-15px;width:60px;height:60px;background:rgba(22,163,74,.08);border-radius:50%"></div>
+        <div style="position:absolute;bottom:-10px;right:-10px;width:45px;height:45px;background:rgba(22,163,74,.06);border-radius:50%"></div>
+        <div style="display:flex;align-items:center;gap:12px;position:relative">
+          <div id="cdIcoWrap" style="width:44px;height:44px;border-radius:50%;background:rgba(22,163,74,.15);border:2px solid rgba(22,163,74,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">
+            ⏳
+          </div>
+          <div style="flex:1">
+            <div id="cdTitle" style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px">داواکاریت نێردرا — چاوەڕوانی وردبینی</div>
+            <div id="cdSub" style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.6">لە ناوماوەی <strong style="color:rgba(255,255,255,.75)">٥ خولەک</strong>دا بابچێتە وردبینی ئادمین</div>
+          </div>
+          <div id="cdTimerBadge" style="flex-shrink:0;text-align:center">
+            <div id="cdTimerNum" style="font-size:22px;font-weight:900;color:#4ade80;font-family:'Inter',sans-serif;line-height:1;direction:ltr">5:00</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.4);margin-top:2px">خولەک</div>
+          </div>
+        </div>
+        <!-- progress bar -->
+        <div style="margin-top:12px;height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;position:relative">
+          <div id="cdProgressBar" style="height:100%;background:linear-gradient(90deg,#16a34a,#4ade80);border-radius:4px;width:100%;transition:width 1s linear"></div>
+        </div>
+        <!-- steps -->
+        <div style="display:flex;align-items:center;gap:6px;margin-top:12px;position:relative">
+          <div id="cdStep1" style="flex:1;text-align:center;font-size:9.5px;color:#4ade80;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:20px;height:20px;border-radius:50%;background:rgba(74,222,128,.2);border:1.5px solid #4ade80;display:flex;align-items:center;justify-content:center;font-size:9px;color:#4ade80"><i class="fas fa-check"></i></div>
+            نێردرا
+          </div>
+          <div style="flex:1;height:2px;background:rgba(255,255,255,.12);border-radius:2px;position:relative;overflow:hidden">
+            <div id="cdLine1" style="height:100%;background:#4ade80;border-radius:2px;width:0%;transition:width 1s linear"></div>
+          </div>
+          <div id="cdStep2" style="flex:1;text-align:center;font-size:9.5px;color:rgba(255,255,255,.35);font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div id="cdStep2Ico" style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,.3)"><i class="fas fa-magnifying-glass"></i></div>
+            وردبینی
+          </div>
+          <div style="flex:1;height:2px;background:rgba(255,255,255,.12);border-radius:2px"></div>
+          <div id="cdStep3" style="flex:1;text-align:center;font-size:9.5px;color:rgba(255,255,255,.35);font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,.3)"><i class="fas fa-wallet"></i></div>
+            پەسەندکردن
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- فیلتەر -->
     <div style="display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px">
       <div class="fchip on" data-txf="all" onclick="filterTxHistory(this)">هەموو</div>
@@ -2432,6 +2476,7 @@ async function submitDeposit(){
     document.getElementById('uploadZone').innerHTML=`<input type="file" id="rcptFile" accept="image/*" onchange="loadRcpt(this)"><i class="fas fa-arrow-up-from-bracket"></i><br>کرتە بکە بۆ بارکردن<br><span style="font-size:12px">کامێرا یان گالەری</span>`;
     // ── گواستنەوەی خۆکار بۆ بەشی مێژووی مامەڵەکان ──
     goPage('txhistory');
+    setTimeout(()=>startReviewCountdown(300), 400);
   });
 }
 
@@ -4514,6 +4559,74 @@ function renderTxHistory(){
 }
 
 
+
+// ═══ DEPOSIT REVIEW COUNTDOWN ═══
+let _cdInterval = null;
+
+function startReviewCountdown(totalSec){
+  totalSec = totalSec || 300; // 5 خولەک
+  const banner  = document.getElementById('reviewCountdownBanner');
+  const timerEl = document.getElementById('cdTimerNum');
+  const progBar = document.getElementById('cdProgressBar');
+  const line1   = document.getElementById('cdLine1');
+  const step2   = document.getElementById('cdStep2');
+  const step2Ico= document.getElementById('cdStep2Ico');
+  const cdTitle = document.getElementById('cdTitle');
+  const cdSub   = document.getElementById('cdSub');
+  const cdIco   = document.getElementById('cdIcoWrap');
+
+  if(!banner) return;
+  banner.style.display = 'block';
+  if(_cdInterval) clearInterval(_cdInterval);
+
+  let remaining = totalSec;
+
+  function tick(){
+    remaining--;
+    if(remaining < 0){
+      clearInterval(_cdInterval);
+      // تەواوبوو — چووە وردبینی
+      timerEl.textContent = '0:00';
+      timerEl.style.color = '#facc15';
+      progBar.style.width = '0%';
+      progBar.style.background = 'linear-gradient(90deg,#d97706,#facc15)';
+      line1.style.width = '100%';
+      line1.style.background = '#facc15';
+      step2.style.color = '#facc15';
+      step2Ico.style.background = 'rgba(250,204,21,.15)';
+      step2Ico.style.borderColor = '#facc15';
+      step2Ico.style.color = '#facc15';
+      cdTitle.textContent = 'داواکاریەکەت چووە وردبینی ئادمین ✅';
+      cdSub.innerHTML = 'ئادمین لە <strong style="color:rgba(255,255,255,.75)">ناوماوەی ١ کاتژمێر</strong>دا وەڵام دەداتەوە';
+      cdIco.textContent = '🔍';
+      cdIco.style.background = 'rgba(250,204,21,.15)';
+      cdIco.style.borderColor = 'rgba(250,204,21,.35)';
+      // بانەرەکە دوای ١٠ چرکە بشارەوە
+      setTimeout(()=>{
+        if(banner) banner.style.opacity='0';
+        banner.style.transition='opacity .5s';
+        setTimeout(()=>{banner.style.display='none';banner.style.opacity='';banner.style.transition='';},600);
+      }, 10000);
+      return;
+    }
+    const m = Math.floor(remaining/60);
+    const s = remaining % 60;
+    timerEl.textContent = m+':'+(s<10?'0':'')+s;
+    const pct = (remaining/totalSec)*100;
+    progBar.style.width = pct+'%';
+    // لاین ١ — دوای ٣٠ چرکەی یەکەم پر دەبێت
+    const line1Pct = Math.min(100, ((totalSec-remaining)/30)*100);
+    line1.style.width = line1Pct+'%';
+    // ڕەنگی کاتژمێر گۆڕان بەپێی ماوەی مایەوە
+    if(remaining < 60){ timerEl.style.color='#fb923c'; progBar.style.background='linear-gradient(90deg,#ea580c,#fb923c)'; }
+    else if(remaining < 120){ timerEl.style.color='#facc15'; progBar.style.background='linear-gradient(90deg,#d97706,#facc15)'; }
+    else { timerEl.style.color='#4ade80'; progBar.style.background='linear-gradient(90deg,#16a34a,#4ade80)'; }
+  }
+
+  tick(); // یەکەم تیک خێرا
+  _cdInterval = setInterval(tick, 1000);
+}
+
 async function checkDbReady(){
   try{
     const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
@@ -4602,175 +4715,4 @@ async function checkDbReady(){
             SET balance=balance+NEW.budget, updated_at=NOW()
             WHERE user_id=NEW.user_id;
           -- ٢. تۆمارکردنی مامەڵەی گەڕانەوە
-          INSERT INTO pa_transactions(user_id,amount,kind,status,ad_number,note)
-            VALUES(NEW.user_id, NEW.budget, 'refund', 'approved', NEW.ad_number,
-              'گەڕانەوەی خۆکار — ڕیکلام #'||COALESCE(NEW.ad_number::TEXT,''));
-          -- ٣. کەمکردنەوەی ٥٠ کۆین لە pa_coins (ئەگەر کۆین هەبوو)
-          UPDATE pa_coins
-            SET coins_balance = GREATEST(0, coins_balance - 50)
-            WHERE user_id = NEW.user_id;
-          -- ٤. تۆمارکردنی مامەڵەی کۆین
-          INSERT INTO pa_coin_transactions(user_id, amount, reason, balance_after)
-            SELECT NEW.user_id, -50, 'ڕیکلامی ڕەتکراو — کۆین کەمکرایەوە #'||COALESCE(NEW.ad_number::TEXT,''),
-              GREATEST(0, coins_balance - 50)
-            FROM pa_coins WHERE user_id = NEW.user_id;
-          -- ٥. ئاگاداری تایبەت بۆ گەڕانەوە
-          INSERT INTO pa_notifications(user_id,type,title,body,related_id,meta)
-            VALUES(NEW.user_id,'refund_rejected_ad',
-              'پارەی ڕیکلامی ڕەتکراوت گەڕایەوە 💸',
-              'بڕی $'||NEW.budget||' گەڕایەوە بۆ جزدانەکەت.',
-              NEW.id,
-              jsonb_build_object('amount',NEW.budget,'ad_number',NEW.ad_number,'ad_title',NEW.title,'reason',NEW.reject_reason)
-            );
-        WHEN 'completed' THEN
-          notif_type := 'ad_completed';
-          notif_title := 'ڕیکلامت تەواوبوو 🏁';
-          notif_body  := 'کەمپینەکەت بە سەرکەوتوویی تەواو بوو.';
-        ELSE
-          RETURN NEW;
-      END CASE;
-      -- ئاگاداری گشتی (جگە لە rejected کە خودی خۆی دوو ئاگاداری دەناردێت)
-      IF NEW.status != 'rejected' THEN
-        INSERT INTO pa_notifications(user_id,type,title,body,related_id,meta)
-          VALUES(NEW.user_id, notif_type, notif_title, notif_body, NEW.id, v_meta);
-      END IF;
-    END IF;
-    RETURN NEW;
-  END;
-  $$ LANGUAGE plpgsql SECURITY DEFINER;
-  
-  CREATE TRIGGER ad_status_notifier
-    AFTER UPDATE ON pa_ads
-    FOR EACH ROW EXECUTE FUNCTION notify_ad_status_change();
-
-  -- ═══ ستوونی پێویست بۆ pa_transactions ═══
-  -- ALTER TABLE pa_transactions ADD COLUMN IF NOT EXISTS kind TEXT DEFAULT 'deposit';
-  -- ALTER TABLE pa_transactions ADD COLUMN IF NOT EXISTS ad_number INT;
-  -- ALTER TABLE pa_transactions ADD COLUMN IF NOT EXISTS note TEXT;
-  
-  -- ═══ ستوونی meta بۆ pa_notifications ═══
-  -- ALTER TABLE pa_notifications ADD COLUMN IF NOT EXISTS meta JSONB;
-
-  ══════════════════════════════════════════════════════════════════════
-  ٤. [SECURE] create_ad_and_deduct  ← فەنکشنی سەرەکی
-  ══════════════════════════════════════════════════════════════════════
-  -- ئەم فەنکشنە یەک تراناکشنی ئەتۆمیک جێبەجێ دەکات:
-  --   ١. چێکردنەوەی باڵانس  (ئەگەر بەسنەبوو → ROLLBACK خۆکار)
-  --   ٢. INSERT ی ڕیکلام    (تەنها ئەگەر باڵانس بەسا)
-  -- JavaScript ڕاستەوخۆ نا باڵانس دەگۆڕێت نا ڕیکلام دروست دەکات.
-  -- هەموو لۆجیک و چێکردنەوە لە داتابەیس دایە.
-
-  CREATE OR REPLACE FUNCTION create_ad_and_deduct(
-    p_user_id    UUID,
-    p_goal       TEXT,
-    p_video_code TEXT    DEFAULT NULL,
-    p_video_link TEXT    DEFAULT NULL,
-    p_budget     NUMERIC DEFAULT 20,
-    p_card_id    UUID    DEFAULT NULL,
-    p_asset_id   UUID    DEFAULT NULL,
-    p_start_date DATE    DEFAULT NULL,
-    p_start_time TIME    DEFAULT NULL,
-    p_age_groups TEXT    DEFAULT NULL,
-    p_gender     TEXT    DEFAULT 'all',
-    p_location   TEXT    DEFAULT 'kurdistan'
-  )
-  RETURNS UUID          -- دەگەڕێنێتەوە ID ی ڕیکلامی نوێ
-  LANGUAGE plpgsql
-  SECURITY DEFINER      -- بە مافی تەواو ئەجرا دەبێت
-  SET search_path = public
-  AS $$
-  DECLARE
-    v_balance  NUMERIC;
-    v_ad_id    UUID;
-    v_ad_num   INT;
-  BEGIN
-    -- ───────────────────────────────────────────────────────
-    -- ١. Validation: بودجە دەبێت > 0 بێت
-    -- ───────────────────────────────────────────────────────
-    IF p_budget <= 0 THEN
-      RAISE EXCEPTION 'invalid_budget: بودجە دەبێت لە سفرە زیاتر بێت';
-    END IF;
-
-    -- ───────────────────────────────────────────────────────
-    -- ٢. باڵانسی ئێستا بخوێنەوە — بە FOR UPDATE قفڵ بکە
-    --    تاوەکو race condition نەبێت
-    -- ───────────────────────────────────────────────────────
-    SELECT balance INTO v_balance
-    FROM   pa_wallets
-    WHERE  user_id = p_user_id
-    FOR UPDATE;                    -- ← قفڵی ڕیزەکە لەماوەی تراناکشن
-
-    IF NOT FOUND THEN
-      RAISE EXCEPTION 'wallet_not_found: جزدانت نەدۆزرایەوە';
-    END IF;
-
-    -- ───────────────────────────────────────────────────────
-    -- ٣. چێکردنەوەی باڵانس — ئەگەر بەسنەبوو هەڵە
-    -- ───────────────────────────────────────────────────────
-    IF v_balance < p_budget THEN
-      RAISE EXCEPTION 'insufficient_balance: موازەنەت بەسنییە. باڵانس: $%, پێویستە: $%',
-            round(v_balance,2), round(p_budget,2);
-    END IF;
-
-    -- ───────────────────────────────────────────────────────
-    -- ٤. بڕینی پارە (ئەتۆمیک — لە هەمان تراناکشن)
-    -- ───────────────────────────────────────────────────────
-    UPDATE pa_wallets
-    SET    balance     = balance - p_budget,
-           updated_at  = NOW()
-    WHERE  user_id = p_user_id;
-
-    -- ───────────────────────────────────────────────────────
-    -- ٥. ژمارەی ڕیکلام بژمێرە
-    -- ───────────────────────────────────────────────────────
-    SELECT FLOOR(RANDOM() * 900000 + 100000)::INT INTO v_ad_num;
-
-    -- ───────────────────────────────────────────────────────
-    -- ٦. ڕیکلام دروست بکە
-    -- ───────────────────────────────────────────────────────
-    INSERT INTO pa_ads (
-      user_id, title, goal,
-      video_code, video_link,
-      budget, card_id, asset_id,
-      start_date, start_time,
-      status, age_groups, gender, location,
-      ad_number
-    ) VALUES (
-      p_user_id,
-      'New Ad ' || TO_CHAR(NOW(), 'DD/MM/YYYY'),
-      p_goal,
-      p_video_code, p_video_link,
-      p_budget, p_card_id, p_asset_id,
-      p_start_date, p_start_time,
-      'pending',
-      p_age_groups::jsonb,
-      p_gender, p_location,
-      v_ad_num
-    )
-    RETURNING id INTO v_ad_id;
-
-    -- ───────────────────────────────────────────────────────
-    -- ٧. تراناکشن تەواوبوو — هەر دووکەی دڵنیا بوون
-    -- ───────────────────────────────────────────────────────
-    RETURN v_ad_id;
-
-  EXCEPTION
-    -- هەر هەڵەیەک → ROLLBACK خۆکار (هیچ گۆڕانکارییەک نامێنێت)
-    WHEN OTHERS THEN
-      RAISE;
-  END;
-  $$;
-
-  -- ───────────────────────────────────────────────────────
-  -- RLS: ئەم فەنکشنە تەنها بۆ بەکارهێنەری دەستنیشانکراو
-  -- ───────────────────────────────────────────────────────
-  REVOKE ALL ON FUNCTION create_ad_and_deduct FROM PUBLIC;
-  GRANT  EXECUTE ON FUNCTION create_ad_and_deduct TO authenticated;
-
-  ══════════════════════════════════════════════════════════════════════
-  ٥. [LEGACY - ئێستا ناکارێت] deduct_wallet_balance
-  ══════════════════════════════════════════════════════════════════════
-  -- ئەم فەنکشنە لە نەوەی پێشووەوە مایەوە، دەتوانیت
-  -- بیساریتەوە یان بیهێڵیتەوە — ئێستا بەکار نایێت.
-  /*
-  CREATE OR REPLACE FUNCTION deduct_wallet_balance(p_user_id UUID, p_amount
+          INSERT INTO pa_transactions(user_
