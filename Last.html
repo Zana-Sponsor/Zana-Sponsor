@@ -1391,7 +1391,6 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       <button class="bud-btn" onclick="chgDep(10)">+</button>
     </div>
     <div class="quick-amts">
-      <button class="submit-btn" onclick="goToUpload()">
       <div class="qa" onclick="setDep(10)">$10</div>
       <div class="qa" onclick="setDep(25)">$25</div>
       <div class="qa" onclick="setDep(50)">$50</div>
@@ -2303,8 +2302,10 @@ async function loadProfile(){
   const topbarName=document.getElementById('topbarName');
   if(topbarName) topbarName.textContent=name;
   document.getElementById('profEmail').textContent=data?.email||cu.email;
-  document.getElementById('editNameDisplay').textContent=name;
-  document.getElementById('editNameInp').value=name;
+  const editDispEl=document.getElementById('editNameDisplay');
+  if(editDispEl)editDispEl.textContent=name;
+  const editInpEl=document.getElementById('editNameInp');
+  if(editInpEl)editInpEl.value=name;
   const av=document.getElementById('profAv');
   if(data?.avatar_b64){av.innerHTML=`<img src="${data.avatar_b64}"><div class="pav-cam"><i class="fas fa-camera"></i></div>`;avB64=data.avatar_b64;}
   else av.innerHTML=`${name[0].toUpperCase()}<div class="pav-cam"><i class="fas fa-camera"></i></div>`;
@@ -2329,7 +2330,7 @@ async function saveName(){
   await withSession(async()=>{
     await sb.from('profiles').update({full_name:name}).eq('id',cu.id);
     document.getElementById('profName').textContent=name;
-    document.getElementById('editNameDisplay').textContent=name;
+    const _ed=document.getElementById('editNameDisplay');if(_ed)_ed.textContent=name;
     closeMo('moEditName');showToast('✅ پاشەکەوتکرا');
   });
 }
@@ -4730,5 +4731,4 @@ function _showTransferFound(box,data){
     :'<div style="width:46px;height:46px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff">'+initials+'</div>';
 
   box.innerHTML='<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(22,163,74,.04)">'
-    +avatarHtml
-    +'<div style="flex:1;min-width:0">
+   
