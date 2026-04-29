@@ -294,6 +294,29 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 .theme-dot i{font-size:12px;color:#fff;display:none;}
 .theme-dot.on i{display:block;}
 
+/* ── ProxoLink 6 Style Card Previews ── */
+.sc-dark-prev{background:#0d1021;border-radius:12px;overflow:hidden;min-height:70px;position:relative;border:1px solid rgba(255,255,255,.08);}
+.sc-dark-grad{height:38px;position:relative;}
+.sc-dark-grad::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:14px;background:#0d1021;border-radius:50% 50% 0 0/14px 14px 0 0;}
+.sc-dark-av{width:22px;height:22px;border-radius:50%;background:#a860d0;border:2px solid #0d1021;position:absolute;top:26px;left:50%;transform:translateX(-50%);}
+.sc-dark-lines{padding:26px 8px 8px;display:flex;flex-direction:column;gap:3px;}
+.sc-dark-line{height:3px;border-radius:3px;background:rgba(255,255,255,.15);}
+.sc-light-prev{background:#fff;border-radius:12px;overflow:hidden;min-height:70px;position:relative;border:1px solid rgba(0,0,0,.08);}
+.sc-light-grad{height:38px;position:relative;}
+.sc-light-grad::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:14px;background:#fff;border-radius:50% 50% 0 0/14px 14px 0 0;}
+.sc-light-av{width:22px;height:22px;border-radius:50%;background:#a860d0;border:2px solid #fff;position:absolute;top:26px;left:50%;transform:translateX(-50%);}
+.sc-light-lines{padding:26px 8px 8px;display:flex;flex-direction:column;gap:3px;}
+.sc-light-line{height:3px;border-radius:3px;background:rgba(0,0,0,.1);}
+.sc-classic-prev{background:#f5f5f5;border-radius:12px;padding:8px 6px;display:flex;flex-direction:column;justify-content:center;gap:4px;min-height:70px;}
+.sc-classic-btn{height:13px;border-radius:20px;width:88%;margin:0 auto;}
+
+/* Bio chips */
+.pl-bio-chip{padding:10px 13px;background:rgba(28,35,51,.05);border:1px solid var(--b1);border-radius:12px;font-size:12px;color:var(--dark);cursor:pointer;font-family:'R',sans-serif;transition:all .15s;line-height:1.7;text-align:right;width:100%;}
+.pl-bio-chip:hover{background:rgba(28,35,51,.1);border-color:var(--dark);}
+.pl-bio-chip:active{transform:scale(.98);}
+.pl-bio-chip-more{background:transparent;border:1px dashed var(--b2);color:var(--mt);font-size:11.5px;text-align:center;padding:8px 13px;}
+.pl-bio-chip-more:hover{background:var(--bg);color:var(--dark);}
+
 /* ══ NOTIFICATIONS PAGE ══ */
 .notif-item{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-bottom:1px solid var(--b1);}
 .notif-item:last-child{border-bottom:none;}
@@ -840,7 +863,12 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 
         <!-- بیۆ -->
         <div class="plform-lbl">بیۆ / دەربارەت <span style="font-size:10px;color:var(--mt)">(کەمتر لە 150 پیت)</span></div>
-        <textarea class="pl-inp pl-ta" id="plDesc" placeholder="لەرێگەی دووگمەکانەوە پەیوەندیمان پێوە بکە" maxlength="150" oninput="updatePLPreview()"></textarea>
+        <textarea class="pl-inp pl-ta" id="plDesc" placeholder="لەرێگەی دووگمەکانەوە پەیوەندیمان پێوە بکە" maxlength="150" oninput="updatePLPreview();updatePlBioCount()"></textarea>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:-10px;margin-bottom:8px;">
+          <span style="font-size:11px;color:var(--mt)">یەکێک هەڵبژێرە یان خۆت بنووسە</span>
+          <span id="plBioCount" style="font-size:11px;color:var(--mt)">0 / 150</span>
+        </div>
+        <div id="plBioChips" style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"></div>
 
         <!-- وێنە -->
         <div class="plform-lbl">وێنەی پرۆفایل <span style="color:var(--rd)">*</span> <span style="font-size:10px;color:var(--mt)">(پێویستە بۆ Dark/Light)</span></div>
@@ -874,17 +902,35 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         <div class="style-grid">
           <div class="style-card on" data-style="dark" onclick="pickStyle(this)">
             <div class="sc-chk"><i class="fas fa-check"></i></div>
-            <div class="sc-classic"><div class="sc-classic-inner"><div class="sc-classic-av"></div><div class="sc-classic-line"></div><div class="sc-classic-line" style="width:28px;opacity:.6"></div></div></div>
+            <div class="sc-dark-prev">
+              <div class="sc-dark-grad" id="scDarkGrad"></div>
+              <div class="sc-dark-av"></div>
+              <div class="sc-dark-lines">
+                <div class="sc-dark-line" style="width:55%;margin:0 auto"></div>
+                <div class="sc-dark-line" style="width:80%;margin:0 auto"></div>
+              </div>
+            </div>
             <div class="sc-name">Dark</div><div class="sc-sub">تاریک</div>
           </div>
           <div class="style-card" data-style="light" onclick="pickStyle(this)">
             <div class="sc-chk"><i class="fas fa-check"></i></div>
-            <div class="sc-minimal"><div class="sc-minimal-inner"><div class="sc-minimal-av"></div><div class="sc-minimal-lines"><div class="sc-minimal-line1"></div><div class="sc-minimal-line2"></div></div></div></div>
+            <div class="sc-light-prev">
+              <div class="sc-light-grad" id="scLightGrad"></div>
+              <div class="sc-light-av"></div>
+              <div class="sc-light-lines">
+                <div class="sc-light-line" style="width:55%;margin:0 auto"></div>
+                <div class="sc-light-line" style="width:80%;margin:0 auto"></div>
+              </div>
+            </div>
             <div class="sc-name">Light</div><div class="sc-sub">ڕووناک</div>
           </div>
           <div class="style-card" data-style="classic" onclick="pickStyle(this)">
             <div class="sc-chk"><i class="fas fa-check"></i></div>
-            <div class="sc-gradient"><div class="sc-gradient-inner"><div class="sc-gradient-av"></div><div class="sc-gradient-line"></div><div class="sc-gradient-line" style="width:28px;opacity:.6"></div></div></div>
+            <div class="sc-classic-prev" id="scClassicPrev">
+              <div class="sc-classic-btn" id="scClassicBtn1"></div>
+              <div class="sc-classic-btn" id="scClassicBtn2"></div>
+              <div class="sc-classic-btn" id="scClassicBtn3" style="opacity:.7"></div>
+            </div>
             <div class="sc-name">Classic</div><div class="sc-sub">کلاسیک</div>
           </div>
         </div>
@@ -904,7 +950,7 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 
         <!-- Live Preview -->
         <div class="plform-lbl" style="margin-top:16px"><i class="fas fa-eye" style="margin-left:5px;color:var(--bl)"></i>پێشبینی زیندوو</div>
-        <div id="plLivePreview" style="border:1.5px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:16px;background:var(--bg);min-height:80px;display:flex;align-items:center;justify-content:center">
+        <div id="plLivePreview" style="border:1.5px solid var(--b1);border-radius:20px;overflow:hidden;margin-bottom:16px;background:var(--bg);min-height:120px;display:flex;align-items:center;justify-content:center">
           <div style="text-align:center;padding:20px;color:var(--mt);font-size:12px">
             <i class="fas fa-link" style="font-size:22px;display:block;margin-bottom:8px;opacity:.3"></i>
             ناو بنووسە تا پێشبینی ببینیت
@@ -2410,6 +2456,11 @@ function showPLForm(){
   document.querySelectorAll('#plFormView .style-card').forEach(s=>s.classList.toggle('on',s.dataset.style==='dark'));
   plTheme='purple';
   document.querySelectorAll('.theme-dot').forEach(t=>t.classList.toggle('on',t.dataset.color==='purple'));
+  // بیۆ chips
+  renderPlBioChips(false);
+  updatePlBioCount();
+  // پێشبینی ستایل کارتەکان
+  updatePLStylePreviews();
   updatePLPreview();
 }
 function hidePLForm(){
@@ -2470,7 +2521,65 @@ function pickStyle(el){
 function pickTheme(el){
   document.querySelectorAll('.theme-dot').forEach(x=>x.classList.remove('on'));
   el.classList.add('on');plTheme=el.dataset.color;
+  updatePLStylePreviews();
   updatePLPreview();
+}
+
+// ── نوێکردنەوەی پێشبینی ستایل کارتەکان ──
+function updatePLStylePreviews(){
+  const tc=THEME_COLORS[plTheme]||THEME_COLORS.purple;
+  const grad='linear-gradient(to right,'+tc.dark+','+tc.main+')';
+  const dg=document.getElementById('scDarkGrad');
+  if(dg)dg.style.background=grad;
+  const lg=document.getElementById('scLightGrad');
+  if(lg)lg.style.background=grad;
+  const cp=document.getElementById('scClassicPrev');
+  if(cp)cp.style.background=grad;
+  const b1=document.getElementById('scClassicBtn1');
+  if(b1)b1.style.background=tc.main;
+  const b2=document.getElementById('scClassicBtn2');
+  if(b2)b2.style.background=tc.dark;
+  const b3=document.getElementById('scClassicBtn3');
+  if(b3)b3.style.background=tc.main;
+}
+
+// ── Bio Chips ──
+const PL_BIO_CHIPS=[
+  'لەرێگەی دووگمەکانەوە پەیوەندیمان پێوە بکەن.',
+  'ئۆفەری ناوازەمان داناوە بۆ کڕیارەکانمان، هەرئێستا پەیوەندیمان پێوە بکە.',
+  'زانیاری زیاترت دەوێت؟ کلیک لەم دووگمانەی خوارەوە بکە، کارمەندەکانمان ئامادەن.',
+  'پەیوەندیمان پێوە بکەن بۆ زانیاری زیاتر، تیمەکەمان بە خێرایی وەڵامتان دەداتەوە.',
+  'تەنها یەک کلیک دوورین. پەیوەندیمان پێوە بکە و وەڵامت دەدەینەوە.',
+  'بۆ هەر پرسیارێک، ئێمە لێرەین. لەم دووگمانەی خوارەوە کلیک بکە.',
+  'کڕیارەکانمان بۆمان گرنگن. پەیوەندیمان پێوە بکە و یارمەتیت دەدەین.',
+  'خزمەتگوزاریمان بۆ ئێوە ئامادەیە، تەنها پەیوەندیمان پێوە بکەن.',
+];
+function renderPlBioChips(showAll){
+  const wrap=document.getElementById('plBioChips');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  const visible=showAll?PL_BIO_CHIPS:PL_BIO_CHIPS.slice(0,3);
+  visible.forEach(text=>{
+    const chip=document.createElement('button');
+    chip.type='button';chip.className='pl-bio-chip';chip.textContent=text;
+    chip.onclick=()=>{
+      const ta=document.getElementById('plDesc');
+      if(ta){ta.value=text;updatePlBioCount();updatePLPreview();}
+    };
+    wrap.appendChild(chip);
+  });
+  if(!showAll&&PL_BIO_CHIPS.length>3){
+    const more=document.createElement('button');
+    more.type='button';more.className='pl-bio-chip pl-bio-chip-more';
+    more.innerHTML='بینینی زیاتر <i class="fas fa-chevron-down" style="font-size:9px;margin-right:3px"></i>';
+    more.onclick=()=>renderPlBioChips(true);
+    wrap.appendChild(more);
+  }
+}
+function updatePlBioCount(){
+  const v=document.getElementById('plDesc')?.value.length||0;
+  const cnt=document.getElementById('plBioCount');
+  if(cnt)cnt.textContent=v+' / 150';
 }
 
 function loadPlLogo(inp){
@@ -2496,61 +2605,88 @@ function updatePLPreview(){
   const tt=document.getElementById('plTT')?.value.trim().replace(/^@/,'')||'';
 
   if(!name){
-    wrap.innerHTML=`<div style="text-align:center;padding:20px;color:var(--mt);font-size:12px"><i class="fas fa-link" style="font-size:22px;display:block;margin-bottom:8px;opacity:.3"></i>ناو بنووسە تا پێشبینی ببینیت</div>`;
+    wrap.innerHTML=`<div style="text-align:center;padding:24px 20px;color:var(--mt);font-size:12px"><i class="fas fa-link" style="font-size:24px;display:block;margin-bottom:8px;opacity:.3"></i>ناو بنووسە تا پێشبینی ببینیت</div>`;
+    wrap.style.display='flex';wrap.style.alignItems='center';wrap.style.justifyContent='center';
     return;
   }
+  wrap.style.display='block';
 
   const tc=THEME_COLORS[plTheme]||THEME_COLORS.purple;
-  const av=plLogoB64?`<img src="${plLogoB64}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-    :`<span style="font-size:18px;font-weight:800;color:#fff">${name[0].toUpperCase()}</span>`;
+  const grad='linear-gradient(to left,'+tc.dark+','+tc.main+')';
 
-  // دووگمەکان
-  const platIcons={whatsapp:{c:'#25d366',i:'fab fa-whatsapp',l:'واتسئاپ'},viber:{c:'#7360f2',i:'fab fa-viber',l:'ڤایبەر'},instagram:{c:'linear-gradient(135deg,#E1306C,#833AB4)',i:'fab fa-instagram',l:'ئینستاگرام'},phone:{c:'#2563eb',i:'fas fa-phone',l:'تەلەفۆن'},telegram:{c:'#229ed9',i:'fab fa-telegram',l:'تێلێگرام'},snapchat:{c:'#fffc00',i:'fab fa-snapchat',l:'سناپچات'}};
-  const activePlats=[...plActivePlatforms].slice(0,4);
-  const btnsHtml=activePlats.map(p=>{
-    const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};
-    return`<div style="flex:1;min-width:calc(50% - 4px);padding:10px 6px;border-radius:12px;background:${plStyle==='dark'?'rgba(255,255,255,.08)':plStyle==='light'?'#f5f6fa':'rgba(255,255,255,.15)'};display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:${plStyle==='dark'?'#fff':plStyle==='light'?'#1c2333':'#fff'}">
-      <i class="${pi.i}" style="font-size:20px;color:${pi.c.startsWith('linear')?'inherit':pi.c}"></i>${pi.l}
-    </div>`;
-  }).join('');
+  const platIcons={
+    whatsapp:{c:'#25d366',i:'fab fa-whatsapp',l:'واتسئاپ'},
+    viber:{c:'#7360f2',i:'fab fa-viber',l:'ڤایبەر'},
+    instagram:{c:'linear-gradient(135deg,#E1306C,#833AB4)',i:'fab fa-instagram',l:'ئینستاگرام'},
+    phone:{c:'#2563eb',i:'fas fa-phone',l:'تەلەفۆن'},
+    telegram:{c:'#229ed9',i:'fab fa-telegram',l:'تێلێگرام'},
+    snapchat:{c:'#fffc00',i:'fab fa-snapchat',l:'سناپچات'},
+  };
+  const activePlats=[...plActivePlatforms];
 
   if(plStyle==='dark'){
-    wrap.innerHTML=`<div style="padding:12px">
-      <div style="background:#0d1021;border-radius:14px;overflow:hidden;font-family:'R',sans-serif">
-        <div style="height:60px;background:linear-gradient(135deg,${tc.dark},${tc.main})"></div>
-        <div style="padding:0 14px 14px;margin-top:-30px">
-          <div style="width:56px;height:56px;border-radius:50%;border:3px solid #0d1021;background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0 auto 8px">${av}</div>
-          <div style="text-align:center;color:#fff;font-size:14px;font-weight:800">${name}</div>
-          ${bio?`<div style="text-align:center;color:rgba(255,255,255,.6);font-size:11px;margin-top:4px;line-height:1.6">${bio}</div>`:''}
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${btnsHtml}</div>
-          ${tt?`<div style="margin-top:8px;padding:7px 12px;border-radius:20px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;gap:6px;color:rgba(255,255,255,.7);font-size:11px"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
+    const avBlock=plLogoB64
+      ?`<div style="width:70px;height:70px;border-radius:50%;border:4px solid #0d1021;overflow:hidden;position:absolute;bottom:-35px;left:50%;transform:translateX(-50%);box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:2"><img src="${plLogoB64}" style="width:100%;height:100%;object-fit:cover"></div>`
+      :`<div style="width:70px;height:70px;border-radius:50%;border:4px solid #0d1021;background:${tc.dark};display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;position:absolute;bottom:-35px;left:50%;transform:translateX(-50%);z-index:2">${name[0].toUpperCase()}</div>`;
+    const btns=activePlats.map(p=>{
+      const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};
+      return`<div style="flex:1;min-width:calc(50% - 5px);padding:14px 6px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#fff;">
+        <i class="${pi.i}" style="font-size:23px;color:${pi.c.startsWith('linear')?'#fff':pi.c}"></i>${pi.l}
+      </div>`;
+    }).join('');
+    wrap.innerHTML=`<div style="font-family:'R',sans-serif;width:100%;">
+      <div style="background:#0d1021;border-radius:18px;overflow:hidden;">
+        <div style="height:110px;background:${grad};position:relative;">${avBlock}</div>
+        <div style="padding:44px 16px 22px;display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:17px;font-weight:800;color:#fff;text-align:center;">${name}</div>
+          ${bio?`<div style="font-size:12px;color:rgba(255,255,255,.6);text-align:center;margin-top:7px;line-height:1.9;white-space:pre-line;">${bio}</div>`:''}
+          <div style="display:flex;flex-wrap:wrap;gap:10px;width:100%;margin-top:20px;">${btns}</div>
+          ${tt?`<div style="margin-top:12px;padding:8px 18px;border-radius:50px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,.7);font-size:12px;"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
         </div>
       </div>
     </div>`;
   } else if(plStyle==='light'){
-    wrap.innerHTML=`<div style="padding:12px">
-      <div style="background:#fff;border-radius:14px;overflow:hidden;font-family:'R',sans-serif;border:1px solid #e8eaf0">
-        <div style="height:60px;background:linear-gradient(135deg,${tc.dark},${tc.main})"></div>
-        <div style="padding:0 14px 14px;margin-top:-30px">
-          <div style="width:56px;height:56px;border-radius:50%;border:3px solid #fff;background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0 auto 8px">${av}</div>
-          <div style="text-align:center;color:#1c2333;font-size:14px;font-weight:800">${name}</div>
-          ${bio?`<div style="text-align:center;color:#8b95a8;font-size:11px;margin-top:4px;line-height:1.6">${bio}</div>`:''}
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${activePlats.map(p=>{const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};return`<div style="flex:1;min-width:calc(50% - 4px);padding:10px 6px;border-radius:12px;background:#f5f6fa;border:1px solid #e8eaf0;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:#1c2333"><i class="${pi.i}" style="font-size:20px;color:${pi.c.startsWith('linear')?'#e1306c':pi.c}"></i>${pi.l}</div>`;}).join('')}</div>
-          ${tt?`<div style="margin-top:8px;padding:7px 12px;border-radius:20px;background:#f5f6fa;border:1px solid #e8eaf0;display:flex;align-items:center;justify-content:center;gap:6px;color:#8b95a8;font-size:11px"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
+    const avBlock=plLogoB64
+      ?`<div style="width:70px;height:70px;border-radius:50%;border:4px solid #fff;overflow:hidden;position:absolute;bottom:-35px;left:50%;transform:translateX(-50%);box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:2"><img src="${plLogoB64}" style="width:100%;height:100%;object-fit:cover"></div>`
+      :`<div style="width:70px;height:70px;border-radius:50%;border:4px solid #fff;background:${tc.dark};display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;position:absolute;bottom:-35px;left:50%;transform:translateX(-50%);z-index:2">${name[0].toUpperCase()}</div>`;
+    const btns=activePlats.map(p=>{
+      const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};
+      return`<div style="flex:1;min-width:calc(50% - 5px);padding:14px 6px;border-radius:16px;background:#f5f6fa;border:1.5px solid #e8eaf0;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#1c2333;">
+        <i class="${pi.i}" style="font-size:23px;color:${pi.c.startsWith('linear')?'#e1306c':pi.c}"></i>${pi.l}
+      </div>`;
+    }).join('');
+    wrap.innerHTML=`<div style="font-family:'R',sans-serif;width:100%;">
+      <div style="background:#fff;border-radius:18px;overflow:hidden;border:1px solid #e8eaf0;">
+        <div style="height:110px;background:${grad};position:relative;">${avBlock}</div>
+        <div style="padding:44px 16px 22px;display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:17px;font-weight:800;color:#1c2333;text-align:center;">${name}</div>
+          ${bio?`<div style="font-size:12px;color:#8b95a8;text-align:center;margin-top:7px;line-height:1.9;white-space:pre-line;">${bio}</div>`:''}
+          <div style="display:flex;flex-wrap:wrap;gap:10px;width:100%;margin-top:20px;">${btns}</div>
+          ${tt?`<div style="margin-top:12px;padding:8px 18px;border-radius:50px;background:#f5f6fa;border:1px solid #e8eaf0;display:inline-flex;align-items:center;gap:7px;color:#8b95a8;font-size:12px;"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
         </div>
       </div>
     </div>`;
   } else { // classic
-    wrap.innerHTML=`<div style="padding:12px">
-      <div style="background:#f0f1f5;border-radius:14px;overflow:hidden;font-family:'R',sans-serif">
-        <div style="padding:18px 14px;text-align:center;background:linear-gradient(to left,${tc.dark},${tc.main});position:relative;padding-bottom:36px">
-          <div style="font-size:15px;font-weight:800;color:#fff">${name}</div>
-          ${bio?`<div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:5px;line-height:1.7">${bio}</div>`:''}
+    const btns=activePlats.map(p=>{
+      const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};
+      const bg=pi.c.startsWith('linear')?pi.c:pi.c;
+      const txtColor=p==='snapchat'?'#000':'#fff';
+      return`<div style="display:grid;grid-template-columns:44px 1fr;align-items:center;padding:14px 16px;border-radius:50px;background:${bg};font-size:14px;font-weight:700;color:${txtColor};width:100%;">
+        <div style="display:flex;align-items:center;justify-content:center;font-size:21px;"><i class="${pi.i}"></i></div>
+        <span style="text-align:center;">${pi.l}</span>
+      </div>`;
+    }).join('');
+    wrap.innerHTML=`<div style="font-family:'R',sans-serif;width:100%;">
+      <div style="background:#f0f0f0;border-radius:18px;overflow:hidden;">
+        <div style="background:${grad};padding:26px 16px 50px;text-align:center;">
+          <div style="font-size:18px;font-weight:800;color:#fff;">${name}</div>
+          ${bio?`<div style="font-size:12px;color:rgba(255,255,255,.85);margin-top:7px;line-height:1.9;white-space:pre-line;">${bio}</div>`:''}
         </div>
-        <div style="margin:-22px 14px 12px;background:#fff;border-radius:14px;padding:14px;box-shadow:0 4px 14px rgba(0,0,0,.08)">
-          <div style="display:flex;flex-wrap:wrap;gap:8px">${activePlats.map(p=>{const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};return`<a style="flex:1;min-width:calc(50% - 4px);padding:12px 8px;border-radius:50px;background:${pi.c.startsWith('linear')?pi.c:pi.c};display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:700;color:#fff;text-decoration:none"><i class="${pi.i}"></i>${pi.l}</a>`;}).join('')}</div>
-          ${tt?`<div style="margin-top:8px;padding:7px 14px;border-radius:50px;background:#111;display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;font-size:12px;font-weight:600"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
+        <div style="margin:-28px 14px 0;background:#fff;border-radius:18px;padding:18px;box-shadow:0 6px 22px rgba(0,0,0,.1);display:flex;flex-direction:column;gap:10px;">
+          ${btns}
+          ${tt?`<div style="padding:11px 16px;border-radius:50px;background:#111;display:flex;align-items:center;justify-content:center;gap:7px;color:#fff;font-size:13px;font-weight:600;"><i class="fab fa-tiktok"></i>@${tt}</div>`:''}
         </div>
+        <div style="height:20px;"></div>
       </div>
     </div>`;
   }
@@ -2604,6 +2740,7 @@ async function submitPLCard(){
     const prev=document.getElementById('plLogoPrev');if(prev)prev.style.display='none';
     const ico=document.getElementById('plLogoIco');if(ico)ico.style.display='';
     const txt=document.getElementById('plLogoTxt');if(txt)txt.textContent='وێنە بارکە';
+    updatePlBioCount();
     loadProxoCards();
   });
 }
