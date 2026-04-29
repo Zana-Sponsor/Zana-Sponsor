@@ -567,10 +567,6 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       </div>
     </div>
     <div class="topbar-right">
-      <!-- Admin Panel button — visible only for admins -->
-      <div id="adminPanelBtn" onclick="window.open('Admin-Panel.html','_blank')" title="پانێڵی ئادمین" style="display:none;width:34px;height:34px;border-radius:50%;background:var(--dark);border:none;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:14px;flex-shrink:0;box-shadow:0 2px 8px rgba(28,35,51,.3);">
-        <i class="fas fa-shield-halved"></i>
-      </div>
       <div class="notif-btn" onclick="goPage('notifications')" id="notifBtn">
         <i class="fas fa-bell" style="font-size:16px"></i>
         <div class="notif-dot" id="notifDot"></div>
@@ -2240,11 +2236,8 @@ function goPage(p){
 }
 
 async function loadProfile(){
-  const{data}=await sb.from('profiles').select('full_name,email,avatar_b64,is_admin').eq('id',cu.id).single();
+  const{data}=await sb.from('profiles').select('full_name,email,avatar_b64').eq('id',cu.id).single();
   const name=data?.full_name||cu.email.split('@')[0];
-  // نیشانەی ئادمین
-  const adminBtn=document.getElementById('adminPanelBtn');
-  if(adminBtn) adminBtn.style.display=data?.is_admin?'flex':'none';
   document.getElementById('profName').textContent=name;
   // ناوی کەسەکە لە topbar
   const topbarName=document.getElementById('topbarName');
