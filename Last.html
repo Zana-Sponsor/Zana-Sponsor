@@ -2676,42 +2676,325 @@ async function submitPLCard(){
 }
 
 function buildPLCardHTML(name,bio,tt,platforms,avatar,style,theme){
-  const tc=THEME_COLORS[theme]||THEME_COLORS.purple;
-  const av=avatar||'';
-  const avHtml=av?`<img src="${av}" alt="${name}" style="width:100%;height:100%;object-fit:cover">`
-    :`<span style="font-size:32px;font-weight:800;color:#fff">${name[0].toUpperCase()}</span>`;
+  // ── ئامادەکاری زانیاریەکان ──
+  const themeMap={
+    purple:{grad:'linear-gradient(to right,#5b1fa8,#c855e0)',from:'#5b1fa8',to:'#c855e0'},
+    blue:  {grad:'linear-gradient(to right,#1e3a8a,#2563eb)',from:'#1e3a8a',to:'#2563eb'},
+    green: {grad:'linear-gradient(to right,#14532d,#16a34a)',from:'#14532d',to:'#16a34a'},
+    red:   {grad:'linear-gradient(to right,#7f1d1d,#dc2626)',from:'#7f1d1d',to:'#dc2626'},
+    yellow:{grad:'linear-gradient(to right,#78350f,#d97706)',from:'#78350f',to:'#d97706'},
+    cyan:  {grad:'linear-gradient(to right,#164e63,#0891b2)',from:'#164e63',to:'#0891b2'},
+    pink:  {grad:'linear-gradient(to right,#831843,#be185d)',from:'#831843',to:'#be185d'},
+    dark:  {grad:'linear-gradient(to right,#0d1021,#1c2333)',from:'#0d1021',to:'#1c2333'},
+  };
+  const tg = themeMap[theme]||themeMap.purple;
   const ttUrl='https://www.tiktok.com/@'+tt;
+  const bioSafe=(bio||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const avImg=avatar?`<img src="${avatar}" alt="${name}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+    :`<span style="font-size:32px;font-weight:800;color:#fff">${(name[0]||'?').toUpperCase()}</span>`;
 
+  // ── تایبەتمەندیەکانی پلاتفۆرمەکان ──
   const platDefs={
-    whatsapp:{c:'#25d366',i:'fab fa-whatsapp',l:'واتسئاپ',url:'whatsapp://send?phone='},
-    viber:{c:'#7360f2',i:'fab fa-viber',l:'ڤایبەر',url:'viber://chat?number='},
-    instagram:{c:'linear-gradient(135deg,#E1306C,#833AB4,#F77737)',i:'fab fa-instagram',l:'ئینستاگرام',url:'https://instagram.com/'},
-    phone:{c:'#2563eb',i:'fas fa-phone-alt',l:'کۆرەک',url:'tel:'},
-    asya:{c:'#dc2626',i:'fas fa-phone-alt',l:'ئاسیا سێڵ',url:'tel:'},
-    telegram:{c:'#229ed9',i:'fab fa-telegram',l:'تیلیگرام',url:'https://t.me/'},
+    whatsapp:{id:'wa',icon:'fab fa-whatsapp',label:'واتسئاپ',bg:'linear-gradient(135deg,#1aad4e,#25d366)',url:'whatsapp://send?phone=',conf:'wh'},
+    viber:   {id:'vb',icon:'fab fa-viber',   label:'ڤایبەر',  bg:'linear-gradient(135deg,#5b40e8,#7b65f2)',url:'viber://chat?number=',  conf:'vi'},
+    instagram:{id:'ig',icon:'fab fa-instagram',label:'ئینستاگرام',bg:'linear-gradient(to right,#8a2387,#e94057,#f27121)',url:'https://instagram.com/',conf:'in'},
+    telegram:{id:'tg',icon:'fab fa-telegram',label:'تیلیگرام',bg:'linear-gradient(135deg,#0c85c2,#29a8eb)',url:'https://t.me/',         conf:'te'},
+    phone:   {id:'ph',icon:'fas fa-phone-alt',label:'کۆرەک',  bg:'#e03030',                              url:'tel:',                   conf:'ph'},
+    asya:    {id:'as',icon:'fas fa-phone-alt',label:'ئاسیا سێڵ',bg:'#e03030',                           url:'tel:',                   conf:'as'},
   };
 
-  const btns=Object.entries(platforms).map(([p,v])=>{
-    const pd=platDefs[p]||{c:'#888',i:'fas fa-link',l:p,url:''};
-    const href=pd.url+v;
-    return{p,v,pd,href};
+  const activeBtns=Object.entries(platforms).map(([p,v])=>{
+    const pd=platDefs[p]||{id:p,icon:'fas fa-link',label:p,bg:'#888',url:'',conf:'xx'};
+    return{...pd,contact:v,href:pd.url+v};
   });
 
-  const font=`@font-face{font-family:'R';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');}`;
+  // ── بلۆکی هەموو پارچەی هاوبەشی JS ──
+  const sharedScript=`
+const urlParams=new URLSearchParams(window.location.search);
+let selectedApp='',selectedUrl='';
+function askConfirm(name,url,label){
+  selectedApp=name;selectedUrl=url;
+  const btn=document.getElementById('main-confirm-btn');
+  const title=document.getElementById('modal-title');
+  title.innerText=label;
+  btn.className='btn-confirm confirm-'+name.substring(0,2);
+  document.getElementById('confirm-modal').classList.add('active');
+  if(navigator.vibrate)navigator.vibrate(25);
+}
+function closeModal(){document.getElementById('confirm-modal').classList.remove('active');}
+function goLink(){
+  const last=localStorage.getItem('tt_ct');
+  const now=Date.now();
+  if(window.ttq&&(!last||(now-last>86400000))){
+    ttq.track('Contact',{content_id:'contact_button',content_name:selectedApp});
+    localStorage.setItem('tt_ct',now);
+  }
+  closeModal();
+  setTimeout(()=>{window.location.href=selectedUrl;},700);
+}
+!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=['page','track','identify','instances','debug','on','off','once','ready','alias','group','enableCookie','disableCookie'];ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)));};};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e;};ttq.load=function(e,n){var r='https://analytics.tiktok.com/i18n/pixel/events.js';ttq._i=ttq._i||{};ttq._i[e]=[];ttq._i[e]._u=r;ttq._t=ttq._t||{};ttq._t[e]=+new Date;ttq._o=ttq._o||{};ttq._o[e]=n||{};var s=document.createElement('script');s.type='text/javascript';s.async=true;s.src=r+'?sdkid='+e+'&lib='+t;e=document.getElementsByTagName('script')[0];e.parentNode.insertBefore(s,e);};ttq.load('D6BIIA3C77U1CE9DCUMG');ttq.page();}(window,document,'ttq');
+document.addEventListener('DOMContentLoaded',function(){
+  window.onclick=function(e){if(e.target.id==='confirm-modal')closeModal();};
+  setTimeout(function(){var s=document.querySelector('.shine-active');if(s)s.classList.add('no-shine');},10000);
+  ${activeBtns.map(b=>`document.getElementById('${b.id}').onclick=function(){askConfirm('${b.conf}','${b.href}','${b.label}');};`).join('\n  ')}
+});`;
 
+  const modalHTML=`<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-content">
+    <h3 id="modal-title">...</h3>
+    <p>ئایا دەتەوێت پەیوەندیمان پێوە بکەی؟</p>
+    <button id="main-confirm-btn" class="btn-confirm" onclick="goLink()">بەڵێ، بەردەوام بە</button>
+    <div class="btn-cancel" onclick="closeModal()">پاشگەزبوونەوە</div>
+  </div>
+</div>`;
+
+  const footerHTML=`<div class="footer">
+  <small>سپۆنسەر کراوە لەلایەن</small>
+  <a href="https://www.tiktok.com/@proxo_iq" target="_blank">
+    <img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo">
+  </a>
+  <div class="legal">
+    <a href="https://proxopages.com/policy" target="_blank">Privacy Policy</a>
+    | <a href="https://proxopages.com/terms" target="_blank">Terms &amp; Conditions</a>
+  </div>
+</div>`;
+
+  const sharedModalCSS=`
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:10000;}
+.modal-overlay.active{display:flex;animation:fadeIn .2s ease;}
+.modal-content{width:85%;max-width:320px;padding:35px 25px;border-radius:24px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3);background:#16181d;color:#fff;border:1px solid rgba(255,255,255,.1);}
+.modal-content h3{margin:0 0 16px;font-size:20px;}
+.modal-content p{font-size:14px;opacity:.7;margin-bottom:25px;line-height:1.6;}
+.btn-confirm{width:100%;padding:16px;border-radius:16px;border:none;font-family:'Rabar_021',sans-serif;font-size:16px;font-weight:bold;cursor:pointer;transition:.2s;margin-bottom:12px;}
+.btn-cancel{color:#888;font-size:14px;cursor:pointer;display:inline-block;padding:5px;}
+.confirm-wh{background:#28E16D;color:#000;}.confirm-vi{background:#7360f2;color:#fff;}
+.confirm-te{background:#26A5E4;color:#fff;}.confirm-ph{background:#fff;color:#000;}
+.confirm-as{background:#e03030;color:#fff;}.confirm-in{background:#dc2743;color:#fff;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes shine{0%{left:-100%;}100%{left:150%;}}
+.shine-active{overflow:hidden;position:relative;}
+.shine-active::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(to right,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-25deg);animation:shine 2.5s ease-in-out infinite;pointer-events:none;border-radius:inherit;}
+.no-shine::after{animation:none!important;display:none;}`;
+
+  const head=(ttl)=>`<!DOCTYPE html>
+<html dir="rtl" lang="ku">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>${ttl}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+@font-face{font-family:'Rabar_021';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}`;
+
+  // ════════════════════════════════
+  // ── DARK ──
+  // ════════════════════════════════
   if(style==='dark'){
-    const btnsBtns=btns.map(b=>`<a href="${b.href}" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);text-decoration:none;color:#fff;font-size:13px;font-weight:600;transition:.15s;flex:1;min-width:calc(50% - 6px)"><i class="${b.pd.i}" style="font-size:26px;color:${b.pd.c.startsWith('linear')?'#fff':b.pd.c}"></i>${b.pd.l}</a>`).join('');
-    return`<!DOCTYPE html><html dir="rtl" lang="ku"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>${name}</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><style>${font}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'R',sans-serif;background:#0d1021;min-height:100vh;display:flex;justify-content:center;}.page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;}.gradient-bg{width:100%;height:180px;background:linear-gradient(to left,${tc.dark},${tc.main});position:relative;flex-shrink:0;}.gradient-bg::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:50px;background:#0d1021;border-radius:50% 50% 0 0/50px 50px 0 0;}.av-wrap{position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);}.av{width:90px;height:90px;border-radius:50%;border:4px solid #0d1021;background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden;}.content{padding:0 18px 60px;display:flex;flex-direction:column;align-items:center;margin-top:50px;}.name{font-size:20px;font-weight:800;color:#fff;text-align:center;}.bio{font-size:13px;color:rgba(255,255,255,.6);text-align:center;margin-top:8px;line-height:1.9;}.btns{display:flex;flex-wrap:wrap;gap:10px;width:100%;margin-top:22px;}.tt-link{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;padding:9px 20px;border-radius:50px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;}.footer{margin-top:auto;padding:28px 20px;text-align:center;}.footer small{display:block;font-size:11px;color:#555;margin-bottom:8px;}.legal{font-size:10px;color:#444;}.legal a{color:inherit;text-decoration:none;margin:0 5px;}</style></head><body><div class="page"><div class="gradient-bg"><div class="av-wrap"><div class="av">${avHtml}</div></div></div><div class="content"><h1 class="name">${name}</h1>${bio?`<p class="bio">${bio}</p>`:''}<div class="btns">${btnsBtns}</div>${tt?`<a href="${ttUrl}" target="_blank" class="tt-link"><i class="fab fa-tiktok"></i>@${tt}</a>`:''}</div><div class="footer"><small>سپۆنسەر کراوە لەلایەن</small><div class="legal"><a href="https://proxopages.com/policy">Privacy Policy</a> | <a href="https://proxopages.com/terms">Terms</a></div></div></div></body></html>`;
+    // بناخەی grid — لە ProxoLink buildLayout
+    let btns=[...activeBtns];
+    const waIdx=btns.findIndex(b=>b.id==='wa');
+    if(waIdx===0&&btns.length>=2)[btns[0],btns[1]]=[btns[1],btns[0]];
+    else if(waIdx>1){const wa=btns.splice(waIdx,1)[0];btns.splice(1,0,wa);}
+    const count=btns.length;
+    let gridHTML='',belowGrid='';
+    const mkBtn=(b,shine)=>`<a id="${b.id}" class="btn${shine?' shine-active':''}">${b.label}<i class="${b.icon}"></i></a>`;
+    if(count===1){
+      gridHTML='';
+      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[0],true)}</div>`;
+    } else if(count===3){
+      gridHTML=mkBtn(btns[0],false)+mkBtn(btns[1],true);
+      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[2],false)}</div>`;
+    } else if(count===5){
+      gridHTML=mkBtn(btns[0],false)+mkBtn(btns[1],true)+mkBtn(btns[2],false)+mkBtn(btns[3],false);
+      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[4],false)}</div>`;
+    } else {
+      gridHTML=btns.map((b,i)=>mkBtn(b,i===1)).join('');
+      belowGrid=`<div class="tt-wrap"><a href="${ttUrl}" target="_blank" class="tt-badge"><span>@${tt}</span><i class="fab fa-tiktok"></i></a></div>`;
+    }
+    const btnColors=btns.map(b=>`#${b.id}{background:${b.bg};}`).join('');
+    return head(name)+`
+body{font-family:'Inter','Rabar_021',sans-serif;background:#0d1021;display:flex;justify-content:center;min-height:100vh;}
+.page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;align-items:center;background:#0d1021;}
+.top-section{width:100%;position:relative;}
+.gradient-bg{width:100%;height:190px;background:${tg.grad};position:relative;}
+.gradient-bg::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:55px;background:#0d1021;border-radius:50% 50% 0 0/55px 55px 0 0;}
+.avatar{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:100px;height:100px;border-radius:50%;border:5px solid #fff;overflow:hidden;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.4);z-index:10;}
+.content{width:100%;display:flex;flex-direction:column;align-items:center;padding:0 16px 50px;background:#0d1021;}
+.name{font-size:19px;font-weight:600;color:#fff;text-align:center;position:relative;top:-25px;margin-bottom:-10px;}
+.desc{font-size:14px;color:#EDEDED;line-height:2;text-align:center;margin-top:18px;padding:0 6px;white-space:pre-line;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:40px;}
+.btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 8px 15px;border-radius:18px;font-size:14px;font-weight:bold;color:#fff;min-height:88px;cursor:pointer;text-decoration:none;overflow:hidden;transition:transform .13s;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);}
+.btn:active{transform:scale(.96);}
+.btn i{font-size:28px;}
+#wa i{font-size:25px;}#vb i{font-size:22px;}#tg i{font-size:22px;}#ig i{font-size:22px;}#ph i{font-size:20px;}#as i{font-size:20px;}
+.three-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:10px;align-items:center;}
+.tt-pill{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:90px;background:rgba(255,255,255,.03);backdrop-filter:blur(5px);color:#fff;text-decoration:none;font-family:'Rabar_021',sans-serif;font-size:13.5px;font-weight:600;position:relative;border:1px solid rgba(255,255,255,.1);width:100%;box-sizing:border-box;}
+.tt-pill::before{content:'';position:absolute;inset:-1px;border-radius:90px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.7;}
+.tt-pill i{font-size:18px;position:relative;z-index:1;}
+.tt-pill span{position:relative;z-index:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;}
+.tt-pill:active{transform:scale(.95);}
+.tt-wrap{display:flex;justify-content:center;width:100%;}
+.tt-badge{background:rgba(255,255,255,.03);color:#fff;text-decoration:none;display:flex;flex-direction:row;align-items:center;gap:8px;padding:7px 18px;border-radius:90px;border:1px solid rgba(255,255,255,.1);position:relative;margin-top:14px;font-family:'Rabar_021',sans-serif;font-size:14.5px;font-weight:600;}
+.tt-badge::before{content:'';position:absolute;inset:-1px;border-radius:50px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.6;}
+.tt-badge i{font-size:17px;position:relative;z-index:1;}
+.tt-badge span{position:relative;z-index:1;direction:ltr;}
+.tt-badge:active{transform:scale(.95);}
+.footer{width:100%;margin-top:100px;padding-bottom:28px;text-align:center;}
+.footer small{display:block;font-size:11px;color:#8b8b8b;margin-bottom:8px;}
+.footer img{height:13px;display:block;margin:0 auto 10px;}
+.legal{font-size:10px;color:#8b8b8b;}
+.legal a{color:inherit;text-decoration:none;margin:0 5px;}
+${btnColors}
+${sharedModalCSS}
+</style></head><body>
+${modalHTML}
+<div class="page">
+  <div class="top-section">
+    <div class="gradient-bg"></div>
+    <div class="avatar">${avImg}</div>
+  </div>
+  <div class="content">
+    <h1 class="name">${name}</h1>
+    <p class="desc">${bioSafe}</p>
+    <div class="grid">${gridHTML}</div>
+    ${belowGrid}
+    ${footerHTML}
+  </div>
+</div>
+<script>${sharedScript}<\/script>
+</body></html>`;
   }
 
+  // ════════════════════════════════
+  // ── LIGHT ──
+  // ════════════════════════════════
   if(style==='light'){
-    const btnsBtns=btns.map(b=>`<a href="${b.href}" target="_blank" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;border-radius:18px;background:#f5f6fa;border:1.5px solid #e8eaf0;text-decoration:none;color:#1c2333;font-size:13px;font-weight:600;flex:1;min-width:calc(50% - 6px)"><i class="${b.pd.i}" style="font-size:26px;color:${b.pd.c.startsWith('linear')?'#e1306c':b.pd.c}"></i>${b.pd.l}</a>`).join('');
-    return`<!DOCTYPE html><html dir="rtl" lang="ku"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>${name}</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><style>${font}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'R',sans-serif;background:#f5f6fa;min-height:100vh;display:flex;justify-content:center;}.page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;}.gradient-bg{width:100%;height:180px;background:linear-gradient(to left,${tc.dark},${tc.main});position:relative;flex-shrink:0;}.gradient-bg::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:50px;background:#f5f6fa;border-radius:50% 50% 0 0/50px 50px 0 0;}.av-wrap{position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);}.av{width:90px;height:90px;border-radius:50%;border:4px solid #f5f6fa;background:${tc.dark};display:flex;align-items:center;justify-content:center;overflow:hidden;}.content{padding:0 18px 60px;display:flex;flex-direction:column;align-items:center;margin-top:50px;}.name{font-size:20px;font-weight:800;color:#1c2333;text-align:center;}.bio{font-size:13px;color:#8b95a8;text-align:center;margin-top:8px;line-height:1.9;}.btns{display:flex;flex-wrap:wrap;gap:10px;width:100%;margin-top:22px;}.tt-link{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;padding:9px 20px;border-radius:50px;background:#fff;border:1.5px solid #e8eaf0;color:#8b95a8;text-decoration:none;font-size:13px;}.footer{margin-top:auto;padding:28px 20px;text-align:center;}.footer small{display:block;font-size:11px;color:#aaa;margin-bottom:8px;}.legal{font-size:10px;color:#bbb;}.legal a{color:inherit;text-decoration:none;margin:0 5px;}</style></head><body><div class="page"><div class="gradient-bg"><div class="av-wrap"><div class="av">${avHtml}</div></div></div><div class="content"><h1 class="name">${name}</h1>${bio?`<p class="bio">${bio}</p>`:''}<div class="btns">${btnsBtns}</div>${tt?`<a href="${ttUrl}" target="_blank" class="tt-link"><i class="fab fa-tiktok"></i>@${tt}</a>`:''}</div><div class="footer"><small>سپۆنسەر کراوە لەلایەن</small><div class="legal"><a href="https://proxopages.com/policy">Privacy Policy</a> | <a href="https://proxopages.com/terms">Terms</a></div></div></div></body></html>`;
+    let btns=[...activeBtns];
+    const waIdx=btns.findIndex(b=>b.id==='wa');
+    if(waIdx===0&&btns.length>=2)[btns[0],btns[1]]=[btns[1],btns[0]];
+    else if(waIdx>1){const wa=btns.splice(waIdx,1)[0];btns.splice(1,0,wa);}
+    const count=btns.length;
+    let gridHTML='',belowGrid='';
+    const mkBtn=(b,shine)=>`<a id="${b.id}" class="btn${shine?' shine-active':''}">${b.label}<i class="${b.icon}"></i></a>`;
+    if(count===1){
+      gridHTML='';
+      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[0],true)}</div>`;
+    } else if(count===3){
+      gridHTML=mkBtn(btns[0],false)+mkBtn(btns[1],true);
+      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[2],false)}</div>`;
+    } else if(count===5){
+      gridHTML=mkBtn(btns[0],false)+mkBtn(btns[1],true)+mkBtn(btns[2],false)+mkBtn(btns[3],false);
+      belowGrid=`<div class="three-bottom-row"><a href="${ttUrl}" target="_blank" class="tt-pill"><span>@${tt}</span><i class="fab fa-tiktok"></i></a>${mkBtn(btns[4],false)}</div>`;
+    } else {
+      gridHTML=btns.map((b,i)=>mkBtn(b,i===1)).join('');
+      belowGrid=`<div class="tt-wrap"><a href="${ttUrl}" target="_blank" class="tt-badge"><span>@${tt}</span><i class="fab fa-tiktok"></i></a></div>`;
+    }
+    const btnColors=btns.map(b=>`#${b.id}{background:${b.bg};}`).join('');
+    return head(name)+`
+body{font-family:'Inter','Rabar_021',sans-serif;background:#f0f0f0;display:flex;justify-content:center;min-height:100vh;}
+.page{width:100%;max-width:430px;background:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+.top-section{width:100%;position:relative;}
+.gradient-bg{width:100%;height:190px;background:${tg.grad};position:relative;}
+.gradient-bg::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:55px;background:#fff;border-radius:50% 50% 0 0/55px 55px 0 0;}
+.avatar{position:absolute;top:40px;left:50%;transform:translateX(-50%);width:100px;height:100px;border-radius:50%;border:5px solid #fff;overflow:hidden;background:#ddd;box-shadow:0 4px 24px rgba(0,0,0,.25);z-index:10;}
+.content{width:100%;display:flex;flex-direction:column;align-items:center;padding:0 16px 50px;background:#fff;}
+.name{font-size:19px;font-weight:600;color:#111;text-align:center;position:relative;top:-25px;margin-bottom:-10px;}
+.desc{font-size:14px;color:#333;line-height:2;text-align:center;margin-top:18px;padding:0 6px;white-space:pre-line;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:40px;}
+.btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 8px 15px;border-radius:18px;font-size:14px;font-weight:bold;color:#fff;min-height:88px;cursor:pointer;text-decoration:none;overflow:hidden;transition:transform .13s;background:#888;box-shadow:0 4px 14px rgba(0,0,0,.15);}
+.btn:active{transform:scale(.96);}
+.btn i{font-size:28px;}
+#wa i{font-size:25px;}#vb i{font-size:22px;}#tg i{font-size:22px;}#ig i{font-size:22px;}#ph i{font-size:20px;}#as i{font-size:20px;}
+.three-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:10px;align-items:center;}
+.tt-pill{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:90px;background:rgba(255,255,255,.06);color:#111;text-decoration:none;font-family:'Rabar_021',sans-serif;font-size:13.5px;font-weight:600;position:relative;border:1px solid rgba(0,0,0,.12);width:100%;box-sizing:border-box;}
+.tt-pill::before{content:'';position:absolute;inset:-1px;border-radius:90px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.65;}
+.tt-pill i{font-size:18px;position:relative;z-index:1;}
+.tt-pill span{position:relative;z-index:1;direction:ltr;}
+.tt-pill:active{transform:scale(.95);}
+.tt-wrap{display:flex;justify-content:center;width:100%;}
+.tt-badge{background:rgba(0,0,0,.04);color:#111;text-decoration:none;display:flex;flex-direction:row;align-items:center;gap:8px;padding:7px 18px;border-radius:90px;border:1px solid rgba(0,0,0,.1);position:relative;margin-top:14px;font-family:'Rabar_021',sans-serif;font-size:14.5px;font-weight:600;}
+.tt-badge::before{content:'';position:absolute;inset:-1px;border-radius:50px;padding:1.2px;background:linear-gradient(45deg,#69c9d0,#ee1d52);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.6;}
+.tt-badge i{font-size:17px;position:relative;z-index:1;}
+.tt-badge span{position:relative;z-index:1;direction:ltr;}
+.tt-badge:active{transform:scale(.95);}
+.footer{width:100%;margin-top:100px;padding-bottom:28px;text-align:center;}
+.footer small{display:block;font-size:11px;color:#7A7A7A;margin-bottom:8px;}
+.footer img{height:13px;display:block;margin:0 auto 10px;}
+.legal{font-size:10px;color:#7A7A7A;}
+.legal a{color:inherit;text-decoration:none;margin:0 5px;}
+${btnColors}
+${sharedModalCSS}
+</style></head><body>
+${modalHTML}
+<div class="page">
+  <div class="top-section">
+    <div class="gradient-bg"></div>
+    <div class="avatar">${avImg}</div>
+  </div>
+  <div class="content">
+    <h1 class="name">${name}</h1>
+    <p class="desc">${bioSafe}</p>
+    <div class="grid">${gridHTML}</div>
+    ${belowGrid}
+    ${footerHTML}
+  </div>
+</div>
+<script>${sharedScript}<\/script>
+</body></html>`;
   }
 
-  // classic
-  const btnsBtns=btns.map(b=>`<a href="${b.href}" target="_blank" style="display:grid;grid-template-columns:44px 1fr;align-items:center;gap:0;padding:14px 16px;border-radius:50px;background:${b.pd.c.startsWith('linear')?b.pd.c:b.pd.c};text-decoration:none;color:#fff;font-size:15px;font-weight:700;width:100%;"><div style="display:flex;align-items:center;justify-content:center;font-size:22px;"><i class="${b.pd.i}"></i></div><span style="text-align:center;">${b.pd.l}</span></a>`).join('');
-  return`<!DOCTYPE html><html dir="rtl" lang="ku"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>${name}</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><style>${font}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'R',sans-serif;background:#f0f0f0;min-height:100vh;display:flex;justify-content:center;}.page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;}.banner{width:100%;background:linear-gradient(to left,${tc.dark},${tc.main});padding:36px 20px 60px;text-align:center;}.name{font-size:22px;font-weight:800;color:#fff;}.bio{font-size:13px;color:rgba(255,255,255,.85);margin-top:10px;line-height:1.9;}.content{width:100%;padding:0 18px;margin-top:-28px;}.card{background:#fff;border-radius:22px;padding:22px 16px;box-shadow:0 4px 24px rgba(0,0,0,.1);display:flex;flex-direction:column;gap:10px;align-items:center;}.tt-link{display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 20px;border-radius:50px;background:#111;color:#fff;text-decoration:none;font-size:13px;font-weight:600;}.footer{padding:40px 20px 28px;text-align:center;}.footer small{display:block;font-size:11px;color:#aaa;margin-bottom:8px;}.legal{font-size:10px;color:#bbb;}.legal a{color:inherit;text-decoration:none;margin:0 5px;}</style></head><body><div class="page"><div class="banner"><h1 class="name">${name}</h1>${bio?`<p class="bio">${bio}</p>`:''}</div><div class="content"><div class="card">${btnsBtns}${tt?`<a href="${ttUrl}" target="_blank" class="tt-link"><i class="fab fa-tiktok"></i>@${tt}</a>`:''}</div></div><div class="footer"><small>سپۆنسەر کراوە لەلایەن</small><div class="legal"><a href="https://proxopages.com/policy">Privacy Policy</a> | <a href="https://proxopages.com/terms">Terms</a></div></div></div></body></html>`;
+  // ════════════════════════════════
+  // ── CLASSIC ──
+  // ════════════════════════════════
+  const btnColors={wa:'#25d366',vb:'#7360F2',tg:'#29a8eb',ig:'linear-gradient(to right,#8a2387,#e94057,#f27121)',ph:'#e03030',as:'#e03030'};
+  const classicBtns=activeBtns.map((b,i)=>`<a id="${b.id}" class="btn-classic${i===0?' shine-active':''}" style="background:${btnColors[b.id]||b.bg}">
+  <div class="ic-spacer"></div>
+  <span>${b.label}</span>
+  <div class="ic-wrap"><i class="${b.icon}"></i></div>
+</a>`).join('\n');
+  const ttClassic=`<a href="${ttUrl}" target="_blank" class="tt-classic"><span dir="ltr">@${tt}</span><i class="fab fa-tiktok"></i></a>`;
+  return head(name)+`
+body{font-family:'Rabar_021',sans-serif;background:#f0f0f0;display:flex;justify-content:center;min-height:100vh;}
+.page{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;align-items:center;background:#f0f0f0;padding-bottom:60px;}
+.top-banner{width:100%;background:${tg.grad};padding:36px 20px 60px;text-align:center;}
+.name{font-size:22px;font-weight:600;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3);}
+.desc{font-size:14px;color:rgba(255,255,255,.9);line-height:1.9;text-align:center;margin-top:10px;padding:0 10px;white-space:pre-line;}
+.content{width:100%;padding:0 18px;margin-top:-30px;}
+.card-inner{background:#fff;border-radius:24px;padding:24px 16px 20px;box-shadow:0 4px 24px rgba(0,0,0,.1);display:flex;flex-direction:column;gap:10px;align-items:center;}
+.btn-classic{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:14px 16px;border-radius:50px;font-size:16px;font-weight:700;color:#fff;text-decoration:none;cursor:pointer;transition:transform .12s,opacity .12s;width:100%;}
+.btn-classic:active{transform:scale(.97);opacity:.9;}
+.btn-classic .ic-wrap{display:flex;align-items:center;justify-content:center;font-size:22px;}
+.btn-classic span{text-align:center;}
+.btn-classic .ic-spacer{width:44px;}
+.tt-classic{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:4px;padding:8px 20px;border-radius:50px;background:#111;color:#fff;text-decoration:none;font-family:'Rabar_021',sans-serif;font-size:13px;font-weight:600;transition:transform .12s;}
+.tt-classic i{font-size:18px;}
+.tt-classic:active{transform:scale(.96);}
+#wa i{font-size:25px;}#vb i{font-size:22px;}#tg i{font-size:22px;}#ig i{font-size:22px;}#ph i{font-size:20px;}#as i{font-size:20px;}
+.footer{width:100%;margin-top:80px;padding:0 18px 20px;text-align:center;}
+.footer small{display:block;font-size:11px;color:#aaa;margin-bottom:8px;}
+.footer img{height:13px;display:block;margin:0 auto 10px;}
+.legal{font-size:10px;color:#bbb;}
+.legal a{color:inherit;text-decoration:none;margin:0 5px;}
+${sharedModalCSS}
+</style></head><body>
+${modalHTML}
+<div class="page">
+  <div class="top-banner">
+    <h1 class="name">${name}</h1>
+    <p class="desc">${bioSafe}</p>
+  </div>
+  <div class="content">
+    <div class="card-inner">
+      ${classicBtns}
+      ${ttClassic}
+    </div>
+  </div>
+  ${footerHTML}
+</div>
+<script>${sharedScript}<\/script>
+</body></html>`;
 }
 
 async function loadProxoCards(){
