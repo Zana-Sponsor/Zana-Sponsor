@@ -5,10 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Proxo Ads</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @font-face{font-family:'R';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2') format('woff2');}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+/* ژمارە و پیتی ئینگلیزی بە Inter */
+[dir=ltr],input[type=email],input[type=password],input[type=url],input[type=number],input[type=tel],input[type=date],input[type=time],.bal-num,.hbal span,.hcoins .coin-amt,.coins-modal-bal,.coins-value-row span:last-child,.tx-amt,.ad-num,.meth-num,.topbar-brand,.auth-brand h1,.sidebar-bal-val,.sidebar-email,.prof-email{font-family:'Inter',sans-serif !important;}
 :root{
   --bg:#f5f6fa;--w:#fff;--card:#fff;
   --b1:#e8eaf0;--b2:#d0d4de;
@@ -525,10 +529,14 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 <!-- APP -->
 <div id="app">
   <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="ham-btn" onclick="openSidebar()"><i class="fas fa-bars"></i></div>
+      <div class="topbar-brand">Proxo <span>Ads</span></div>
+    </div>
     <div class="topbar-right">
-      <div class="hbal" onclick="goPage('profile')">
-        <i class="fas fa-wallet"></i>
-        <span id="hBal">$0.00</span>
+      <div class="notif-btn" onclick="goPage('notifications')" id="notifBtn">
+        <i class="fas fa-bell" style="font-size:16px"></i>
+        <div class="notif-dot" id="notifDot"></div>
       </div>
       <!-- PROXO COINS BADGE -->
       <div class="hcoins" id="hCoinsBtn" onclick="openCoinsModal()" style="display:none">
@@ -536,14 +544,10 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         <span class="coin-amt" id="hCoins">0</span>
         <span class="exchange-tag" id="hCoinsExchangeTag" style="display:none">گۆڕانەوە</span>
       </div>
-      <div class="notif-btn" onclick="goPage('notifications')" id="notifBtn">
-        <i class="fas fa-bell" style="font-size:16px"></i>
-        <div class="notif-dot" id="notifDot"></div>
+      <div class="hbal" onclick="goPage('profile')">
+        <i class="fas fa-wallet"></i>
+        <span id="hBal">$0.00</span>
       </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <div class="topbar-brand">Proxo <span>Ads</span></div>
-      <div class="ham-btn" onclick="openSidebar()"><i class="fas fa-bars"></i></div>
     </div>
   </div>
 
