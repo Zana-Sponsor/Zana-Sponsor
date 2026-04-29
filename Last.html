@@ -61,6 +61,35 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 .hbal{display:flex;align-items:center;gap:7px;padding:8px 14px;cursor:pointer;background:var(--dark);border-radius:22px;font-size:13px;color:#fff;font-weight:700;}
 .hbal i{font-size:12px;opacity:.7;}
 
+/* ══ PROXO COINS ══ */
+.hcoins{display:flex;align-items:center;gap:6px;padding:8px 13px;cursor:pointer;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:22px;font-size:13px;color:#fff;font-weight:700;box-shadow:0 2px 10px rgba(245,158,11,.35);position:relative;transition:all .2s;}
+.hcoins:active{opacity:.9;}
+.hcoins .coin-ico{font-size:14px;animation:coinSpin 3s linear infinite;}
+.hcoins .coin-amt{font-weight:800;letter-spacing:-.3px;}
+.hcoins .exchange-tag{font-size:9px;background:rgba(255,255,255,.25);border-radius:20px;padding:2px 7px;font-weight:700;letter-spacing:.3px;white-space:nowrap;}
+@keyframes coinSpin{0%,100%{transform:rotateY(0deg)}50%{transform:rotateY(180deg)}}
+
+/* Coins modal */
+.coins-modal-header{text-align:center;padding:8px 0 20px;}
+.coins-modal-icon{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#d97706);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 14px;box-shadow:0 6px 20px rgba(245,158,11,.4);}
+.coins-modal-bal{font-size:38px;font-weight:900;color:var(--dark);direction:ltr;}
+.coins-modal-sub{font-size:12px;color:var(--mt);margin-top:4px;}
+.coins-value-bar{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(217,119,6,.05));border:1px solid rgba(245,158,11,.2);border-radius:14px;padding:14px 16px;margin:14px 0;}
+.coins-value-row{display:flex;align-items:center;justify-content:space-between;font-size:13px;}
+.coins-value-row span:first-child{color:var(--mt);}
+.coins-value-row span:last-child{font-weight:800;color:var(--dark);}
+.coins-progress-wrap{margin:14px 0;}
+.coins-progress-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--mt);margin-bottom:8px;}
+.coins-progress-track{height:8px;background:var(--b1);border-radius:20px;overflow:hidden;}
+.coins-progress-fill{height:100%;background:linear-gradient(90deg,#fbbf24,#d97706);border-radius:20px;transition:width .6s ease;}
+.coins-info-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--b1);font-size:12px;color:var(--dark);}
+.coins-info-item:last-child{border-bottom:none;}
+.coins-info-ico{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.coins-exchange-btn{width:100%;padding:15px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:15px;font-family:'R',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;box-shadow:0 4px 16px rgba(245,158,11,.35);}
+.coins-exchange-btn:active{opacity:.9;}
+.coins-exchange-btn:disabled{opacity:.4;pointer-events:none;}
+.coins-need-more{width:100%;padding:13px;background:var(--bg);border:1.5px dashed var(--b2);border-radius:14px;color:var(--mt);font-family:'R',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:14px;cursor:default;}
+
 /* ══ NOTIFICATION BELL ══ */
 .notif-btn{position:relative;width:38px;height:38px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dark);}
 .notif-dot{position:absolute;top:6px;left:6px;width:9px;height:9px;border-radius:50%;background:var(--rd);border:2px solid var(--w);display:none;animation:pulse 1.5s infinite;}
@@ -505,6 +534,12 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         <i class="fas fa-bell" style="font-size:16px"></i>
         <div class="notif-dot" id="notifDot"></div>
       </div>
+      <!-- PROXO COINS BADGE -->
+      <div class="hcoins" id="hCoinsBtn" onclick="openCoinsModal()" style="display:none">
+        <span class="coin-ico">🪙</span>
+        <span class="coin-amt" id="hCoins">0</span>
+        <span class="exchange-tag" id="hCoinsExchangeTag" style="display:none">گۆڕانەوە</span>
+      </div>
       <div class="hbal" onclick="goPage('profile')">
         <i class="fas fa-wallet"></i>
         <span id="hBal">$0.00</span>
@@ -617,6 +652,23 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
       <button class="add-bal-btn" onclick="openDeposit()">
         <i class="fas fa-plus"></i> زیادکردنی بالانس
       </button>
+    </div>
+    <!-- Proxo Coins Card in Profile -->
+    <div class="pcard" id="profileCoinsCard" style="background:linear-gradient(135deg,rgba(251,191,36,.06),rgba(217,119,6,.04));border-color:rgba(245,158,11,.2)">
+      <div class="pcard-hdr">
+        <div class="pcard-hdr-left" style="color:#b45309"><span style="margin-left:5px">🪙</span> کۆینی پرۆکسۆ</div>
+        <span style="font-size:11px;cursor:pointer;color:#d97706;font-weight:700" onclick="openCoinsModal()">
+          <i class="fas fa-arrow-right-arrow-left"></i> گۆڕانەوە
+        </span>
+      </div>
+      <div class="bal-row">
+        <div class="bal-num" id="profCoins" style="color:#d97706">0</div>
+        <div class="bal-cur">کۆین</div>
+      </div>
+      <div style="font-size:12px;color:#b45309;margin-top:6px;background:rgba(245,158,11,.08);border-radius:10px;padding:8px 12px">
+        <i class="fas fa-info-circle" style="margin-left:5px"></i>
+        هەر ٥٠ کۆین = $٠.٥٠ · کەمترین ٥٠٠ کۆین بۆ گۆڕانەوە
+      </div>
     </div>
     <div class="pcard">
       <div class="pcard-hdr"><div class="pcard-hdr-left"><i class="fas fa-gear"></i> ڕێکخستنەکان</div></div>
@@ -1160,6 +1212,68 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
   </div>
 </div>
 
+<!-- ═══ PROXO COINS MODAL ═══ -->
+<div class="mover" id="moCoins">
+  <div class="mbox">
+    <div class="mbar"></div>
+    <div class="mhdr">
+      <h3><span style="margin-left:7px">🪙</span>کۆینی پرۆکسۆ</h3>
+      <button class="mclose" onclick="closeMo('moCoins')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <!-- Header Balance -->
+    <div class="coins-modal-header">
+      <div class="coins-modal-icon">🪙</div>
+      <div class="coins-modal-bal" id="modalCoinsAmt">0</div>
+      <div class="coins-modal-sub">کۆینی کۆتاپیاکراو</div>
+    </div>
+    <!-- Value bar -->
+    <div class="coins-value-bar">
+      <div class="coins-value-row" style="margin-bottom:8px">
+        <span>نرخی هەموو کۆینەکان</span>
+        <span id="modalCoinsValue" style="color:#d97706">/bin/sh.00</span>
+      </div>
+      <div class="coins-value-row">
+        <span>هر ٥٠ کۆین = $٠.٥٠</span>
+        <span style="color:var(--mt);font-size:11px">١ کۆین = $٠.٠١</span>
+      </div>
+    </div>
+    <!-- Progress to exchange -->
+    <div class="coins-progress-wrap">
+      <div class="coins-progress-lbl">
+        <span>کۆینی ئێستا</span>
+        <span id="modalCoinsProgressLbl">0 / 500</span>
+      </div>
+      <div class="coins-progress-track">
+        <div class="coins-progress-fill" id="modalCoinsProgressFill" style="width:0%"></div>
+      </div>
+      <div style="font-size:11px;color:var(--mt);margin-top:6px;text-align:center" id="modalCoinsProgressMsg">٥٠٠ کۆین پێویستە بۆ گۆڕانەوە</div>
+    </div>
+    <!-- Info -->
+    <div style="margin:14px 0">
+      <div class="coins-info-item">
+        <div class="coins-info-ico" style="background:rgba(22,163,74,.1);color:var(--gr)"><i class="fas fa-circle-plus"></i></div>
+        <div>هەر جار ڕیکلامێک بنێریت، <strong>٥٠ کۆین</strong> وەردەگریت.</div>
+      </div>
+      <div class="coins-info-item">
+        <div class="coins-info-ico" style="background:rgba(220,38,38,.08);color:var(--rd)"><i class="fas fa-circle-minus"></i></div>
+        <div>ئەگەر ئەدمین ڕیکلامەکەت ڕەتکردەوە، <strong>٥٠ کۆین</strong> کەم دەکرێتەوە.</div>
+      </div>
+      <div class="coins-info-item">
+        <div class="coins-info-ico" style="background:rgba(37,99,235,.08);color:var(--bl)"><i class="fas fa-repeat"></i></div>
+        <div>کەمترین ٥٠٠ کۆین پێویستە بۆ گۆڕانەوە بۆ $٥ بالانس.</div>
+      </div>
+    </div>
+    <!-- Exchange Button (shown when >= 500) -->
+    <button class="coins-exchange-btn" id="coinsExchangeBtn" onclick="exchangeCoins()" style="display:none">
+      <i class="fas fa-arrow-right-arrow-left"></i> گۆڕانەوە بۆ بالانس
+    </button>
+    <div class="coins-need-more" id="coinsNeedMore">
+      <i class="fas fa-lock" style="color:var(--mt)"></i>
+      <span id="coinsNeedMoreTxt">٥٠٠ کۆین پێویستە بۆ گۆڕانەوە</span>
+    </div>
+  </div>
+</div>
+
 <!-- DEPOSIT: AMOUNT -->
 <div class="mover" id="moAmount">
   <div class="mbox">
@@ -1652,7 +1766,9 @@ async function boot(){
   document.getElementById('app').style.display='flex';
   document.getElementById('bnav').style.display='block';
   await ensureWallet();
+  await ensureCoinsWallet();
   await loadBal();
+  await loadCoins();
   loadProfile();
   loadMyCards();
   goPage('home');
@@ -1663,6 +1779,17 @@ async function boot(){
   sb.channel('notif_'+cu.id)
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'pa_notifications',filter:`user_id=eq.${cu.id}`},()=>{
       checkNotifBell();
+    })
+    .subscribe();
+
+  // Proxo Coins: listen for ad status → rejected, deduct coins
+  sb.channel('coins_ads_'+cu.id)
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads',filter:`user_id=eq.${cu.id}`},(payload)=>{
+      if(payload.new?.status==='rejected' && payload.old?.status!=='rejected'){
+        addCoins(-COINS_PER_AD,'ڕیکلامی ڕەتکراو — کۆین کەمکرایەوە').then(()=>{
+          showToast('ڕیکلامەکەت ڕەتکرا — 50 🪙 کۆین کەمکرایەوە','err');
+        });
+      }
     })
     .subscribe();
 }
@@ -1715,6 +1842,137 @@ async function loadBal(){
 
 async function doLogout(){
   await sb.auth.signOut();cu=null;showAuth();
+}
+
+// ════════════════════════════════════════════════
+// PROXO COINS — Complete System
+// ════════════════════════════════════════════════
+const COINS_PER_AD    = 50;
+const COINS_MIN_EXCHANGE = 500;
+const COINS_TO_USD    = 0.01; // 1 coin = $0.01, so 50 coins = $0.50
+
+async function ensureCoinsWallet(){
+  // upsert a row in pa_coins (coins_balance column)
+  await sb.from('pa_coins').upsert(
+    {user_id:cu.id, coins_balance:0},
+    {onConflict:'user_id', ignoreDuplicates:true}
+  );
+}
+
+async function loadCoins(){
+  const{data,error}=await sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single();
+  if(error&&error.code!=='PGRST116') return 0;
+  const coins=parseInt(data?.coins_balance||0);
+  updateCoinsBadge(coins);
+  return coins;
+}
+
+function updateCoinsBadge(coins){
+  const btn=document.getElementById('hCoinsBtn');
+  const amtEl=document.getElementById('hCoins');
+  const tagEl=document.getElementById('hCoinsExchangeTag');
+  if(!btn)return;
+  btn.style.display='flex';
+  amtEl.textContent=coins.toLocaleString();
+  if(coins>=COINS_MIN_EXCHANGE){
+    tagEl.style.display='inline-block';
+  } else {
+    tagEl.style.display='none';
+  }
+  // Also update profile page coin display
+  const profCoins=document.getElementById('profCoins');
+  if(profCoins)profCoins.textContent=coins.toLocaleString();
+}
+
+async function addCoins(amount, reason){
+  // Read current balance
+  const{data}=await sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single();
+  const current=parseInt(data?.coins_balance||0);
+  const newBal=Math.max(0, current+amount);
+  await sb.from('pa_coins').update({coins_balance:newBal}).eq('user_id',cu.id);
+  // Log in coin_transactions table
+  await sb.from('pa_coin_transactions').insert({
+    user_id: cu.id,
+    amount:  amount,
+    reason:  reason||'',
+    balance_after: newBal
+  }).maybeSingle();
+  updateCoinsBadge(newBal);
+  return newBal;
+}
+
+function openCoinsModal(){
+  sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single().then(({data})=>{
+    const coins=parseInt(data?.coins_balance||0);
+    const usdVal=(coins*COINS_TO_USD).toFixed(2);
+    const progress=Math.min(100,(coins/COINS_MIN_EXCHANGE)*100);
+    const remaining=Math.max(0,COINS_MIN_EXCHANGE-coins);
+
+    document.getElementById('modalCoinsAmt').textContent=coins.toLocaleString();
+    document.getElementById('modalCoinsValue').textContent='$'+usdVal;
+    document.getElementById('modalCoinsProgressLbl').textContent=coins.toLocaleString()+' / '+COINS_MIN_EXCHANGE.toLocaleString();
+    document.getElementById('modalCoinsProgressFill').style.width=progress+'%';
+
+    const exchangeBtn=document.getElementById('coinsExchangeBtn');
+    const needMore=document.getElementById('coinsNeedMore');
+    const needMoreTxt=document.getElementById('coinsNeedMoreTxt');
+    const progressMsg=document.getElementById('modalCoinsProgressMsg');
+
+    if(coins>=COINS_MIN_EXCHANGE){
+      exchangeBtn.style.display='flex';
+      needMore.style.display='none';
+      progressMsg.textContent='✅ ئامادەیت بۆ گۆڕانەوە — $'+(coins*COINS_TO_USD).toFixed(2)+' وەردەگریت';
+      progressMsg.style.color='var(--gr)';
+    } else {
+      exchangeBtn.style.display='none';
+      needMore.style.display='flex';
+      needMoreTxt.textContent=remaining.toLocaleString()+' کۆین تر پێویستە بۆ گۆڕانەوە';
+      progressMsg.textContent=remaining.toLocaleString()+' کۆین تر پێویستە';
+      progressMsg.style.color='var(--mt)';
+    }
+    document.getElementById('moCoins').classList.add('on');
+  });
+}
+
+async function exchangeCoins(){
+  const btn=document.getElementById('coinsExchangeBtn');
+  const{data}=await sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single();
+  const coins=parseInt(data?.coins_balance||0);
+  if(coins<COINS_MIN_EXCHANGE){showToast('٥٠٠ کۆین پێویستە','err');return;}
+
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> گۆڕانەوە...';
+
+  try{
+    const dollarsToAdd=parseFloat((coins*COINS_TO_USD).toFixed(2));
+    // Deduct all coins
+    await sb.from('pa_coins').update({coins_balance:0}).eq('user_id',cu.id);
+    // Add to wallet
+    const{data:wd}=await sb.from('pa_wallets').select('balance').eq('user_id',cu.id).single();
+    const newWalBal=parseFloat(wd?.balance||0)+dollarsToAdd;
+    await sb.from('pa_wallets').update({balance:newWalBal}).eq('user_id',cu.id);
+    // Log coin transaction
+    await sb.from('pa_coin_transactions').insert({
+      user_id:cu.id, amount:-coins,
+      reason:'گۆڕانەوە بۆ بالانس — $'+dollarsToAdd,
+      balance_after:0
+    }).maybeSingle();
+    // Log wallet transaction
+    await sb.from('pa_transactions').insert({
+      user_id:cu.id, amount:dollarsToAdd,
+      type:'deposit', note:'گۆڕانەوەی '+coins+' کۆین پرۆکسۆ'
+    }).maybeSingle();
+
+    updateCoinsBadge(0);
+    await loadBal();
+    closeMo('moCoins');
+    showToast('✅ $'+dollarsToAdd+' زیادکرا بۆ بالانسەکەت!','ok');
+  }catch(e){
+    showToast('هەڵەیەک ڕوویدا: '+e.message,'err');
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-arrow-right-arrow-left"></i> گۆڕانەوە بۆ بالانس';
+  }
 }
 function openWA(){window.open('https://wa.me/9647512345678','_blank');}
 
@@ -2352,7 +2610,9 @@ async function submitAd(){
         throw new Error(friendly?friendly[1]:error.message);
       }
       await loadBal();
-      showToast('✅ داواکاری ڕیکلامەکەت نێردرا!','ok');
+      // Award 50 Proxo Coins for submitting an ad
+      await addCoins(COINS_PER_AD, 'ناردنی ڕیکلام — کۆینی پاداشت');
+      showToast('✅ داواکاری ڕیکلامەکەت نێردرا! +50 🪙 کۆینت وەرگرت','ok');
       goPage('myads');
     }catch(e){
       showToast(e.message,'err');
