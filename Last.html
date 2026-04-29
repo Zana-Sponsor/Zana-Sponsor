@@ -1816,6 +1816,7 @@ async function checkAndApplyRef(){
 }
 
 let sb, cu=null, aMode='login';
+let _txMap={};
 let budget=20, days=1, depAmt=50;
 let goal='messages', method='fib', cardId=null;
 let rcptB64='', avB64='';
@@ -2442,11 +2443,11 @@ async function loadTx(){
   const mn={fib:'FIB',fastpay:'FastPay',kcard:'K-Card'};
   const appName={fib:'FIB Bank',fastpay:'FastPay',kcard:'ZainCash'};
   const sm={pending:'sb-p چاوەڕوان',approved:'sb-ok پەسەندکرا',rejected:'sb-no ڕەتکرا'};
-  list.innerHTML=data.map(t=>{
+  list.innerHTML=data.map((t,i)=>{
     const[sc,sl]=(sm[t.status]||'sb-p چاوەڕوان').split(' ');
     const lbl=t.status==='approved'?'زیادکردنی باڵانس لەلایەن ئادمینەوە':(mn[t.method]||'—');
-    const td=encodeURIComponent(JSON.stringify(t));
-    return`<div class="tx-item" style="cursor:pointer" onclick="showReceipt(${JSON.stringify(t)})">
+    const key='prof_'+i; _txMap[key]=Object.assign({kind:'deposit'},t);
+    return`<div class="tx-item" style="cursor:pointer" onclick="showReceipt(_txMap['${key}'])">
       <div class="tx-ico tx-in"><i class="fas fa-arrow-down-long"></i></div>
       <div class="tx-info">
         <div class="tx-lbl">${lbl}</div>
@@ -4426,6 +4427,7 @@ async function loadTxHistory(){
   }));
 
   allTxHistory=[...depositItems,...spendItems,...coinExchangeItems].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  _txMap={}; allTxHistory.forEach((t,i)=>{_txMap[t.id+'_'+i]=t;});
   renderTxHistory();
 }
 
@@ -4489,7 +4491,9 @@ function renderTxHistory(){
       statusBadge=sMap[t.status]||sMap.pending;
     }
 
-    return`<div class="tx-item" style="cursor:pointer;padding:12px 4px;margin:-1px -4px;border-radius:12px;transition:background .15s" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''" onclick="${isCoinExchange?'':('showReceipt('+JSON.stringify(t)+')')}">
+    const _txKey = t.id+'_'+filtered.indexOf(t);
+    _txMap[_txKey]=t;
+    return`<div class="tx-item" style="cursor:pointer;padding:12px 4px;margin:-1px -4px;border-radius:12px;transition:background .15s" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''" onclick="${isCoinExchange?'':('showReceipt(_txMap[\''+_txKey+'\'])')}">
       <div style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">
         <i class="fas ${icoName}"></i>
       </div>
@@ -4769,10 +4773,4 @@ async function checkDbReady(){
   -- ئەم فەنکشنە لە نەوەی پێشووەوە مایەوە، دەتوانیت
   -- بیساریتەوە یان بیهێڵیتەوە — ئێستا بەکار نایێت.
   /*
-  CREATE OR REPLACE FUNCTION deduct_wallet_balance(p_user_id UUID, p_amount NUMERIC)
-  RETURNS VOID AS $$
-  BEGIN
-    UPDATE pa_wallets
-    SET balance = balance - p_amount
-    WHERE user_id = p_user_id AND balance >= p_amount;
-    IF NOT FOUND THEN
+  CREATE OR REPLACE FUNCTION deduct_wallet_balance(p_user_id UUID, p_amount
