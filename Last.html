@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Proxo App</title>
+<title>Proxo Ads</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
@@ -67,11 +67,11 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .atabs{display:flex;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:22px;}
 .atab{flex:1;padding:10px;text-align:center;font-size:13px;border-radius:10px;cursor:pointer;font-family:'R',sans-serif;border:none;background:transparent;color:var(--mt);transition:all .2s;}
 .atab.on{background:var(--dark);color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(28,35,51,.2);}
-.finp{width:100%;padding:14px 16px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;color:var(--tx);font-family:'R',sans-serif;font-size:16px;outline:none;transition:all .2s;margin-bottom:12px;}
+.finp{width:100%;padding:16px 18px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;color:var(--tx);font-family:'R',sans-serif;font-size:16px;outline:none;transition:all .2s;margin-bottom:12px;}
 .finp:focus{border-color:var(--dark);background:var(--w);}
 .finp::placeholder{color:var(--mt);}
 .finp[dir=ltr]{text-align:left;}
-.abtn{width:100%;padding:15px;background:var(--dark);color:#fff;border:none;border-radius:14px;font-family:'R',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 4px 16px rgba(28,35,51,.25);transition:opacity .2s;}
+.abtn{width:100%;padding:17px;background:var(--dark);color:#fff;border:none;border-radius:14px;font-family:'R',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 4px 16px rgba(28,35,51,.25);transition:opacity .2s;}
 .abtn:active{opacity:.9;}
 .abtn:disabled{opacity:.5;pointer-events:none;}
 .amsg{font-size:12.5px;text-align:center;padding:11px 14px;border-radius:11px;display:none;margin-top:10px;}
@@ -83,19 +83,19 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 #offlineBanner.show{display:block;}
 
 /* ══ APP ══ */
-#app{display:none;flex-direction:column;min-height:100vh;padding-bottom:78px;background:var(--bg);}
-.topbar{padding:10px 14px;background:var(--w);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+#app{display:none;flex-direction:column;min-height:100vh;padding-bottom:86px;background:var(--bg);}
+.topbar{padding:12px 18px;background:var(--w);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
 .topbar-brand{font-size:17px;font-weight:800;color:var(--dark);letter-spacing:-0.5px;font-family:'Inter',sans-serif;}
 .topbar-brand span{color:var(--mt2);}
 .topbar-greet{display:flex;flex-direction:column;justify-content:center;}
 .topbar-greet-sub{font-size:10px;color:var(--mt);font-weight:600;letter-spacing:.3px;font-family:'R',sans-serif;line-height:1.2;}
-.topbar-greet-name{font-size:16px;font-weight:900;color:var(--dark);line-height:1.3;font-family:'R',sans-serif;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-greet-name{font-size:17px;font-weight:900;color:var(--dark);line-height:1.3;font-family:'R',sans-serif;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .topbar-right{display:flex;align-items:center;gap:6px;}
-.hbal{display:flex;align-items:center;gap:5px;padding:6px 11px;cursor:pointer;background:var(--dark);border-radius:20px;font-size:12px;color:#fff;font-weight:600;font-family:'R',sans-serif;}
-.hbal i{font-size:11px;opacity:.7;}
+.hbal{display:flex;align-items:center;gap:6px;padding:8px 14px;cursor:pointer;background:var(--dark);border-radius:20px;font-size:12px;color:#fff;font-weight:600;font-family:'R',sans-serif;}
+.hbal i{font-size:12px;opacity:.7;}
 
 /* ══ PROXO COINS ══ */
-.hcoins{display:flex;align-items:center;gap:5px;padding:6px 10px;cursor:pointer;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:20px;font-size:12px;color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(245,158,11,.35);position:relative;transition:all .2s;}
+.hcoins{display:flex;align-items:center;gap:6px;padding:8px 13px;cursor:pointer;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:20px;font-size:12px;color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(245,158,11,.35);position:relative;transition:all .2s;}
 .hcoins:active{opacity:.9;}
 .hcoins .coin-ico{font-size:12px;animation:coinSpin 3s linear infinite;}
 .hcoins .coin-amt{font-weight:700;letter-spacing:-.3px;font-family:'R',sans-serif;}
@@ -134,52 +134,52 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 /* ══ BOTTOM NAV ══ */
 .bnav{position:fixed;bottom:0;left:0;right:0;background:var(--w);border-top:1px solid var(--b1);display:none;z-index:300;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -2px 20px rgba(0,0,0,.08);}
 .bnav-inner{display:flex;max-width:500px;margin:0 auto;}
-.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px 8px;border:none;background:transparent;color:var(--mt);font-family:'R',sans-serif;font-size:10px;cursor:pointer;transition:color .2s;}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px 4px 10px;border:none;background:transparent;color:var(--mt);font-family:'R',sans-serif;font-size:10px;cursor:pointer;transition:color .2s;}
 .bn.on{color:var(--dark);}
-.bn i{font-size:20px;}
+.bn i{font-size:22px;}
 .bn-fab-col{flex:1;display:flex;justify-content:center;align-items:flex-start;padding-top:6px;}
 .bn-fab{background:var(--dark);border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;margin-top:-24px;border:3px solid var(--bg);box-shadow:0 4px 18px rgba(28,35,51,.35);cursor:pointer;transition:transform .2s;}
 .bn-fab:active{transform:scale(.93);}
 .bn-fab i{font-size:22px;color:#fff;}
 
 /* ══ PAGES ══ */
-.pg{display:none;padding:16px;animation:fu .2s ease;}
+.pg{display:none;padding:20px;animation:fu .2s ease;}
 .pg.on{display:block;}
 .pg-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.pg-title{font-size:22px;font-weight:900;color:var(--dark);}
-.slbl{font-size:11px;color:var(--mt);letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;font-weight:700;}
+.pg-title{font-size:24px;font-weight:900;color:var(--dark);}
+.slbl{font-size:12px;color:var(--mt);letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;font-weight:700;}
 .slbl:first-child{margin-top:0;}
 
 /* ══ HOME ══ */
-.home-hero{background:var(--dark);border-radius:20px;padding:22px 20px;margin-bottom:16px;position:relative;overflow:hidden;}
+.home-hero{background:var(--dark);border-radius:22px;padding:26px 22px;margin-bottom:16px;position:relative;overflow:hidden;}
 .home-hero::before{content:'';position:absolute;top:-30px;left:-30px;width:120px;height:120px;background:rgba(255,255,255,.04);border-radius:50%;}
-.home-hero h2{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px;}
-.home-hero p{font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.7;}
+.home-hero h2{font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;}
+.home-hero p{font-size:13.5px;color:rgba(255,255,255,.6);line-height:1.7;}
 .home-hero-start{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:9px 18px;background:rgba(255,255,255,.12);border-radius:20px;color:#fff;font-size:13px;cursor:pointer;border:1px solid rgba(255,255,255,.15);}
-.home-card{background:var(--w);border:1px solid var(--b1);border-radius:16px;padding:15px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .18s;}
+.home-card{background:var(--w);border:1px solid var(--b1);border-radius:18px;padding:18px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .18s;}
 .home-card:active{background:var(--bg);}
 .home-card-ico{width:46px;height:46px;border-radius:14px;background:var(--dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .home-card-ico i{font-size:18px;color:#fff;}
 .home-card-ico.light{background:var(--bg);border:1px solid var(--b1);}
 .home-card-ico.light i{color:var(--dark);}
 .home-card-info{flex:1;}
-.home-card-title{font-size:14px;font-weight:700;color:var(--dark);}
-.home-card-sub{font-size:12px;color:var(--mt);margin-top:2px;}
+.home-card-title{font-size:15px;font-weight:700;color:var(--dark);}
+.home-card-sub{font-size:13px;color:var(--mt);margin-top:2px;}
 .home-card-arr{color:var(--mt);font-size:14px;}
 
 /* ══ PROFILE ══ */
-.prof-top{background:var(--w);border:1px solid var(--b1);border-radius:20px;padding:22px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.prof-top{background:var(--w);border:1px solid var(--b1);border-radius:20px;padding:24px 20px;margin-bottom:14px;display:flex;align-items:center;gap:14px;}
 .pav{width:60px;height:60px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0;cursor:pointer;position:relative;}
 .pav img{width:100%;height:100%;object-fit:cover;}
 .pav-cam{position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:var(--dark);border:2px solid var(--w);display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;}
 .prof-info{flex:1;}
 .prof-name{font-size:16px;font-weight:800;color:var(--dark);}
 .prof-email{font-size:11px;color:var(--mt);margin-top:2px;direction:ltr;text-align:right;}
-.pcard{background:var(--w);border:1px solid var(--b1);border-radius:16px;padding:16px;margin-bottom:10px;}
+.pcard{background:var(--w);border:1px solid var(--b1);border-radius:18px;padding:20px;margin-bottom:10px;}
 .pcard-hdr{font-size:11px;color:var(--mt);display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .pcard-hdr-left{display:flex;align-items:center;gap:6px;}
 .bal-row{display:flex;align-items:baseline;gap:6px;}
-.bal-num{font-size:28px;font-weight:900;color:var(--dark);direction:ltr;}
+.bal-num{font-size:32px;font-weight:900;color:var(--dark);direction:ltr;}
 .bal-cur{font-size:13px;color:var(--mt);}
 .add-bal-btn{width:100%;padding:13px;background:var(--bg);border:1.5px solid var(--b2);border-radius:13px;color:var(--dark);font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;}
 .add-bal-btn:active{background:var(--b1);}
@@ -234,7 +234,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .goal-tab i{display:block;font-size:18px;margin-bottom:5px;}
 .bud-btn{width:44px;height:44px;border-radius:13px;border:1.5px solid var(--b2);background:var(--w);color:var(--dark);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'R',sans-serif;flex-shrink:0;}
 .bud-btn:active{background:var(--bg);}
-.submit-btn{width:100%;padding:16px;background:var(--dark);color:#fff;border:none;border-radius:15px;font-family:'R',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;box-shadow:0 4px 16px rgba(28,35,51,.22);}
+.submit-btn{width:100%;padding:18px;background:var(--dark);color:#fff;border:none;border-radius:15px;font-family:'R',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;box-shadow:0 4px 16px rgba(28,35,51,.22);}
 .submit-btn:active{opacity:.9;}
 .submit-btn:disabled{opacity:.4;pointer-events:none;}
 
@@ -262,7 +262,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .ads-filter::-webkit-scrollbar{display:none;}
 .fchip{padding:7px 14px;border-radius:20px;font-family:'R',sans-serif;font-size:12px;cursor:pointer;border:1.5px solid var(--b1);background:var(--w);color:var(--mt);white-space:nowrap;transition:all .2s;}
 .fchip.on{background:var(--dark);color:#fff;border-color:var(--dark);}
-.ad-card{background:var(--w);border:1px solid var(--b1);border-radius:18px;padding:16px;margin-bottom:10px;animation:fu .2s ease;}
+.ad-card{background:var(--w);border:1px solid var(--b1);border-radius:18px;padding:20px;margin-bottom:10px;animation:fu .2s ease;}
 .ad-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .ad-num{font-size:11px;color:var(--mt);background:var(--bg);padding:3px 10px;border-radius:20px;border:1px solid var(--b1);font-family:monospace;}
 .ad-status{font-size:11px;padding:4px 11px;border-radius:20px;font-weight:700;}
@@ -271,7 +271,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .as-r{background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2);}
 .as-c{background:rgba(37,99,235,.08);color:var(--bl);border:1px solid rgba(37,99,235,.2);}
 .as-pa{background:var(--bg);color:var(--mt);border:1px solid var(--b1);}
-.ad-title{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.ad-title{font-size:16px;font-weight:800;color:var(--dark);margin-bottom:8px;}
 .ad-metas{display:flex;gap:8px;flex-wrap:wrap;}
 .ad-m{font-size:11px;color:var(--mt2);display:flex;align-items:center;gap:4px;background:var(--bg);padding:4px 10px;border-radius:20px;border:1px solid var(--b1);}
 .ad-m i{font-size:10px;}
@@ -799,6 +799,26 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
         هەر <span style="font-family:'R',sans-serif;direction:ltr;unicode-bidi:embed">50</span> کۆین = <span style="font-family:'R',sans-serif;direction:ltr;unicode-bidi:embed">$0.50</span> · کەمترین <span style="font-family:'R',sans-serif;direction:ltr;unicode-bidi:embed">500</span> کۆین بۆ گۆڕانەوە
       </div>
     </div>
+    <!-- بانگێشتکردن -->
+    <div class="pcard" id="referralCard">
+      <div class="pcard-hdr">
+        <div class="pcard-hdr-left"><i class="fas fa-gift" style="color:#d97706"></i> بانگێشتکردنی هاوڕێ</div>
+        <span style="font-size:11px;color:var(--gr);font-weight:700" id="refEarnedLbl"></span>
+      </div>
+      <div style="font-size:12.5px;color:var(--mt);margin-bottom:14px;line-height:1.8">
+        هاوڕێیەکت بانگێشت بکە — کاتێک خۆی تۆمار کرد <b style="color:var(--dark)">+100 🪙 کۆین</b> وەردەگریت
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;padding:12px 14px;margin-bottom:12px">
+        <div style="flex:1;font-size:13px;font-weight:700;color:var(--dark);direction:ltr;text-align:left;font-family:'R',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="refLinkDisp">چوارچێوەکردن...</div>
+        <button onclick="copyRefLink()" style="padding:7px 13px;background:var(--dark);color:#fff;border:none;border-radius:10px;font-family:'R',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0" id="refCopyBtn">
+          <i class="fas fa-copy" style="margin-left:4px"></i>کۆپی
+        </button>
+      </div>
+      <button onclick="shareRefLink()" style="width:100%;padding:12px;background:var(--bg);border:1.5px solid var(--b2);border-radius:12px;color:var(--dark);font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
+        <i class="fas fa-share-nodes"></i>هاوبەشکردن
+      </button>
+    </div>
+
     <div class="pcard">
       <div class="pcard-hdr"><div class="pcard-hdr-left"><i class="fas fa-gear"></i> ڕێکخستنەکان</div></div>
       <button id="setupDbBtn" onclick="setupDatabase()" style="display:none;width:100%;padding:13px;background:rgba(37,99,235,.08);border:1.5px solid rgba(37,99,235,.2);border-radius:13px;color:var(--bl);font-family:'R',sans-serif;font-size:13px;font-weight:700;cursor:pointer;align-items:center;justify-content:center;gap:7px;margin-bottom:10px">
@@ -1302,11 +1322,11 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
     <div class="coins-value-bar">
       <div class="coins-value-row" style="margin-bottom:8px">
         <span>نرخی هەموو کۆینەکان</span>
-        <span id="modalCoinsValue" style="color:#d97706">/bin/sh.00</span>
+        <span id="modalCoinsValue" style="color:#d97706">$0.00</span>
       </div>
       <div class="coins-value-row">
-        <span>هر ٥٠ کۆین = $٠.٥٠</span>
-        <span style="color:var(--mt);font-size:11px">١ کۆین = $٠.٠١</span>
+        <span>هەر 50 کۆین = $0.50</span>
+        <span style="color:var(--mt);font-size:11px">1 کۆین = $0.01</span>
       </div>
     </div>
     <!-- Progress to exchange -->
@@ -1318,17 +1338,17 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
       <div class="coins-progress-track">
         <div class="coins-progress-fill" id="modalCoinsProgressFill" style="width:0%"></div>
       </div>
-      <div style="font-size:11px;color:var(--mt);margin-top:6px;text-align:center" id="modalCoinsProgressMsg">٥٠٠ کۆین پێویستە بۆ گۆڕانەوە</div>
+      <div style="font-size:11px;color:var(--mt);margin-top:6px;text-align:center" id="modalCoinsProgressMsg">500 کۆین پێویستە بۆ گۆڕانەوە</div>
     </div>
     <!-- Info -->
     <div style="margin:14px 0">
       <div class="coins-info-item">
         <div class="coins-info-ico" style="background:rgba(22,163,74,.1);color:var(--gr)"><i class="fas fa-circle-plus"></i></div>
-        <div>هەر جار ڕیکلامێک بنێریت، <strong>٥٠ کۆین</strong> وەردەگریت.</div>
+        <div>هەر جار ڕیکلامێک بنێریت، <strong>50 کۆین</strong> وەردەگریت.</div>
       </div>
       <div class="coins-info-item">
         <div class="coins-info-ico" style="background:rgba(220,38,38,.08);color:var(--rd)"><i class="fas fa-circle-minus"></i></div>
-        <div>ئەگەر ئەدمین ڕیکلامەکەت ڕەتکردەوە، <strong>٥٠ کۆین</strong> کەم دەکرێتەوە (یان $٠.٥٠ لە بالانس).</div>
+        <div>ئەگەر ئەدمین ڕیکلامەکەت ڕەتکردەوە، <strong>50 کۆین</strong> کەم دەکرێتەوە (یان $0.50 لە بالانس).</div>
       </div>
       <div class="coins-info-item">
         <div class="coins-info-ico" style="background:rgba(37,99,235,.08);color:var(--bl)"><i class="fas fa-repeat"></i></div>
@@ -1341,7 +1361,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
     </button>
     <div class="coins-need-more" id="coinsNeedMore">
       <i class="fas fa-lock" style="color:var(--mt)"></i>
-      <span id="coinsNeedMoreTxt">٥٠٠ کۆین پێویستە بۆ گۆڕانەوە</span>
+      <span id="coinsNeedMoreTxt">500 کۆین پێویستە بۆ گۆڕانەوە</span>
     </div>
   </div>
 </div>
@@ -1645,17 +1665,52 @@ async function saveProfile(){
   const btn   = document.getElementById('updProfBtn');
   const msg   = document.getElementById('updProfMsg');
   if(!name){ showToast('ناوت بنووسە','err'); return; }
+
   await withSession(async () => {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> پاشەکەوتکردن...';
+
+    // بارکردنی دروستی پرۆفایلی ئێستا بۆ چێکردنەوەی cooldown
+    const {data: profNow} = await sb.from('profiles').select('avatar_updated_at,name_updated_at').eq('id',cu.id).single();
+    const now = Date.now();
+    const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+
+    // چێکردنەوەی 7 ڕۆژی ناو
+    if(profNow?.name_updated_at){
+      const diff = now - new Date(profNow.name_updated_at).getTime();
+      if(diff < SEVEN_DAYS){
+        const rem = Math.ceil((SEVEN_DAYS - diff) / (24*60*60*1000));
+        showToast(`ناو تا ${rem} ڕۆژی دیکە ناتوانرێت بگۆڕدرێت`,'err');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> پاشەکەوتکردن';
+        return;
+      }
+    }
+
+    // چێکردنەوەی 7 ڕۆژی وێنە
+    if(updAvB64New && profNow?.avatar_updated_at){
+      const diff = now - new Date(profNow.avatar_updated_at).getTime();
+      if(diff < SEVEN_DAYS){
+        const rem = Math.ceil((SEVEN_DAYS - diff) / (24*60*60*1000));
+        showToast(`وێنە تا ${rem} ڕۆژی دیکە ناتوانرێت بگۆڕدرێت`,'err');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> پاشەکەوتکردن';
+        return;
+      }
+    }
+
     const updates = { full_name: name };
     if(phone) updates.phone = phone;
-    if(updAvB64New){ updates.avatar_b64 = updAvB64New; avB64 = updAvB64New; }
+    if(name !== (document.getElementById('profName').textContent||'')) updates.name_updated_at = new Date().toISOString();
+    if(updAvB64New){ updates.avatar_b64 = updAvB64New; updates.avatar_updated_at = new Date().toISOString(); avB64 = updAvB64New; }
+
     const { error } = await sb.from('profiles').update(updates).eq('id', cu.id);
     if(error){
       showToast('هەڵە: ' + error.message, 'err');
     } else {
       document.getElementById('profName').textContent = name;
+      const topbarName = document.getElementById('topbarName');
+      if(topbarName) topbarName.textContent = name;
       const editDisp = document.getElementById('editNameDisplay');
       if(editDisp) editDisp.textContent = name;
       const editInp = document.getElementById('editNameInp');
@@ -1675,6 +1730,93 @@ async function saveProfile(){
     btn.innerHTML = '<i class="fas fa-check"></i> پاشەکەوتکردن';
   });
 }
+// ══════════════════════════════════════════════
+// REFERRAL SYSTEM
+// ══════════════════════════════════════════════
+function genRefCode(userId){
+  // کۆدی یەکتا لە UUID بەشێک
+  return 'PRX-' + userId.replace(/-/g,'').substring(0,8).toUpperCase();
+}
+
+async function loadReferralSection(){
+  const code = genRefCode(cu.id);
+  const link = `${window.location.origin}${window.location.pathname}?ref=${code}`;
+  document.getElementById('refLinkDisp').textContent = link;
+
+  // ژمارەی بانگێشتکراوان
+  const {data} = await sb.from('pa_referrals').select('id').eq('referrer_id', cu.id).not('referred_id','is',null);
+  const count = data?.length || 0;
+  const el = document.getElementById('refEarnedLbl');
+  if(el && count > 0) el.textContent = `${count} کەس · +${count*100} 🪙`;
+}
+
+function copyRefLink(){
+  const link = document.getElementById('refLinkDisp').textContent;
+  navigator.clipboard.writeText(link).then(()=>{
+    const btn = document.getElementById('refCopyBtn');
+    btn.innerHTML = '<i class="fas fa-check" style="margin-left:4px"></i>کۆپیکرا';
+    btn.style.background = 'var(--gr)';
+    setTimeout(()=>{btn.innerHTML='<i class="fas fa-copy" style="margin-left:4px"></i>کۆپی';btn.style.background='var(--dark)';},2000);
+  }).catch(()=> showToast('دووبارە هەوڵ بدەرەوە','err'));
+}
+
+function shareRefLink(){
+  const link = document.getElementById('refLinkDisp').textContent;
+  if(navigator.share){
+    navigator.share({title:'Proxo Ads', text:'پێ بکەوە تۆمار بکە و ڕیکلامەکانت بەڕێوە ببە 🚀', url: link});
+  } else {
+    copyRefLink();
+    showToast('لینکەکە کۆپیکرا','ok');
+  }
+}
+
+async function checkAndApplyRef(){
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if(!ref) return;
+
+  // ئایا ئەم بەکارهێنەرە پێشتر ref بەکارهێناوە؟
+  const {data: existing} = await sb.from('pa_referrals').select('id').eq('referred_id', cu.id).maybeSingle();
+  if(existing) return; // پێشتر بەکارهێناوە
+
+  // referrer بدۆزەرەوە
+  // کۆدی referrer = PRX-{userId بەشی یەکەم}
+  const {data: allUsers} = await sb.from('pa_referrals').select('referrer_id,ref_code').eq('ref_code', ref).is('referred_id', null).maybeSingle();
+  
+  let referrerId = null;
+  if(allUsers){
+    referrerId = allUsers.referrer_id;
+  } else {
+    // ref کۆد لە UUID دۆزەرەوە
+    const codeBody = ref.replace('PRX-','').toLowerCase();
+    const {data: profiles} = await sb.from('profiles').select('id').ilike('id', codeBody + '%').maybeSingle();
+    if(profiles) referrerId = profiles.id;
+  }
+
+  if(!referrerId || referrerId === cu.id) return;
+
+  // تۆمارکردنی referral
+  await sb.from('pa_referrals').upsert({
+    referrer_id: referrerId,
+    referred_id: cu.id,
+    ref_code: ref,
+    used_at: new Date().toISOString()
+  }, {onConflict: 'ref_code', ignoreDuplicates: false}).maybeSingle();
+
+  // 100 کۆین بۆ referrer زیاد بکە
+  const {data: refCoins} = await sb.from('pa_coins').select('coins_balance').eq('user_id', referrerId).single();
+  const newBal = (parseInt(refCoins?.coins_balance||0)) + 100;
+  await sb.from('pa_coins').update({coins_balance: newBal}).eq('user_id', referrerId);
+  await sb.from('pa_coin_transactions').insert({
+    user_id: referrerId, amount: 100,
+    reason: 'بانگێشتکردنی بەکارهێنەری نوێ',
+    balance_after: newBal
+  }).maybeSingle();
+
+  // URL پاک بکەرەوە
+  window.history.replaceState({}, '', window.location.pathname);
+}
+
 let sb, cu=null, aMode='login';
 let budget=20, days=1, depAmt=50;
 let goal='messages', method='fib', cardId=null;
@@ -1849,6 +1991,8 @@ async function boot(){
   loadMyCards();
   goPage('home');
   checkDbReady(); // چێکردنەوەی ئایا فەنکشنی داتابەیس دانراوە
+  loadReferralSection();
+  checkAndApplyRef();
   // ═══ ٥. CHECK NOTIFICATIONS ═══
   checkNotifBell();
   // Real-time notifications listener
@@ -2035,7 +2179,7 @@ async function exchangeCoins(){
   const btn=document.getElementById('coinsExchangeBtn');
   const{data}=await sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single();
   const coins=parseInt(data?.coins_balance||0);
-  if(coins<COINS_MIN_EXCHANGE){showToast('٥٠٠ کۆین پێویستە','err');return;}
+  if(coins<COINS_MIN_EXCHANGE){showToast('500 کۆین پێویستە','err');return;}
 
   btn.disabled=true;
   btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> گۆڕانەوە...';
@@ -2086,7 +2230,7 @@ function goPage(p){
   
   if(p==='notifications'){loadNotifications();markAllRead();}
   if(p==='support')loadChat();
-  if(p==='profile')loadBal();
+  if(p==='profile'){loadBal();loadReferralSection();}
   if(p==='create')loadAssetsForDropdown();
   if(p==='txhistory')loadTxHistory();
   // Update sidebar active state
@@ -3305,7 +3449,31 @@ function buildPageDark(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push("  setTimeout(hideEffects, 10000);");
   p.push("  // فووتەر خۆکار");p.push("  (function(){var b=document.querySelectorAll('.btn');var n=b.length;var m=n<=2?100:n<=3?120:n<=4?140:n<=5?160:180;var f=document.querySelector('.footer');if(f)f.style.marginTop=m+'px';})();");p.push("});");
   p.push('<'+'/script>');
-  p.push('</body>');
+  p.push(`<!-- 
+══════════════════════════════════════════════════════
+SQL بۆ Supabase — جێبەجێ بکە لە SQL Editor
+══════════════════════════════════════════════════════
+
+-- جەدوەلی referral codes
+CREATE TABLE IF NOT EXISTS pa_referrals (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  referrer_id UUID REFERENCES auth.users(id) NOT NULL,
+  referred_id UUID REFERENCES auth.users(id),
+  ref_code TEXT UNIQUE NOT NULL,
+  used_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
+CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
+
+-- ref_code زیاد بکە بۆ profiles
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
+
+══════════════════════════════════════════════════════ -->
+</body>`);
   p.push('</html>');
 
   return p.join('\n');
@@ -3536,7 +3704,31 @@ function buildPageLight(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   p.push("  setTimeout(hideEffects, 10000);");
   p.push("  (function(){var b=document.querySelectorAll('.btn');var n=b.length;var m=n<=2?100:n<=3?120:n<=4?140:n<=5?160:180;var f=document.querySelector('.footer');if(f)f.style.marginTop=m+'px';})();");p.push("});");
   p.push('<'+'/script>');
-  p.push('</body>');
+  p.push(`<!-- 
+══════════════════════════════════════════════════════
+SQL بۆ Supabase — جێبەجێ بکە لە SQL Editor
+══════════════════════════════════════════════════════
+
+-- جەدوەلی referral codes
+CREATE TABLE IF NOT EXISTS pa_referrals (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  referrer_id UUID REFERENCES auth.users(id) NOT NULL,
+  referred_id UUID REFERENCES auth.users(id),
+  ref_code TEXT UNIQUE NOT NULL,
+  used_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
+CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
+
+-- ref_code زیاد بکە بۆ profiles
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
+
+══════════════════════════════════════════════════════ -->
+</body>`);
   p.push('</html>');
 
   return p.join('\n');
@@ -3737,7 +3929,31 @@ function buildPageClassic(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
   parts.push("  setTimeout(function(){ var s=document.querySelector('.shine-active'); if(s) s.classList.add('no-shine'); }, 10000);");
   parts.push("  (function(){var b=document.querySelectorAll('.btn-classic');var n=b.length;var m=n<=2?80:n<=3?100:n<=4?120:n<=5?140:160;var f=document.querySelector('.footer');if(f)f.style.marginTop=m+'px';})();");parts.push("});");
   parts.push('<'+'/script>');
-  parts.push('</body>');
+  parts.push(`<!-- 
+══════════════════════════════════════════════════════
+SQL بۆ Supabase — جێبەجێ بکە لە SQL Editor
+══════════════════════════════════════════════════════
+
+-- جەدوەلی referral codes
+CREATE TABLE IF NOT EXISTS pa_referrals (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  referrer_id UUID REFERENCES auth.users(id) NOT NULL,
+  referred_id UUID REFERENCES auth.users(id),
+  ref_code TEXT UNIQUE NOT NULL,
+  used_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
+CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
+
+-- ref_code زیاد بکە بۆ profiles
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
+
+══════════════════════════════════════════════════════ -->
+</body>`);
   parts.push('</html>');
 
   return parts.join('\n');
@@ -4522,5 +4738,29 @@ async function checkDbReady(){
 ======================================================================= -->
 
 
+<!-- 
+══════════════════════════════════════════════════════
+SQL بۆ Supabase — جێبەجێ بکە لە SQL Editor
+══════════════════════════════════════════════════════
+
+-- جەدوەلی referral codes
+CREATE TABLE IF NOT EXISTS pa_referrals (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  referrer_id UUID REFERENCES auth.users(id) NOT NULL,
+  referred_id UUID REFERENCES auth.users(id),
+  ref_code TEXT UNIQUE NOT NULL,
+  used_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE pa_referrals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own referrals" ON pa_referrals FOR ALL USING (auth.uid() = referrer_id);
+CREATE POLICY "Check ref code" ON pa_referrals FOR SELECT USING (true);
+
+-- ref_code زیاد بکە بۆ profiles
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
+
+══════════════════════════════════════════════════════ -->
 </body>
 </html>
