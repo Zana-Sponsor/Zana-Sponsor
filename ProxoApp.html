@@ -1977,30 +1977,33 @@ async function doAuth(){
         else{showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');return;}
       }
       cu=newUser;
-      // ══ AUTO REFERRAL — definitive fix ═══════════════════════
+      // ══ AUTO REFERRAL — force-update fix ════════════════════
       const refCode=localStorage.getItem('proxo_ref');
       let referralSuccess=false;
       if(refCode){
         try{
-          // STEP 1 — await RPC: SQL must fully commit before we continue
+          // STEP 1: await RPC — blocks until SQL fully commits
           const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
             p_new_user_id:cu.id,
             p_ref_code:refCode
           });
           localStorage.removeItem('proxo_ref');
-          if(!rErr && rData?.ok===true) referralSuccess=true;
+          if(!rErr && rData?.ok===true){
+            referralSuccess=true;
+            console.log('Force-updating UI to 50 coins');
+            // STEP 2: Immediate DOM injection — user sees 50 before anything loads
+            updateCoinsBadge(50);
+            // STEP 3: No global currentCoins exists — updateCoinsBadge() IS the state
+          }
         }catch(_){localStorage.removeItem('proxo_ref');}
       }
-      // STEP 2 — 1500ms delay only when referral succeeded
-      if(referralSuccess) await new Promise(r=>setTimeout(r,1500));
-      // STEP 3 — boot(): builds UI, wallet, runs loadCoins() internally
+      // STEP 4: 1000ms grace period — Supabase secondary indexes settle
+      if(referralSuccess) await new Promise(r=>setTimeout(r,1000));
+      // STEP 5: boot() — builds full UI, internally calls loadCoins()
       await boot();
       if(referralSuccess){
-        // STEP 4a — Force direct DOM update immediately (no DB round-trip)
-        updateCoinsBadge(50);
-        // STEP 4b — Fetch fresh value from DB to confirm real balance
+        // STEP 6: loadCoins() re-reads DB after boot to confirm real balance
         await loadCoins();
-        // STEP 5 — Toast only after UI is confirmed updated
         showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
       }
       return;
@@ -4709,6 +4712,4 @@ async function checkDbReady(){
   ٢. جەدوەلی pa_notifications
   ══════════════════════════════════════════════════════════════════════
   CREATE TABLE pa_notifications (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    type TEXT NOT NULL DEFAULT 'ge
+    id UUID DEFAULT gen_rand
