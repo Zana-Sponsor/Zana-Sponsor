@@ -2093,38 +2093,21 @@ function resetAssetBuilder(){
 }
 
 async function submitAsset(){
-  if(!requireOnline())return;
-  const name=document.getElementById('assetName').value.trim();
-  const value=document.getElementById('assetValue').value.trim();
-  const note=document.getElementById('assetNote').value.trim();
-  if(!name||!value){showToast('ناو و نرخ پێویستن','err');return;}
+  const name = document.getElementById('assetName').value.trim();
+  const value = document.getElementById('assetValue').value.trim();
+  if(!name || !value){ showToast('ناو و نرخ پڕ بکەرەوە','err'); return; }
   await withSession(async()=>{
-    await sb.from('pa_assets').insert({user_id:cu.id,name,asset_type:currentAssetType,value,note:note||null,style:currentAssetStyle});
-    showToast('✅ کەرەستە زیادکرا');
-    lastSavedAsset={name,asset_type:currentAssetType,value,note,style:currentAssetStyle};
-    // ناردنی خۆکار بۆ تێلێگرام (Silent — بەبێ ئاگادارکردنەوەی کڕیار)
-    autoSendAssetToTelegram({name,asset_type:currentAssetType,value,note:note||null,style:currentAssetStyle});
-    // نیشاندانی بەشی ئەنجام
-    document.getElementById('assetBuilderForm').style.display='none';
-    // دروستکردنی کارتی پاشەکەوتراو
-    const rc=document.getElementById('assetResultCard');
-    if(rc){
-      const icons={whatsapp:'fab fa-whatsapp',instagram:'fab fa-instagram',phone:'fas fa-phone',telegram:'fab fa-telegram',link:'fas fa-link'};
-      const icoClass={whatsapp:'wa',instagram:'ig',phone:'ph',telegram:'tg',link:'lk'};
-      const typeLabels={whatsapp:'واتسئەپ',instagram:'ئینستاگرام',phone:'تەلەفۆن',telegram:'تێلێگرام',link:'لینک'};
-      rc.innerHTML=`<div class="asset-saved-card" style="margin-bottom:0">
-        <div class="asset-saved-card-top">
-          <div class="asset-saved-ico ${icoClass[currentAssetType]||'lk'}"><i class="${icons[currentAssetType]||'fas fa-link'}"></i></div>
-          <div style="flex:1"><div class="asset-saved-name">${name}</div><div class="asset-saved-type">${typeLabels[currentAssetType]||currentAssetType}</div></div>
-        </div>
-        <div class="asset-saved-value">${value}</div>
-        ${note?`<div class="asset-saved-note"><i class="fas fa-note-sticky" style="margin-left:4px;opacity:.6"></i>${note}</div>`:''}
-      </div>`;
-    }
-    document.getElementById('assetBuilderResult').style.display='block';
-    document.getElementById('assetTgStatus').style.display='none';
-    await loadAssets();
-    await loadAssetsForDropdown();
+    const{error} = await sb.from('pa_assets').insert({
+      user_id: cu.id,
+      name,
+      value,
+      asset_type: assetType,
+      note: document.getElementById('assetNote')?.value.trim()||null,
+      style: document.querySelector('[data-style].on')?.dataset.style||'classic'
+    });
+    if(error) throw error;
+    showToast('✅ ئامراز پاشەکەوتکرا','ok');
+    loadAssets();
   });
 }
 
@@ -2661,6 +2644,7 @@ function buildPLCardHTML(name,bio,tt,platforms,avatar,style,theme){
 async function loadProxoCards(){
   const{data}=await sb.from('proxolink_cards').select('id,name,style,color_theme,avatar_b64,card_number,html_content').eq('user_id',cu.id).order('created_at',{ascending:false});
   const list=document.getElementById('proxoCardsList');
+  <div id="assetsListWrap"></div>
   if(!data?.length){
     list.innerHTML=`<div class="empty-box"><div class="empty-box-ico"><i class="fas fa-link"></i></div><h3>هیچ کەرەستەیەک نییە</h3><p>دووگمەی سەرەوە بکە بۆ دروستکردن</p></div>`;
     return;
