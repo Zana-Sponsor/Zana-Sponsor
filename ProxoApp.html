@@ -1957,32 +1957,31 @@ async function doAuth(){
       let referralSuccess=false;
       if(refCode){
         try{
-          // STEP 1: await RPC — blocks until SQL fully commits
+          console.log('[Referral] Attempting to apply code:', refCode);
           const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
             p_new_user_id:cu.id,
             p_ref_code:refCode
           });
-          localStorage.removeItem('proxo_ref');
+          
           if(!rErr && rData?.ok===true){
             referralSuccess=true;
-            console.log('[Referral] RPC ok — force-updating UI to 50 coins');
-            // STEP 2: Immediate DOM injection before boot() runs
-            updateCoinsBadge(50);
+            localStorage.removeItem('proxo_ref');
+            console.log('[Referral] RPC Success!');
           }else{
-            console.log('[Referral] RPC returned:',rData,'err:',rErr);
+            console.error('[Referral] RPC failed:', rErr || rData?.msg);
           }
         }catch(e){
-          localStorage.removeItem('proxo_ref');
-          console.log('[Referral] RPC exception:',e);
+          console.error('[Referral] Exception:', e);
         }
       }
-      // STEP 3: 1000ms grace — Supabase replication settles
-      if(referralSuccess) await new Promise(r=>setTimeout(r,1000));
-      // STEP 4: boot() — builds full UI, internally calls loadCoins()
+      
+      // Ensure everything is settled before booting
+      if(referralSuccess) await new Promise(r=>setTimeout(r,1500));
+      
       await boot();
+      
       if(referralSuccess){
-        // STEP 5: Re-read DB after boot to get confirmed balance
-        await loadCoins();
+        await loadCoins(); // Refresh UI with new balance
         showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
       }
       return;
@@ -3540,82 +3539,56 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
 
--- ══════════════════════════════════════════════════════════════════
--- فەنکشنی handle_auto_referral
--- دەبێت لە Supabase SQL Editor جێبەجێ بکرێت
--- ══════════════════════════════════════════════════════════════════
-CREATE OR REPLACE FUNCTION handle_auto_referral(
-  p_new_user_id UUID,
-  p_ref_code    TEXT
-)
-RETURNS JSONB
-LANGUAGE plpgsql
-SECURITY DEFINER          -- دەستوەری ئەدمین بۆ نووسینی با pa_coins
-SET search_path = public
-AS $$
+-- فەنکشنی handle_auto_referral بۆ چارەسەرکردنی بانگێشتکردن و زیادکردنی کۆین
+CREATE OR REPLACE FUNCTION handle_auto_referral(p_new_user_id UUID, p_ref_code TEXT)
+RETURNS JSON AS $$
 DECLARE
-  v_referral     RECORD;
-  v_current_bal  INTEGER := 0;
-  v_new_bal      INTEGER;
-  v_reward       INTEGER := 50;   -- کۆینی دیاری بۆ بەکارهێنەری نوێ
+    v_referrer_id UUID;
+    v_ref_record_id UUID;
+    v_current_coins INTEGER;
 BEGIN
+    -- دۆزینەوەی ئەو کەسەی کە خاوەنی کۆدەکەیە
+    SELECT referrer_id, id INTO v_referrer_id, v_ref_record_id
+    FROM pa_referrals
+    WHERE ref_code = p_ref_code AND referred_id IS NULL
+    LIMIT 1;
 
-  -- ١. کۆدی ref دیاریکردن
-  SELECT * INTO v_referral
-  FROM   pa_referrals
-  WHERE  ref_code = UPPER(TRIM(p_ref_code))
-    AND  referred_id IS NULL        -- هێشتا بەکارنەهاتووە
-  LIMIT 1
-  FOR UPDATE SKIP LOCKED;          -- جیاکردنی race condition
+    IF v_referrer_id IS NULL THEN
+        RETURN json_build_object('ok', false, 'msg', 'کۆدەکە نادروستە یان پێشتر بەکارهاتووە');
+    END IF;
 
-  IF NOT FOUND THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'invalid_or_used_code');
-  END IF;
+    -- ڕێگری لەوەی کەسەکە کۆدی خۆی بەکاربهێنێت
+    IF v_referrer_id = p_new_user_id THEN
+        RETURN json_build_object('ok', false, 'msg', 'ناتوانی کۆدی خۆت بەکاربهێنیت');
+    END IF;
 
-  -- ٢. بەکارهێنەری نوێ نابێت خودی referrer بێت
-  IF v_referral.referrer_id = p_new_user_id THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'self_referral');
-  END IF;
+    -- نوێکردنەوەی جەدوەلی بانگێشتکردن
+    UPDATE pa_referrals 
+    SET referred_id = p_new_user_id, used_at = NOW()
+    WHERE id = v_ref_record_id;
 
-  -- ٣. ئایا ئەم بەکارهێنەرە پێشتر جایزەی وەرگرتووە؟
-  IF EXISTS (
-    SELECT 1 FROM pa_referrals
-    WHERE referred_id = p_new_user_id
-  ) THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'already_referred');
-  END IF;
+    -- دڵنیابوونەوە لەوەی جەدوەلی pa_coins هەیە و داتای تێدایە بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_coins (user_id, coins_balance)
+    VALUES (p_new_user_id, 0)
+    ON CONFLICT (user_id) DO NOTHING;
 
-  -- ٤. pa_referrals نوێبکەرەوە
-  UPDATE pa_referrals
-  SET    referred_id = p_new_user_id,
-         used_at     = NOW()
-  WHERE  id = v_referral.id;
+    -- زیادکردنی ٥٠ کۆین بۆ هەژمارە نوێیەکە
+    UPDATE pa_coins 
+    SET coins_balance = coins_balance + 50
+    WHERE user_id = p_new_user_id
+    RETURNING coins_balance INTO v_current_coins;
 
-  -- ٥. pa_coins ی بەکارهێنەری نوێ دروست بکە / نوێبکەرەوە
-  INSERT INTO pa_coins (user_id, coins_balance)
-  VALUES (p_new_user_id, v_reward)
-  ON CONFLICT (user_id)
-  DO UPDATE SET coins_balance = pa_coins.coins_balance + v_reward
-  RETURNING coins_balance INTO v_new_bal;
+    -- تۆمارکردنی مامەڵەکە
+    INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
+    VALUES (p_new_user_id, 50, 'دیاری بانگێشتکردن', v_current_coins);
 
-  -- ٦. تۆمار بکە لە pa_coin_transactions بۆ audit
-  INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
-  VALUES (
-    p_new_user_id,
-    v_reward,
-    'جایزەی بانگێشت — کۆدی ' || UPPER(TRIM(p_ref_code)),
-    v_new_bal
-  );
+    -- زیادکردنی ئاگاداری بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_notifications (user_id, type, title, body)
+    VALUES (p_new_user_id, 'general', 'دیاری بانگێشتکردن 🎁', '٥٠ کۆین وەک دیاری بانگێشتکردن بۆ هەژمارەکەت زیادکرا.');
 
-  RETURN jsonb_build_object('ok', true, 'coins_awarded', v_reward, 'new_balance', v_new_bal);
-
-EXCEPTION WHEN OTHERS THEN
-  RETURN jsonb_build_object('ok', false, 'reason', SQLERRM);
+    RETURN json_build_object('ok', true);
 END;
-$$;
-
--- دەستوەر بدە بە anon role کە فەنکشنەکەی بانگ بکات
-GRANT EXECUTE ON FUNCTION handle_auto_referral(UUID, TEXT) TO anon, authenticated;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 ══════════════════════════════════════════════════════ -->
 </body>`);
@@ -3872,82 +3845,56 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
 
--- ══════════════════════════════════════════════════════════════════
--- فەنکشنی handle_auto_referral
--- دەبێت لە Supabase SQL Editor جێبەجێ بکرێت
--- ══════════════════════════════════════════════════════════════════
-CREATE OR REPLACE FUNCTION handle_auto_referral(
-  p_new_user_id UUID,
-  p_ref_code    TEXT
-)
-RETURNS JSONB
-LANGUAGE plpgsql
-SECURITY DEFINER          -- دەستوەری ئەدمین بۆ نووسینی با pa_coins
-SET search_path = public
-AS $$
+-- فەنکشنی handle_auto_referral بۆ چارەسەرکردنی بانگێشتکردن و زیادکردنی کۆین
+CREATE OR REPLACE FUNCTION handle_auto_referral(p_new_user_id UUID, p_ref_code TEXT)
+RETURNS JSON AS $$
 DECLARE
-  v_referral     RECORD;
-  v_current_bal  INTEGER := 0;
-  v_new_bal      INTEGER;
-  v_reward       INTEGER := 50;   -- کۆینی دیاری بۆ بەکارهێنەری نوێ
+    v_referrer_id UUID;
+    v_ref_record_id UUID;
+    v_current_coins INTEGER;
 BEGIN
+    -- دۆزینەوەی ئەو کەسەی کە خاوەنی کۆدەکەیە
+    SELECT referrer_id, id INTO v_referrer_id, v_ref_record_id
+    FROM pa_referrals
+    WHERE ref_code = p_ref_code AND referred_id IS NULL
+    LIMIT 1;
 
-  -- ١. کۆدی ref دیاریکردن
-  SELECT * INTO v_referral
-  FROM   pa_referrals
-  WHERE  ref_code = UPPER(TRIM(p_ref_code))
-    AND  referred_id IS NULL        -- هێشتا بەکارنەهاتووە
-  LIMIT 1
-  FOR UPDATE SKIP LOCKED;          -- جیاکردنی race condition
+    IF v_referrer_id IS NULL THEN
+        RETURN json_build_object('ok', false, 'msg', 'کۆدەکە نادروستە یان پێشتر بەکارهاتووە');
+    END IF;
 
-  IF NOT FOUND THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'invalid_or_used_code');
-  END IF;
+    -- ڕێگری لەوەی کەسەکە کۆدی خۆی بەکاربهێنێت
+    IF v_referrer_id = p_new_user_id THEN
+        RETURN json_build_object('ok', false, 'msg', 'ناتوانی کۆدی خۆت بەکاربهێنیت');
+    END IF;
 
-  -- ٢. بەکارهێنەری نوێ نابێت خودی referrer بێت
-  IF v_referral.referrer_id = p_new_user_id THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'self_referral');
-  END IF;
+    -- نوێکردنەوەی جەدوەلی بانگێشتکردن
+    UPDATE pa_referrals 
+    SET referred_id = p_new_user_id, used_at = NOW()
+    WHERE id = v_ref_record_id;
 
-  -- ٣. ئایا ئەم بەکارهێنەرە پێشتر جایزەی وەرگرتووە؟
-  IF EXISTS (
-    SELECT 1 FROM pa_referrals
-    WHERE referred_id = p_new_user_id
-  ) THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'already_referred');
-  END IF;
+    -- دڵنیابوونەوە لەوەی جەدوەلی pa_coins هەیە و داتای تێدایە بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_coins (user_id, coins_balance)
+    VALUES (p_new_user_id, 0)
+    ON CONFLICT (user_id) DO NOTHING;
 
-  -- ٤. pa_referrals نوێبکەرەوە
-  UPDATE pa_referrals
-  SET    referred_id = p_new_user_id,
-         used_at     = NOW()
-  WHERE  id = v_referral.id;
+    -- زیادکردنی ٥٠ کۆین بۆ هەژمارە نوێیەکە
+    UPDATE pa_coins 
+    SET coins_balance = coins_balance + 50
+    WHERE user_id = p_new_user_id
+    RETURNING coins_balance INTO v_current_coins;
 
-  -- ٥. pa_coins ی بەکارهێنەری نوێ دروست بکە / نوێبکەرەوە
-  INSERT INTO pa_coins (user_id, coins_balance)
-  VALUES (p_new_user_id, v_reward)
-  ON CONFLICT (user_id)
-  DO UPDATE SET coins_balance = pa_coins.coins_balance + v_reward
-  RETURNING coins_balance INTO v_new_bal;
+    -- تۆمارکردنی مامەڵەکە
+    INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
+    VALUES (p_new_user_id, 50, 'دیاری بانگێشتکردن', v_current_coins);
 
-  -- ٦. تۆمار بکە لە pa_coin_transactions بۆ audit
-  INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
-  VALUES (
-    p_new_user_id,
-    v_reward,
-    'جایزەی بانگێشت — کۆدی ' || UPPER(TRIM(p_ref_code)),
-    v_new_bal
-  );
+    -- زیادکردنی ئاگاداری بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_notifications (user_id, type, title, body)
+    VALUES (p_new_user_id, 'general', 'دیاری بانگێشتکردن 🎁', '٥٠ کۆین وەک دیاری بانگێشتکردن بۆ هەژمارەکەت زیادکرا.');
 
-  RETURN jsonb_build_object('ok', true, 'coins_awarded', v_reward, 'new_balance', v_new_bal);
-
-EXCEPTION WHEN OTHERS THEN
-  RETURN jsonb_build_object('ok', false, 'reason', SQLERRM);
+    RETURN json_build_object('ok', true);
 END;
-$$;
-
--- دەستوەر بدە بە anon role کە فەنکشنەکەی بانگ بکات
-GRANT EXECUTE ON FUNCTION handle_auto_referral(UUID, TEXT) TO anon, authenticated;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 ══════════════════════════════════════════════════════ -->
 </body>`);
@@ -4174,82 +4121,56 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
 
--- ══════════════════════════════════════════════════════════════════
--- فەنکشنی handle_auto_referral
--- دەبێت لە Supabase SQL Editor جێبەجێ بکرێت
--- ══════════════════════════════════════════════════════════════════
-CREATE OR REPLACE FUNCTION handle_auto_referral(
-  p_new_user_id UUID,
-  p_ref_code    TEXT
-)
-RETURNS JSONB
-LANGUAGE plpgsql
-SECURITY DEFINER          -- دەستوەری ئەدمین بۆ نووسینی با pa_coins
-SET search_path = public
-AS $$
+-- فەنکشنی handle_auto_referral بۆ چارەسەرکردنی بانگێشتکردن و زیادکردنی کۆین
+CREATE OR REPLACE FUNCTION handle_auto_referral(p_new_user_id UUID, p_ref_code TEXT)
+RETURNS JSON AS $$
 DECLARE
-  v_referral     RECORD;
-  v_current_bal  INTEGER := 0;
-  v_new_bal      INTEGER;
-  v_reward       INTEGER := 50;   -- کۆینی دیاری بۆ بەکارهێنەری نوێ
+    v_referrer_id UUID;
+    v_ref_record_id UUID;
+    v_current_coins INTEGER;
 BEGIN
+    -- دۆزینەوەی ئەو کەسەی کە خاوەنی کۆدەکەیە
+    SELECT referrer_id, id INTO v_referrer_id, v_ref_record_id
+    FROM pa_referrals
+    WHERE ref_code = p_ref_code AND referred_id IS NULL
+    LIMIT 1;
 
-  -- ١. کۆدی ref دیاریکردن
-  SELECT * INTO v_referral
-  FROM   pa_referrals
-  WHERE  ref_code = UPPER(TRIM(p_ref_code))
-    AND  referred_id IS NULL        -- هێشتا بەکارنەهاتووە
-  LIMIT 1
-  FOR UPDATE SKIP LOCKED;          -- جیاکردنی race condition
+    IF v_referrer_id IS NULL THEN
+        RETURN json_build_object('ok', false, 'msg', 'کۆدەکە نادروستە یان پێشتر بەکارهاتووە');
+    END IF;
 
-  IF NOT FOUND THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'invalid_or_used_code');
-  END IF;
+    -- ڕێگری لەوەی کەسەکە کۆدی خۆی بەکاربهێنێت
+    IF v_referrer_id = p_new_user_id THEN
+        RETURN json_build_object('ok', false, 'msg', 'ناتوانی کۆدی خۆت بەکاربهێنیت');
+    END IF;
 
-  -- ٢. بەکارهێنەری نوێ نابێت خودی referrer بێت
-  IF v_referral.referrer_id = p_new_user_id THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'self_referral');
-  END IF;
+    -- نوێکردنەوەی جەدوەلی بانگێشتکردن
+    UPDATE pa_referrals 
+    SET referred_id = p_new_user_id, used_at = NOW()
+    WHERE id = v_ref_record_id;
 
-  -- ٣. ئایا ئەم بەکارهێنەرە پێشتر جایزەی وەرگرتووە؟
-  IF EXISTS (
-    SELECT 1 FROM pa_referrals
-    WHERE referred_id = p_new_user_id
-  ) THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'already_referred');
-  END IF;
+    -- دڵنیابوونەوە لەوەی جەدوەلی pa_coins هەیە و داتای تێدایە بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_coins (user_id, coins_balance)
+    VALUES (p_new_user_id, 0)
+    ON CONFLICT (user_id) DO NOTHING;
 
-  -- ٤. pa_referrals نوێبکەرەوە
-  UPDATE pa_referrals
-  SET    referred_id = p_new_user_id,
-         used_at     = NOW()
-  WHERE  id = v_referral.id;
+    -- زیادکردنی ٥٠ کۆین بۆ هەژمارە نوێیەکە
+    UPDATE pa_coins 
+    SET coins_balance = coins_balance + 50
+    WHERE user_id = p_new_user_id
+    RETURNING coins_balance INTO v_current_coins;
 
-  -- ٥. pa_coins ی بەکارهێنەری نوێ دروست بکە / نوێبکەرەوە
-  INSERT INTO pa_coins (user_id, coins_balance)
-  VALUES (p_new_user_id, v_reward)
-  ON CONFLICT (user_id)
-  DO UPDATE SET coins_balance = pa_coins.coins_balance + v_reward
-  RETURNING coins_balance INTO v_new_bal;
+    -- تۆمارکردنی مامەڵەکە
+    INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
+    VALUES (p_new_user_id, 50, 'دیاری بانگێشتکردن', v_current_coins);
 
-  -- ٦. تۆمار بکە لە pa_coin_transactions بۆ audit
-  INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
-  VALUES (
-    p_new_user_id,
-    v_reward,
-    'جایزەی بانگێشت — کۆدی ' || UPPER(TRIM(p_ref_code)),
-    v_new_bal
-  );
+    -- زیادکردنی ئاگاداری بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_notifications (user_id, type, title, body)
+    VALUES (p_new_user_id, 'general', 'دیاری بانگێشتکردن 🎁', '٥٠ کۆین وەک دیاری بانگێشتکردن بۆ هەژمارەکەت زیادکرا.');
 
-  RETURN jsonb_build_object('ok', true, 'coins_awarded', v_reward, 'new_balance', v_new_bal);
-
-EXCEPTION WHEN OTHERS THEN
-  RETURN jsonb_build_object('ok', false, 'reason', SQLERRM);
+    RETURN json_build_object('ok', true);
 END;
-$$;
-
--- دەستوەر بدە بە anon role کە فەنکشنەکەی بانگ بکات
-GRANT EXECUTE ON FUNCTION handle_auto_referral(UUID, TEXT) TO anon, authenticated;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 ══════════════════════════════════════════════════════ -->
 </body>`);
@@ -4786,4 +4707,168 @@ function renderTxHistory(){
       const sMap={
         pending:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.25)"><i class="fas fa-clock" style="font-size:7px"></i> چاوەڕوان</span>`,
         approved:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.25)"><i class="fas fa-check" style="font-size:7px"></i> پەسەندکرا</span>`,
-        rejected:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-
+        rejected:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2)"><i class="fas fa-xmark" style="font-size:7px"></i> ڕەتکرا</span>`,
+      };
+      statusBadge=sMap[t.status]||sMap.pending;
+    }
+
+    const _txKey = t.id+'_'+filtered.indexOf(t);
+    _txMap[_txKey]=t;
+    return`<div class="tx-item" style="cursor:pointer;padding:12px 4px;margin:-1px -4px;border-radius:12px;transition:background .15s" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''" onclick="${isCoinExchange?'':('showReceipt(_txMap[\''+_txKey+'\'])')}">
+      <div style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">
+        <i class="fas ${icoName}"></i>
+      </div>
+      <div class="tx-info" style="flex:1;min-width:0">
+        <div class="tx-lbl" style="font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>
+        <div style="font-size:11px;color:var(--mt);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+          <span>${dateStr}</span>
+          ${sub?`<span style="color:var(--b2)">·</span><span style="color:var(--mt2)">${sub}</span>`:''}
+        </div>
+        ${statusBadge?`<div style="margin-top:5px">${statusBadge}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <div style="font-size:14px;font-weight:800;color:${amtColor};font-family:'Inter',sans-serif;letter-spacing:-.3px">${amtText}</div>
+        ${!isCoinExchange?`<i class="fas fa-chevron-left" style="font-size:10px;color:var(--mt)"></i>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+
+
+// ═══ DEPOSIT REVIEW COUNTDOWN ═══
+let _cdInterval = null;
+
+function startReviewCountdown(totalSec){
+  totalSec = totalSec || 300; // 5 خولەک
+  const banner  = document.getElementById('reviewCountdownBanner');
+  const timerEl = document.getElementById('cdTimerNum');
+  const progBar = document.getElementById('cdProgressBar');
+  const line1   = document.getElementById('cdLine1');
+  const step2   = document.getElementById('cdStep2');
+  const step2Ico= document.getElementById('cdStep2Ico');
+  const cdTitle = document.getElementById('cdTitle');
+  const cdSub   = document.getElementById('cdSub');
+  const cdIco   = document.getElementById('cdIcoWrap');
+
+  if(!banner) return;
+  banner.style.display = 'block';
+  if(_cdInterval) clearInterval(_cdInterval);
+
+  let remaining = totalSec;
+
+  function tick(){
+    remaining--;
+    if(remaining < 0){
+      clearInterval(_cdInterval);
+      // تەواوبوو — چووە وردبینی
+      timerEl.textContent = '0:00';
+      timerEl.style.color = '#facc15';
+      progBar.style.width = '0%';
+      progBar.style.background = 'linear-gradient(90deg,#d97706,#facc15)';
+      line1.style.width = '100%';
+      line1.style.background = '#facc15';
+      step2.style.color = '#facc15';
+      step2Ico.style.background = 'rgba(250,204,21,.15)';
+      step2Ico.style.borderColor = '#facc15';
+      step2Ico.style.color = '#facc15';
+      cdTitle.textContent = 'داواکاریەکەت چووە وردبینی ئادمین ✅';
+      cdSub.innerHTML = 'ئادمین لە <strong style="color:rgba(255,255,255,.75)">ناوماوەی ١ کاتژمێر</strong>دا وەڵام دەداتەوە';
+      cdIco.textContent = '🔍';
+      cdIco.style.background = 'rgba(250,204,21,.15)';
+      cdIco.style.borderColor = 'rgba(250,204,21,.35)';
+      // بانەرەکە دوای ١٠ چرکە بشارەوە
+      setTimeout(()=>{
+        if(banner) banner.style.opacity='0';
+        banner.style.transition='opacity .5s';
+        setTimeout(()=>{banner.style.display='none';banner.style.opacity='';banner.style.transition='';},600);
+      }, 10000);
+      return;
+    }
+    const m = Math.floor(remaining/60);
+    const s = remaining % 60;
+    timerEl.textContent = m+':'+(s<10?'0':'')+s;
+    const pct = (remaining/totalSec)*100;
+    progBar.style.width = pct+'%';
+    // لاین ١ — دوای ٣٠ چرکەی یەکەم پر دەبێت
+    const line1Pct = Math.min(100, ((totalSec-remaining)/30)*100);
+    line1.style.width = line1Pct+'%';
+    // ڕەنگی کاتژمێر گۆڕان بەپێی ماوەی مایەوە
+    if(remaining < 60){ timerEl.style.color='#fb923c'; progBar.style.background='linear-gradient(90deg,#ea580c,#fb923c)'; }
+    else if(remaining < 120){ timerEl.style.color='#facc15'; progBar.style.background='linear-gradient(90deg,#d97706,#facc15)'; }
+    else { timerEl.style.color='#4ade80'; progBar.style.background='linear-gradient(90deg,#16a34a,#4ade80)'; }
+  }
+
+  tick(); // یەکەم تیک خێرا
+  _cdInterval = setInterval(tick, 1000);
+}
+
+async function checkDbReady(){
+  try{
+    const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
+    // ئەگەر invalid_budget هاتەوە = فەنکشنەکە هەیە
+    const ready=error?.message?.includes('invalid_budget')||error?.message?.includes('بودجە');
+    const btn=document.getElementById('setupDbBtn');
+    if(btn){
+      if(ready){
+        btn.style.display='none'; // فەنکشنەکە هەیە، دووگمە شاری بکە
+      } else {
+        btn.style.display='flex'; // نییە، پیشان بدە
+      }
+    }
+  }catch(e){/* بێدەنگ */}
+}
+</script>
+
+<!-- =====================================================================
+  SQL SCRIPTS (کۆمێنت — بۆ ڕێنمایی ئەدمین)
+  
+  ══════════════════════════════════════════════════════════════════════
+  ١. جەدوەلی pa_assets
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_assets (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    name TEXT NOT NULL,
+    asset_type TEXT NOT NULL CHECK (asset_type IN ('whatsapp','instagram','phone','telegram','link')),
+    value TEXT NOT NULL,
+    note TEXT,
+    style TEXT DEFAULT 'classic',  -- نوێ: ستایلی کارت (classic, light, gradient)
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  -- ئەگەر جەدوەلەکەت پێشتر هەیە، ئەم ستوونە زیاد بکە:
+  -- ALTER TABLE pa_assets ADD COLUMN IF NOT EXISTS style TEXT DEFAULT 'classic';
+  ALTER TABLE pa_assets ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Users manage own assets" ON pa_assets
+    FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٢. جەدوەلی pa_notifications
+  ══════════════════════════════════════════════════════════════════════
+  CREATE TABLE pa_notifications (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    type TEXT NOT NULL DEFAULT 'general',
+    title TEXT,
+    body TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    related_id UUID,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  ALTER TABLE pa_notifications ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Users read own notifications" ON pa_notifications
+    FOR ALL USING (auth.uid() = user_id);
+  
+  ══════════════════════════════════════════════════════════════════════
+  ٣. تریگەری ئاگاداری کاتێک ئەدمین ستاتۆس گۆڕی
+  ══════════════════════════════════════════════════════════════════════
+  CREATE OR REPLACE FUNCTION notify_ad_status_change()
+  RETURNS TRIGGER AS $$
+  DECLARE
+    notif_type TEXT;
+    notif_title TEXT;
+    notif_body TEXT;
+    v_meta JSONB;
+  BEGIN
+    IF OLD.status IS DISTINCT FROM NEW.status THEN
+      v_meta := jsonb
