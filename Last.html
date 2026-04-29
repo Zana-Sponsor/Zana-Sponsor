@@ -290,36 +290,37 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 .plat-field-row{display:flex;flex-direction:column;}
 .plat-field-lbl{font-size:11px;color:var(--mt);font-weight:700;margin-bottom:5px;margin-top:12px;text-align:right;}
 .style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
-.style-card{border-radius:16px;padding:10px 8px 12px;cursor:pointer;border:2px solid var(--b1);text-align:center;transition:all .25s;position:relative;overflow:hidden;background:var(--bg);}
-.style-card:hover{border-color:var(--b2);transform:translateY(-1px);}
-.style-card.on{border-color:var(--dark);background:rgba(28,35,51,.04);box-shadow:0 4px 16px rgba(28,35,51,.12);}
+.style-card{border-radius:16px;padding:14px 10px;cursor:pointer;border:2px solid var(--b1);text-align:center;transition:all .25s;position:relative;overflow:hidden;}
+.style-card.on{border-color:var(--dark);}
 .style-card .sc-name{font-size:12px;font-weight:700;color:var(--dark);margin-top:8px;}
 .style-card .sc-sub{font-size:10px;color:var(--mt);margin-top:2px;}
-.style-card .sc-chk{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;background:var(--dark);display:none;align-items:center;justify-content:center;font-size:9px;color:#fff;z-index:2;}
+.style-card .sc-chk{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;background:var(--dark);display:none;align-items:center;justify-content:center;font-size:9px;color:#fff;}
 .style-card.on .sc-chk{display:flex;}
-/* ══ STYLE CARD PREVIEWS — Dark ══ */
-.sc-classic{background:linear-gradient(135deg,#1c2333 0%,#2e3a50 100%);border-radius:12px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
-.sc-classic-inner{text-align:center;}
-.sc-classic-av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);margin:0 auto 4px;}
-.sc-classic-line{height:3px;border-radius:2px;background:rgba(255,255,255,.3);width:40px;margin:2px auto;}
+/* ── Style Card: DARK preview ── */
+.sc-dark-wrap{border-radius:10px;overflow:hidden;min-height:64px;background:#0d1021;position:relative;}
+.sc-dark-header{height:28px;background:linear-gradient(135deg,#7b2fd4,#c855e0);position:relative;}
+.sc-dark-header::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:10px;background:#0d1021;border-radius:50% 50% 0 0 / 10px 10px 0 0;}
+.sc-dark-av{width:20px;height:20px;border-radius:50%;background:#c855e0;border:2px solid #0d1021;position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);z-index:2;}
+.sc-dark-body{padding:14px 6px 5px;display:flex;flex-direction:column;gap:3px;}
+.sc-dark-line{height:3px;border-radius:3px;background:rgba(255,255,255,.15);}
 
-/* ══ Dark Preview (ProxoLink-style) ══ */
-.sc-dark-prev{background:#0d1021;border:1px solid rgba(255,255,255,.08);border-radius:12px;min-height:60px;overflow:hidden;position:relative;}
-.sc-dark-grad{height:26px;border-radius:10px 10px 0 0;position:relative;}
-.sc-dark-grad::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:10px;background:#0d1021;border-radius:50% 50% 0 0/10px 10px 0 0;}
-.sc-dark-circle{width:18px;height:18px;border-radius:50%;background:#a860d0;border:2px solid #0d1021;position:absolute;top:17px;left:50%;transform:translateX(-50%);}
-.sc-dark-lines{padding:18px 8px 6px;display:flex;flex-direction:column;gap:3px;}
-.sc-dark-line{height:3px;border-radius:3px;background:rgba(255,255,255,.12);}
-
-/* ══ Light Preview (ProxoLink-style) ══ */
-.sc-light-prev{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;min-height:60px;overflow:hidden;position:relative;}
-.sc-light-grad{height:26px;border-radius:10px 10px 0 0;position:relative;}
-.sc-light-grad::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:10px;background:#fff;border-radius:50% 50% 0 0/10px 10px 0 0;}
-.sc-light-circle{width:18px;height:18px;border-radius:50%;background:#a860d0;border:2px solid #fff;position:absolute;top:17px;left:50%;transform:translateX(-50%);}
-.sc-light-lines{padding:18px 8px 6px;display:flex;flex-direction:column;gap:3px;}
+/* ── Style Card: LIGHT preview ── */
+.sc-light-wrap{border-radius:10px;overflow:hidden;min-height:64px;background:#fff;border:1px solid rgba(0,0,0,.07);position:relative;}
+.sc-light-header{height:28px;background:linear-gradient(135deg,#7b2fd4,#c855e0);position:relative;}
+.sc-light-header::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:10px;background:#fff;border-radius:50% 50% 0 0 / 10px 10px 0 0;}
+.sc-light-av{width:20px;height:20px;border-radius:50%;background:#c855e0;border:2px solid #fff;position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);z-index:2;}
+.sc-light-body{padding:14px 6px 5px;display:flex;flex-direction:column;gap:3px;}
 .sc-light-line{height:3px;border-radius:3px;background:rgba(0,0,0,.1);}
 
-/* ══ Classic / Gradient Preview ══ */
+/* ── Style Card: CLASSIC preview ── */
+.sc-classic-wrap{border-radius:10px;overflow:hidden;min-height:64px;background:#f5f5f5;border:1px solid rgba(0,0,0,.07);}
+.sc-classic-header{height:28px;background:linear-gradient(135deg,#667eea,#764ba2);position:relative;}
+.sc-classic-header::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:10px;background:#f5f5f5;border-radius:50% 50% 0 0 / 10px 10px 0 0;}
+.sc-classic-av{width:20px;height:20px;border-radius:50%;background:#8b5cf6;border:2px solid #f5f5f5;position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);z-index:2;}
+.sc-classic-body{padding:14px 6px 5px;display:flex;flex-direction:column;gap:3px;}
+.sc-classic-line{height:3px;border-radius:3px;background:rgba(0,0,0,.12);}
+
+/* legacy — ناکارێت بەڵام پارێزراوە بۆ دڵنیابوون */
 .sc-minimal{background:#fff;border:1px solid var(--b1);border-radius:12px;padding:10px;min-height:60px;display:flex;align-items:center;justify-content:center;}
 .sc-minimal-inner{display:flex;align-items:center;gap:6px;}
 .sc-minimal-av{width:24px;height:24px;border-radius:50%;background:var(--b1);}
@@ -908,46 +909,42 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
         <div class="plform-lbl">ستایل</div>
         <div class="style-grid">
 
-          <!-- ── Dark ── -->
+          <!-- Dark -->
           <div class="style-card on" data-style="dark" onclick="pickStyle(this)">
             <div class="sc-chk"><i class="fas fa-check"></i></div>
-            <div class="sc-dark-prev">
-              <div class="sc-dark-grad" style="background:linear-gradient(135deg,#7b2fd4,#c855e0)">
-                <div class="sc-dark-circle"></div>
-              </div>
-              <div class="sc-dark-lines">
+            <div class="sc-dark-wrap">
+              <div class="sc-dark-header"><div class="sc-dark-av"></div></div>
+              <div class="sc-dark-body">
                 <div class="sc-dark-line"></div>
-                <div class="sc-dark-line" style="width:65%;opacity:.6"></div>
+                <div class="sc-dark-line" style="width:60%;margin:0 auto;opacity:.5"></div>
               </div>
             </div>
             <div class="sc-name">Dark</div>
             <div class="sc-sub">تاریک</div>
           </div>
 
-          <!-- ── Light ── -->
+          <!-- Light -->
           <div class="style-card" data-style="light" onclick="pickStyle(this)">
             <div class="sc-chk"><i class="fas fa-check"></i></div>
-            <div class="sc-light-prev">
-              <div class="sc-light-grad" style="background:linear-gradient(135deg,#8b5cf6,#c855e0)">
-                <div class="sc-light-circle"></div>
-              </div>
-              <div class="sc-light-lines">
+            <div class="sc-light-wrap">
+              <div class="sc-light-header"><div class="sc-light-av"></div></div>
+              <div class="sc-light-body">
                 <div class="sc-light-line"></div>
-                <div class="sc-light-line" style="width:65%;opacity:.6"></div>
+                <div class="sc-light-line" style="width:60%;margin:0 auto;opacity:.5"></div>
               </div>
             </div>
             <div class="sc-name">Light</div>
             <div class="sc-sub">ڕووناک</div>
           </div>
 
-          <!-- ── Classic ── -->
+          <!-- Classic -->
           <div class="style-card" data-style="classic" onclick="pickStyle(this)">
             <div class="sc-chk"><i class="fas fa-check"></i></div>
-            <div class="sc-gradient">
-              <div class="sc-gradient-inner">
-                <div class="sc-gradient-av"></div>
-                <div class="sc-gradient-line"></div>
-                <div class="sc-gradient-line" style="width:28px;opacity:.6"></div>
+            <div class="sc-classic-wrap" style="position:relative;">
+              <div class="sc-classic-header"><div class="sc-classic-av"></div></div>
+              <div class="sc-classic-body">
+                <div class="sc-classic-line"></div>
+                <div class="sc-classic-line" style="width:60%;margin:0 auto;opacity:.5"></div>
               </div>
             </div>
             <div class="sc-name">Classic</div>
