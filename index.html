@@ -522,16 +522,6 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .asset-saved-value{background:var(--bg);border:1px solid var(--b1);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--dark2);direction:ltr;text-align:left;font-family:monospace;margin-bottom:6px;}
 .asset-saved-note{font-size:11px;color:var(--mt2);padding:4px 0;}
 .asset-saved-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--b1);}
-
-/* ══ FIELD ERROR ══ */
-.field-err{display:none;align-items:center;gap:5px;font-size:11px;color:var(--rd);margin-top:4px;padding:4px 8px;background:rgba(220,38,38,.06);border-radius:8px;}
-.field-err i{font-size:10px;}
-
-/* ══ MODAL RECEIPT STICKY HEADER FIX ══ */
-#moReceipt .mbox{padding-top:0;}
-
-/* ══ SIDEBAR ACTIVE ══ */
-.sidebar-item.active{background:rgba(28,35,51,.06);border-right:3px solid var(--dark);}
 </style>
 </head>
 <body>
@@ -1936,105 +1926,113 @@ function switchTab(m){
   document.getElementById('tabL').classList.toggle('on',m==='login');
   document.getElementById('tabS').classList.toggle('on',m==='signup');
   document.getElementById('nameWrap').style.display=m==='signup'?'block':'none';
+  // بۆ signup پاسۆرد پێویست نییە — OTP ئیمەیل دەگات
+  const passEl=document.getElementById('authPass');
+  if(passEl) passEl.style.display=m==='signup'?'none':'block';
   document.getElementById('authBtnTxt').textContent=m==='login'?'چوونەژوورەوە':'تۆمارکردن';
   document.getElementById('authMsg').style.display='none';
 }
+// ════════════════════════════════════════════════════════════════
+// handleSubmit — تۆمارکردنی نوێ بۆ جەدوەلی users
+// Supabase Webhook → n8n → Resend → OTP ئیمەیل
+// ════════════════════════════════════════════════════════════════
+async function handleSubmit(email, fullName){
+  const btn=document.getElementById('authBtn');
+
+  // ── چاکسازی داخلکردن ──
+  email=(email||'').trim().toLowerCase();
+  fullName=(fullName||'').trim();
+
+  if(!email||!fullName){showAmsg('تکایە ناو و ئیمەیل پڕ بکەرەوە','err');return;}
+  const emailRx=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailRx.test(email)){showAmsg('ئیمەیلەکە دروست نییە','err');return;}
+
+  // ── دووگمە disable بکە ──
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> چاوەڕوان بکە...';
+  document.getElementById('authMsg').style.display='none';
+
+  try{
+    // ── ١. نموونەی OTP دروست بکە (٦ ژمارە) ──
+    const otpCode=Math.floor(100000+Math.random()*900000).toString();
+
+    // ── ٢. لە جەدوەلی users داخڵ بکە ──
+    // Supabase Webhook ئۆتۆماتیکی n8n تریگەر دەکات → Resend → OTP ئیمەیل
+    const{error}=await sb.from('users').insert([{
+      email:    email,
+      full_name:fullName,
+      otp_code: otpCode
+    }]);
+
+    if(error){
+      // ئیمەیلی دووبارە
+      if(error.code==='23505'||error.message?.toLowerCase().includes('duplicate')||error.message?.toLowerCase().includes('unique')){
+        showAmsg('ئەم ئیمەیلە پێشتر تۆماربووە. تکایە بچۆ ژوورەوە','err');
+      } else {
+        showAmsg('هەڵە: '+error.message,'err');
+      }
+      return;
+    }
+
+    // ── ٣. ئیمەیل و OTP لە sessionStorage پاشەکەوت بکە بۆ verify.html ──
+    sessionStorage.setItem('proxo_pending_email',email);
+    sessionStorage.setItem('proxo_pending_otp',otpCode);
+
+    // ── ٤. بگوازەرەوە بۆ verify.html ──
+    window.location.href='verify.html';
+
+  }catch(e){
+    showAmsg('کێشەیەکی نەچاوەڕواندراو: '+e.message,'err');
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-arrow-left"></i> <span id="authBtnTxt">تۆمارکردن</span>';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// doAuth — چوونەژوورەوە (login) + تۆمارکردن (signup via users table)
+// ════════════════════════════════════════════════════════════════
 async function doAuth(){
   const email=document.getElementById('authEmail').value.trim();
-  const pass=document.getElementById('authPass').value;
   const btn=document.getElementById('authBtn');
+
+  // ── Signup: داخڵکردن لە جەدوەلی users، Webhook دەکەوێتە کار ──
+  if(aMode==='signup'){
+    const name=document.getElementById('authName').value.trim()||email.split('@')[0];
+    await handleSubmit(email,name);
+    return;
+  }
+
+  // ── Login: Supabase Auth ئەوەی کۆنت کاردەکات ──
+  const pass=document.getElementById('authPass').value;
   if(!email||!pass){showAmsg('ئیمەیل و پاسۆرد پڕ بکەرەوە','err');return;}
   if(pass.length<6){showAmsg('پاسۆرد کەمترین ٦ پیت','err');return;}
   btn.disabled=true;
-  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
   try{
-    if(aMode==='login'){
-      const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
-      if(error){
-        // هەڵەی تایبەت بۆ ئیمەیلی تەسدیقنەکراو
-        if(error.message?.includes('Email not confirmed')||error.message?.includes('email_not_confirmed')){
-          // هەوڵ بدە resend confirmation بکات
-          await sb.auth.resend({type:'signup',email});
-          showAmsg('تکایە ئیمەیلەکەت بپشکنە — لینکی دڵنیاکردنەوەت نێردراوە. ئەگەر نەتت گەیشت spam بپشکنە.','err');
-        } else {
-          throw error;
-        }
-        return;
-      }
-      cu=data.user;boot();
-    } else {
-      const name=document.getElementById('authName').value.trim()||email.split('@')[0];
-      // سەرەتا تۆمار بکە
-      const{data,error}=await sb.auth.signUp({
-        email,
-        password:pass,
-        options:{
-          data:{full_name:name},
-          emailRedirectTo: window.location.href
-        }
-      });
-      if(error){
-        // ئەگەر پێشتر تۆمارکراوە — لۆگین بکە
-        if(error.message?.includes('already registered')||error.message?.includes('already been registered')){
-          const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
-          if(!le&&ld?.session){cu=ld.user;await boot();return;}
-        }
-        throw error;
-      }
-
-      // ئەگەر session هاتەوە = email confirmation چالاک نییە → سەرەکەوە
-      if(data.session){
-        cu=data.user;
-        const refCode=localStorage.getItem('proxo_ref');
-        if(refCode){
-          try{
-            const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{p_new_user_id:cu.id,p_ref_code:refCode});
-            if(!rErr&&rData?.ok===true){
-              localStorage.removeItem('proxo_ref');
-              await new Promise(r=>setTimeout(r,1000));
-              showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
-            }
-          }catch(e){console.error('[Referral]',e);}
-        }
-        await boot();
-        setTimeout(()=>loadCoins(),1500);
-        return;
-      }
-
-      // email confirmation چالاکە → پەیام نیشان بدە
-      // هەوڵبدە بە لۆگین — هەندێک project confirmation دەناوێت
-      const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
-      if(!le&&ld?.session){
-        cu=ld.user;
-        await boot();
-        return;
-      }
-
-      // تەنها confirmation پێویستە
-      showAmsg('✅ هەژماری دروستکرا!\n\nتکایە ئیمەیلەکەت بپشکنە و لینکی دڵنیاکردنەوەکە کلیک بکە.\n(ئەگەر نەتگەیشت، Spam بپشکنە)','ok');
+    const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+    if(error)throw error;
+    cu=data.user;
+    // ── AUTO REFERRAL ──
+    const refCode=localStorage.getItem('proxo_ref');
+    let referralSuccess=false;
+    if(refCode){
+      try{
+        const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{p_new_user_id:cu.id,p_ref_code:refCode});
+        if(!rErr&&rData?.ok===true){referralSuccess=true;localStorage.removeItem('proxo_ref');}
+        else{console.error('[Referral] RPC failed:',rErr||rData?.msg);}
+      }catch(e){console.error('[Referral] Exception:',e);}
+    }
+    if(referralSuccess){await new Promise(r=>setTimeout(r,2000));}
+    await boot();
+    if(referralSuccess){
+      setTimeout(async()=>{await loadCoins();},500);
+      setTimeout(async()=>{await loadCoins();},2000);
+      showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
     }
   }catch(e){
-    const m={
-      'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە',
-      'Email already registered':'ئەم ئیمەیلە پێشتر تۆمارکراوە — بچۆ ژوورەوە',
-      'User already registered':'ئەم ئیمەیلە پێشتر تۆمارکراوە — بچۆ ژوورەوە',
-      'already been registered':'ئەم ئیمەیلە پێشتر تۆمارکراوە — بچۆ ژوورەوە',
-      'Password should be at least 6 characters':'پاسۆرد کەمترین ٦ پیت دەبێت',
-      'Unable to validate email address':'فۆرماتی ئیمەیل هەڵەیە',
-      'Email not confirmed':'تکایە ئیمەیلەکەت بپشکنە و دڵنیابکەرەوە',
-      'over_email_send_rate_limit':'زۆر جار هەوڵت دا — چەند خولەکێک بوەستە',
-    };
-    const friendly=Object.entries(m).find(([k])=>e.message?.includes(k));
-    // Failed to fetch = CORS کێشە — فایل دەبێت لە سێرڤەر بێت
-    if(e.message==='Failed to fetch'||e.message?.includes('fetch')){
-      showAmsg('⚠️ کێشەی پەیوەندی:\n\nفایلەکە دەبێت لە سێرڤەر بێت، نەک لە Claude preview.\nفایلەکە بخرێتە Netlify.com یان هەر سێرڤەرێک.\n\nبۆ زانیاری زیاتر لە Claude داوا بکە.','err');
-    } else {
-      showAmsg(friendly?friendly[1]:('هەڵە: '+e.message),'err');
-    }
-  }finally{
-    btn.disabled=false;
-    btn.innerHTML='<i class="fas fa-arrow-left"></i> <span id="authBtnTxt">'+(aMode==='login'?'چوونەژوورەوە':'تۆمارکردن')+'</span>';
-  }
+    const m={'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە','Email already registered':'پێشتر تۆمارکراوە','User already registered':'پێشتر تۆمارکراوە'};
+    showAmsg(m[e.message]||e.message,'err');
+  }finally{btn.disabled=false;}
 }
 function showAmsg(t,c){const el=document.getElementById('authMsg');el.textContent=t;el.className='amsg '+c;el.style.display='block';}
 function showToast(m,c){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(c?' '+c:'');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);}
@@ -4750,4 +4748,5 @@ function renderTxHistory(){
     if(!isSpend&&!isCoinExchange){
       const sMap={
         pending:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.25)"><i class="fas fa-clock" style="font-size:7px"></i> چاوەڕوان</span>`,
-        approved:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:
+        approved:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.25)"><i class="fas fa-check" style="font-size:7px"></i> پەسەندکرا</span>`,
+        rejected:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2)"><i class="fas fa-xma
