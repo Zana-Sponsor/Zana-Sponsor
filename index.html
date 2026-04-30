@@ -522,6 +522,16 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .asset-saved-value{background:var(--bg);border:1px solid var(--b1);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--dark2);direction:ltr;text-align:left;font-family:monospace;margin-bottom:6px;}
 .asset-saved-note{font-size:11px;color:var(--mt2);padding:4px 0;}
 .asset-saved-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--b1);}
+
+/* ══ FIELD ERROR ══ */
+.field-err{display:none;align-items:center;gap:5px;font-size:11px;color:var(--rd);margin-top:4px;padding:4px 8px;background:rgba(220,38,38,.06);border-radius:8px;}
+.field-err i{font-size:10px;}
+
+/* ══ MODAL RECEIPT STICKY HEADER FIX ══ */
+#moReceipt .mbox{padding-top:0;}
+
+/* ══ SIDEBAR ACTIVE ══ */
+.sidebar-item.active{background:rgba(28,35,51,.06);border-right:3px solid var(--dark);}
 </style>
 </head>
 <body>
@@ -551,31 +561,6 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
         <i class="fas fa-arrow-left"></i>
         <span id="authBtnTxt">چوونەژوورەوە</span>
       </button>
-
-      <!-- ══ OTP STEP (signup verification) ══ -->
-      <div id="otpWrap" style="display:none;margin-top:14px">
-        <div style="font-size:13px;color:var(--mt);text-align:center;margin-bottom:12px;line-height:1.6">
-          کۆدی ٦ ژمارەییمان بۆ ئیمەیلەکەت ناردووە.<br>
-          <span id="otpEmailLbl" style="color:var(--dark);font-weight:700" dir="ltr"></span>
-        </div>
-        <input class="finp" type="text" id="authOtp" placeholder="OTP — 123456" dir="ltr"
-          maxlength="6" inputmode="numeric" autocomplete="one-time-code"
-          onkeydown="if(event.key==='Enter')verifyOtp()">
-        <button class="abtn" id="otpBtn" onclick="verifyOtp()">
-          <i class="fas fa-check"></i>
-          <span>پشتڕاستکردنەوە</span>
-        </button>
-        <button class="abtn" id="otpResendBtn" onclick="resendOtp()"
-          style="background:var(--bg);color:var(--dark);box-shadow:none;border:1.5px solid var(--b1);margin-top:8px">
-          <i class="fas fa-rotate-right"></i>
-          <span>دووبارە ناردنی کۆد</span>
-        </button>
-        <button class="abtn" onclick="cancelOtp()"
-          style="background:transparent;color:var(--mt);box-shadow:none;margin-top:6px;font-size:13px;padding:10px">
-          <span>گەڕانەوە</span>
-        </button>
-      </div>
-
       <div class="amsg" id="authMsg"></div>
     </div>
   </div>
@@ -1946,58 +1931,6 @@ async function withSession(fn){
 }
 
 // ═══ AUTH ═══
-// OTP requests go through our same-origin backend proxy (no CORS issues).
-// The backend forwards them to the n8n webhook configured via N8N_WEBHOOK_URL.
-const N8N_WEBHOOK_URL = '/api/auth/otp';
-
-// Pending signup state — held while user enters OTP
-let pendingSignup = null;
-
-function showOtpStep(email){
-  document.getElementById('otpEmailLbl').textContent = email;
-  document.getElementById('authMsg').style.display = 'none';
-  // Hide standard auth inputs and buttons
-  document.getElementById('authName').parentElement.style.display = 'none';
-  document.getElementById('authEmail').style.display = 'none';
-  document.getElementById('authPass').style.display = 'none';
-  document.getElementById('authBtn').style.display = 'none';
-  document.querySelector('.atabs').style.display = 'none';
-  document.getElementById('otpWrap').style.display = 'block';
-  setTimeout(()=>document.getElementById('authOtp').focus(), 100);
-}
-
-function hideOtpStep(){
-  document.getElementById('otpWrap').style.display = 'none';
-  document.getElementById('authOtp').value = '';
-  document.getElementById('authName').parentElement.style.display = aMode==='signup'?'block':'none';
-  document.getElementById('authEmail').style.display = '';
-  document.getElementById('authPass').style.display = '';
-  document.getElementById('authBtn').style.display = '';
-  document.querySelector('.atabs').style.display = 'flex';
-}
-
-function cancelOtp(){
-  pendingSignup = null;
-  hideOtpStep();
-  document.getElementById('authMsg').style.display = 'none';
-}
-
-async function postWebhook(payload){
-  if(!N8N_WEBHOOK_URL) throw new Error('Webhook URL تۆمارنەکراوە');
-  const res = await fetch(N8N_WEBHOOK_URL, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(payload),
-  });
-  let data = null;
-  try { data = await res.json(); } catch(_){ data = {}; }
-  if(!res.ok){
-    const msg = (data && (data.error||data.message)) || ('HTTP '+res.status);
-    throw new Error(msg);
-  }
-  return data || {};
-}
-
 function switchTab(m){
   aMode=m;
   document.getElementById('tabL').classList.toggle('on',m==='login');
@@ -2005,10 +1938,6 @@ function switchTab(m){
   document.getElementById('nameWrap').style.display=m==='signup'?'block':'none';
   document.getElementById('authBtnTxt').textContent=m==='login'?'چوونەژوورەوە':'تۆمارکردن';
   document.getElementById('authMsg').style.display='none';
-  // Reset OTP step if user switches tabs mid-flow
-  if(document.getElementById('otpWrap').style.display==='block'){
-    cancelOtp();
-  }
 }
 async function doAuth(){
   const email=document.getElementById('authEmail').value.trim();
@@ -2024,148 +1953,65 @@ async function doAuth(){
       cu=data.user;boot();
     } else {
       const name=document.getElementById('authName').value.trim()||email.split('@')[0];
-      // Step 1 of signup: send OTP via n8n webhook
-      try {
-        await postWebhook({ email, name, action: 'send' });
-      } catch(e){
-        showAmsg('نەتوانرا کۆد بنێردرێت: '+e.message,'err');
-        return;
+      const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
+      if(error)throw error;
+      let newUser=data.user;
+      if(!data.session){
+        const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
+        if(!le&&ld?.session){newUser=ld.user;}
+        else{showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');return;}
       }
-      pendingSignup = { email, password: pass, name };
-      showOtpStep(email);
-      showAmsg('✉️ کۆدی پشتڕاستکردنەوە بۆ ئیمەیلەکەت نێردرا','ok');
+      cu=newUser;
+      // ══ AUTO REFERRAL — definitive fix ═══════════════════════
+      const refCode=localStorage.getItem('proxo_ref');
+      let referralSuccess=false;
+      if(refCode){
+        try{
+          console.log('[Referral] Attempting to apply code:', refCode);
+          const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
+            p_new_user_id:cu.id,
+            p_ref_code:refCode
+          });
+          
+          if(!rErr && rData?.ok===true){
+            referralSuccess=true;
+            localStorage.removeItem('proxo_ref');
+            console.log('[Referral] RPC Success!');
+          }else{
+            console.error('[Referral] RPC failed:', rErr || rData?.msg);
+          }
+        }catch(e){
+          console.error('[Referral] Exception:', e);
+        }
+      }
+      
+      // Ensure everything is settled before booting
+      if(referralSuccess) {
+          await new Promise(r=>setTimeout(r,2000));
+          console.log('[Referral] Waiting for DB sync...');
+      }
+      
+      await boot();
+      
+      if(referralSuccess){
+        // Force multiple reloads to ensure UI is updated
+        setTimeout(async () => {
+            await loadCoins();
+            console.log('[Referral] UI Refreshed');
+        }, 500);
+        setTimeout(async () => {
+            await loadCoins();
+        }, 2000);
+        showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
+      }
       return;
+      // ═════════════════════════════════════════════════════════
     }
   }catch(e){
     const m={'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە','Email already registered':'پێشتر تۆمارکراوە','User already registered':'پێشتر تۆمارکراوە'};
     showAmsg(m[e.message]||e.message,'err');
   }finally{btn.disabled=false;}
 }
-
-async function resendOtp(){
-  if(!pendingSignup){showAmsg('هیچ داواکارییەکی چالاک نییە','err');return;}
-  const btn = document.getElementById('otpResendBtn');
-  btn.disabled = true;
-  try{
-    await postWebhook({ email: pendingSignup.email, name: pendingSignup.name, action: 'send' });
-    showAmsg('✉️ کۆدێکی نوێ نێردرا','ok');
-  }catch(e){
-    showAmsg('نەتوانرا کۆد بنێردرێت: '+e.message,'err');
-  }finally{ btn.disabled = false; }
-}
-
-async function verifyOtp(){
-  const otp = document.getElementById('authOtp').value.trim();
-  if(!pendingSignup){showAmsg('هیچ داواکارییەکی چالاک نییە','err');return;}
-  if(!otp || otp.length<4){showAmsg('کۆدی OTP داخل بکە','err');return;}
-  const btn = document.getElementById('otpBtn');
-  btn.disabled = true;
-  try{
-    // Step 2 of signup: verify OTP via the same webhook
-    const data = await postWebhook({
-      email: pendingSignup.email,
-      otp,
-      token: otp,
-      action: 'verify'
-    });
-    // Webhook may respond with various shapes — accept ok/success/verified flags
-    const ok = data === true
-      || data?.ok === true
-      || data?.success === true
-      || data?.verified === true
-      || data?.status === 'ok'
-      || data?.status === 'verified'
-      || (Object.keys(data||{}).length === 0); // empty 200 response treated as success
-    if(!ok){
-      const msg = data?.message || data?.error || 'کۆد هەڵەیە';
-      showAmsg(msg,'err');
-      return;
-    }
-    // OTP good — create the Supabase account & sign in
-    await finalizeSignupAfterOtp(pendingSignup);
-  }catch(e){
-    showAmsg('پشتڕاستکردنەوە سەرکەوتوو نەبوو: '+e.message,'err');
-  }finally{ btn.disabled = false; }
-}
-
-async function finalizeSignupAfterOtp(p){
-  try{
-    const{data,error}=await sb.auth.signUp({
-      email:p.email, password:p.password,
-      options:{data:{full_name:p.name}}
-    });
-    if(error && !/already/i.test(error.message)) throw error;
-    let newUser = data?.user;
-    if(!data?.session){
-      const{data:ld,error:le}=await sb.auth.signInWithPassword({email:p.email,password:p.password});
-      if(le){
-        showAmsg('✅ ئیمەیلەکەت پشتڕاستکرایەوە — ئێستا بچۆ ژوورەوە','ok');
-        pendingSignup=null; hideOtpStep(); switchTab('login'); return;
-      }
-      newUser = ld?.user;
-    }
-    cu = newUser;
-    pendingSignup = null;
-    hideOtpStep();
-    // ══ AUTO REFERRAL ══
-    const refCode=localStorage.getItem('proxo_ref');
-    let referralSuccess=false;
-    if(refCode){
-      try{
-        const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
-          p_new_user_id:cu.id, p_ref_code:refCode
-        });
-        if(!rErr && rData?.ok===true){
-          referralSuccess=true;
-          localStorage.removeItem('proxo_ref');
-        }
-      }catch(_){ }
-    }
-    if(referralSuccess) await new Promise(r=>setTimeout(r,2000));
-    await boot();
-    if(referralSuccess){
-      setTimeout(async()=>{ await loadCoins(); }, 500);
-      setTimeout(async()=>{ await loadCoins(); }, 2000);
-      showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
-    }
-  }catch(e){
-    showAmsg(e.message||'هەڵەی نادیار','err');
-  }
-}
-
-// ══ Auto-verify via /verify?email=...&token=... link ══
-async function handleVerifyLink(){
-  const params = new URLSearchParams(window.location.search);
-  const path = window.location.pathname;
-  if(!path.endsWith('/verify') && !params.get('token')) return false;
-  const email = params.get('email');
-  const token = params.get('token');
-  if(!email || !token) return false;
-  try{
-    const data = await postWebhook({ email, otp: token, token, action: 'verify' });
-    const ok = data === true
-      || data?.ok === true
-      || data?.success === true
-      || data?.verified === true
-      || data?.status === 'ok'
-      || data?.status === 'verified'
-      || (Object.keys(data||{}).length === 0);
-    // Clean the URL
-    window.history.replaceState({}, document.title, '/');
-    if(ok){
-      showAmsg('✅ ئیمەیلەکەت پشتڕاستکرایەوە — ئێستا بچۆ ژوورەوە','ok');
-      switchTab('login');
-      const e = document.getElementById('authEmail'); if(e) e.value = email;
-    }else{
-      showAmsg(data?.message || data?.error || 'بەستەری پشتڕاستکردنەوە دروست نییە','err');
-    }
-  }catch(e){
-    window.history.replaceState({}, document.title, '/');
-    showAmsg('پشتڕاستکردنەوە سەرکەوتوو نەبوو: '+e.message,'err');
-  }
-  return true;
-}
-
 function showAmsg(t,c){const el=document.getElementById('authMsg');el.textContent=t;el.className='amsg '+c;el.style.display='block';}
 function showToast(m,c){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(c?' '+c:'');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);}
 function closeMo(id){document.getElementById(id).classList.remove('on');}
@@ -2196,8 +2042,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   })();
   // ──────────────────────────────────────────────────────────────
   sb=window.supabase.createClient(SB_URL,SB_KEY);
-  // Auto-verify when arriving via /verify?email=...&token=... link
-  handleVerifyLink();
   const n=new Date();
   document.getElementById('todayLbl').textContent='New Ad '+n.toLocaleDateString('en-GB').replace(/\//g,'/');
   document.getElementById('adDate').value=n.toISOString().split('T')[0];
@@ -4896,164 +4740,4 @@ function renderTxHistory(){
       </div>
       <div class="tx-info" style="flex:1;min-width:0">
         <div class="tx-lbl" style="font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>
-        <div style="font-size:11px;color:var(--mt);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-          <span>${dateStr}</span>
-          ${sub?`<span style="color:var(--b2)">·</span><span style="color:var(--mt2)">${sub}</span>`:''}
-        </div>
-        ${statusBadge?`<div style="margin-top:5px">${statusBadge}</div>`:''}
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <div style="font-size:14px;font-weight:800;color:${amtColor};font-family:'Inter',sans-serif;letter-spacing:-.3px">${amtText}</div>
-        ${!isCoinExchange?`<i class="fas fa-chevron-left" style="font-size:10px;color:var(--mt)"></i>`:''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-
-
-// ═══ DEPOSIT REVIEW COUNTDOWN ═══
-let _cdInterval = null;
-
-function startReviewCountdown(totalSec){
-  totalSec = totalSec || 300; // 5 خولەک
-  const banner  = document.getElementById('reviewCountdownBanner');
-  const timerEl = document.getElementById('cdTimerNum');
-  const progBar = document.getElementById('cdProgressBar');
-  const line1   = document.getElementById('cdLine1');
-  const step2   = document.getElementById('cdStep2');
-  const step2Ico= document.getElementById('cdStep2Ico');
-  const cdTitle = document.getElementById('cdTitle');
-  const cdSub   = document.getElementById('cdSub');
-  const cdIco   = document.getElementById('cdIcoWrap');
-
-  if(!banner) return;
-  banner.style.display = 'block';
-  if(_cdInterval) clearInterval(_cdInterval);
-
-  let remaining = totalSec;
-
-  function tick(){
-    remaining--;
-    if(remaining < 0){
-      clearInterval(_cdInterval);
-      // تەواوبوو — چووە وردبینی
-      timerEl.textContent = '0:00';
-      timerEl.style.color = '#facc15';
-      progBar.style.width = '0%';
-      progBar.style.background = 'linear-gradient(90deg,#d97706,#facc15)';
-      line1.style.width = '100%';
-      line1.style.background = '#facc15';
-      step2.style.color = '#facc15';
-      step2Ico.style.background = 'rgba(250,204,21,.15)';
-      step2Ico.style.borderColor = '#facc15';
-      step2Ico.style.color = '#facc15';
-      cdTitle.textContent = 'داواکاریەکەت چووە وردبینی ئادمین ✅';
-      cdSub.innerHTML = 'ئادمین لە <strong style="color:rgba(255,255,255,.75)">ناوماوەی ١ کاتژمێر</strong>دا وەڵام دەداتەوە';
-      cdIco.textContent = '🔍';
-      cdIco.style.background = 'rgba(250,204,21,.15)';
-      cdIco.style.borderColor = 'rgba(250,204,21,.35)';
-      // بانەرەکە دوای ١٠ چرکە بشارەوە
-      setTimeout(()=>{
-        if(banner) banner.style.opacity='0';
-        banner.style.transition='opacity .5s';
-        setTimeout(()=>{banner.style.display='none';banner.style.opacity='';banner.style.transition='';},600);
-      }, 10000);
-      return;
-    }
-    const m = Math.floor(remaining/60);
-    const s = remaining % 60;
-    timerEl.textContent = m+':'+(s<10?'0':'')+s;
-    const pct = (remaining/totalSec)*100;
-    progBar.style.width = pct+'%';
-    // لاین ١ — دوای ٣٠ چرکەی یەکەم پر دەبێت
-    const line1Pct = Math.min(100, ((totalSec-remaining)/30)*100);
-    line1.style.width = line1Pct+'%';
-    // ڕەنگی کاتژمێر گۆڕان بەپێی ماوەی مایەوە
-    if(remaining < 60){ timerEl.style.color='#fb923c'; progBar.style.background='linear-gradient(90deg,#ea580c,#fb923c)'; }
-    else if(remaining < 120){ timerEl.style.color='#facc15'; progBar.style.background='linear-gradient(90deg,#d97706,#facc15)'; }
-    else { timerEl.style.color='#4ade80'; progBar.style.background='linear-gradient(90deg,#16a34a,#4ade80)'; }
-  }
-
-  tick(); // یەکەم تیک خێرا
-  _cdInterval = setInterval(tick, 1000);
-}
-
-async function checkDbReady(){
-  try{
-    const{error}=await sb.rpc('create_ad_and_deduct',{p_user_id:cu.id,p_goal:'x',p_budget:-1});
-    // ئەگەر invalid_budget هاتەوە = فەنکشنەکە هەیە
-    const ready=error?.message?.includes('invalid_budget')||error?.message?.includes('بودجە');
-    const btn=document.getElementById('setupDbBtn');
-    if(btn){
-      if(ready){
-        btn.style.display='none'; // فەنکشنەکە هەیە، دووگمە شاری بکە
-      } else {
-        btn.style.display='flex'; // نییە، پیشان بدە
-      }
-    }
-  }catch(e){/* بێدەنگ */}
-}
-</script>
-
-<!-- =====================================================================
-  SQL SCRIPTS (کۆمێنت — بۆ ڕێنمایی ئەدمین)
-  
-  ══════════════════════════════════════════════════════════════════════
-  ١. جەدوەلی pa_assets
-  ══════════════════════════════════════════════════════════════════════
-  CREATE TABLE pa_assets (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    name TEXT NOT NULL,
-    asset_type TEXT NOT NULL CHECK (asset_type IN ('whatsapp','instagram','phone','telegram','link')),
-    value TEXT NOT NULL,
-    note TEXT,
-    style TEXT DEFAULT 'classic',  -- نوێ: ستایلی کارت (classic, light, gradient)
-    created_at TIMESTAMPTZ DEFAULT NOW()
-  );
-  -- ئەگەر جەدوەلەکەت پێشتر هەیە، ئەم ستوونە زیاد بکە:
-  -- ALTER TABLE pa_assets ADD COLUMN IF NOT EXISTS style TEXT DEFAULT 'classic';
-  ALTER TABLE pa_assets ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Users manage own assets" ON pa_assets
-    FOR ALL USING (auth.uid() = user_id);
-  
-  ══════════════════════════════════════════════════════════════════════
-  ٢. جەدوەلی pa_notifications
-  ══════════════════════════════════════════════════════════════════════
-  CREATE TABLE pa_notifications (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-    type TEXT NOT NULL DEFAULT 'general',
-    title TEXT,
-    body TEXT,
-    is_read BOOLEAN DEFAULT FALSE,
-    related_id UUID,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-  );
-  ALTER TABLE pa_notifications ENABLE ROW LEVEL SECURITY;
-  CREATE POLICY "Users read own notifications" ON pa_notifications
-    FOR ALL USING (auth.uid() = user_id);
-  
-  ══════════════════════════════════════════════════════════════════════
-  ٣. تریگەری ئاگاداری کاتێک ئەدمین ستاتۆس گۆڕی
-  ══════════════════════════════════════════════════════════════════════
-  CREATE OR REPLACE FUNCTION notify_ad_status_change()
-  RETURNS TRIGGER AS $$
-  DECLARE
-    notif_type TEXT;
-    notif_title TEXT;
-    notif_body TEXT;
-    v_meta JSONB;
-  BEGIN
-    IF OLD.status IS DISTINCT FROM NEW.status THEN
-      v_meta := jsonb
-;
-    END IF;
-    RETURN NEW;
-  END;
-  $$ LANGUAGE plpgsql;
-====================================================================== -->
-
-</body>
-</html>
+        <div style="font-s
