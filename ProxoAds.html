@@ -77,13 +77,23 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .amsg{font-size:12.5px;text-align:center;padding:11px 14px;border-radius:11px;display:none;margin-top:10px;}
 .amsg.ok{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);color:var(--gr);}
 .amsg.err{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:var(--rd);}
-.auth-or{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--mt);font-size:12px;}
-.auth-or::before,.auth-or::after{content:'';flex:1;height:1px;background:var(--b1);}
-.gbtn{width:100%;padding:15px 17px;background:var(--w);color:var(--dark);border:1.5px solid var(--b1);border-radius:14px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:border-color .18s,background .18s;}
-.gbtn:hover{background:var(--bg);border-color:var(--b2);}
-.gbtn:active{opacity:.9;}
-.gbtn:disabled{opacity:.5;pointer-events:none;}
-.gbtn svg{width:20px;height:20px;flex-shrink:0;}
+/* ══ OTP STEP ══ */
+#otpStep{display:none;animation:slideUp .28s cubic-bezier(.22,1,.36,1);}
+.otp-header-ico{width:52px;height:52px;border-radius:16px;background:var(--dark);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:22px;box-shadow:0 4px 16px rgba(28,35,51,.25);}
+.otp-email-badge{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:var(--dark);background:var(--bg);border:1px solid var(--b1);border-radius:10px;padding:9px 14px;text-align:center;margin-bottom:16px;direction:ltr;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.otp-boxes{display:flex;justify-content:center;gap:8px;margin-bottom:16px;direction:ltr;}
+.otp-box{width:46px;height:54px;background:var(--bg);border:1.5px solid var(--b1);border-radius:13px;color:var(--tx);font-family:'Inter',sans-serif;font-size:22px;font-weight:700;text-align:center;outline:none;transition:all .18s;-webkit-appearance:none;appearance:none;caret-color:var(--dark);}
+.otp-box:focus{border-color:var(--dark);background:var(--w);box-shadow:0 0 0 3px rgba(28,35,51,.08);transform:scale(1.04);}
+.otp-box.filled{border-color:var(--dark);background:var(--w);}
+.otp-box.otp-err{border-color:var(--rd)!important;background:rgba(220,38,38,.05)!important;animation:otpShake .35s ease;}
+.otp-box.otp-ok{border-color:var(--gr)!important;background:rgba(22,163,74,.05)!important;}
+@keyframes otpShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.otp-resend-row{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;font-size:12.5px;color:var(--mt);}
+.otp-resend-btn{background:none;border:none;color:var(--dark);font-family:'R',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px;}
+.otp-resend-btn:disabled{color:var(--mt);text-decoration:none;cursor:default;}
+.otp-timer{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;}
+.otp-back{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;padding:8px;margin-top:6px;background:none;border:none;color:var(--mt);font-family:'R',sans-serif;font-size:12.5px;cursor:pointer;transition:color .18s;}
+.otp-back:hover{color:var(--dark);}
 
 /* ══ OFFLINE BANNER ══ */
 #offlineBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:var(--rd);color:#fff;font-size:13px;font-family:'R',sans-serif;text-align:center;padding:10px 16px;font-weight:700;}
@@ -548,21 +558,53 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
         <button class="atab on" id="tabL" onclick="switchTab('login')">چوونەژوورەوە</button>
         <button class="atab" id="tabS" onclick="switchTab('signup')">تۆمارکردن</button>
       </div>
-      <div id="nameWrap" style="display:none">
-        <input class="finp" type="text" id="authName" placeholder="ناوی تەواو">
+
+      <!-- ── STEP 1: ئیمەیل + پاسۆرد ── -->
+      <div id="authStep">
+        <div id="nameWrap" style="display:none">
+          <input class="finp" type="text" id="authName" placeholder="ناوی تەواو">
+        </div>
+        <input class="finp" type="email" id="authEmail" placeholder="ئیمەیل" dir="ltr"
+          oninput="document.getElementById('authMsg').style.display='none'">
+        <input class="finp" type="password" id="authPass" placeholder="پاسۆرد" dir="ltr"
+          onkeydown="if(event.key==='Enter')doAuth()">
+        <button class="abtn" id="authBtn" onclick="doAuth()">
+          <i class="fas fa-arrow-left"></i>
+          <span id="authBtnTxt">چوونەژوورەوە</span>
+        </button>
       </div>
-      <input class="finp" type="email" id="authEmail" placeholder="ئیمەیل" dir="ltr">
-      <input class="finp" type="password" id="authPass" placeholder="پاسۆرد" dir="ltr"
-        onkeydown="if(event.key==='Enter')doAuth()">
-      <button class="abtn" id="authBtn" onclick="doAuth()">
-        <i class="fas fa-arrow-left"></i>
-        <span id="authBtnTxt">چوونەژوورەوە</span>
-      </button>
-      <div class="auth-or">یان</div>
-      <button class="gbtn" id="googleBtn" onclick="doGoogleAuth()">
-        <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-        چوونەژوورەوە بە Google
-      </button>
+
+      <!-- ── STEP 2: کۆدی OTP ── -->
+      <div id="otpStep">
+        <div style="text-align:center;margin-bottom:16px">
+          <div class="otp-header-ico">✉️</div>
+          <div style="font-size:16px;font-weight:800;color:var(--dark);margin-bottom:4px">کۆدی دڵنیاکردنەوە</div>
+          <div style="font-size:12.5px;color:var(--mt);line-height:1.7">کۆدی ٦ ژمارەیی نێردراوە بۆ</div>
+        </div>
+        <div class="otp-email-badge" id="otpEmailBadge"></div>
+        <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:.06em;text-transform:uppercase;text-align:center;margin-bottom:10px">کۆدەکە داخل بکە</div>
+        <div class="otp-boxes">
+          <input class="otp-box" type="tel" maxlength="1" id="ob0" oninput="otpIn(this,0)" onkeydown="otpKey(event,0)" onpaste="otpPaste(event)">
+          <input class="otp-box" type="tel" maxlength="1" id="ob1" oninput="otpIn(this,1)" onkeydown="otpKey(event,1)">
+          <input class="otp-box" type="tel" maxlength="1" id="ob2" oninput="otpIn(this,2)" onkeydown="otpKey(event,2)">
+          <input class="otp-box" type="tel" maxlength="1" id="ob3" oninput="otpIn(this,3)" onkeydown="otpKey(event,3)">
+          <input class="otp-box" type="tel" maxlength="1" id="ob4" oninput="otpIn(this,4)" onkeydown="otpKey(event,4)">
+          <input class="otp-box" type="tel" maxlength="1" id="ob5" oninput="otpIn(this,5)" onkeydown="otpKey(event,5)">
+        </div>
+        <button class="abtn" id="otpVerifyBtn" onclick="otpVerify()" disabled>
+          <i class="fas fa-shield-halved"></i>
+          <span id="otpVerifyTxt">دڵنیاکردنەوە</span>
+        </button>
+        <div class="otp-resend-row">
+          <span>کۆدت نەهات؟</span>
+          <button class="otp-resend-btn" id="otpResendBtn" onclick="otpResend()" disabled>دووبارە بنێرە</button>
+          <span class="otp-timer" id="otpTimerTxt"></span>
+        </div>
+        <button class="otp-back" onclick="otpBack()">
+          <i class="fas fa-chevron-right" style="font-size:11px"></i> گەڕانەوە
+        </button>
+      </div>
+
       <div class="amsg" id="authMsg"></div>
     </div>
   </div>
@@ -1846,7 +1888,7 @@ async function checkAndApplyRef(){
   // localStorage دەمێنێتەوە تا doAuth() ی نوێ پرۆسێیبکات
 }
 
-let sb, cu=null, aMode='login', _booted=false;
+let sb, cu=null, aMode='login';
 let _txMap={};
 let budget=20, days=1, depAmt=50;
 let goal='messages', method='fib', cardId=null;
@@ -1932,33 +1974,11 @@ async function withSession(fn){
   }
 }
 
-// ═══ DEVICE FINGERPRINT ═══
-function getDeviceId(){
-  let id=localStorage.getItem('_pdid');
-  if(!id){
-    const raw=[navigator.userAgent,navigator.language,screen.width,screen.height,new Date().getTimezoneOffset()].join('|');
-    let h=0;for(let i=0;i<raw.length;i++){h=Math.imul(31,h)+raw.charCodeAt(i)|0;}
-    id=Math.abs(h).toString(36)+'-'+Date.now().toString(36);
-    localStorage.setItem('_pdid',id);
-  }
-  return id;
-}
-
-// ═══ GOOGLE AUTH ═══
-async function doGoogleAuth(){
-  const btn=document.getElementById('googleBtn');
-  btn.disabled=true;
-  try{
-    const{error}=await sb.auth.signInWithOAuth({
-      provider:'google',
-      options:{redirectTo:window.location.origin+window.location.pathname}
-    });
-    if(error){btn.disabled=false;showAmsg('هەڵەی Google: '+error.message,'err');}
-    // سەرکەوتوو = ڕیدایرێکت دەکات، دووگمە disabled دەمێنێت
-  }catch(e){btn.disabled=false;showAmsg('هەڵەی Google: '+e.message,'err');}
-}
-
 // ═══ AUTH ═══
+const OTP_WEBHOOK='https://proxoapp.app.n8n.cloud/webhook-test/send-otp';
+const OTP_COOLDOWN=60;
+let _otpEmail='',_otpCode='',_otpMode='',_otpName='',_otpTimer=null;
+
 function switchTab(m){
   aMode=m;
   document.getElementById('tabL').classList.toggle('on',m==='login');
@@ -1968,27 +1988,7 @@ function switchTab(m){
   document.getElementById('authMsg').style.display='none';
 }
 
-async function applyReferral(userId){
-  const refCode=localStorage.getItem('proxo_ref');
-  if(!refCode) return false;
-  try{
-    const{data,error}=await sb.rpc('handle_auto_referral',{
-      p_new_user_id:userId,
-      p_ref_code:refCode,
-      p_device_id:getDeviceId()
-    });
-    if(!error&&data?.ok===true){
-      localStorage.removeItem('proxo_ref');
-      return true;
-    }
-    const msg=error?.message||data?.msg||'';
-    if(msg.includes('دیوایس')||msg.toLowerCase().includes('device')){
-      setTimeout(()=>showToast('⚠️ ئەم دیوایسە پێشتر خەڵاتی بانگێشتکردنی وەرگرتووە','err'),500);
-    }
-  }catch(e){console.error('[Ref]',e);}
-  return false;
-}
-
+// ── STEP 1: validate → send OTP ──
 async function doAuth(){
   const email=document.getElementById('authEmail').value.trim();
   const pass=document.getElementById('authPass').value;
@@ -1996,33 +1996,165 @@ async function doAuth(){
   if(!email||!pass){showAmsg('ئیمەیل و پاسۆرد پڕ بکەرەوە','err');return;}
   if(pass.length<6){showAmsg('پاسۆرد کەمترین ٦ پیت','err');return;}
   btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> <span>ناردنی کۆد...</span>';
+  _otpEmail=email;_otpMode=aMode;_otpCode='';
+  _otpName=aMode==='signup'?(document.getElementById('authName').value.trim()||email.split('@')[0]):'';
   try{
-    if(aMode==='login'){
-      const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+    const res=await fetch(OTP_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    if(!res.ok)throw new Error('webhook error '+res.status);
+    try{const j=await res.json();if(j?.otp)_otpCode=String(j.otp);}catch(_){}
+    otpShowStep();
+  }catch(e){
+    showAmsg('هەڵەی ناردنی کۆد — دووبارە هەوڵ بدەرەوە','err');
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-arrow-left"></i><span id="authBtnTxt">'+(aMode==='login'?'چوونەژوورەوە':'تۆمارکردن')+'</span>';
+  }
+}
+
+// ── Show OTP step ──
+function otpShowStep(){
+  document.getElementById('authStep').style.display='none';
+  document.getElementById('otpStep').style.display='block';
+  document.getElementById('otpEmailBadge').textContent=_otpEmail;
+  document.getElementById('authMsg').style.display='none';
+  document.getElementById('authBtn').disabled=false;
+  document.getElementById('authBtn').innerHTML='<i class="fas fa-arrow-left"></i><span id="authBtnTxt">'+(aMode==='login'?'چوونەژوورەوە':'تۆمارکردن')+'</span>';
+  otpClearBoxes();
+  otpStartTimer();
+  setTimeout(()=>document.getElementById('ob0').focus(),150);
+}
+
+function otpBack(){
+  clearInterval(_otpTimer);
+  document.getElementById('otpStep').style.display='none';
+  document.getElementById('authStep').style.display='block';
+  document.getElementById('authMsg').style.display='none';
+}
+
+// ── Box handlers ──
+function otpIn(el,idx){
+  el.value=el.value.replace(/\D/g,'').slice(0,1);
+  el.classList.toggle('filled',!!el.value);
+  otpClearState();
+  if(el.value&&idx<5)document.getElementById('ob'+(idx+1)).focus();
+  document.getElementById('otpVerifyBtn').disabled=otpGetVal().length<6;
+}
+function otpKey(e,idx){
+  if(e.key==='Backspace'){otpClearState();if(!document.getElementById('ob'+idx).value&&idx>0)document.getElementById('ob'+(idx-1)).focus();}
+  if(e.key==='ArrowLeft'&&idx>0)document.getElementById('ob'+(idx-1)).focus();
+  if(e.key==='ArrowRight'&&idx<5)document.getElementById('ob'+(idx+1)).focus();
+  if(e.key==='Enter'&&otpGetVal().length===6)otpVerify();
+}
+function otpPaste(e){
+  e.preventDefault();
+  const d=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+  d.split('').forEach((c,i)=>{const b=document.getElementById('ob'+i);if(b){b.value=c;b.classList.add('filled');}});
+  document.getElementById('ob'+(Math.min(d.length,5))).focus();
+  document.getElementById('otpVerifyBtn').disabled=d.length<6;
+}
+function otpGetVal(){return[0,1,2,3,4,5].map(i=>document.getElementById('ob'+i).value).join('');}
+function otpClearBoxes(){[0,1,2,3,4,5].forEach(i=>{const b=document.getElementById('ob'+i);b.value='';b.className='otp-box';});document.getElementById('otpVerifyBtn').disabled=true;}
+function otpClearState(){[0,1,2,3,4,5].forEach(i=>document.getElementById('ob'+i).classList.remove('otp-err','otp-ok'));}
+function otpSetState(s){[0,1,2,3,4,5].forEach(i=>document.getElementById('ob'+i).classList.add('otp-'+s));}
+
+// ── Verify OTP → complete Supabase auth ──
+async function otpVerify(){
+  const code=otpGetVal();
+  if(code.length<6)return;
+  // client-side check if n8n returned the OTP
+  if(_otpCode&&code!==_otpCode){
+    otpSetState('err');
+    showAmsg('❌ کۆدەکە هەڵەیە — دووبارە هەوڵ بدەرەوە','err');
+    setTimeout(()=>{otpClearBoxes();document.getElementById('ob0').focus();},900);
+    return;
+  }
+  const btn=document.getElementById('otpVerifyBtn');
+  btn.disabled=true;
+  document.getElementById('otpVerifyTxt').textContent='چاوەڕوانبە...';
+  btn.querySelector('i').className='fas fa-circle-notch fa-spin';
+  try{
+    if(_otpMode==='login'){
+      const pass=document.getElementById('authPass').value;
+      const{data,error}=await sb.auth.signInWithPassword({email:_otpEmail,password:pass});
       if(error)throw error;
-      cu=data.user;
-      if(!_booted){_booted=true;await boot();}
-    } else {
-      const name=document.getElementById('authName').value.trim()||email.split('@')[0];
-      const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
+      otpSetState('ok');
+      clearInterval(_otpTimer);
+      await new Promise(r=>setTimeout(r,400));
+      cu=data.user;boot();
+    }else{
+      const pass=document.getElementById('authPass').value;
+      const{data,error}=await sb.auth.signUp({email:_otpEmail,password:pass,options:{data:{full_name:_otpName}}});
       if(error)throw error;
       let newUser=data.user;
       if(!data.session){
-        const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
+        const{data:ld,error:le}=await sb.auth.signInWithPassword({email:_otpEmail,password:pass});
         if(!le&&ld?.session){newUser=ld.user;}
-        else{showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');btn.disabled=false;return;}
+        else{otpSetState('ok');showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');return;}
       }
       cu=newUser;
-      const ok=await applyReferral(cu.id);
-      if(!_booted){_booted=true;await boot();}
-      if(ok) setTimeout(async()=>{await loadCoins();showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');},600);
+      const refCode=localStorage.getItem('proxo_ref');
+      let referralSuccess=false;
+      if(refCode){
+        try{
+          const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{p_new_user_id:cu.id,p_ref_code:refCode});
+          if(!rErr&&rData?.ok===true){referralSuccess=true;localStorage.removeItem('proxo_ref');}
+          else{console.error('[Referral] failed:',rErr||rData?.msg);}
+        }catch(e){console.error('[Referral] Exception:',e);}
+      }
+      otpSetState('ok');
+      clearInterval(_otpTimer);
+      if(referralSuccess)await new Promise(r=>setTimeout(r,2000));
+      await boot();
+      if(referralSuccess){
+        setTimeout(async()=>{await loadCoins();},500);
+        setTimeout(async()=>{await loadCoins();},2000);
+        showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
+      }
+      return;
     }
   }catch(e){
     const m={'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە','Email already registered':'پێشتر تۆمارکراوە','User already registered':'پێشتر تۆمارکراوە'};
+    otpSetState('err');
     showAmsg(m[e.message]||e.message,'err');
     btn.disabled=false;
+    document.getElementById('otpVerifyTxt').textContent='دڵنیاکردنەوە';
+    btn.querySelector('i').className='fas fa-shield-halved';
   }
 }
+
+// ── Resend ──
+async function otpResend(){
+  document.getElementById('otpResendBtn').disabled=true;
+  otpClearBoxes();
+  showAmsg('ناردنەوە...','ok');
+  try{
+    const res=await fetch(OTP_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:_otpEmail})});
+    if(!res.ok)throw new Error('');
+    try{const j=await res.json();if(j?.otp)_otpCode=String(j.otp);}catch(_){}
+    showAmsg('✅ کۆدی نوێ نێردرا — ئیمەیلەکەت بپشکنە','ok');
+    otpStartTimer();
+  }catch(_){
+    showAmsg('هەڵەی ناردن — دووبارە هەوڵ بدەرەوە','err');
+    document.getElementById('otpResendBtn').disabled=false;
+  }
+  setTimeout(()=>document.getElementById('ob0').focus(),100);
+}
+
+// ── Timer ──
+function otpStartTimer(){
+  clearInterval(_otpTimer);
+  let t=OTP_COOLDOWN;
+  const timerEl=document.getElementById('otpTimerTxt');
+  const resendBtn=document.getElementById('otpResendBtn');
+  resendBtn.disabled=true;
+  timerEl.textContent='('+t+'s)';
+  _otpTimer=setInterval(()=>{
+    t--;
+    timerEl.textContent=t>0?'('+t+'s)':'';
+    if(t<=0){clearInterval(_otpTimer);resendBtn.disabled=false;}
+  },1000);
+}
+
 function showAmsg(t,c){const el=document.getElementById('authMsg');el.textContent=t;el.className='amsg '+c;el.style.display='block';}
 function showToast(m,c){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(c?' '+c:'');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);}
 function closeMo(id){document.getElementById(id).classList.remove('on');}
@@ -2065,24 +2197,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.addEventListener('click',e=>{
     if(!e.target.closest('.asset-select-wrap'))closeAssetDropdown();
   });
-  sb.auth.getSession().then(async({data:{session}})=>{
-    if(session?.user&&!_booted){cu=session.user;_booted=true;await boot();}
+  sb.auth.getSession().then(({data:{session}})=>{
+    if(session?.user){cu=session.user;boot();}
   });
-  sb.auth.onAuthStateChange(async(event,s)=>{
-    if(s?.user){
-      cu=s.user;
-      // Google OAuth — بانگێشتکردن پرۆسێ بکە
-      const isGoogle=(s.user.app_metadata?.provider==='google')||
-        (s.user.identities||[]).some(i=>i.provider==='google');
-      if(isGoogle&&event==='SIGNED_IN'){
-        const ok=await applyReferral(cu.id);
-        if(!_booted){_booted=true;await boot();}
-        if(ok) setTimeout(async()=>{await loadCoins();showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');},600);
-        return;
-      }
-      if(!_booted){_booted=true;await boot();}
-    }
-    else if(!s){cu=null;_booted=false;showAuth();}
+  sb.auth.onAuthStateChange((_,s)=>{
+    if(s?.user&&!cu){cu=s.user;boot();}
+    else if(!s){cu=null;showAuth();}
   });
 });
 
@@ -2101,6 +2221,7 @@ async function boot(){
   goPage('home');
   checkDbReady(); // چێکردنەوەی ئایا فەنکشنی داتابەیس دانراوە
   loadReferralSection();
+  checkAndApplyRef();
   // ═══ ٥. CHECK NOTIFICATIONS ═══
   checkNotifBell();
   // Real-time notifications listener
@@ -3581,44 +3702,54 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
 
--- زیادکردنی ستوونی device_id بۆ pa_referrals
-ALTER TABLE pa_referrals ADD COLUMN IF NOT EXISTS device_id TEXT;
-CREATE INDEX IF NOT EXISTS idx_ref_device ON pa_referrals(device_id);
-
--- فەنکشنی handle_auto_referral (نوێکراوە — پشکنینی device_id)
-CREATE OR REPLACE FUNCTION handle_auto_referral(
-    p_new_user_id UUID,
-    p_ref_code    TEXT,
-    p_device_id   TEXT DEFAULT NULL
-)
+-- فەنکشنی handle_auto_referral بۆ چارەسەرکردنی بانگێشتکردن و زیادکردنی کۆین
+CREATE OR REPLACE FUNCTION handle_auto_referral(p_new_user_id UUID, p_ref_code TEXT)
 RETURNS JSON AS $$
 DECLARE
-    v_referrer_id   UUID;
-    v_ref_id        UUID;
-    v_coins         INTEGER;
-    v_dev_used      BOOLEAN := FALSE;
+    v_referrer_id UUID;
+    v_ref_record_id UUID;
+    v_current_coins INTEGER;
 BEGIN
-    IF p_device_id IS NOT NULL THEN
-        SELECT EXISTS(SELECT 1 FROM pa_referrals WHERE device_id=p_device_id AND referred_id IS NOT NULL)
-        INTO v_dev_used;
-        IF v_dev_used THEN
-            RETURN json_build_object('ok',false,'msg','ئەم دیوایسە پێشتر خەڵاتی بانگێشتکردنی وەرگرتووە');
-        END IF;
-    END IF;
-    SELECT referrer_id, id INTO v_referrer_id, v_ref_id
-    FROM pa_referrals WHERE ref_code=p_ref_code AND referred_id IS NULL LIMIT 1;
+    -- دۆزینەوەی ئەو کەسەی کە خاوەنی کۆدەکەیە
+    SELECT referrer_id, id INTO v_referrer_id, v_ref_record_id
+    FROM pa_referrals
+    WHERE ref_code = p_ref_code AND referred_id IS NULL
+    LIMIT 1;
+
     IF v_referrer_id IS NULL THEN
-        RETURN json_build_object('ok',false,'msg','کۆدەکە نادروستە یان پێشتر بەکارهاتووە');
+        RETURN json_build_object('ok', false, 'msg', 'کۆدەکە نادروستە یان پێشتر بەکارهاتووە');
     END IF;
-    IF v_referrer_id=p_new_user_id THEN
-        RETURN json_build_object('ok',false,'msg','ناتوانی کۆدی خۆت بەکاربهێنیت');
+
+    -- ڕێگری لەوەی کەسەکە کۆدی خۆی بەکاربهێنێت
+    IF v_referrer_id = p_new_user_id THEN
+        RETURN json_build_object('ok', false, 'msg', 'ناتوانی کۆدی خۆت بەکاربهێنیت');
     END IF;
-    UPDATE pa_referrals SET referred_id=p_new_user_id, used_at=NOW(), device_id=p_device_id WHERE id=v_ref_id;
-    INSERT INTO pa_coins(user_id,coins_balance) VALUES(p_new_user_id,0) ON CONFLICT(user_id) DO NOTHING;
-    UPDATE pa_coins SET coins_balance=coins_balance+50 WHERE user_id=p_new_user_id RETURNING coins_balance INTO v_coins;
-    INSERT INTO pa_coin_transactions(user_id,amount,reason,balance_after) VALUES(p_new_user_id,50,'دیاری بانگێشتکردن',v_coins);
-    INSERT INTO pa_notifications(user_id,type,title,body) VALUES(p_new_user_id,'general','دیاری بانگێشتکردن 🎁','٥٠ کۆین وەک دیاری بانگێشتکردن بۆ هەژمارەکەت زیادکرا.');
-    RETURN json_build_object('ok',true);
+
+    -- نوێکردنەوەی جەدوەلی بانگێشتکردن
+    UPDATE pa_referrals 
+    SET referred_id = p_new_user_id, used_at = NOW()
+    WHERE id = v_ref_record_id;
+
+    -- دڵنیابوونەوە لەوەی جەدوەلی pa_coins هەیە و داتای تێدایە بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_coins (user_id, coins_balance)
+    VALUES (p_new_user_id, 0)
+    ON CONFLICT (user_id) DO NOTHING;
+
+    -- زیادکردنی ٥٠ کۆین بۆ هەژمارە نوێیەکە
+    UPDATE pa_coins 
+    SET coins_balance = coins_balance + 50
+    WHERE user_id = p_new_user_id
+    RETURNING coins_balance INTO v_current_coins;
+
+    -- تۆمارکردنی مامەڵەکە
+    INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
+    VALUES (p_new_user_id, 50, 'دیاری بانگێشتکردن', v_current_coins);
+
+    -- زیادکردنی ئاگاداری بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_notifications (user_id, type, title, body)
+    VALUES (p_new_user_id, 'general', 'دیاری بانگێشتکردن 🎁', '٥٠ کۆین وەک دیاری بانگێشتکردن بۆ هەژمارەکەت زیادکرا.');
+
+    RETURN json_build_object('ok', true);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -3877,44 +4008,54 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
 
--- زیادکردنی ستوونی device_id بۆ pa_referrals
-ALTER TABLE pa_referrals ADD COLUMN IF NOT EXISTS device_id TEXT;
-CREATE INDEX IF NOT EXISTS idx_ref_device ON pa_referrals(device_id);
-
--- فەنکشنی handle_auto_referral (نوێکراوە — پشکنینی device_id)
-CREATE OR REPLACE FUNCTION handle_auto_referral(
-    p_new_user_id UUID,
-    p_ref_code    TEXT,
-    p_device_id   TEXT DEFAULT NULL
-)
+-- فەنکشنی handle_auto_referral بۆ چارەسەرکردنی بانگێشتکردن و زیادکردنی کۆین
+CREATE OR REPLACE FUNCTION handle_auto_referral(p_new_user_id UUID, p_ref_code TEXT)
 RETURNS JSON AS $$
 DECLARE
-    v_referrer_id   UUID;
-    v_ref_id        UUID;
-    v_coins         INTEGER;
-    v_dev_used      BOOLEAN := FALSE;
+    v_referrer_id UUID;
+    v_ref_record_id UUID;
+    v_current_coins INTEGER;
 BEGIN
-    IF p_device_id IS NOT NULL THEN
-        SELECT EXISTS(SELECT 1 FROM pa_referrals WHERE device_id=p_device_id AND referred_id IS NOT NULL)
-        INTO v_dev_used;
-        IF v_dev_used THEN
-            RETURN json_build_object('ok',false,'msg','ئەم دیوایسە پێشتر خەڵاتی بانگێشتکردنی وەرگرتووە');
-        END IF;
-    END IF;
-    SELECT referrer_id, id INTO v_referrer_id, v_ref_id
-    FROM pa_referrals WHERE ref_code=p_ref_code AND referred_id IS NULL LIMIT 1;
+    -- دۆزینەوەی ئەو کەسەی کە خاوەنی کۆدەکەیە
+    SELECT referrer_id, id INTO v_referrer_id, v_ref_record_id
+    FROM pa_referrals
+    WHERE ref_code = p_ref_code AND referred_id IS NULL
+    LIMIT 1;
+
     IF v_referrer_id IS NULL THEN
-        RETURN json_build_object('ok',false,'msg','کۆدەکە نادروستە یان پێشتر بەکارهاتووە');
+        RETURN json_build_object('ok', false, 'msg', 'کۆدەکە نادروستە یان پێشتر بەکارهاتووە');
     END IF;
-    IF v_referrer_id=p_new_user_id THEN
-        RETURN json_build_object('ok',false,'msg','ناتوانی کۆدی خۆت بەکاربهێنیت');
+
+    -- ڕێگری لەوەی کەسەکە کۆدی خۆی بەکاربهێنێت
+    IF v_referrer_id = p_new_user_id THEN
+        RETURN json_build_object('ok', false, 'msg', 'ناتوانی کۆدی خۆت بەکاربهێنیت');
     END IF;
-    UPDATE pa_referrals SET referred_id=p_new_user_id, used_at=NOW(), device_id=p_device_id WHERE id=v_ref_id;
-    INSERT INTO pa_coins(user_id,coins_balance) VALUES(p_new_user_id,0) ON CONFLICT(user_id) DO NOTHING;
-    UPDATE pa_coins SET coins_balance=coins_balance+50 WHERE user_id=p_new_user_id RETURNING coins_balance INTO v_coins;
-    INSERT INTO pa_coin_transactions(user_id,amount,reason,balance_after) VALUES(p_new_user_id,50,'دیاری بانگێشتکردن',v_coins);
-    INSERT INTO pa_notifications(user_id,type,title,body) VALUES(p_new_user_id,'general','دیاری بانگێشتکردن 🎁','٥٠ کۆین وەک دیاری بانگێشتکردن بۆ هەژمارەکەت زیادکرا.');
-    RETURN json_build_object('ok',true);
+
+    -- نوێکردنەوەی جەدوەلی بانگێشتکردن
+    UPDATE pa_referrals 
+    SET referred_id = p_new_user_id, used_at = NOW()
+    WHERE id = v_ref_record_id;
+
+    -- دڵنیابوونەوە لەوەی جەدوەلی pa_coins هەیە و داتای تێدایە بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_coins (user_id, coins_balance)
+    VALUES (p_new_user_id, 0)
+    ON CONFLICT (user_id) DO NOTHING;
+
+    -- زیادکردنی ٥٠ کۆین بۆ هەژمارە نوێیەکە
+    UPDATE pa_coins 
+    SET coins_balance = coins_balance + 50
+    WHERE user_id = p_new_user_id
+    RETURNING coins_balance INTO v_current_coins;
+
+    -- تۆمارکردنی مامەڵەکە
+    INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
+    VALUES (p_new_user_id, 50, 'دیاری بانگێشتکردن', v_current_coins);
+
+    -- زیادکردنی ئاگاداری بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_notifications (user_id, type, title, body)
+    VALUES (p_new_user_id, 'general', 'دیاری بانگێشتکردن 🎁', '٥٠ کۆین وەک دیاری بانگێشتکردن بۆ هەژمارەکەت زیادکرا.');
+
+    RETURN json_build_object('ok', true);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -4143,44 +4284,54 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_updated_at TIMESTAMPTZ;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS name_updated_at TIMESTAMPTZ;
 
--- زیادکردنی ستوونی device_id بۆ pa_referrals
-ALTER TABLE pa_referrals ADD COLUMN IF NOT EXISTS device_id TEXT;
-CREATE INDEX IF NOT EXISTS idx_ref_device ON pa_referrals(device_id);
-
--- فەنکشنی handle_auto_referral (نوێکراوە — پشکنینی device_id)
-CREATE OR REPLACE FUNCTION handle_auto_referral(
-    p_new_user_id UUID,
-    p_ref_code    TEXT,
-    p_device_id   TEXT DEFAULT NULL
-)
+-- فەنکشنی handle_auto_referral بۆ چارەسەرکردنی بانگێشتکردن و زیادکردنی کۆین
+CREATE OR REPLACE FUNCTION handle_auto_referral(p_new_user_id UUID, p_ref_code TEXT)
 RETURNS JSON AS $$
 DECLARE
-    v_referrer_id   UUID;
-    v_ref_id        UUID;
-    v_coins         INTEGER;
-    v_dev_used      BOOLEAN := FALSE;
+    v_referrer_id UUID;
+    v_ref_record_id UUID;
+    v_current_coins INTEGER;
 BEGIN
-    IF p_device_id IS NOT NULL THEN
-        SELECT EXISTS(SELECT 1 FROM pa_referrals WHERE device_id=p_device_id AND referred_id IS NOT NULL)
-        INTO v_dev_used;
-        IF v_dev_used THEN
-            RETURN json_build_object('ok',false,'msg','ئەم دیوایسە پێشتر خەڵاتی بانگێشتکردنی وەرگرتووە');
-        END IF;
-    END IF;
-    SELECT referrer_id, id INTO v_referrer_id, v_ref_id
-    FROM pa_referrals WHERE ref_code=p_ref_code AND referred_id IS NULL LIMIT 1;
+    -- دۆزینەوەی ئەو کەسەی کە خاوەنی کۆدەکەیە
+    SELECT referrer_id, id INTO v_referrer_id, v_ref_record_id
+    FROM pa_referrals
+    WHERE ref_code = p_ref_code AND referred_id IS NULL
+    LIMIT 1;
+
     IF v_referrer_id IS NULL THEN
-        RETURN json_build_object('ok',false,'msg','کۆدەکە نادروستە یان پێشتر بەکارهاتووە');
+        RETURN json_build_object('ok', false, 'msg', 'کۆدەکە نادروستە یان پێشتر بەکارهاتووە');
     END IF;
-    IF v_referrer_id=p_new_user_id THEN
-        RETURN json_build_object('ok',false,'msg','ناتوانی کۆدی خۆت بەکاربهێنیت');
+
+    -- ڕێگری لەوەی کەسەکە کۆدی خۆی بەکاربهێنێت
+    IF v_referrer_id = p_new_user_id THEN
+        RETURN json_build_object('ok', false, 'msg', 'ناتوانی کۆدی خۆت بەکاربهێنیت');
     END IF;
-    UPDATE pa_referrals SET referred_id=p_new_user_id, used_at=NOW(), device_id=p_device_id WHERE id=v_ref_id;
-    INSERT INTO pa_coins(user_id,coins_balance) VALUES(p_new_user_id,0) ON CONFLICT(user_id) DO NOTHING;
-    UPDATE pa_coins SET coins_balance=coins_balance+50 WHERE user_id=p_new_user_id RETURNING coins_balance INTO v_coins;
-    INSERT INTO pa_coin_transactions(user_id,amount,reason,balance_after) VALUES(p_new_user_id,50,'دیاری بانگێشتکردن',v_coins);
-    INSERT INTO pa_notifications(user_id,type,title,body) VALUES(p_new_user_id,'general','دیاری بانگێشتکردن 🎁','٥٠ کۆین وەک دیاری بانگێشتکردن بۆ هەژمارەکەت زیادکرا.');
-    RETURN json_build_object('ok',true);
+
+    -- نوێکردنەوەی جەدوەلی بانگێشتکردن
+    UPDATE pa_referrals 
+    SET referred_id = p_new_user_id, used_at = NOW()
+    WHERE id = v_ref_record_id;
+
+    -- دڵنیابوونەوە لەوەی جەدوەلی pa_coins هەیە و داتای تێدایە بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_coins (user_id, coins_balance)
+    VALUES (p_new_user_id, 0)
+    ON CONFLICT (user_id) DO NOTHING;
+
+    -- زیادکردنی ٥٠ کۆین بۆ هەژمارە نوێیەکە
+    UPDATE pa_coins 
+    SET coins_balance = coins_balance + 50
+    WHERE user_id = p_new_user_id
+    RETURNING coins_balance INTO v_current_coins;
+
+    -- تۆمارکردنی مامەڵەکە
+    INSERT INTO pa_coin_transactions (user_id, amount, reason, balance_after)
+    VALUES (p_new_user_id, 50, 'دیاری بانگێشتکردن', v_current_coins);
+
+    -- زیادکردنی ئاگاداری بۆ بەکارهێنەرە نوێیەکە
+    INSERT INTO pa_notifications (user_id, type, title, body)
+    VALUES (p_new_user_id, 'general', 'دیاری بانگێشتکردن 🎁', '٥٠ کۆین وەک دیاری بانگێشتکردن بۆ هەژمارەکەت زیادکرا.');
+
+    RETURN json_build_object('ok', true);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -4564,140 +4715,4 @@ function showReceipt(t){
     <!-- ═══ هيرۆ ═══ -->
     <div style="background:${heroGrad};border-radius:20px;padding:24px 20px 20px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden">
       <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:${accentColor}18;border-radius:50%"></div>
-      <div style="position:absolute;bottom:-20px;left:-20px;width:70px;height:70px;background:${accentColor}10;border-radius:50%"></div>
-      <div style="font-size:10px;color:rgba(255,255,255,.4);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;position:relative">PROXO ADS · پسووڵەی مامەڵە</div>
-      <!-- ئایکۆن -->
-      <div style="width:60px;height:60px;border-radius:50%;background:${accentBg};border:2px solid ${accentBorder};display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;color:${accentColor};position:relative;box-shadow:0 0 24px ${accentColor}30">
-        <i class="fas ${isDeposit?'fa-arrow-down-long':isRefund?'fa-rotate-left':'fa-arrow-up-long'}"></i>
-      </div>
-      <!-- بڕ -->
-      <div style="font-size:36px;font-weight:900;color:#fff;letter-spacing:-1px;direction:ltr;position:relative">
-        ${isSpend?'-':'+'}$${amount.toFixed(2)}
-      </div>
-      <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:5px;position:relative">
-        ${isDeposit?'زیادکردنی باڵانس':isRefund?'گەڕانەوەی پارە':'خەرجکردنی باڵانس'}
-      </div>
-      <!-- badge -->
-      <div style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:7px 16px;border-radius:30px;background:${st.bg};border:1px solid ${accentBorder};position:relative">
-        <i class="${st.ico}" style="font-size:11px;color:${st.color}"></i>
-        <span style="font-size:12px;font-weight:700;color:${st.color}">${st.txt}</span>
-      </div>
-    </div>
-
-    <!-- ═══ وردەکاری ═══ -->
-    <div style="background:var(--w);border:1.5px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:14px">
-      ${detailHtml}
-    </div>
-
-    <!-- ═══ وەسڵ ═══ -->
-    ${rcptHtml}
-
-    <!-- ═══ تایم‌لاین ═══ -->
-    <div style="background:var(--bg);border:1px solid var(--b1);border-radius:16px;padding:16px;margin-bottom:16px">
-      <div style="font-size:11px;color:var(--mt);font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:5px">
-        <i class="fas fa-timeline" style="color:var(--bl)"></i>مێژووی مامەڵە
-      </div>
-      ${timelineHtml}
-    </div>
-
-    <!-- ═══ داخستن ═══ -->
-    <button onclick="closeMo('moReceipt')" style="width:100%;padding:15px;background:var(--dark);color:#fff;border:none;border-radius:15px;font-family:'R',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(28,35,51,.2)">
-      <i class="fas fa-check"></i> باشە، داخە
-    </button>`;
-
-  document.getElementById('moReceipt').classList.add('on');
-}
-
-// ═══ TRANSACTION HISTORY PAGE ═══
-let allTxHistory=[], txFilterMode='all';
-
-async function loadTxHistory(){
-  const list=document.getElementById('txHistoryList');
-  list.innerHTML='<div style="text-align:center;padding:20px;color:var(--mt)"><i class="fas fa-circle-notch fa-spin"></i></div>';
-
-  const{data:deposits}=await sb.from('pa_transactions').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
-  const{data:ads}=await sb.from('pa_ads').select('id,title,budget,created_at,ad_number,status').eq('user_id',cu.id).order('created_at',{ascending:false});
-  const{data:coinTxs}=await sb.from('pa_coin_transactions').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
-
-
-  const mn={fib:'FIB',fastpay:'FastPay',kcard:'K-Card/ZainCash'};
-
-  const depositItems=(deposits||[]).map(t=>({
-    id:t.id,
-    kind: t.kind==='refund'?'refund':'deposit',
-    label: t.kind==='refund'
-      ? `گەڕانەوەی پارە${t.ad_number?' — ڕیکلام #'+t.ad_number:''}`
-      : t.status==='approved'?'زیادکردنی باڵانس لەلایەن ئادمینەوە':(mn[t.method]||t.method||'—'),
-    amount:parseFloat(t.amount),
-    status:t.status,
-    date:t.created_at,
-    method:t.method,
-    ad_number:t.ad_number||null,
-    note:t.note||null,
-    deposit_number:t.deposit_number||null,
-  }));
-
-  const spendItems=(ads||[]).map(a=>({
-    id:a.id,
-    kind:'spend',
-    label:'New Ad '+(a.ad_number||'—'),
-    amount:parseFloat(a.budget),
-    status:'spent',
-    date:a.created_at
-  }));
-
-  // کۆین گۆڕین — تەنها ئەوانەی amount منفی (گۆڕینەوە بۆ بالانس)
-  const coinExchangeItems=(coinTxs||[]).filter(c=>parseInt(c.amount)<0&&(c.reason||'').includes('گۆڕانەوە')).map(c=>({
-    id:c.id,
-    kind:'coin_exchange',
-    label:c.reason||'گۆڕانەوەی کۆین بۆ بالانس',
-    coins_amount:Math.abs(parseInt(c.amount)),
-    usd_amount:parseFloat((Math.abs(parseInt(c.amount))*COINS_TO_USD).toFixed(2)),
-    amount:parseFloat((Math.abs(parseInt(c.amount))*COINS_TO_USD).toFixed(2)),
-    status:'approved',
-    date:c.created_at,
-    balance_after:c.balance_after||0,
-  }));
-
-  allTxHistory=[...depositItems,...spendItems,...coinExchangeItems].sort((a,b)=>new Date(b.date)-new Date(a.date));
-  _txMap={}; allTxHistory.forEach((t,i)=>{_txMap[t.id+'_'+i]=t;});
-  renderTxHistory();
-}
-
-function filterTxHistory(el){
-  document.querySelectorAll('[data-txf]').forEach(x=>x.classList.remove('on'));
-  el.classList.add('on');
-  txFilterMode=el.dataset.txf;
-  renderTxHistory();
-}
-
-function renderTxHistory(){
-  const list=document.getElementById('txHistoryList');
-  const filtered=txFilterMode==='all'?allTxHistory
-    :txFilterMode==='deposit'?allTxHistory.filter(t=>t.kind==='deposit'||t.kind==='refund')
-    :allTxHistory.filter(t=>t.kind===txFilterMode);
-
-  if(!filtered.length){
-    list.innerHTML='<div style="text-align:center;padding:24px;color:var(--mt);font-size:13px"><i class="fas fa-inbox" style="font-size:28px;display:block;margin-bottom:10px;opacity:.3"></i>هیچ مامەڵەیەک نەدۆزرایەوە</div>';
-    return;
-  }
-
-  list.innerHTML=filtered.map(t=>{
-    const isRefund=t.kind==='refund';
-    const isSpend=t.kind==='spend';
-    const isCoinExchange=t.kind==='coin_exchange';
-
-    let icoName='fa-arrow-down-long', amtColor='var(--gr)', amtPrefix='+';
-    let icoBg='rgba(22,163,74,.08)', icoBorder='rgba(22,163,74,.15)', icoColor='var(--gr)';
-    if(isSpend){icoName='fa-arrow-up-long';amtColor='var(--rd)';amtPrefix='-';icoBg='rgba(220,38,38,.06)';icoBorder='rgba(220,38,38,.12)';icoColor='var(--rd)';}
-    if(isRefund){icoName='fa-rotate-left';}
-    if(isCoinExchange){icoName='fa-coins';amtColor='#d97706';amtPrefix='+';icoBg='rgba(245,158,11,.1)';icoBorder='rgba(245,158,11,.25)';icoColor='#d97706';}
-
-    // ناو کورت
-    let label=t.label||'—';
-    if(isCoinExchange) label='کۆین گۆڕدرا بۆ بالانس';
-    else if(isRefund) label='گەڕانەوەی پارە'+(t.ad_number?' #'+t.ad_number:'');
-
-    // بەروار — تەنها کات و بەروار، بەبێ زیادە
-    const d=new Date(t.date);
-    co
+      <div style="position:absolute;bottom:-20px;left:-20px;width:70px;height:70px;bac
