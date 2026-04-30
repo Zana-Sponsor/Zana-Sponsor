@@ -1976,7 +1976,11 @@ async function requestOtp(email) {
       body: JSON.stringify({ action: 'request_otp', email })
     });
     const data = await res.json();
-    return data;
+    // ئەگەر HTTP 200 بوو و هیچ success:false ی تێدا نەبوو = سەرکەوتوو
+    if(res.ok && data.success !== false) {
+      return { success: true, message: data.message || 'کۆدەکە نێردرا' };
+    }
+    return { success: false, message: data.message || 'هەڵەی ناردنی کۆد' };
   } catch(e) {
     return { success: false, message: 'هەڵەی تۆڕ: ' + e.message };
   }
@@ -1991,7 +1995,11 @@ async function verifyOtpCode(email, code) {
       body: JSON.stringify({ action: 'verify_otp', email, code })
     });
     const data = await res.json();
-    return data;
+    // ئەگەر HTTP 200 بوو و هیچ success:false ی تێدا نەبوو = سەرکەوتوو
+    if(res.ok && data.success !== false) {
+      return { success: true, message: data.message || 'دڵنیاکراوە' };
+    }
+    return { success: false, message: data.message || 'کۆدی هەڵە' };
   } catch(e) {
     return { success: false, message: 'هەڵەی تۆڕ: ' + e.message };
   }
