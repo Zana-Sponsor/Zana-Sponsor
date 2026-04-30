@@ -1946,71 +1946,95 @@ async function doAuth(){
   if(!email||!pass){showAmsg('ئیمەیل و پاسۆرد پڕ بکەرەوە','err');return;}
   if(pass.length<6){showAmsg('پاسۆرد کەمترین ٦ پیت','err');return;}
   btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
   try{
     if(aMode==='login'){
       const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
-      if(error)throw error;
+      if(error){
+        // هەڵەی تایبەت بۆ ئیمەیلی تەسدیقنەکراو
+        if(error.message?.includes('Email not confirmed')||error.message?.includes('email_not_confirmed')){
+          // هەوڵ بدە resend confirmation بکات
+          await sb.auth.resend({type:'signup',email});
+          showAmsg('تکایە ئیمەیلەکەت بپشکنە — لینکی دڵنیاکردنەوەت نێردراوە. ئەگەر نەتت گەیشت spam بپشکنە.','err');
+        } else {
+          throw error;
+        }
+        return;
+      }
       cu=data.user;boot();
     } else {
       const name=document.getElementById('authName').value.trim()||email.split('@')[0];
-      const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
-      if(error)throw error;
-      let newUser=data.user;
-      if(!data.session){
-        const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
-        if(!le&&ld?.session){newUser=ld.user;}
-        else{showAmsg('✅ هەژماری دروستکرا — ئێستا بچۆ ژوورەوە','ok');return;}
-      }
-      cu=newUser;
-      // ══ AUTO REFERRAL — definitive fix ═══════════════════════
-      const refCode=localStorage.getItem('proxo_ref');
-      let referralSuccess=false;
-      if(refCode){
-        try{
-          console.log('[Referral] Attempting to apply code:', refCode);
-          const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{
-            p_new_user_id:cu.id,
-            p_ref_code:refCode
-          });
-          
-          if(!rErr && rData?.ok===true){
-            referralSuccess=true;
-            localStorage.removeItem('proxo_ref');
-            console.log('[Referral] RPC Success!');
-          }else{
-            console.error('[Referral] RPC failed:', rErr || rData?.msg);
-          }
-        }catch(e){
-          console.error('[Referral] Exception:', e);
+      // سەرەتا تۆمار بکە
+      const{data,error}=await sb.auth.signUp({
+        email,
+        password:pass,
+        options:{
+          data:{full_name:name},
+          emailRedirectTo: window.location.href
         }
+      });
+      if(error){
+        // ئەگەر پێشتر تۆمارکراوە — لۆگین بکە
+        if(error.message?.includes('already registered')||error.message?.includes('already been registered')){
+          const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
+          if(!le&&ld?.session){cu=ld.user;await boot();return;}
+        }
+        throw error;
       }
-      
-      // Ensure everything is settled before booting
-      if(referralSuccess) {
-          await new Promise(r=>setTimeout(r,2000));
-          console.log('[Referral] Waiting for DB sync...');
+
+      // ئەگەر session هاتەوە = email confirmation چالاک نییە → سەرەکەوە
+      if(data.session){
+        cu=data.user;
+        const refCode=localStorage.getItem('proxo_ref');
+        if(refCode){
+          try{
+            const{data:rData,error:rErr}=await sb.rpc('handle_auto_referral',{p_new_user_id:cu.id,p_ref_code:refCode});
+            if(!rErr&&rData?.ok===true){
+              localStorage.removeItem('proxo_ref');
+              await new Promise(r=>setTimeout(r,1000));
+              showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
+            }
+          }catch(e){console.error('[Referral]',e);}
+        }
+        await boot();
+        setTimeout(()=>loadCoins(),1500);
+        return;
       }
-      
-      await boot();
-      
-      if(referralSuccess){
-        // Force multiple reloads to ensure UI is updated
-        setTimeout(async () => {
-            await loadCoins();
-            console.log('[Referral] UI Refreshed');
-        }, 500);
-        setTimeout(async () => {
-            await loadCoins();
-        }, 2000);
-        showToast('🎉 پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا','ok');
+
+      // email confirmation چالاکە → پەیام نیشان بدە
+      // هەوڵبدە بە لۆگین — هەندێک project confirmation دەناوێت
+      const{data:ld,error:le}=await sb.auth.signInWithPassword({email,password:pass});
+      if(!le&&ld?.session){
+        cu=ld.user;
+        await boot();
+        return;
       }
-      return;
-      // ═════════════════════════════════════════════════════════
+
+      // تەنها confirmation پێویستە
+      showAmsg('✅ هەژماری دروستکرا!\n\nتکایە ئیمەیلەکەت بپشکنە و لینکی دڵنیاکردنەوەکە کلیک بکە.\n(ئەگەر نەتگەیشت، Spam بپشکنە)','ok');
     }
   }catch(e){
-    const m={'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە','Email already registered':'پێشتر تۆمارکراوە','User already registered':'پێشتر تۆمارکراوە'};
-    showAmsg(m[e.message]||e.message,'err');
-  }finally{btn.disabled=false;}
+    const m={
+      'Invalid login credentials':'ئیمەیل یان پاسۆرد هەڵەیە',
+      'Email already registered':'ئەم ئیمەیلە پێشتر تۆمارکراوە — بچۆ ژوورەوە',
+      'User already registered':'ئەم ئیمەیلە پێشتر تۆمارکراوە — بچۆ ژوورەوە',
+      'already been registered':'ئەم ئیمەیلە پێشتر تۆمارکراوە — بچۆ ژوورەوە',
+      'Password should be at least 6 characters':'پاسۆرد کەمترین ٦ پیت دەبێت',
+      'Unable to validate email address':'فۆرماتی ئیمەیل هەڵەیە',
+      'Email not confirmed':'تکایە ئیمەیلەکەت بپشکنە و دڵنیابکەرەوە',
+      'over_email_send_rate_limit':'زۆر جار هەوڵت دا — چەند خولەکێک بوەستە',
+    };
+    const friendly=Object.entries(m).find(([k])=>e.message?.includes(k));
+    // Failed to fetch = CORS کێشە — فایل دەبێت لە سێرڤەر بێت
+    if(e.message==='Failed to fetch'||e.message?.includes('fetch')){
+      showAmsg('⚠️ کێشەی پەیوەندی:\n\nفایلەکە دەبێت لە سێرڤەر بێت، نەک لە Claude preview.\nفایلەکە بخرێتە Netlify.com یان هەر سێرڤەرێک.\n\nبۆ زانیاری زیاتر لە Claude داوا بکە.','err');
+    } else {
+      showAmsg(friendly?friendly[1]:('هەڵە: '+e.message),'err');
+    }
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-arrow-left"></i> <span id="authBtnTxt">'+(aMode==='login'?'چوونەژوورەوە':'تۆمارکردن')+'</span>';
+  }
 }
 function showAmsg(t,c){const el=document.getElementById('authMsg');el.textContent=t;el.className='amsg '+c;el.style.display='block';}
 function showToast(m,c){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(c?' '+c:'');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3200);}
@@ -4726,18 +4750,4 @@ function renderTxHistory(){
     if(!isSpend&&!isCoinExchange){
       const sMap={
         pending:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(217,119,6,.1);color:#d97706;border:1px solid rgba(217,119,6,.25)"><i class="fas fa-clock" style="font-size:7px"></i> چاوەڕوان</span>`,
-        approved:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.25)"><i class="fas fa-check" style="font-size:7px"></i> پەسەندکرا</span>`,
-        rejected:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(220,38,38,.08);color:var(--rd);border:1px solid rgba(220,38,38,.2)"><i class="fas fa-xmark" style="font-size:7px"></i> ڕەتکرا</span>`,
-      };
-      statusBadge=sMap[t.status]||sMap.pending;
-    }
-
-    const _txKey = t.id+'_'+filtered.indexOf(t);
-    _txMap[_txKey]=t;
-    return`<div class="tx-item" style="cursor:pointer;padding:12px 4px;margin:-1px -4px;border-radius:12px;transition:background .15s" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background=''" onclick="${isCoinExchange?'':('showReceipt(_txMap[\''+_txKey+'\'])')}">
-      <div style="background:${icoBg};border:1px solid ${icoBorder};color:${icoColor};width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">
-        <i class="fas ${icoName}"></i>
-      </div>
-      <div class="tx-info" style="flex:1;min-width:0">
-        <div class="tx-lbl" style="font-size:13px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${label}</div>
-        <div style="font-s
+        approved:`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:
