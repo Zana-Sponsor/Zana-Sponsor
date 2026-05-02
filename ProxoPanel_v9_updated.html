@@ -2453,7 +2453,14 @@ async function createPromoCode(){
   // Check duplicate
   const dup=_allPromos.find(p=>p.code===code);
   if(dup){showToast('ئەم کۆدە پێشتر هەیە','rd');return;}
-  const row={code,discount_type:discType,discount_value:discVal,max_uses:maxUses,used_count:0,is_active:true};
+  const row = {
+  code,
+  discount_type: discType,
+  discount_value: discVal,
+  max_uses: maxUses,
+  used_count: 0,
+  is_active: true,
+  created_by: (await sb.auth.getUser()).data.user?.id};
   if(expiry)row.expires_at=new Date(expiry).toISOString();
   const{error}=await sb.from('promo_codes').insert(row);
   if(error){showToast('هەڵە: '+error.message,'rd');return;}
