@@ -1575,6 +1575,31 @@ async function confirmAddBalance(){
   await sb.from('pa_transactions').insert({user_id:uid,amount:amtUSD,type:'admin_adjustment',status:'approved',note:`ئادمین (${adminEmail}): زیادکردن — ${note}`});
   await sb.from('pa_notifications').insert({user_id:uid,type:'balance_added',title:'باڵانست زیادکرا 💰',body:`ئادمین ${Math.round(amtIQD).toLocaleString()} IQD زیادی کرد بۆ باڵانسەکەت.`,is_read:false});
   showToast('✅ '+Math.round(amtIQD).toLocaleString()+' IQD زیادکرا','gr');
+  // ── ئیمێڵی وەسڵی زیادکردنی باڵانس ──
+try {
+  const { data: prof } = await sb.from('pa_profiles')
+    .select('full_name, email')
+    .eq('user_id', uid)
+    .single();
+
+  const userEmail = prof?.email;
+  const userName  = prof?.full_name || prof?.email || 'بەکارهێنەر';
+
+  if (userEmail) {
+    await fetch('https://proxoapp.app.n8n.cloud/webhook/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action:     'balance_receipt',
+        email:      userEmail,
+        userName:   userName,
+        amount:     Math.round(amtIQD).toLocaleString(),
+        newBalance: Math.round(newBal * 1800).toLocaleString(),
+        note:       note
+      })
+    });
+  }
+} catch(_) {}
   closeMo('moAddBalance');loadUsers();loadDashboardStats();
   if(_curPage==='txlog')loadTxLog();
 }
