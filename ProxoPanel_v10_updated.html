@@ -1824,7 +1824,32 @@ async function approveDeposit(id,userId,amount){
       await sb.from('pa_wallets').update({balance:parseFloat(w?.balance||0)+parseFloat(amount),updated_at:new Date().toISOString()}).eq('user_id',userId);
       await sb.from('pa_notifications').insert({user_id:userId,type:'deposit_approved',title:'پارەدانت پەسەندکرا ✅',body:`${Math.round(parseFloat(amount)*1800).toLocaleString()} IQD زیادکرا بۆ باڵانسەکەت.`,is_read:false});
       showToast('✅ پارەدان پەسەندکرا','gr');
-      loadDeposits();loadDashboardStats();
+
+try {
+  const { data: prof } = await sb.from('profiles')
+    .select('full_name, email')
+    .eq('id', userId)
+    .single();
+
+  const newBal = parseFloat(w?.balance||0) + parseFloat(amount);
+
+  if (prof?.email) {
+    await fetch('https://proxoapp.app.n8n.cloud/webhook/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action:     'balance_receipt',
+        email:      prof.email,
+        userName:   prof.full_name || prof.email || 'بەکارهێنەر',
+        amount:     Math.round(parseFloat(amount) * 1800).toLocaleString(),
+        newBalance: Math.round(newBal * 1800).toLocaleString(),
+        note:       'داواکاریەکەت پەسەندکرا'
+      })
+    });
+  }
+} catch(_) {}
+
+loadDeposits(); loadDashboardStats();
     });
 }
 
