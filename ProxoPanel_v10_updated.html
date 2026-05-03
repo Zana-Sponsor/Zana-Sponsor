@@ -1577,10 +1577,10 @@ async function confirmAddBalance(){
   showToast('✅ '+Math.round(amtIQD).toLocaleString()+' IQD زیادکرا','gr');
   // ── ئیمێڵی وەسڵی زیادکردنی باڵانس ──
 try {
-  const { data: prof } = await sb.from('pa_profiles')
-    .select('full_name, email')
-    .eq('user_id', uid)
-    .single();
+  const { data: prof } = await sb.from('profiles')
+  .select('full_name, email')
+  .eq('id', uid)
+  .single();
 
   const userEmail = prof?.email;
   const userName  = prof?.full_name || prof?.email || 'بەکارهێنەر';
