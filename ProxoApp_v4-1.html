@@ -3699,14 +3699,15 @@ async function exchangeCoins(){
       await fetch(N8N_WEBHOOK,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          action:'balance_receipt',
-          email:cu.email,
-          amount:iqToAdd.toLocaleString()+' IQD',
-          newBalance:(newWalBal*1800).toFixed(0)+' IQD',
-          note:'گۆڕانەوەی '+coins.toLocaleString()+' کۆین پرۆکسۆ بۆ باڵانس',
-          type:'deposit'
-        })
+        body: JSON.stringify({
+  action: 'balance_receipt',
+  email: cu.email,
+  userName: cu.user_metadata?.full_name || cu.email.split('@')[0], // ✅ زیادکرا
+  amount: iqToAdd.toLocaleString() + ' IQD',
+  newBalance: (newWalBal * 1800).toFixed(0) + ' IQD',
+  note: 'گۆڕانەوەی ' + coins.toLocaleString() + ' کۆین پرۆکسۆ بۆ باڵانس',
+  type: 'deposit'
+})
       });
     }catch(_){}
     closeMo('moCoins');
