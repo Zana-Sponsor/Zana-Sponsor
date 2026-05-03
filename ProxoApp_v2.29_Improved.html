@@ -1351,7 +1351,7 @@ textarea.lc-inp{resize:none;}
       <div class="pcard-hdr">
         <div class="pcard-hdr-left" style="color:#b45309"><span style="margin-left:5px"><i class="fas fa-coins"></i></span> کۆینی پرۆکسۆ</div>
         <span style="font-size:11px;cursor:pointer;color:#d97706;font-weight:700" onclick="openCoinsModal()">
-          <i class="fas fa-arrow-right-arrow-left"></i> گۆڕانەوە
+          <i class="fas fa-arrow-right-arrow-left"></i> گۆڕینەوە
         </span>
       </div>
       <div class="bal-row">
@@ -1395,12 +1395,12 @@ textarea.lc-inp{resize:none;}
       </div>
       <div class="plist-item" onclick="openChangePass()">
         <div class="plist-ico"><i class="fas fa-lock"></i></div>
-        <div class="plist-txt">گۆڕینی پاسۆرد</div>
+        <div class="plist-txt">گۆڕینی وشەی نهێنی</div>
         <i class="fas fa-chevron-left plist-arr"></i>
       </div>
       <div class="plist-item green" onclick="openWA()">
         <div class="plist-ico"><i class="fab fa-whatsapp"></i></div>
-        <div class="plist-txt">گفتوگۆ لەگەڵ ئەدمین</div>
+        <div class="plist-txt">گفتوگۆ لەگەڵ کارمەند</div>
         <i class="fas fa-chevron-left plist-arr" style="color:var(--gr)"></i>
       </div>
       <div class="plist-item red" onclick="doLogout()">
@@ -1494,7 +1494,7 @@ textarea.lc-inp{resize:none;}
     <div class="create-sec">
       <div class="create-sec-hdr">
         <div class="create-sec-ico" style="background:rgba(16,185,129,.1);color:#10b981"><i class="fas fa-users"></i></div>
-        <div class="create-sec-lbl">هەدەفکردن</div>
+        <div class="create-sec-lbl">ئامانجەکان</div>
       </div>
 
       <!-- Age -->
@@ -1531,7 +1531,6 @@ textarea.lc-inp{resize:none;}
       <div style="display:flex;gap:7px;flex-wrap:wrap">
         <div class="fchip on" data-loc="kurdistan" onclick="pickLoc(this)">کوردستان</div>
         <div class="fchip" data-loc="iraq" onclick="pickLoc(this)">عێراق</div>
-        <div class="fchip" data-loc="all" onclick="pickLoc(this)">کورد و عەرەب</div>
       </div>
     </div>
 
@@ -1590,7 +1589,7 @@ textarea.lc-inp{resize:none;}
           <div style="display:flex;align-items:center;gap:10px;flex:1">
             <div class="est-ico-wrap est-ico-clicks"><i class="fas fa-hand-pointer"></i></div>
             <div>
-              <div class="est-lbl">کلیک / نامەی چاوەڕوانکراو</div>
+              <div class="est-lbl">کلیکی چاوەڕوانکراو</div>
               <div id="estClicksCtr" style="font-size:10px;color:var(--mt);margin-top:1px">CTR: 0.5%–2%</div>
             </div>
           </div>
@@ -1620,7 +1619,6 @@ textarea.lc-inp{resize:none;}
       </div>
       <div class="create-warning">
         <i class="fas fa-triangle-exclamation"></i>
-        <div class="create-warning-txt"><strong>گرنگ:</strong> تەواوی زانیاریەکان بەدروووستی پر بکەوە — بەپێچەوانەوە بەرپرسیار نابین.</div>
       </div>
     </div>
 
@@ -1690,7 +1688,7 @@ textarea.lc-inp{resize:none;}
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <div class="pg-title">سپۆنسەرەکانم</div>
       <button class="empty-btn" onclick="goPage('create')" style="padding:8px 14px;font-size:12px">
-        <i class="fas fa-plus"></i> نوێ
+        <i class="fas fa-plus"></i> ڕیکلامی نوێ
       </button>
     </div>
     <div class="ads-filter" id="adsFilter">
@@ -1730,16 +1728,16 @@ textarea.lc-inp{resize:none;}
         </div>
 
         <!-- ناو -->
-        <div class="plform-lbl">ناو <span style="color:var(--rd)">*</span></div>
+        <div class="plform-lbl">ناوی بازرگانی<span style="color:var(--rd)">*</span></div>
         <input class="pl-inp" type="text" id="plBrandName" placeholder="ناوت یان ناوی براند" oninput="updatePLPreview()">
         <div class="pl-field-err" id="plErrName" style="display:none"><i class="fas fa-circle-exclamation"></i><span>تکایە ناوت بنووسە</span></div>
 
         <!-- بیۆ -->
-        <div class="plform-lbl">بیۆ / دەربارەت <span style="font-size:10px;color:var(--mt)">(کەمتر لە 150 پیت)</span></div>
+        <div class="plform-lbl">کورتەی پەیوەندی <span style="font-size:10px;color:var(--mt)">(کەمتر لە 150 پیت)</span></div>
         <textarea class="pl-inp pl-ta" id="plDesc" placeholder="لەرێگەی دووگمەکانەوە پەیوەندیمان پێوە بکە" maxlength="150" oninput="plUpdateBioCount();updatePLPreview()"></textarea>
         <div class="pl-field-err" id="plErrBio" style="display:none"><i class="fas fa-circle-exclamation"></i><span id="plErrBioMsg"></span></div>
         <div class="pl-bio-meta">
-          <small>یەکێک هەڵبژێرە یان خۆت بنووسە</small>
+          <small>کورتەی پەیوەندی بنووسە یان هەڵیبژێرە</small>
           <span id="plBioCount">0 / 150</span>
         </div>
         <div class="pl-bio-chips" id="plBioChips"></div>
@@ -1750,12 +1748,12 @@ textarea.lc-inp{resize:none;}
           <input type="file" id="plLogoFile" accept="image/*" onchange="loadPlLogo(this)" style="display:none">
           <img id="plLogoPrev" class="logo-preview" alt="وێنە" style="display:none">
           <div class="logo-upload-ico" id="plLogoIco"><i class="fas fa-camera"></i></div>
-          <b id="plLogoTxt">وێنە بارکە</b>
-          <span>کرتە بکە تا هەڵبژێریت</span>
+          <b id="plLogoTxt">وێنە ئەپڵۆدبکە</b>
+          <span>گرتە بکە بۆ هەڵبژاردن</span>
         </div>
 
         <!-- تیکتۆک -->
-        <div class="plform-lbl"><i class="fab fa-tiktok" style="margin-left:5px"></i>ناوی ئەکاونتی تیکتۆک <span style="color:var(--rd)">*</span></div>
+        <div class="plform-lbl"><i class="fab fa-tiktok" style="margin-left:5px"></i>ناوی بەکارهێنەری تیکتۆک <span style="color:var(--rd)">*</span></div>
         <div style="position:relative;display:flex;align-items:center;">
           <span style="position:absolute;left:14px;font-size:16px;color:var(--dark);font-weight:700;font-family:'Inter',sans-serif;z-index:2;user-select:none;pointer-events:none">@</span>
           <input class="pl-inp" style="direction:ltr;text-align:left;padding-left:34px;width:100%;margin-bottom:14px" type="text" id="plTT" placeholder="username" oninput="updatePLPreview()">
@@ -1768,7 +1766,7 @@ textarea.lc-inp{resize:none;}
         <div class="pl-field-err" id="plErrVideo" style="display:none"><i class="fas fa-circle-exclamation"></i><span>لینکەکە دەبێت بە https:// دەستپێبکات</span></div>
 
         <!-- پلاتفۆرمەکان -->
-        <div class="plform-lbl" style="margin-top:14px">دووگمەکانت هەڵبژێرە</div>
+        <div class="plform-lbl" style="margin-top:14px">دووگمەکانی پەیوەندی هەڵبژێرە</div>
         <div class="pl-cb-list" id="plCbList"></div>
         <div class="pl-field-err" id="plErrPlatform" style="display:none"><i class="fas fa-circle-exclamation"></i><span>کەمترین یەک پلاتفۆرم پڕ بکەرەوە</span></div>
         <div class="pl-contact-fields" id="plContactFields"></div>
@@ -1896,8 +1894,8 @@ textarea.lc-inp{resize:none;}
             
           </div>
           <div style="flex:1">
-            <div id="cdTitle" style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px">داواکاریت نێردرا — چاوەڕوانی وردبینی</div>
-            <div id="cdSub" style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.6">لە ناوماوەی <strong style="color:rgba(255,255,255,.75)">٥ خولەک</strong>دا بابچێتە وردبینی ئادمین</div>
+            <div id="cdTitle" style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px">داواکاریەکە نێردرا — چاوەڕوانی وردبینی بکە</div>
+            <div id="cdSub" style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.6">لەماوەی <strong style="color:rgba(255,255,255,.75)">٥ خولەک</strong>دا بابچێتە وردبینی ئادمین</div>
           </div>
           <div id="cdTimerBadge" style="flex-shrink:0;text-align:center">
             <div id="cdTimerNum" style="font-size:22px;font-weight:900;color:#4ade80;font-family:'Inter',sans-serif;line-height:1;direction:ltr">5:00</div>
