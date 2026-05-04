@@ -6285,7 +6285,7 @@ function pickCard(el,id){
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            action:     'balance_receipt',
+            action:     'balance_deducted',
             email:      cu.email,
             userName:   cu?.user_metadata?.full_name || cu.email || 'بەکارهێنەر',
             amount:     Math.round(finalTotal).toLocaleString(),
