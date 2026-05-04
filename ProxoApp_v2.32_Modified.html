@@ -1890,21 +1890,28 @@ textarea.lc-inp{resize:none;}
         <div class="create-sec-ico" style="background:rgba(245,158,11,.1);color:#d97706"><i class="fas fa-wallet"></i></div>
         <div class="create-sec-lbl">بودجە و ماوە</div>
       </div>
-      <!-- Tier Picker Grid (JS fills this in) -->
-      <div class="tier-grid" id="tierPickerGrid"></div>
-      <!-- hidden compat holders -->
-      <div id="daysDisp" style="display:none">1</div>
-      <div id="budDisp"  style="display:none">36,000</div>
-      <!-- total summary -->
-      <div style="background:rgba(14,120,255,.06);border:1px solid rgba(14,120,255,.15);border-radius:12px;padding:11px 14px">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:12px;color:var(--mt2)">تایەری هەڵبژێردراو</span>
-          <span id="tierSelLbl" style="font-size:12px;font-weight:800;color:var(--dark);font-family:'Inter'">$20 · 1 ڕۆژ</span>
+      <div class="bud-row">
+        <div class="bud-card">
+          <div class="bud-card-lbl">بودجەی ڕۆژانە</div>
+          <div class="bud-card-val" id="budDisp" style="font-size:17px">36,000</div>
+          <div class="bud-card-sub">IQD</div>
+          <div class="bud-ctrl">
+            <button class="bud-btn-v2" onclick="chgBud(1)">+</button>
+            <button class="bud-btn-v2" onclick="chgBud(-1)">−</button>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
-          <span style="font-size:12px;color:var(--mt2)">کۆی بودجە</span>
-          <span style="font-size:15px;font-weight:900;color:#0E78FF;font-family:'Inter'" id="totalBud">36,000 IQD</span>
+        <div class="bud-card">
+          <div class="bud-card-lbl">ژمارەی ڕۆژ</div>
+          <div class="bud-card-val" id="daysDisp">1</div>
+          <div class="bud-ctrl">
+            <button class="bud-btn-v2" onclick="chgDays(1)">+</button>
+            <button class="bud-btn-v2" onclick="chgDays(-1)">−</button>
+          </div>
         </div>
+      </div>
+      <div style="background:rgba(14,120,255,.06);border:1px solid rgba(14,120,255,.15);border-radius:12px;padding:11px 14px;text-align:center">
+        <span style="font-size:13px;color:var(--mt2)">کۆی بودجە: </span>
+        <span style="font-size:14px;font-weight:800;color:#0E78FF" id="totalBud">36,000 IQD بۆ 1 ڕۆژ</span>
       </div>
     </div>
 
@@ -5761,15 +5768,12 @@ function pickTier(i){
 function updateBudgetDisplay(){
   const t=TIERS[tierIndex];
   budget=t.iqd; days=t.days; budgetTier=t.higher?1:0;
-  // compat holders
+  // visible card values
   const bd=document.getElementById('budDisp'); if(bd)bd.textContent=t.iqd.toLocaleString();
   const dd=document.getElementById('daysDisp'); if(dd)dd.textContent=t.days;
-  // tier label
-  const tl=document.getElementById('tierSelLbl');
-  if(tl)tl.textContent=`$${t.usd} · ${t.days} ڕۆژ${t.higher?' (بودجەی بەرز)':''}`;
-  // total summary
+  // total summary line
   const tb=document.getElementById('totalBud');
-  if(tb)tb.textContent=t.iqd.toLocaleString()+' IQD';
+  if(tb)tb.textContent=`${t.iqd.toLocaleString()} IQD بۆ ${t.days} ڕۆژ${t.higher?' (بودجەی بەرز)':''}`;
   updateEstResults();
   // price breakdown
   const service=Math.round(t.iqd/6);
@@ -5779,11 +5783,22 @@ function updateBudgetDisplay(){
   document.getElementById('bdTotal').textContent=t.iqd.toLocaleString()+' IQD';
   document.getElementById('bdTotalLbl').textContent=`کۆی گشتی (${t.days} ڕۆژ)`;
   document.getElementById('bdDiscountRow').style.display='none';
-  // refresh card highlights
-  document.querySelectorAll('.tier-card').forEach((c,i)=>c.classList.toggle('sel',i===tierIndex));
 }
-function chgBud(d){tierIndex=Math.min(8,Math.max(0,d>0?tierIndex+1:tierIndex-1));updateBudgetDisplay();}
-function chgDays(d){tierIndex=Math.min(8,Math.max(0,d>0?tierIndex+2:tierIndex-2));updateBudgetDisplay();}
+// بودجە +/− → تایەری دوای/پێشی (±1)
+function chgBud(d){
+  tierIndex=Math.min(8,Math.max(0,d>0?tierIndex+1:tierIndex-1));
+  updateBudgetDisplay();
+  if(typeof clearPromoResult==='function')clearPromoResult();
+}
+// ڕۆژ +/− → بچووە بۆ تایەری ڕۆژی دوای/پێشی (هەمیشە تایەری نەرمەکە)
+function chgDays(d){
+  const curDays=TIERS[tierIndex].days;
+  const newDays=Math.max(1,Math.min(5,curDays+(d>0?1:-1)));
+  if(newDays!==curDays){tierIndex=(newDays-1)*2;}
+  else{tierIndex=Math.min(8,Math.max(0,d>0?tierIndex+1:tierIndex-1));}
+  updateBudgetDisplay();
+  if(typeof clearPromoResult==='function')clearPromoResult();
+}
 function pickGoal(el){
   document.querySelectorAll('.goal-tab,.goal-tab-v2').forEach(x=>x.classList.remove('on'));
   el.classList.add('on');goal=el.dataset.g;
