@@ -6356,9 +6356,8 @@ function pickCard(el,id){
         // ئەگەر RPC نەدۆزرایەوە → فالبەک بۆ داخستنی ڕاستەوخۆ
         const _rpcMissing=error.message?.includes('Could not find')||error.message?.includes('does not exist')||error?.code==='PGRST202';
         if(_rpcMissing){
-          // 1. ئامارکردنی ژمارەی ڕیکلام بۆ ad_number
-          const{count:_adCnt}=await sb.from('pa_ads').select('id',{count:'exact',head:true}).eq('user_id',cu.id);
-          const _adNum=(_adCnt||0)+1;
+          // 1. دروستکردنی ژمارەی تایبەتی 6-ژمارەیی بۆ ad_number
+          const _adNum=Math.floor(100000+Math.random()*900000);
           // 2. داخستنی ڕیکلام ڕاستەوخۆ
           const{data:_newAd,error:_adErr}=await sb.from('pa_ads').insert({
             user_id:cu.id,
@@ -6484,7 +6483,7 @@ function renderAds(){
     const ageInfo=ad.age_groups?`<div class="ad-m"><i class="fas fa-users"></i>${JSON.parse(ad.age_groups).join('، ')}</div>`:'';
     return`<div class="ad-card" onclick="showAdDetail(allAds.find(x=>x.id==='${ad.id}'))" style="cursor:pointer">
       <div class="ad-card-top"><span class="ad-num">#${ad.ad_number}</span><span class="ad-status ${sc}">${sl}</span></div>
-      <div class="ad-title">${ad.title}</div>
+      <div class="ad-title">${ad.title||('ڕیکلام #'+ad.ad_number)||ad.video_link||'ڕیکلامی نوێ'}</div>
       <div class="ad-metas">
         <div class="ad-m"><i class="fas fa-bullseye"></i>${gs[ad.goal]||ad.goal}</div>
         <div class="ad-m"><i class="fas fa-money-bill"></i>${Math.round(parseFloat(ad.budget||0)*1800).toLocaleString()} IQD</div>
@@ -6528,7 +6527,7 @@ async function showAdDetail(ad){
   var finalTotal=Math.round(parseFloat(ad.budget||0)*1800);
   var discountIQD=usage?Math.round(parseFloat(usage.discount_applied||0)):0;
   var originalTotal=finalTotal+discountIQD;
-  var days=originalTotal>=36000?Math.round((originalTotal-36000)/18000)+1:1;
+  var days=Math.max(1,Math.round(originalTotal/36000));
 
   var endDateStr='—';
   if(ad.start_date){
@@ -6567,9 +6566,11 @@ async function showAdDetail(ad){
   h+='<span class="ad-status '+sc+'">'+sl+'</span>';
   h+='<span style="font-size:11px;color:var(--mt);font-family:Inter,sans-serif">#'+ad.ad_number+'</span>';
   h+='</div>';
-  h+='<div style="font-size:17px;font-weight:900;color:var(--dark);margin-bottom:16px;line-height:1.4">'+(ad.title||'—')+'</div>';
+  var _adLabel=ad.title||('ڕیکلام #'+ad.ad_number);
+  var _adVideoLink=ad.video_link||ad.video_code||'—';
+  h+='<div style="font-size:17px;font-weight:900;color:var(--dark);margin-bottom:16px;line-height:1.4;word-break:break-all">'+_adLabel+'</div>';
   h+='<div class="ad-sheet-sec"><i class="fas fa-info-circle" style="margin-left:5px"></i>زانیاری گشتی</div>';
-  h+='<div class="ad-sheet-row"><span class="ad-sheet-lbl">ناونیشانی ڕیکلام</span><span class="ad-sheet-val" style="direction:rtl;text-align:right">'+(ad.title||'—')+'</span></div>';
+  h+='<div class="ad-sheet-row"><span class="ad-sheet-lbl">لینک / کۆدی ڤیدیۆ</span><span class="ad-sheet-val" style="direction:ltr;text-align:left;font-size:11px;word-break:break-all">'+_adVideoLink+'</span></div>';
   h+='<div class="ad-sheet-row"><span class="ad-sheet-lbl">ئامانجی ڕیکلام</span><span class="ad-sheet-val" style="direction:rtl;text-align:right">'+(goalMap[ad.goal]||ad.goal||'—')+'</span></div>';
   if(estLabel&&estValue!=null) h+='<div class="ad-sheet-row"><span class="ad-sheet-lbl">'+estLabel+'</span><span class="ad-sheet-val" style="direction:ltr;text-align:left;color:var(--gr);font-size:13px">~'+estValue.toLocaleString()+'</span></div>';
   h+='<div class="ad-sheet-row"><span class="ad-sheet-lbl">پلاتفۆرم</span><span class="ad-sheet-val"><i class="fab fa-tiktok" style="margin-left:4px"></i>TikTok</span></div>';
@@ -8205,7 +8206,7 @@ async function loadTxHistory(){
 
   const mn={fib:'FIB',fastpay:'FastPay',kcard:'K-Card/ZainCash'};
 
-  const depositItems=(deposits||[]).map(t=>({
+  const depositItems=(deposits||[]).filter(t=>!(t.type==='withdrawal'&&t.kind!=='refund'&&!(t.note||'').includes('ئادمین'))).map(t=>({
     id:t.id,
     kind: t.kind==='refund'?'refund':t.type==='withdrawal'&&(t.note||'').includes('ئادمین')?'admin_deduct':t.type==='reward'?'reward':'deposit',
     label: t.kind==='refund'
@@ -8352,7 +8353,7 @@ function renderTxHistory(){
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
         <div style="font-size:14px;font-weight:800;color:${amtColor};font-family:'Inter',sans-serif;letter-spacing:-.3px">${amtText}</div>
-        ${t._balanceAfter!==undefined?`<div style="font-size:10px;color:var(--mt);font-weight:600;text-align:left;direction:rtl">باڵانس ئێستات ${t._balanceAfter.toLocaleString()} دینار</div>`:''}
+        ${t._balanceAfter!==undefined?`<div style="font-size:10px;color:var(--mt);font-weight:600;text-align:left;direction:rtl">باڵانس دوای مامەڵەکە ${Math.max(0,t._balanceAfter).toLocaleString()} دینار</div>`:''}
         ${!isCoinExchange?`<i class="fas fa-chevron-left" style="font-size:10px;color:var(--mt)"></i>`:''}
       </div>
     </div>`;
