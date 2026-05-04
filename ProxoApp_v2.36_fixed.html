@@ -161,7 +161,7 @@ body{font-family:'R',sans-serif;background:var(--bg);color:var(--tx);min-height:
 .ads-filter{-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;}
 /* دووگمەکان — touch-action بۆ کەمکردنی delay */
 button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-action:manipulation;}
-@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fu{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
 /* ══ RULES ══ */
@@ -411,7 +411,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .bn-fab i{font-size:20px;color:#fff;}
 
 /* ══ PAGES ══ */
-.pg{display:none;padding:20px;animation:fu .2s ease;}
+.pg{display:none;padding:20px;animation:fu .12s ease;}
 .pg.on{display:block;}
 .pg-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
 .pg-title{font-size:24px;font-weight:900;color:var(--dark);}
@@ -545,7 +545,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .ads-filter::-webkit-scrollbar{display:none;}
 .fchip{padding:7px 14px;border-radius:20px;font-family:'R',sans-serif;font-size:12px;cursor:pointer;border:1.5px solid var(--b1);background:var(--w);color:var(--mt);white-space:nowrap;transition:all .2s;}
 .fchip.on{background:var(--dark);color:#fff;border-color:var(--dark);}
-.ad-card{background:var(--w);border:1px solid var(--b1);border-radius:18px;padding:20px;margin-bottom:10px;animation:fu .2s ease;}
+.ad-card{background:var(--w);border:1px solid var(--b1);border-radius:18px;padding:20px;margin-bottom:10px;animation:fu .12s ease;}
 .ad-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .ad-num{font-size:11px;color:var(--mt);background:var(--bg);padding:3px 10px;border-radius:20px;border:1px solid var(--b1);font-family:monospace;}
 .ad-status{font-size:11px;padding:4px 11px;border-radius:20px;font-weight:700;}
@@ -1644,154 +1644,7 @@ textarea.lc-inp{resize:none;}
     </div>
 
     <!-- ══ FAQ CARD ══ -->
-    <div class="faq-card">
-      <div class="faq-card-hdr">
-        <div class="faq-card-hdr-ico"><i class="fas fa-circle-question"></i></div>
-        <div class="faq-card-hdr-title">پرسیارە باوەکان</div>
-        <div class="faq-card-hdr-count">٨ پرسیار</div>
-      </div>
-      <div class="faq-search-wrap">
-        <div class="faq-search-box">
-          <i class="fas fa-magnifying-glass"></i>
-          <input class="faq-search-inp" type="text" placeholder="گەڕان لە پرسیارەکان..." oninput="faqSearch(this.value)">
-        </div>
-      </div>
-      <div class="faq-list" id="faqList">
 
-        <!-- Q1 -->
-        <div class="faq-item" onclick="faqToggle(this)">
-          <div class="faq-item-q">
-            <div class="faq-item-q-ico"><i class="fas fa-plus"></i></div>
-            <div class="faq-item-q-txt">ئایا چۆن ڕیکلامی نوێ دروست بکەم؟</div>
-            <div class="faq-item-q-arr"><i class="fas fa-chevron-down"></i></div>
-          </div>
-          <div class="faq-item-a">
-            <div class="faq-item-a-inner">
-              <div class="faq-item-a-txt">سەرەتا کلیک لە دووگمەی <b>« + »</b> دەکەی، دواتر ئەنجامی ڕیکلام دیاری دەکەی، دواتر زانیاری ڕیکلامەکانت پڕدەکەیتەوە.</div>
-              <div class="faq-item-a-note"><i class="fas fa-triangle-exclamation"></i><span>تکایە، زانیاریەکان بەدروستی پڕبکەرەوە، ئێمە بەرپرس نین لەپڕکردنەوەی زانیاری هەڵە!</span></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Q2 -->
-        <div class="faq-item" onclick="faqToggle(this)">
-          <div class="faq-item-q">
-            <div class="faq-item-q-ico"><i class="fas fa-rotate-left"></i></div>
-            <div class="faq-item-q-txt">ئایا پارەکە دەگەڕێتەوە ئەگەر ڕیکلامەکەم ڕەت کرایەوە؟</div>
-            <div class="faq-item-q-arr"><i class="fas fa-chevron-down"></i></div>
-          </div>
-          <div class="faq-item-a">
-            <div class="faq-item-a-inner">
-              <div class="faq-item-a-txt">بەڵێ، ئەگەر ڕیکلامەکەت بە هەر هۆکارێک پەسەند نەکرا، بڕی پارەکە بە شێوەیەکی <b>ئۆتۆماتیکی</b> دەگەڕێتەوە بۆ سەر باڵانسی هەژمارەکەت.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Q3 -->
-        <div class="faq-item" onclick="faqToggle(this)">
-          <div class="faq-item-q">
-            <div class="faq-item-q-ico"><i class="fas fa-wallet"></i></div>
-            <div class="faq-item-q-txt">چۆن دەتوانم باڵانسی ئەکاونتەکەم پڕ بکەمەوە؟</div>
-            <div class="faq-item-q-arr"><i class="fas fa-chevron-down"></i></div>
-          </div>
-          <div class="faq-item-a">
-            <div class="faq-item-a-inner">
-              <div class="faq-item-a-txt">
-                <span style="display:block;margin-bottom:6px">١. کلیک لەسێ خەتەکەی سەرەوە دەکەیت</span>
-                <span style="display:block;margin-bottom:6px">٢. کلیک لە <b>زیادکردنی باڵانس</b> دەکەی</span>
-                <span style="display:block;margin-bottom:6px">٣. ڕێگەی پارەدان دیاری دەکەی</span>
-                <span style="display:block;margin-bottom:6px">٤. بڕی باڵانس دەنووسیت</span>
-                <span style="display:block;margin-bottom:6px">٥. زانیاریەکان پڕدەکەیتەوە (ناوی هەژمار، تێبینی، وێنەی پسوولە)</span>
-                <span style="display:block">٦. داواکاری دەنێریت — لەماوەی <b>٣٠ خولەک</b> یاخود کەمتر باڵانسەکە دەخرێتە سەر هەژمارەکەت.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Q4 -->
-        <div class="faq-item" onclick="faqToggle(this)">
-          <div class="faq-item-q">
-            <div class="faq-item-q-ico"><i class="fas fa-shield-halved"></i></div>
-            <div class="faq-item-q-txt">ئایا پێویست دەکا وشەی نهێنی و ئیمێڵم بدەم بەئێوە؟</div>
-            <div class="faq-item-q-arr"><i class="fas fa-chevron-down"></i></div>
-          </div>
-          <div class="faq-item-a">
-            <div class="faq-item-a-inner">
-              <div class="faq-item-a-txt"><b style="color:#16a34a">نەخێر،</b> بەهیچ شێوازێک ئێمە وشەی نهێنی و زانیاریە کەسیەکان وەرناگرین. بەڵکو چەند زانیاریەکی سەرەتایی وەردەگرین سەبارەت بەو ڤیدیۆیەی کە دەتەوێ ڕیکلامی بۆ بکەی.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Q5 -->
-        <div class="faq-item" onclick="faqToggle(this)">
-          <div class="faq-item-q">
-            <div class="faq-item-q-ico"><i class="fas fa-location-dot"></i></div>
-            <div class="faq-item-q-txt">ئایا دەتوانم دیاری بکەم چ شارێک ڕیکلامەکەم ببینێ؟</div>
-            <div class="faq-item-q-arr"><i class="fas fa-chevron-down"></i></div>
-          </div>
-          <div class="faq-item-a">
-            <div class="faq-item-a-inner">
-              <div class="faq-item-a-txt"><b style="color:#dc2626">نەخێر،</b> لەئێستادا لەسیستەمی تیک تۆک هەڵبژاردنی شارەکان بەردەست نییە بۆ عێراق و هەرێمی کوردستان.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Q6 -->
-        <div class="faq-item" onclick="faqToggle(this)">
-          <div class="faq-item-q">
-            <div class="faq-item-q-ico"><i class="fas fa-chart-bar"></i></div>
-            <div class="faq-item-q-txt">ئایا لەکوێ ئەنجامی ڕیکلامەکانم ببینم؟</div>
-            <div class="faq-item-q-arr"><i class="fas fa-chevron-down"></i></div>
-          </div>
-          <div class="faq-item-a">
-            <div class="faq-item-a-inner">
-              <div class="faq-item-a-txt">لەبەشی <b>«سپۆنسەرەکانم»</b> دەتوانیت ئەنجام و وردەکاریەکانی ڕیکلامەکەت ببینی.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Q7 -->
-        <div class="faq-item" onclick="faqToggle(this)">
-          <div class="faq-item-q">
-            <div class="faq-item-q-ico"><i class="fas fa-headset"></i></div>
-            <div class="faq-item-q-txt">ئایا ئەگەر ڕووبەڕوی کێشەیەک بوومەوە لەئەپەکە چی بکەم؟</div>
-            <div class="faq-item-q-arr"><i class="fas fa-chevron-down"></i></div>
-          </div>
-          <div class="faq-item-a">
-            <div class="faq-item-a-inner">
-              <div class="faq-item-a-txt">دەتوانیت لەڕێگەی <b>واتسئاپ</b> یاخود <b>پشتگیری ناو ئەپەکە</b> پەیوەندی بکەی بەکارمەندەکانمانەوە کە <b>٢٤ کاتژمێر</b> لەسەر هێڵن بۆ یارمەتیدانتان.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Q8 -->
-        <div class="faq-item" onclick="faqToggle(this)">
-          <div class="faq-item-q">
-            <div class="faq-item-q-ico"><i class="fas fa-link"></i></div>
-            <div class="faq-item-q-txt">چۆن کەرەستەی پەیوەندی دروست بکەم؟</div>
-            <div class="faq-item-q-arr"><i class="fas fa-chevron-down"></i></div>
-          </div>
-          <div class="faq-item-a">
-            <div class="faq-item-a-inner">
-              <div class="faq-item-a-txt">
-                <span style="display:block;margin-bottom:6px">١. دەچیتە بەشی <b>«ئامرازەکان»</b></span>
-                <span style="display:block;margin-bottom:6px">٢. کلیک لەدروستکردنی <b>«کەرەستەی پەیوەندی»</b> دەکەی</span>
-                <span style="display:block;margin-bottom:6px">٣. زانیاریەکان پڕدەکەیتەوە (ناو، دووگمەی پەیوەندی و هتد)</span>
-                <span style="display:block">٤. کلیک لەپێشبینی و دروستکردن دەکەی — ڕاستەوخۆ بەسەرکەوتوویی دروست دەبێت.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Empty state (hidden by default) -->
-        <div class="faq-empty" id="faqEmpty" style="display:none">
-          <i class="fas fa-magnifying-glass"></i>
-          <p>هیچ پرسیارێک نەدۆزرایەوە</p>
-        </div>
-
-      </div>
-    </div>
-    <!-- ══ END FAQ CARD ══ -->
 
     <div style="height:14px"></div>
   </div>
@@ -2850,7 +2703,7 @@ textarea.lc-inp{resize:none;}
       <div class="coins-progress-track">
         <div class="coins-progress-fill" id="modalCoinsProgressFill" style="width:0%"></div>
       </div>
-      <div style="font-size:11px;color:var(--mt);margin-top:6px;text-align:center" id="modalCoinsProgressMsg">500 کۆین پێویستە بۆ گۆڕانەوە</div>
+      <div style="font-size:11px;color:var(--mt);margin-top:6px;text-align:center" id="modalCoinsProgressMsg">50 کۆین پێویستە بۆ گۆڕانەوە</div>
     </div>
     <!-- Info -->
     <div style="margin:14px 0">
@@ -2864,7 +2717,7 @@ textarea.lc-inp{resize:none;}
       </div>
       <div class="coins-info-item">
         <div class="coins-info-ico" style="background:rgba(37,99,235,.08);color:var(--bl)"><i class="fas fa-repeat"></i></div>
-        <div>کەمترین <span style="font-family:'R',sans-serif">500</span> کۆین پێویستە بۆ گۆڕانەوە بۆ <span style="font-family:'R',sans-serif">5,000</span> IQD باڵانس.</div>
+        <div>کەمترین <span style="font-family:'R',sans-serif">50</span> کۆین پێویستە بۆ گۆڕانەوە بۆ <span style="font-family:'R',sans-serif">500</span> IQD باڵانس.</div>
       </div>
     </div>
     <!-- Exchange Button (shown when >= 500) -->
@@ -2873,7 +2726,7 @@ textarea.lc-inp{resize:none;}
     </button>
     <div class="coins-need-more" id="coinsNeedMore">
       <i class="fas fa-lock" style="color:var(--mt)"></i>
-      <span id="coinsNeedMoreTxt">500 کۆین پێویستە بۆ گۆڕانەوە</span>
+      <span id="coinsNeedMoreTxt">50 کۆین پێویستە بۆ گۆڕانەوە</span>
     </div>
   </div>
 </div>
@@ -3837,8 +3690,8 @@ async function verifyOtp() {
             if(refDeviceOk){
               const { data: rData, error: rErr } = await sb.rpc('handle_auto_referral', { p_new_user_id: cu.id, p_ref_code: refCode });
               if(!rErr && rData?.ok === true) {
-                setTimeout(async () => { await loadCoins(); }, 500);
-                setTimeout(() => showToast('پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا', 'ok'), 1500);
+                await loadCoins();
+                showToast('پیرۆزە! ٥٠ کۆین وەک دیاری بانگێشت بۆ هەژمارەکەت زیادکرا ٕ\u2728', 'ok');
               }
             }
           } catch(e) {}
@@ -5173,7 +5026,7 @@ async function doLogout(){
 // PROXO COINS — Complete System
 // ════════════════════════════════════════════════
 const COINS_PER_AD    = 50;
-const COINS_MIN_EXCHANGE = 500;
+const COINS_MIN_EXCHANGE = 50;
 const COINS_TO_IQD    = 10;   // 1 coin = 10 IQD, so 50 coins = 500 IQD
 const COINS_TO_USD    = COINS_TO_IQD / 1800; // for DB wallet (stores USD)
 
@@ -5284,7 +5137,7 @@ async function exchangeCoins(){
   const btn=document.getElementById('coinsExchangeBtn');
   const{data}=await sb.from('pa_coins').select('coins_balance').eq('user_id',cu.id).single();
   const coins=parseInt(data?.coins_balance||0);
-  if(coins<COINS_MIN_EXCHANGE){showToast('500 کۆین پێویستە','err');return;}
+  if(coins<COINS_MIN_EXCHANGE){showToast('50 کۆین پێویستە','err');return;}
 
   btn.disabled=true;
   btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> گۆڕانەوە...';
