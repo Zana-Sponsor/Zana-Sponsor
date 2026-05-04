@@ -2011,7 +2011,7 @@ async function confirmDeductBalance(){
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action:     'balance_receipt',
+          action:     'balance_deducted',
           email:      userEmail,
           userName:   userName,
           amount:     Math.round(amtIQD).toLocaleString(),
