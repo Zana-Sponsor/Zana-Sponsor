@@ -1950,7 +1950,7 @@ try {
   const userName  = prof?.full_name || prof?.email || 'بەکارهێنەر';
 
   if (userEmail) {
-    await fetch('http://109.199.114.145:5678/webhook-test/send-otp', {
+    await fetch('http://109.199.114.145:5678/webhook/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2007,7 +2007,7 @@ async function confirmDeductBalance(){
     const dateStr   = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
 
     if (userEmail) {
-      await fetch('http://109.199.114.145:5678/webhook-test/send-otp', {
+      await fetch('http://109.199.114.145:5678/webhook/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2470,7 +2470,7 @@ async function confirmReject(){
         ]);
         if(prof?.email){
           const newBalIQD=Math.round(parseFloat(freshWal?.balance||0)*1800);
-          await fetch('http://109.199.114.145:5678/webhook-test/send-otp',{
+          await fetch('http://109.199.114.145:5678/webhook/send-otp',{
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({
