@@ -6335,6 +6335,11 @@ function pickCard(el,id){
         const _adNum = typeof data === 'string' ? data : (data?.ad_number || data?.id || '—');
         const _userEmail = cu?.email || '';
         const _userName  = cu?.user_metadata?.full_name || _userEmail || 'بەکارهێنەر';
+        // ── ئیمێڵی وەسڵی ڕیکلامی نوێ بۆ بەکارهێنەر ──
+      try {
+        const _adNum = typeof data === 'string' ? data : (data?.ad_number || data?.id || '—');
+        const _userEmail = cu?.email || '';
+        const _userName  = cu?.user_metadata?.full_name || _userEmail || 'بەکارهێنەر';
         if (_userEmail) {
           const {data: _freshWal} = await sb.from('pa_wallets').select('balance').eq('user_id', cu.id).single();
           const _newBalIQD = Math.max(0, Math.round(parseFloat(_freshWal?.balance||0) * 1800));
@@ -6355,6 +6360,7 @@ function pickCard(el,id){
             })
           }).catch(()=>{});
         }
+      } catch(_e) { console.warn('Ad email error:', _e?.message); }
       } catch(_e) { console.warn('Ad email error:', _e?.message); }
       } catch(_e) { console.warn('Ad email error:', _e?.message); }
       // ── ئاگادارکردنەوەی تیلیگرام بۆ ئادمین ──
