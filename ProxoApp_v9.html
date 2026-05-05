@@ -287,8 +287,8 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .notif-btn{position:relative;width:34px;height:34px;border-radius:50%;background:var(--bg);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dark);}
 .notif-dot{position:absolute;top:6px;left:6px;width:9px;height:9px;border-radius:50%;background:var(--rd);border:2px solid var(--w);display:none;animation:pulse 1.5s infinite;}
 .notif-dot.show{display:block;}
-.notif-count{position:absolute;top:4px;left:4px;min-width:16px;height:16px;border-radius:8px;background:var(--rd);border:2px solid var(--w);display:none;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;padding:0 3px;}
-.notif-count.show{display:flex;}
+.notif-count{position:absolute;top:-5px;left:-5px;min-width:18px;height:18px;border-radius:9px;background:#dc2626;border:2px solid var(--w);display:none;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff;padding:0 4px;font-family:'Inter',sans-serif;box-shadow:0 2px 6px rgba(220,38,38,.4);}
+.notif-count.show{display:flex;animation:pulse .6s ease;}
 
 /* ══ DEPOSIT FLOW v2 ══ */
 .dep-pm-btn{width:46px;height:46px;border-radius:14px;border:1.5px solid var(--b1);background:var(--bg);color:var(--dark);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;font-family:'Inter',sans-serif;font-weight:300;}
@@ -540,6 +540,38 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .asset-opt.selected .asset-opt-check{display:block;}
 .asset-none{padding:14px;text-align:center;font-size:12px;color:var(--mt);}
 
+/* ══ SPONSORSHIP DASHBOARD CARDS ══ */
+.spons-card{background:var(--w);border:1px solid var(--b1);border-radius:20px;padding:18px 16px;margin-bottom:12px;animation:fu .14s ease;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.spons-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.spons-order-id{font-size:11px;color:var(--mt);background:var(--bg);padding:4px 10px;border-radius:20px;border:1px solid var(--b1);font-family:'Inter',monospace;letter-spacing:.5px;}
+.spons-status-badge{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:700;}
+.spons-status-pending{background:rgba(217,119,6,.09);color:#b45309;border:1px solid rgba(217,119,6,.25);}
+.spons-status-active{background:rgba(22,163,74,.09);color:#15803d;border:1px solid rgba(22,163,74,.25);}
+.spons-status-rejected{background:rgba(239,68,68,.09);color:#dc2626;border:1px solid rgba(239,68,68,.25);}
+.spons-status-completed{background:rgba(99,102,241,.09);color:#4f46e5;border:1px solid rgba(99,102,241,.25);}
+.spons-status-paused{background:rgba(107,114,128,.09);color:#4b5563;border:1px solid rgba(107,114,128,.25);}
+.spons-title{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.4;}
+.spons-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.spons-metric-box{background:var(--bg);border-radius:14px;padding:12px 10px;text-align:center;border:1px solid var(--b1);}
+.spons-metric-ico{font-size:13px;margin-bottom:5px;}
+.spons-metric-val{font-size:16px;font-weight:900;color:var(--dark);font-family:'Inter',sans-serif;line-height:1;}
+.spons-metric-lbl{font-size:10px;color:var(--mt);font-weight:600;margin-top:4px;}
+.spons-metric-box.spend .spons-metric-ico{color:#16a34a;}
+.spons-metric-box.spend .spons-metric-val{color:#16a34a;}
+.spons-metric-box.clicks .spons-metric-ico{color:#2563eb;}
+.spons-metric-box.clicks .spons-metric-val{color:#2563eb;}
+.spons-metric-box.impr .spons-metric-ico{color:#7c3aed;}
+.spons-metric-box.impr .spons-metric-val{color:#7c3aed;}
+.spons-dates{display:flex;gap:8px;}
+.spons-date-item{flex:1;display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--b1);border-radius:11px;padding:8px 10px;font-size:11px;color:var(--mt2);}
+.spons-date-item i{font-size:11px;color:var(--mt);flex-shrink:0;}
+.spons-date-item span{font-weight:700;color:var(--dark);font-family:'Inter',sans-serif;font-size:11px;}
+.spons-pending-overlay{margin-bottom:14px;padding:10px 13px;background:rgba(217,119,6,.06);border:1px dashed rgba(217,119,6,.3);border-radius:12px;font-size:11.5px;color:#92400e;display:flex;align-items:center;gap:8px;line-height:1.6;}
+
+/* Refresh spin animation */
+@keyframes sponsRefreshSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.refresh-spinning{animation:sponsRefreshSpin .7s linear infinite !important;}
+
 /* ══ MY ADS ══ */
 .ads-filter{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;}
 .ads-filter::-webkit-scrollbar{display:none;}
@@ -706,7 +738,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .chat-send{width:46px;height:46px;border-radius:13px;background:var(--dark);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
 
 /* ══ MODALS ══ */
-.mover{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:flex-end;z-index:9000;padding:0;}
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:flex-end;z-index:9000;padding:0;will-change:opacity;}
 .mover.on{display:flex;}
 .mbox{background:var(--w);border-radius:24px 24px 0 0;padding:22px 20px 34px;width:100%;max-width:500px;max-height:88vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.15);}
 .mbar{width:40px;height:4px;background:var(--b2);border-radius:4px;margin:0 auto 20px;}
@@ -863,7 +895,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 /* ═══ AD DETAIL SHEET ═══ */
 .ad-sheet-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:9200;display:none;opacity:0;transition:opacity .15s;}
 .ad-sheet-ov.on{display:block;opacity:1;}
-.ad-sheet{position:fixed;bottom:0;left:0;right:0;background:var(--w);border-radius:22px 22px 0 0;z-index:9300;transform:translateY(100%);transition:transform .2s cubic-bezier(.4,0,.2,1);max-height:90vh;display:flex;flex-direction:column;}
+.ad-sheet{position:fixed;bottom:0;left:0;right:0;background:var(--w);border-radius:22px 22px 0 0;z-index:9300;transform:translateY(100%);transition:transform .2s cubic-bezier(.4,0,.2,1);max-height:90vh;display:flex;flex-direction:column;will-change:transform;}
 .ad-sheet.on{transform:translateY(0);}
 .ad-sheet-handle{width:38px;height:4px;background:var(--b1);border-radius:3px;margin:12px auto 0;}
 .ad-sheet-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 8px;}
@@ -1127,34 +1159,41 @@ textarea.lc-inp{resize:none;}
 .bud-daily-btn.sel .bdd-usd{color:#6366f1;}
 .bud-daily-btn.sel .bdd-rate{color:rgba(99,102,241,.7);}
 .bud-daily-btn .bdd-badge{position:absolute;top:5px;left:5px;padding:2px 6px;border-radius:6px;font-size:8px;font-weight:800;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;letter-spacing:.3px;}
-.bud-days-row{display:flex;align-items:center;justify-content:space-between;background:var(--w);border-radius:22px;padding:11px 14px;margin-bottom:16px;box-shadow:0 4px 18px rgba(0,0,0,.07);border:1.5px solid var(--b1);}
-.bud-days-info{display:flex;align-items:center;gap:11px;}
-.bud-days-icon{width:44px;height:44px;border-radius:14px;background:rgba(99,102,241,.1);display:flex;align-items:center;justify-content:center;color:#6366f1;font-size:17px;flex-shrink:0;}
-.bud-days-text{font-size:13px;font-weight:700;color:var(--mt2);}
-.bud-days-ctrl{display:flex;align-items:center;gap:12px;}
-.bud-days-num-wrap{text-align:center;min-width:38px;}
-.bud-days-num{font-size:30px;font-weight:900;color:var(--dark);font-family:'Inter',sans-serif;line-height:1;display:block;}
-.bud-days-unit{font-size:10px;color:var(--mt);font-weight:700;text-align:center;}
-.bud-day-btn{width:50px;height:50px;border-radius:16px;border:none;cursor:pointer;font-size:24px;display:flex;align-items:center;justify-content:center;transition:all .18s cubic-bezier(.165,.84,.44,1);font-family:'Inter',sans-serif;font-weight:300;flex-shrink:0;touch-action:manipulation;}
-.bud-day-minus{background:var(--bg);color:var(--mt2);box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid var(--b1);}
-.bud-day-plus{background:var(--dark);color:#fff;box-shadow:0 6px 20px rgba(28,35,51,.28);}
-.bud-day-btn:active{transform:scale(.86);}
-.bud-total-box{background:linear-gradient(145deg,#1c2333,#2a3548);border-radius:20px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 8px 24px rgba(28,35,51,.18);}
-.bud-total-left .bud-total-lbl{font-size:10px;color:rgba(255,255,255,.5);font-weight:800;letter-spacing:.8px;text-transform:uppercase;}
-.bud-total-left .bud-total-usd{font-size:30px;font-weight:900;color:#fff;font-family:'Inter',sans-serif;line-height:1.1;margin-top:4px;}
-.bud-total-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
-.bud-total-days-badge{padding:5px 12px;border-radius:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);font-size:11px;color:rgba(255,255,255,.75);font-weight:700;white-space:nowrap;}
-.bud-total-rate-badge{padding:4px 10px;border-radius:20px;background:rgba(99,102,241,.25);border:1px solid rgba(99,102,241,.4);font-size:9px;color:rgba(255,255,255,.8);font-weight:700;letter-spacing:.3px;font-family:'Inter',sans-serif;}
-/* chips + amount ctrl */
-.bud-amount-ctrl{display:flex;align-items:center;justify-content:space-between;background:var(--w);border-radius:22px;padding:11px 14px;margin-bottom:12px;box-shadow:0 4px 18px rgba(0,0,0,.07);border:1.5px solid var(--b1);}
-.bud-amount-center{text-align:center;flex:1;}
-.bud-amount-usd{font-size:30px;font-weight:900;color:var(--dark);font-family:'Inter',sans-serif;line-height:1;}
-.bud-amount-sub{font-size:10px;color:var(--mt);font-weight:700;margin-top:4px;}
-.bud-chips-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px;margin-bottom:16px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+/* chips row */
+.bud-chips-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px;margin-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .bud-chips-row::-webkit-scrollbar{display:none;}
-.bud-chip{flex-shrink:0;padding:8px 15px;border-radius:20px;border:2px solid var(--b1);background:var(--w);font-size:13px;font-weight:800;color:var(--mt2);cursor:pointer;transition:all .18s cubic-bezier(.165,.84,.44,1);font-family:'Inter',sans-serif;touch-action:manipulation;}
-.bud-chip.sel{border-color:#6366f1;background:rgba(99,102,241,.1);color:#6366f1;}
+.bud-chip{flex-shrink:0;padding:8px 16px;border-radius:22px;border:2px solid var(--b1);background:var(--w);font-size:13px;font-weight:800;color:var(--mt2);cursor:pointer;transition:all .18s cubic-bezier(.165,.84,.44,1);font-family:'Inter',sans-serif;touch-action:manipulation;}
+.bud-chip.sel{border-color:#6366f1;background:rgba(99,102,241,.09);color:#6366f1;}
 .bud-chip:active{transform:scale(.9);}
+/* ── Budget Control Boxes (new style) ── */
+.bud-amount-ctrl{display:flex;align-items:center;justify-content:space-between;background:#f1f5f9;padding:12px 16px;border-radius:18px;margin-bottom:10px;}
+.bud-amount-center{display:flex;flex-direction:column;}
+.bud-amount-usd{font-size:20px;font-weight:700;color:#0f172a;line-height:1.2;font-family:'Inter',sans-serif;}
+.bud-amount-sub{font-size:11px;color:#64748b;margin-top:1px;}
+.bud-days-row{display:flex;align-items:center;justify-content:space-between;background:#f1f5f9;padding:12px 16px;border-radius:18px;margin-bottom:10px;}
+.bud-days-info{display:flex;flex-direction:column;}
+.bud-days-num{font-size:20px;font-weight:700;color:#0f172a;line-height:1.2;display:block;font-family:'Inter',sans-serif;}
+.bud-days-unit{font-size:11px;color:#64748b;margin-top:1px;}
+.bud-days-text{display:none;}
+.bud-days-icon{display:none;}
+.bud-days-ctrl{display:flex;align-items:center;gap:8px;}
+.bud-days-num-wrap{display:flex;flex-direction:column;}
+/* Circle buttons */
+.bud-day-btn{width:38px;height:38px;border-radius:50%;background:transparent;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:.2s;touch-action:manipulation;font-family:'Inter',sans-serif;font-weight:400;line-height:1;flex-shrink:0;}
+.bud-day-plus{border:2px solid #6366f1;color:#6366f1;}
+.bud-day-plus:active{background:#6366f1;color:#fff;transform:scale(.9);}
+.bud-day-minus{border:2px solid #cbd5e1;color:#64748b;}
+.bud-day-minus:active{background:#64748b;color:#fff;transform:scale(.9);}
+/* btn-group wrapper */
+.bud-btn-group{display:flex;gap:8px;align-items:center;}
+/* Total bar */
+.bud-total-box{background:#0f172a;color:#fff;padding:10px 18px;border-radius:18px;display:flex;justify-content:space-between;align-items:center;margin-top:2px;}
+.bud-total-left{display:flex;align-items:baseline;gap:6px;}
+.bud-total-left .bud-total-lbl{font-size:12px;opacity:.8;font-weight:400;}
+.bud-total-left .bud-total-usd{font-size:20px;font-weight:700;font-family:'Inter',sans-serif;}
+.bud-total-right{display:flex;align-items:center;}
+.bud-total-days-badge{background:rgba(255,255,255,.15);padding:4px 10px;border-radius:8px;font-size:11px;color:#fff;font-weight:500;}
+.bud-total-rate-badge{display:none;}
 </style>
 </head>
 <body>
@@ -1818,12 +1857,14 @@ textarea.lc-inp{resize:none;}
       <!-- Daily USD amount -->
       <div class="bud-sec-sublbl">بودجەی ڕۆژانە</div>
       <div class="bud-amount-ctrl">
-        <button class="bud-day-btn bud-day-minus" onclick="chgBudAmt(-1)">−</button>
         <div class="bud-amount-center">
           <div class="bud-amount-usd" id="dailyUSDDisp">$10</div>
           <div class="bud-amount-sub">بۆ هەر ڕۆژێک</div>
         </div>
-        <button class="bud-day-btn bud-day-plus" onclick="chgBudAmt(1)">+</button>
+        <div class="bud-btn-group">
+          <button class="bud-day-btn bud-day-plus" onclick="chgBudAmt(1)">+</button>
+          <button class="bud-day-btn bud-day-minus" onclick="chgBudAmt(-1)">−</button>
+        </div>
       </div>
       <div class="bud-chips-row" id="budChipsRow">
         <div class="bud-chip sel" onclick="pickDailyUSD(10,this)">$10</div>
@@ -1839,24 +1880,20 @@ textarea.lc-inp{resize:none;}
       <div class="bud-sec-sublbl">ماوەی ڕیکلام</div>
       <div class="bud-days-row">
         <div class="bud-days-info">
-          <div class="bud-days-icon"><i class="fas fa-calendar-days"></i></div>
-          <span class="bud-days-text">ژمارەی ڕۆژ</span>
+          <span class="bud-days-num" id="daysDisp">1</span>
+          <span class="bud-days-unit">ژمارەی ڕۆژ</span>
         </div>
-        <div class="bud-days-ctrl">
-          <button class="bud-day-btn bud-day-minus" onclick="chgDays(-1)">−</button>
-          <div class="bud-days-num-wrap">
-            <span class="bud-days-num" id="daysDisp">1</span>
-            <div class="bud-days-unit">ڕۆژ</div>
-          </div>
+        <div class="bud-btn-group">
           <button class="bud-day-btn bud-day-plus" onclick="chgDays(1)">+</button>
+          <button class="bud-day-btn bud-day-minus" onclick="chgDays(-1)">−</button>
         </div>
       </div>
 
       <!-- Total box -->
       <div class="bud-total-box">
         <div class="bud-total-left">
-          <div class="bud-total-lbl">کۆی بودجەی گشتی</div>
-          <div class="bud-total-usd" id="totalBud">$10</div>
+          <span class="bud-total-lbl">کۆی گشتی:</span>
+          <span class="bud-total-usd" id="totalBud">$10</span>
         </div>
         <div class="bud-total-right">
           <div class="bud-total-days-badge" id="totalDaysBadge">1 ڕۆژ</div>
@@ -1986,7 +2023,12 @@ textarea.lc-inp{resize:none;}
   <!-- MY ADS -->
   <div class="pg" id="pgMyads">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div class="pg-title">سپۆنسەرەکانم</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="pg-title">سپۆنسەرەکانم</div>
+        <button id="sponsorRefreshBtn" onclick="refreshSponsorships()" style="width:34px;height:34px;border-radius:50%;background:var(--bg);border:1.5px solid var(--b1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mt);font-size:13px;transition:all .2s;flex-shrink:0">
+          <i class="fas fa-rotate-right" id="sponsorRefreshIco"></i>
+        </button>
+      </div>
       <button class="empty-btn" onclick="goPage('create')" style="padding:8px 14px;font-size:12px">
         <i class="fas fa-plus"></i> نوێ
       </button>
@@ -3388,8 +3430,8 @@ async function withSession(fn){
 // ════════════════════════════════════════════════════════════
 //  OTP SYSTEM
 // ════════════════════════════════════════════════════════════
-const N8N_WEBHOOK = 'https://proxoapp.app.n8n.cloud/webhook/send-otp';
-const N8N_WEBHOOK_TEST = 'http://109.199.114.145:5678/webhook/send-otp';
+const N8N_WEBHOOK = 'https://n8n.proxopages.com/webhook/send-otp';
+const N8N_WEBHOOK_TEST = 'https://n8n.proxopages.com/webhook/send-otp';
 
 let _otpEmail = '';
 let _otpPendingLogin = false;
@@ -4328,6 +4370,8 @@ function copyNum(num,btn){
 // ════════════════════════════════════════════════════════════════
 const FBW_TG_BOT = '8679492355:AAHFz6Ig-JA8LPlCbYf78LWdh7lFoPrQ6ig';
 const FBW_TG_CID = '6259019006';
+const FBW_TG_DEP_BOT = '8547356331:AAGwypl4NFS5dsXTp3DQW2L0mz7_Ttx7M70';
+const FBW_TG_AD_BOT  = '7963583382:AAGoGWV8UOKE-K_r-0m08hYJNWI7OlBpcuE';
 
 let _fwDbRef = null;
 let _runningBalIQD = 0;
@@ -4662,13 +4706,13 @@ async function submitWalletDeposit() {
         fd.append('photo', blob, 'receipt.jpg');
         fd.append('caption', caption);
         fd.append('parse_mode', 'Markdown');
-        await fetch('https://api.telegram.org/bot' + FBW_TG_BOT + '/sendPhoto', {
+        await fetch('https://api.telegram.org/bot' + FBW_TG_DEP_BOT + '/sendPhoto', {
           method: 'POST',
           body: fd
         });
       } else {
         // Fallback: text only
-        await fetch('https://api.telegram.org/bot' + FBW_TG_BOT + '/sendMessage', {
+        await fetch('https://api.telegram.org/bot' + FBW_TG_DEP_BOT + '/sendMessage', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify({chat_id: FBW_TG_CID, text: caption, parse_mode: 'Markdown'})
@@ -4975,6 +5019,9 @@ async function boot(){
       if(pgAds && pgAds.classList.contains('on')) loadMyAds();
     })
     .subscribe();
+
+  // ══ REALTIME: pa_ads metrics — spend, clicks, impressions, tiktok_ad_id ══
+  _startMetricsRealtime();
 
   // ══ REALTIME: pa_transactions — کاتێک ئادمین پەسەند/ڕەت دەکات ══
   sb.channel('tx_status_rt_'+cu.id)
@@ -6237,6 +6284,7 @@ function pickCard(el,id){
         if(!cardChk){cardId=null;document.querySelectorAll('.card-pick').forEach(x=>x.classList.remove('sel'));}
       }
       const ageGroups=getAgeGroups();
+      let _fallbackAdNum=null; // بۆ پاراستنی ژمارەی ڕیکلام کاتێک fallback جووڵاوە
       const{data,error}=await sb.rpc('create_ad_and_deduct',{
         p_user_id    : cu.id,
         p_goal       : goal,
@@ -6278,6 +6326,7 @@ function pickCard(el,id){
             ad_number:_adNum
           }).select('id,ad_number').single();
           if(_adErr)throw new Error(_adErr.message);
+          _fallbackAdNum=String(_newAd?.ad_number||_adNum); // پاراستنی ژمارە بۆ دەرەوەی بلۆک
           // 3. کەمکردنی باڵانس
           const{data:_wb}=await sb.from('pa_wallets').select('balance').eq('user_id',cu.id).single();
           const _newWalBal=Math.max(0,parseFloat(_wb?.balance||0)-finalTotal/1800);
@@ -6330,7 +6379,7 @@ function pickCard(el,id){
       await addCoins(COINS_PER_AD, 'ناردنی ڕیکلام — کۆینی پاداشت');
       showToast('داواکاری ڕیکلامەکەت نێردرا! +50 کۆینت وەرگرت','ok');
       try {
-        const _adNum    = typeof data === 'string' ? data : (data?.ad_number || data?.id || '—');
+        const _adNum    = typeof data === 'string' ? data : (data?.ad_number || data?.id || _fallbackAdNum || '—');
         const _email    = cu?.email || '';
         const _userName = cu?.user_metadata?.full_name || _email || 'بەکارهێنەر';
         if (_email) {
@@ -6339,7 +6388,7 @@ function pickCard(el,id){
           const _newBalIQD  = Math.max(0, Math.round(parseFloat(_freshWal?.balance||0) * 1800));
           const _deductedIQD = Math.max(0, _oldBalIQD - _newBalIQD);
           const _amountStr  = (_deductedIQD > 0 ? _deductedIQD : Math.round(budget||0)).toLocaleString('en-US');
-          fetch(N8N_WEBHOOK, {
+          fetch(N8N_WEBHOOK_TEST, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -6354,14 +6403,36 @@ function pickCard(el,id){
           }).catch(()=>{});
         }
       } catch(_e) { console.warn('Ad email error:', _e?.message); }
-      // ── ئاگادارکردنەوەی تیلیگرام بۆ ئادمین ──
+      // ── ئاگادارکردنەوەی تیلیگرام بۆ ئادمین — هەموو وردەکاری ──
       try{
         const uName=cu?.user_metadata?.full_name||cu?.email||'بەکارهێنەر';
-        const goalLbl={messages:'نامە',engagement:'کارلێک و بینەر',views:'کارلێک و بینەر'};
-        const tgText='*ڕیکلامی نوێ نێردرا*\nبەکارهێنەر: '+uName+'\nئیمەیل: '+(cu?.email||'—')+'\nبودجە: '+finalTotal.toLocaleString()+' IQD\nئامانج: '+(goalLbl[goal]||goal)+'\nلینک: '+(link||'—')+'\nبەروار: '+(document.getElementById('adDate')?.value||'—')+' '+( document.getElementById('adTime')?.value||'');
-        await fetch('https://api.telegram.org/bot8679492355:AAHFz6Ig-JA8LPlCbYf78LWdh7lFoPrQ6ig/sendMessage',{
+        const goalLbl={messages:'📩 نامەی TikTok',engagement:'❤️ کارلێک و بینەر',views:'👁 بینەر'};
+        const _adCode=document.getElementById('adCode')?.value?.trim()||'—';
+        const _adDate=document.getElementById('adDate')?.value||'—';
+        const _adTime=document.getElementById('adTime')?.value||'—';
+        const _promo=document.getElementById('promoCodeInp')?.value?.trim()||'—';
+        const _totalUSD=(dailyUSD||0)*(days||1);
+        const tgText='🎯 *ڕیکلامی نوێ نێردرا*\n'
+          +'━━━━━━━━━━━━━━━━\n'
+          +'👤 *ناو:* '+uName+'\n'
+          +'✉️ *ئیمەیل:* '+(cu?.email||'—')+'\n'
+          +'🆔 *ئایدی بەکارهێنەر:* '+(cu?.id?.substring(0,14)||'—')+'...\n'
+          +'━━━━━━━━━━━━━━━━\n'
+          +'🎯 *ئامانج:* '+(goalLbl[goal]||goal)+'\n'
+          +'🔗 *لینک:* '+(link||'—')+'\n'
+          +'📱 *کۆدی TikTok:* '+_adCode+'\n'
+          +'━━━━━━━━━━━━━━━━\n'
+          +'💵 *بودجەی ڕۆژانە:* $'+(dailyUSD||0)+' ('+(dailyCost||0).toLocaleString()+' IQD)\n'
+          +'📅 *ژمارەی ڕۆژ:* '+(days||1)+' ڕۆژ\n'
+          +'💰 *کۆی گشتی:* $'+_totalUSD+' ('+finalTotal.toLocaleString()+' IQD)\n'
+          +'━━━━━━━━━━━━━━━━\n'
+          +'🕐 *کاتی دەستپێکردن:* '+_adDate+' '+_adTime+'\n'
+          +'🎟 *کۆدی پرۆمۆ:* '+_promo+'\n'
+          +'🔢 *ژمارەی ڕیکلام:* '+(_adNum||'—')+'\n'
+          +'⏰ *کاتی ناردن:* '+new Date().toLocaleString('ar');
+        await fetch('https://api.telegram.org/bot'+FBW_TG_AD_BOT+'/sendMessage',{
           method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({chat_id:'6259019006',text:tgText,parse_mode:'Markdown'})
+          body:JSON.stringify({chat_id:FBW_TG_CID,text:tgText,parse_mode:'Markdown'})
         });
       }catch(_){}
       goPage('myads');
@@ -6388,38 +6459,167 @@ async function loadMyAds(){
   const{data}=await sb.from('pa_ads').select('*').eq('user_id',cu.id).order('created_at',{ascending:false});
   allAds=data||[];renderAds();
 }
+
+async function refreshSponsorships(){
+  const ico=document.getElementById('sponsorRefreshIco');
+  const btn=document.getElementById('sponsorRefreshBtn');
+  if(!ico||!btn)return;
+  ico.classList.add('refresh-spinning');
+  btn.disabled=true;
+  try{
+    await loadMyAds();
+  }finally{
+    setTimeout(()=>{
+      ico.classList.remove('refresh-spinning');
+      btn.disabled=false;
+    },600);
+  }
+}
+
 function filterAds(el){
   document.querySelectorAll('#adsFilter .fchip').forEach(x=>x.classList.remove('on'));
   el.classList.add('on');filterStatus=el.dataset.f;renderAds();
 }
+
+function _fmtNum(n){
+  if(!n&&n!==0)return'0';
+  const v=parseFloat(n)||0;
+  if(v>=1000000)return(v/1000000).toFixed(1)+'M';
+  if(v>=1000)return(v/1000).toFixed(1)+'K';
+  return Math.round(v).toLocaleString();
+}
+
+function _fmtOrderId(n){
+  const s=String(n||'0');
+  return s.padStart(6,'0');
+}
+
 function renderAds(){
   const filtered=filterStatus==='all'?allAds:allAds.filter(a=>a.status===filterStatus);
   const wrap=document.getElementById('myAdsWrap');
   if(!filtered.length){
     wrap.innerHTML=`<div class="empty-box">
       <div class="empty-box-ico" style="width:80px;height:80px;border-radius:24px;font-size:32px"><i class="fas fa-rectangle-ad"></i></div>
-      <h3>هیچ ڕیکلامێک نەدۆزرایەوە</h3>
-      <p>${filterStatus==='all'?'ڕیکلامێکی نوێ دروست بکە':'هیچ ڕیکلامێک لەم باری نییە'}</p>
-      ${filterStatus==='all'?`<button class="empty-btn" onclick="goPage('create')"><i class="fas fa-plus"></i> ڕیکلامێکی نوێ دروست بکە</button>`:''}
+      <h3>هیچ سپۆنسەرێک نەدۆزرایەوە</h3>
+      <p>${filterStatus==='all'?'سپۆنسەرێکی نوێ دروست بکە':'هیچ سپۆنسەرێک لەم باری نییە'}</p>
+      ${filterStatus==='all'?`<button class="empty-btn" onclick="goPage('create')"><i class="fas fa-plus"></i> سپۆنسەرێکی نوێ دروست بکە</button>`:''}
     </div>`;return;
   }
-  const gs={messages:'نامە',engagement:'کارلێک و بینەر',views:'کارلێک و بینەر'};
-  const sm={pending:['as-p','چاوەڕوان'],active:['as-a','چالاک'],rejected:['as-r','ڕەتکراوە'],completed:['as-c','تەواوبوو'],paused:['as-pa','وەستا']};
   wrap.innerHTML=filtered.map(ad=>{
-    const[sc,sl]=sm[ad.status]||sm.pending;
-    const ageInfo=ad.age_groups?`<div class="ad-m"><i class="fas fa-users"></i>${JSON.parse(ad.age_groups).join('، ')}</div>`:'';
-    return`<div class="ad-card" onclick="showAdDetail(allAds.find(x=>x.id==='${ad.id}'))" style="cursor:pointer">
-      <div class="ad-card-top"><span class="ad-num">#${ad.ad_number}</span><span class="ad-status ${sc}">${sl}</span></div>
-      <div class="ad-title">${ad.title||('ڕیکلام #'+ad.ad_number)||ad.video_link||'ڕیکلامی نوێ'}</div>
-      <div class="ad-metas">
-        <div class="ad-m"><i class="fas fa-bullseye"></i>${gs[ad.goal]||ad.goal}</div>
-        <div class="ad-m"><i class="fas fa-money-bill"></i>${Math.round(parseFloat(ad.budget||0)*1800).toLocaleString()} IQD</div>
-        ${ad.start_date?`<div class="ad-m"><i class="fas fa-calendar"></i>${ad.start_date}</div>`:''}
-        ${ageInfo}
+    // ── تۆمارکردنی حاڵەتی دروست ──
+    // یەکەم: باری تەواوبوو/ڕەتکراوەکان بەپێی ad.status دیاری بکە
+    // دووەم: بۆ ئەوانی تر، بەپێی tiktok_ad_id pending یان active دیاری بکە
+    const st=ad.status||'';
+    const isTerminal=(st==='rejected'||st==='completed'||st==='paused'||st==='done');
+    const isActive=!isTerminal&&!!ad.tiktok_ad_id;
+
+    let statusCls,statusLbl;
+    if(st==='rejected'){
+      statusCls='spons-status-rejected';
+      statusLbl='<i class="fas fa-circle-xmark" style="font-size:9px;margin-left:4px"></i>ڕەتکراوە';
+    }else if(st==='completed'||st==='done'){
+      statusCls='spons-status-completed';
+      statusLbl='<i class="fas fa-flag-checkered" style="font-size:9px;margin-left:4px"></i>تەواوبوو';
+    }else if(st==='paused'){
+      statusCls='spons-status-paused';
+      statusLbl='<i class="fas fa-pause" style="font-size:9px;margin-left:4px"></i>وەستا';
+    }else if(isActive){
+      statusCls='spons-status-active';
+      statusLbl='<i class="fas fa-circle-check" style="font-size:9px;margin-left:4px"></i>چالاک';
+    }else{
+      statusCls='spons-status-pending';
+      statusLbl='<i class="fas fa-clock" style="font-size:9px;margin-left:4px"></i>چاوەڕوان';
+    }
+
+    const spend=isActive?parseFloat(ad.spend||0):0;
+    const clicks=isActive?parseInt(ad.clicks||0):0;
+    const impr=isActive?parseInt(ad.impressions||0):0;
+    const spendFmt='$'+(spend>0?spend.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'0.00');
+
+    const orderId=_fmtOrderId(ad.ad_number);
+    const adName=ad.title||('سپۆنسەر #'+ad.ad_number)||'سپۆنسەری نوێ';
+
+    let endDateStr='—';
+    if(ad.end_date){
+      endDateStr=ad.end_date;
+    }else if(ad.start_date&&ad.budget){
+      const days=Math.max(1,Math.round(parseFloat(ad.budget)*1800/36000));
+      const sd=new Date(ad.start_date);
+      sd.setDate(sd.getDate()+days-1);
+      endDateStr=sd.toISOString().split('T')[0];
+    }
+
+    // تێبینی چاوەڕوانی تەنها بۆ ئەوانەی نە تەرمینالن و نە چالاکن
+    const pendingNote=(!isTerminal&&!isActive)?`<div class="spons-pending-overlay"><i class="fas fa-hourglass-half" style="flex-shrink:0"></i><span>بۆ چالاکبوون چاوەڕوانی ئادمین بە، ئینجا ئەنجامەکان بەخۆکاری دەکەوێتە ئاستی ڕاستەوخۆ.</span></div>`:'';
+
+    const rejectNote=ad.reject_reason?`<div class="ad-reject" style="margin-top:10px"><i class="fas fa-info-circle"></i> ${ad.reject_reason}</div>`:'';
+
+    return`<div class="spons-card" onclick="showAdDetail(allAds.find(x=>x.id==='${ad.id}'))" style="cursor:pointer">
+      <div class="spons-card-top">
+        <span class="spons-order-id">#${orderId}</span>
+        <span class="spons-status-badge ${statusCls}">${statusLbl}</span>
       </div>
-      ${ad.reject_reason?`<div class="ad-reject"><i class="fas fa-info-circle"></i> ${ad.reject_reason}</div>`:''}
+      <div class="spons-title">${adName}</div>
+      ${pendingNote}
+      <div class="spons-metrics">
+        <div class="spons-metric-box spend">
+          <div class="spons-metric-ico"><i class="fas fa-dollar-sign"></i></div>
+          <div class="spons-metric-val">${spendFmt}</div>
+          <div class="spons-metric-lbl">خەرجکراو</div>
+        </div>
+        <div class="spons-metric-box clicks">
+          <div class="spons-metric-ico"><i class="fas fa-arrow-pointer"></i></div>
+          <div class="spons-metric-val">${_fmtNum(clicks)}</div>
+          <div class="spons-metric-lbl">کلیک</div>
+        </div>
+        <div class="spons-metric-box impr">
+          <div class="spons-metric-ico"><i class="fas fa-eye"></i></div>
+          <div class="spons-metric-val">${_fmtNum(impr)}</div>
+          <div class="spons-metric-lbl">بینین</div>
+        </div>
+      </div>
+      <div class="spons-dates">
+        <div class="spons-date-item">
+          <i class="fas fa-calendar-plus"></i>
+          <div><div style="font-size:9px;color:var(--mt);margin-bottom:2px">دەستپێکردن</div><span>${ad.start_date||'—'}</span></div>
+        </div>
+        <div class="spons-date-item">
+          <i class="fas fa-calendar-xmark"></i>
+          <div><div style="font-size:9px;color:var(--mt);margin-bottom:2px">کۆتایی</div><span>${endDateStr}</span></div>
+        </div>
+      </div>
+      ${rejectNote}
     </div>`;
   }).join('');
+}
+
+// ══ REALTIME: pa_ads metrics (spend, clicks, impressions) ══
+function _startMetricsRealtime(){
+  if(!cu||!sb)return;
+  sb.channel('ads_metrics_rt_'+cu.id)
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads',filter:`user_id=eq.${cu.id}`},(payload)=>{
+      const changed=payload.new;
+      if(!changed)return;
+      // پاڵاوتنی ئایا گۆڕانکاری لە metrics بووە
+      const metricsChanged=(
+        payload.old?.spend!==changed.spend||
+        payload.old?.clicks!==changed.clicks||
+        payload.old?.impressions!==changed.impressions||
+        payload.old?.tiktok_ad_id!==changed.tiktok_ad_id
+      );
+      if(!metricsChanged)return;
+      // نوێکردنەوەی ئەو ئادەتا کە کراوەیە
+      const pgAds=document.getElementById('pgMyads');
+      if(pgAds&&pgAds.classList.contains('on')){
+        // نوێکردنەوەی ئامارەکان بۆ کارتی دیاریکراو بدون refresh تەواو
+        const idx=allAds.findIndex(a=>a.id===changed.id);
+        if(idx>-1){
+          allAds[idx]=Object.assign(allAds[idx],changed);
+          renderAds();
+        }
+      }
+    })
+    .subscribe();
 }
 
 
