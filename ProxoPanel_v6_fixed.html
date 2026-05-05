@@ -568,6 +568,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-section">مامەڵەکان</div>
     <div class="sb-item" onclick="goPage('deposits')"><i class="fas fa-money-bill-wave"></i> داواکاری پارەدان <span class="sb-badge yw" id="sbDepCount">0</span></div>
     <div class="sb-item" onclick="goPage('ads')"><i class="fas fa-rectangle-ad"></i> ڕیکلامەکان <span class="sb-badge yw" id="sbAdsCount">0</span></div>
+    <div class="sb-item" onclick="goPage('approval')"><i class="fas fa-shield-check" style="color:#10b981"></i> Approval Workflow <span class="sb-badge yw" id="sbApprovalCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('txlog')"><i class="fas fa-list-check" style="color:#38bdf8"></i> مێژووی مامەڵەکان</div>
     <div class="sb-section">ئامرازەکان</div>
     <div class="sb-item" onclick="goPage('notifications')"><i class="fas fa-bell"></i> ناردنی ئاگاداری</div>
@@ -579,6 +580,8 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-item" onclick="goPage('requests')"><i class="fas fa-inbox" style="color:#f59e0b"></i> داواکاریەکانی جزدان <span class="sb-badge yw" id="sbReqCount" style="display:none">0</span></div>
     <div class="sb-section">دارایی</div>
     <div class="sb-item" onclick="goPage('revenue')"><i class="fas fa-chart-line" style="color:#16a34a"></i> داهاتی ڕیکلامەکان</div>
+    <div class="sb-section">سیستەم</div>
+    <div class="sb-item" onclick="goPage('maintenance')"><i class="fas fa-triangle-exclamation" style="color:#ef4444"></i> ڕاگرتنی پەڕەکە</div>
     <div class="sb-section">خەڵات</div>
     <div class="sb-item" onclick="goPage('giveaway')"><i class="fas fa-gift" style="color:#a855f7"></i> خەڵاتی هەفتانە</div>
   </div>
@@ -696,6 +699,22 @@ tr:hover td{background:rgba(28,35,51,.015);}
         <div class="ad-table-wrap tbl-scroll" id="adsTableWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
+      </div>
+    </div>
+
+    <!-- ══ APPROVAL WORKFLOW ══ -->
+    <div class="pg" id="pgApproval">
+      <div class="sec-hdr" style="flex-wrap:wrap;gap:10px">
+        <h3><i class="fas fa-shield-check" style="margin-left:8px;color:#10b981"></i>Approval Workflow — داواکاریەکانی چاوەڕوان</h3>
+        <div class="act-btn dark" onclick="loadApprovalWorkflow()" style="padding:8px 14px"><i class="fas fa-rotate-right"></i> نوێکردنەوە</div>
+      </div>
+      <!-- Info box -->
+      <div class="info-box" style="margin-bottom:16px;border-right:3px solid #10b981">
+        <i class="fas fa-info-circle" style="margin-left:6px;color:#10b981"></i>
+        تەنها ڕیکلامەکانی <strong>چاوەڕوان</strong> لێرە دەردەکەوێن. کلیک بکە لەسەر <strong>Review</strong> بۆ داخلکردنی ئایدی تیکتاک و بەرواری دەستپێکردن / کۆتایی، پاشان پەسەند بکە.
+      </div>
+      <div class="tbl-wrap" id="approvalTableWrap">
+        <div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>
       </div>
     </div>
 
@@ -818,6 +837,78 @@ tr:hover td{background:rgba(28,35,51,.015);}
         </div>
         <div id="fbBannerList" style="display:flex;flex-direction:column;gap:10px">
           <div class="empty"><i class="fas fa-images"></i><p>هیچ بانەرێک نییە</p></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══ MAINTENANCE MODE ══ -->
+    <div class="pg" id="pgMaintenance">
+      <div class="sec-hdr">
+        <h3><i class="fas fa-triangle-exclamation" style="margin-left:8px;color:#ef4444"></i>ڕاگرتنی پەڕەکە</h3>
+      </div>
+
+      <!-- Status Card -->
+      <div style="background:var(--w);border:2px solid var(--b1);border-radius:18px;padding:20px;margin-bottom:16px" id="maintStatusCard">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="width:52px;height:52px;border-radius:14px;background:rgba(239,68,68,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0" id="maintIcoWrap">
+            <i class="fas fa-circle-check" style="color:#16a34a;font-size:22px" id="maintStatusIco"></i>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:800;color:var(--dark)" id="maintStatusTitle">پەڕەکە چالاکە</div>
+            <div style="font-size:12px;color:var(--mt);margin-top:3px" id="maintStatusSub">ئەپلیکەیشن بۆ بەکارهێنەران بەردەستە</div>
+          </div>
+          <div>
+            <span class="badge active" id="maintBadge">چالاک</span>
+          </div>
+        </div>
+        <div id="maintTimerRow" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:12px">
+          <div style="font-size:11px;font-weight:700;color:#ef4444;margin-bottom:4px"><i class="fas fa-clock" style="margin-left:5px"></i>کات تا کردنەوەی ئۆتۆماتیکی</div>
+          <div style="font-size:22px;font-weight:900;color:#ef4444;font-family:'Inter',sans-serif" id="maintCountdown">—</div>
+          <div style="font-size:11px;color:var(--mt);margin-top:4px" id="maintEndsAt"></div>
+        </div>
+        <div id="maintReasonRow" style="display:none;margin-top:14px;padding:10px 14px;background:var(--bg);border-radius:11px;font-size:12px;color:var(--dark)">
+          <i class="fas fa-info-circle" style="margin-left:6px;color:var(--mt)"></i><span id="maintReasonDisp"></span>
+        </div>
+      </div>
+
+      <!-- Toggle Form -->
+      <div style="background:var(--w);border:1px solid var(--b1);border-radius:18px;padding:20px;margin-bottom:16px">
+        <div style="font-size:14px;font-weight:800;color:var(--dark);margin-bottom:16px"><i class="fas fa-toggle-on" style="margin-left:8px;color:var(--mt)"></i>کنترۆل</div>
+
+        <label class="modal-lbl" style="margin-top:0">هۆکاری ڕاگرتن <span style="font-size:10px;color:var(--mt)">(نیشاندەرێت بۆ بەکارهێنەران)</span></label>
+        <textarea class="minp mta" id="maintReason" placeholder="بۆ نموونە: باشترکردنی خزمەتگوزاریەکان..." style="min-height:80px"></textarea>
+
+        <label class="modal-lbl">کاتی ڕاگرتن</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px" id="maintDurPresets">
+          <div class="chip" onclick="setMaintDur(30,this)">30 خولەک</div>
+          <div class="chip" onclick="setMaintDur(60,this)">1 کاتژمێر</div>
+          <div class="chip" onclick="setMaintDur(120,this)">2 کاتژمێر</div>
+          <div class="chip" onclick="setMaintDur(0,this)">بەبێ ئەنجام (دەستی)</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+          <input class="minp" type="number" id="maintDurCustom" placeholder="کات بە خولەک" min="1" style="flex:1;margin:0;direction:ltr;text-align:left" oninput="document.querySelectorAll('#maintDurPresets .chip').forEach(x=>x.classList.remove('on'))">
+          <span style="font-size:12px;color:var(--mt);flex-shrink:0">خولەک</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button class="modal-btn rd" onclick="activateMaintenance()" id="maintOnBtn">
+            <i class="fas fa-triangle-exclamation"></i> ڕاگرتنی پەڕەکە
+          </button>
+          <button class="modal-btn dark" onclick="deactivateMaintenance()" id="maintOffBtn">
+            <i class="fas fa-circle-check"></i> کردنەوەی پەڕەکە
+          </button>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div style="background:var(--w);border:1px solid var(--b1);border-radius:18px;padding:16px">
+        <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:10px"><i class="fas fa-circle-info" style="margin-left:6px;color:var(--bl)"></i>زانیاری</div>
+        <div style="font-size:12px;color:var(--mt2);line-height:2">
+          • کاتێک پەڕەکە ڕادەگیرێت، بەکارهێنەران پێڕوو لە هۆکارەکە دەبینن<br>
+          • ئەگەر کاتێک دانێیت، دوای تەواوبوونی کاتەکە پەڕەکە ئۆتۆماتیکی دەکرێتەوە<br>
+          • ئادمینەکان دەتوانن هەمیشە بچنە ژوورەوە<br>
+          • پاشماوەی کاتەکە بە تایمەر لەسەر پەڕەکەی بەکارهێنەر دیارە
         </div>
       </div>
     </div>
@@ -1491,6 +1582,7 @@ const pageConfig={
   users:{title:'بەکارهێنەران',sub:'بەڕێوەبردنی هەژمارەکان',load:loadUsers},
   deposits:{title:'داواکاریەکانی پارەدان',sub:'پەسەندکردن و ڕەتکردنەوەی داواکاریەکان',load:loadDeposits},
   ads:{title:'ڕیکلامەکان',sub:'بەڕێوەبردنی ڕیکلامەکان',load:loadAds},
+  approval:{title:'Approval Workflow',sub:'پەسەندکردنی داواکاریەکانی چاوەڕوان — TikTok Ad ID و بەروار',load:loadApprovalWorkflow},
   txlog:{title:'مێژووی مامەڵەکان',sub:'هەموو مامەڵەکانی دارایی سیستەم',load:loadTxLog},
   promo:{title:'کۆدەکانی داشکاندن',sub:'دروستکردن و بەڕێوەبردنی کۆدەکان',load:loadPromos},
   notifications:{title:'ناردنی ئاگاداری',sub:'ناردن بۆ بەکارهێنەران',load:loadNotifHistory},
@@ -1500,6 +1592,7 @@ const pageConfig={
   giveaway:{title:'خەڵاتی هەفتانە',sub:'بەڕێوەبردنی قورعەی هەفتانە',load:loadGiveaway},
   requests:{title:'داواکاریەکانی جزدان',sub:'داواکاریەکانی بارکردن و کەمکردنی باڵانس (Firebase)'},
   revenue:{title:'داهاتی ڕیکلامەکان',sub:'پیوانەی داهات، تێچوو و قازانجی ڕیکلامەکان',load:loadRevenue},
+  maintenance:{title:'ڕاگرتنی پەڕەکە',sub:'کردنەوە و داخستنی ئەپلیکەیشن بۆ بەکارهێنەران',load:loadMaintenance},
 };
 
 let _curPage='dashboard';
@@ -1629,6 +1722,13 @@ async function loadDepBadge(){
 async function loadAdBadge(){
   const{count}=await sb.from('pa_ads').select('*',{count:'exact',head:true}).eq('status','pending');
   document.getElementById('sbAdsCount').textContent=count||0;
+  // Approval Workflow badge
+  const pendingCount = count||0;
+  const approvalBadge = document.getElementById('sbApprovalCount');
+  if(approvalBadge){
+    approvalBadge.textContent = pendingCount;
+    approvalBadge.style.display = pendingCount > 0 ? 'inline-flex' : 'none';
+  }
 }
 
 async function loadDashDeposits(){
@@ -2281,7 +2381,7 @@ function renderAdsTable(q=''){
       <td style="font-size:11px;color:var(--mt)">${new Date(a.created_at).toLocaleDateString('ku')}</td>
       <td onclick="event.stopPropagation()"><div class="act-grp">
         <div class="act-btn dark" onclick="showAdDetail('${a.id}')"><i class="fas fa-eye"></i></div>
-        ${a.status==='pending'?`<div class="act-btn gr" onclick="event.stopPropagation();updateAdStatus('${a.id}','${a.user_id}','active',${a.budget})"><i class="fas fa-check"></i> پەسەند</div>
+        ${a.status==='pending'?`<div class="act-btn gr" onclick="event.stopPropagation();openApproveModal('${a.id}')"><i class="fas fa-check-circle"></i> Review</div>
           <div class="act-btn rd" onclick="event.stopPropagation();showRejectReason('${a.id}','ad')"><i class="fas fa-times"></i> ڕەت</div>`:''}
         ${a.status==='active'?`<div class="act-btn yw" onclick="event.stopPropagation();updateAdStatus('${a.id}','${a.user_id}','paused',0)"><i class="fas fa-pause"></i></div>`:''}
         ${a.status==='paused'?`<div class="act-btn gr" onclick="event.stopPropagation();updateAdStatus('${a.id}','${a.user_id}','active',0)"><i class="fas fa-play"></i></div>`:''}
@@ -2304,7 +2404,7 @@ function renderAdsTable(q=''){
         <div class="user-card-date">${new Date(a.created_at).toLocaleDateString('ku')}</div>
       </div>
       ${a.status==='pending'?`<div class="ad-card-actions" onclick="event.stopPropagation()">
-        <div class="act-btn gr" onclick="updateAdStatus('${a.id}','${a.user_id}','active',${a.budget})"><i class="fas fa-check"></i> پەسەندکردن</div>
+        <div class="act-btn gr" onclick="openApproveModal('${a.id}')"><i class="fas fa-check-circle"></i> Review</div>
         <div class="act-btn rd" onclick="showRejectReason('${a.id}','ad')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>
       </div>`:''}
       ${a.status==='active'?`<div class="ad-card-actions" onclick="event.stopPropagation()">
@@ -2378,7 +2478,7 @@ async function showAdDetail(id){
     ${priceBreakdownHTML}
     <div class="sep"></div>
     <div class="act-grp" style="flex-wrap:wrap">
-      ${a.status==='pending'?`<div class="act-btn gr" style="flex:1" onclick="updateAdStatus('${a.id}','${a.user_id}','active',${a.budget});closeMo('moAdDetail')"><i class="fas fa-check"></i> پەسەندکردن</div>
+      ${a.status==='pending'?`<div class="act-btn gr" style="flex:1" onclick="openApproveModal('${a.id}');closeMo('moAdDetail')"><i class="fas fa-check-circle"></i> Review</div>
         <div class="act-btn rd" style="flex:1" onclick="showRejectReason('${a.id}','ad');closeMo('moAdDetail')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>`:''}
       ${a.status==='active'?`<div class="act-btn yw" style="flex:1" onclick="updateAdStatus('${a.id}','${a.user_id}','paused',0);closeMo('moAdDetail')"><i class="fas fa-pause"></i> وەستان</div>`:''}
       ${a.status==='paused'?`<div class="act-btn gr" style="flex:1" onclick="updateAdStatus('${a.id}','${a.user_id}','active',0);closeMo('moAdDetail')"><i class="fas fa-play"></i> دووبارە چالاک</div>`:''}
@@ -2408,6 +2508,145 @@ async function updateAdStatus(id,userId,newStatus,budget){
   }
   showToast('✅ ستاتۆس نوێکرایەوە','gr');
   loadAds();loadAdBadge();
+}
+
+// ══ APPROVAL WORKFLOW ══
+let _approvalPendingAds = [];
+
+async function loadApprovalWorkflow(){
+  const wrap = document.getElementById('approvalTableWrap');
+  if(!wrap) return;
+  wrap.innerHTML = '<div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>';
+  const {data: adsRaw} = await sb.from('pa_ads').select('*').eq('status','pending').order('created_at',{ascending:false});
+  const uids = [...new Set((adsRaw||[]).map(a=>a.user_id).filter(Boolean))];
+  const {data: profs} = await (uids.length ? sb.from('profiles').select('id,full_name,email').in('id',uids) : Promise.resolve({data:[]}));
+  const profMap = {}; (profs||[]).forEach(p=>{profMap[p.id]=p;});
+  _approvalPendingAds = (adsRaw||[]).map(a=>({...a,profiles:profMap[a.user_id]||null}));
+  // update sidebar badge
+  const badge = document.getElementById('sbApprovalCount');
+  if(badge){
+    badge.textContent = _approvalPendingAds.length;
+    badge.style.display = _approvalPendingAds.length > 0 ? 'inline-flex' : 'none';
+  }
+  if(!_approvalPendingAds.length){
+    wrap.innerHTML = '<div class="empty"><i class="fas fa-shield-check" style="color:#10b981"></i><p>هیچ داواکارییەکی چاوەڕوان نییە — هەموو پاک!</p></div>';
+    return;
+  }
+  const gs = {messages:'نامە',engagement:'کارلێک',views:'ڤیووو'};
+  const tableHTML = `<table>
+    <thead><tr><th>#</th><th>ناونیشان</th><th>بەکارهێنەر</th><th>بودجە</th><th>ئامانج</th><th>بەروار</th><th>کردارەکان</th></tr></thead>
+    <tbody>${_approvalPendingAds.map(a=>`<tr>
+      <td style="font-family:monospace;font-size:11px">#${a.ad_number||'—'}</td>
+      <td style="font-size:13px;font-weight:700">${a.title||'—'}</td>
+      <td style="font-size:12px;color:var(--mt)">${a.profiles?.full_name||'—'}<br><span style="font-size:10px">${a.profiles?.email||'—'}</span></td>
+      <td><span style="font-family:'Inter';font-weight:800;color:var(--rd)">${Math.round(parseFloat(a.budget||0)*1800).toLocaleString()} IQD</span></td>
+      <td style="font-size:11px">${gs[a.goal]||a.goal||'—'}</td>
+      <td style="font-size:11px;color:var(--mt)">${new Date(a.created_at).toLocaleDateString('ku')}</td>
+      <td><div class="act-grp">
+        <div class="act-btn gr" onclick="openApproveModal('${a.id}')"><i class="fas fa-check-circle"></i> Review</div>
+        <div class="act-btn rd" onclick="showRejectReason('${a.id}','ad')"><i class="fas fa-times"></i> ڕەت</div>
+      </div></td>
+    </tr>`).join('')}</tbody></table>`;
+
+  const cardsHTML = `<div class="ad-cards">${_approvalPendingAds.map(a=>`
+    <div class="ad-card">
+      <div class="ad-card-top">
+        <div class="mini-av" style="background:var(--bl);font-size:10px;font-weight:900">#${a.ad_number||'?'}</div>
+        <div class="ad-card-info">
+          <div class="ad-card-name">${a.title||'بێ ناونیشان'}</div>
+          <div class="ad-card-sub">${a.profiles?.full_name||'—'} • ${a.profiles?.email||'—'}</div>
+        </div>
+        <span class="badge pending">چاوەڕوان</span>
+      </div>
+      <div class="ad-card-meta">
+        <div class="user-card-stat rd"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(a.budget||0)*1800).toLocaleString()} IQD</div>
+        <div class="user-card-stat" style="font-size:11px">${gs[a.goal]||a.goal||'—'}</div>
+        <div class="user-card-date">${new Date(a.created_at).toLocaleDateString('ku')}</div>
+      </div>
+      <div class="ad-card-actions">
+        <div class="act-btn gr" onclick="openApproveModal('${a.id}')"><i class="fas fa-check-circle"></i> Review</div>
+        <div class="act-btn rd" onclick="showRejectReason('${a.id}','ad')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>
+      </div>
+    </div>`).join('')}</div>`;
+
+  wrap.innerHTML = tableHTML + cardsHTML;
+}
+
+let _approveAdId = '', _approveUserId = '', _approveAdBudget = 0;
+
+function openApproveModal(adId){
+  const ad = allAds.find(a=>a.id===adId) || _approvalPendingAds.find(a=>a.id===adId);
+  if(!ad){ showToast('ڕیکلام نەدۆزرایەوە','rd'); return; }
+  _approveAdId = ad.id;
+  _approveUserId = ad.user_id;
+  _approveAdBudget = parseFloat(ad.budget||0);
+  // Populate info
+  document.getElementById('approveAdTitle').textContent = ad.title || '—';
+  document.getElementById('approveAdUser').textContent = (ad.profiles?.full_name||'—') + ' · ' + (ad.profiles?.email||'—');
+  document.getElementById('approveAdBudget').textContent = Math.round(_approveAdBudget * 1800).toLocaleString() + ' IQD';
+  document.getElementById('approveTikTokId').value = ad.tiktok_ad_id || '';
+  document.getElementById('approveStartDate').value = ad.start_date ? ad.start_date.substring(0,10) : '';
+  document.getElementById('approveEndDate').value = ad.end_date ? ad.end_date.substring(0,10) : '';
+  clearFieldErr('approveTikTokId');
+  clearFieldErr('approveStartDate');
+  clearFieldErr('approveEndDate');
+  openMo('moApproveAd');
+}
+
+async function submitApproval(){
+  const tiktokId = (document.getElementById('approveTikTokId').value||'').trim();
+  const startDate = document.getElementById('approveStartDate').value;
+  const endDate = document.getElementById('approveEndDate').value;
+  let valid = true;
+  if(!tiktokId){ showFieldErr('approveTikTokId'); valid = false; }
+  if(!startDate){ showFieldErr('approveStartDate'); valid = false; }
+  if(!endDate){ showFieldErr('approveEndDate'); valid = false; }
+  if(!valid) return;
+  if(startDate >= endDate){ showToast('بەرواری کۆتایی دەبێت دوای دەستپێکردن بێت','rd'); return; }
+  const btn = document.getElementById('approveSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> چاوەڕوانبە...';
+  try{
+    // Update ad row: status=active + tiktok details
+    const {error} = await sb.from('pa_ads').update({
+      status: 'active',
+      tiktok_ad_id: tiktokId,
+      start_date: startDate,
+      end_date: endDate
+    }).eq('id', _approveAdId);
+    if(error){ showToast('هەڵە: '+error.message,'rd'); btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> پەسەندکردن (Approve)'; return; }
+    // Giveaway entry if budget >= $20
+    if(_approveAdBudget >= 20 && _approveUserId){
+      try{
+        const {data:prof} = await sb.from('profiles').select('full_name,email').eq('id',_approveUserId).single();
+        const weekStart = _gwGetFridayWeekStart ? _gwGetFridayWeekStart() : new Date().toISOString().substring(0,10);
+        await sb.from('weekly_giveaway_entries').upsert(
+          {user_id:_approveUserId,user_name:prof?.full_name||prof?.email||'بێ ناو',user_email:prof?.email||null,week_start:weekStart},
+          {onConflict:'user_id,week_start',ignoreDuplicates:true}
+        );
+        await sb.from('pa_notifications').insert({user_id:_approveUserId,type:'general',title:'بەشداری قورعەی هەفتانە 🎁',body:'ڕیکلامەکەت پەسەندکرا و خۆت دانرا بۆ قورعەی خەڵاتی هەفتانە!',is_read:false});
+      }catch(e){}
+    }
+    // Revenue record
+    try{ await recordAdRevenue(_approveAdId, _approveUserId, _approveAdBudget); }catch(e){}
+    // User notification — status changes to "Live" in the app
+    await sb.from('pa_notifications').insert({
+      user_id: _approveUserId,
+      type: 'general',
+      title: 'ڕیکلامەکەت چالاک بوو ✅',
+      body: `ڕیکلامەکەت پەسەندکرا و ئێستا ژیوەیە (Live). TikTok Ad ID: ${tiktokId} | دەستپێکردن: ${startDate} | کۆتایی: ${endDate}`,
+      is_read: false
+    });
+    showToast('✅ ڕیکلام پەسەندکرا — ستاتۆس: چالاک (Live)','gr');
+    closeMo('moApproveAd');
+    loadAds();
+    loadApprovalWorkflow();
+    loadAdBadge();
+  }catch(e){
+    showToast('هەڵەیەک ڕوویدا: '+e.message,'rd');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fas fa-check-circle"></i> پەسەندکردن (Approve)';
 }
 
 // ══ REJECT ══
@@ -2442,15 +2681,31 @@ async function confirmReject(){
     }
     loadDeposits();
   } else {
-    let res=await sb.from('pa_ads').update({status:'rejected',reject_reason:reason}).eq('id',id);
-    if(res.error){
-      res=await sb.from('pa_ads').update({status:'rejected'}).eq('id',id);
-      if(res.error){showToast('هەڵە: '+res.error.message,'rd');return;}
+    // status و reject_reason یەک کاتژمێر نوێ بکەرەوە (تریگەر پێویستیە هەر دووکیان هەبێت)
+    const {error:statusErr}=await sb.from('pa_ads').update({status:'rejected',reject_reason:reason}).eq('id',id);
+    if(statusErr){
+      // ئەگەر reject_reason ستوون نەبوو، تەنها status بکەرەوە
+      const {error:statusOnly}=await sb.from('pa_ads').update({status:'rejected'}).eq('id',id);
+      if(statusOnly){showToast('هەڵە: '+statusOnly.message,'rd');return;}
+    }
+    // 3. ئاگادارکردنەوەی بەکارهێنەر
+    const adObj=allAds.find(a=>a.id===id)||_approvalPendingAds.find(a=>a.id===id);
+    if(adObj?.user_id){
+      const adLabel=adObj.ad_number?`ڕیکلامی #${adObj.ad_number}`:'ڕیکلامەکەت';
+      await sb.from('pa_notifications').insert({
+        user_id:adObj.user_id,
+        type:'general',
+        title:`${adLabel} ڕەتکرا ❌`,
+        body:'هۆکاری ڕەتکردنەوە: '+reason,
+        is_read:false
+      });
     }
     loadAds();
+    loadApprovalWorkflow();
+    loadAdBadge();
   }
   closeMo('moRejectReason');
-  showToast('✅ ڕەتکرا','gr');
+  showToast('✅ ڕیکلامەکە ڕەتکرا','gr');
 }
 
 // ══ NOTIFICATIONS ══
@@ -2518,6 +2773,121 @@ function setForceUpdate(val,el){
   el.style.color='#fff';
   el.style.borderColor=val?'var(--rd)':'var(--dark)';
 }
+
+// ══ MAINTENANCE MODE ══
+let _maintTimer = null;
+let _maintDurMins = 0;
+
+function setMaintDur(mins, el) {
+  _maintDurMins = mins;
+  document.querySelectorAll('#maintDurPresets .chip').forEach(x => x.classList.remove('on'));
+  if (el) el.classList.add('on');
+  const inp = document.getElementById('maintDurCustom');
+  if (inp) inp.value = mins > 0 ? mins : '';
+}
+
+async function loadMaintenance() {
+  const { data } = await sb.from('pa_settings').select('value').eq('key', 'maintenance_mode').single();
+  if (!data) { renderMaintStatus(null); return; }
+  try { renderMaintStatus(JSON.parse(data.value)); } catch { renderMaintStatus(null); }
+}
+
+function renderMaintStatus(cfg) {
+  const active = cfg?.active === true;
+  const reason = cfg?.reason || '';
+  const endsAt = cfg?.ends_at ? new Date(cfg.ends_at) : null;
+  const now = new Date();
+
+  const card = document.getElementById('maintStatusCard');
+  const ico = document.getElementById('maintIcoWrap');
+  const icoEl = document.getElementById('maintStatusIco');
+  const title = document.getElementById('maintStatusTitle');
+  const sub = document.getElementById('maintStatusSub');
+  const badge = document.getElementById('maintBadge');
+  const timerRow = document.getElementById('maintTimerRow');
+  const reasonRow = document.getElementById('maintReasonRow');
+  const endsAtEl = document.getElementById('maintEndsAt');
+  const reasonDisp = document.getElementById('maintReasonDisp');
+
+  if (active) {
+    card.style.borderColor = '#ef4444';
+    ico.style.background = 'rgba(239,68,68,.15)';
+    icoEl.className = 'fas fa-triangle-exclamation';
+    icoEl.style.color = '#ef4444';
+    title.textContent = 'پەڕەکە ڕاگیراوە';
+    sub.textContent = 'ئەپلیکەیشن بۆ بەکارهێنەران نادیارە';
+    badge.textContent = 'ڕاگیراو';
+    badge.className = 'badge rejected';
+
+    if (reason) { reasonRow.style.display = 'block'; reasonDisp.textContent = reason; }
+    else { reasonRow.style.display = 'none'; }
+
+    if (endsAt && endsAt > now) {
+      timerRow.style.display = 'block';
+      endsAtEl.textContent = 'دەکرێتەوە لە: ' + endsAt.toLocaleString('ku');
+      // Start countdown
+      if (_maintTimer) clearInterval(_maintTimer);
+      _maintTimer = setInterval(() => {
+        const rem = Math.max(0, endsAt - new Date());
+        if (rem === 0) { clearInterval(_maintTimer); loadMaintenance(); return; }
+        document.getElementById('maintCountdown').textContent = fmtCountdown(rem);
+      }, 1000);
+      document.getElementById('maintCountdown').textContent = fmtCountdown(endsAt - now);
+    } else if (endsAt && endsAt <= now) {
+      // Timer expired — auto deactivate
+      deactivateMaintenance();
+      return;
+    } else {
+      timerRow.style.display = 'none';
+      if (_maintTimer) clearInterval(_maintTimer);
+    }
+  } else {
+    card.style.borderColor = 'var(--b1)';
+    ico.style.background = 'rgba(22,163,74,.1)';
+    icoEl.className = 'fas fa-circle-check';
+    icoEl.style.color = '#16a34a';
+    title.textContent = 'پەڕەکە چالاکە';
+    sub.textContent = 'ئەپلیکەیشن بۆ بەکارهێنەران بەردەستە';
+    badge.textContent = 'چالاک';
+    badge.className = 'badge approved';
+    timerRow.style.display = 'none';
+    reasonRow.style.display = 'none';
+    if (_maintTimer) clearInterval(_maintTimer);
+  }
+
+  // Pre-fill reason
+  if (reason) document.getElementById('maintReason').value = reason;
+}
+
+function fmtCountdown(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  return [h > 0 ? String(h).padStart(2, '0') : null, String(m).padStart(2, '0'), String(s).padStart(2, '0')].filter(Boolean).join(':');
+}
+
+async function activateMaintenance() {
+  const reason = (document.getElementById('maintReason').value || '').trim();
+  if (!reason) { showToast('هۆکاری ڕاگرتن بنووسە', 'rd'); return; }
+  const customMins = parseInt(document.getElementById('maintDurCustom').value || 0);
+  const durMins = customMins > 0 ? customMins : _maintDurMins;
+  const endsAt = durMins > 0 ? new Date(Date.now() + durMins * 60 * 1000).toISOString() : null;
+  const cfg = { active: true, reason, ends_at: endsAt, updated_at: new Date().toISOString() };
+  const { error } = await sb.from('pa_settings').upsert({ key: 'maintenance_mode', value: JSON.stringify(cfg), updated_at: new Date().toISOString() }, { onConflict: 'key' });
+  if (error) { showToast('هەڵە: ' + error.message, 'rd'); return; }
+  showToast('✅ پەڕەکە ڕاگیرا', 'rd');
+  loadMaintenance();
+}
+
+async function deactivateMaintenance() {
+  const cfg = { active: false, reason: '', ends_at: null, updated_at: new Date().toISOString() };
+  const { error } = await sb.from('pa_settings').upsert({ key: 'maintenance_mode', value: JSON.stringify(cfg), updated_at: new Date().toISOString() }, { onConflict: 'key' });
+  if (error) { showToast('هەڵە: ' + error.message, 'rd'); return; }
+  showToast('✅ پەڕەکە کرایەوە', 'gr');
+  loadMaintenance();
+}
+
 
 async function loadVersion(){
   const{data,error}=await sb.from('pa_settings').select('*').in('key',['app_version','version_message','force_update']);
@@ -4183,6 +4553,51 @@ async function confirmFbReject(){
   </div>
 </div>
 
+
+<!-- ══ APPROVAL WORKFLOW MODAL ══ -->
+<div class="overlay" id="moApproveAd">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-hdr">
+      <h3><i class="fas fa-check-circle" style="margin-left:8px;color:#10b981"></i>Review & Approve — پەسەندکردنی ڕیکلام</h3>
+      <div class="modal-close" onclick="closeMo('moApproveAd')"><i class="fas fa-xmark"></i></div>
+    </div>
+    <!-- Ad Info -->
+    <div style="background:rgba(16,185,129,.06);border:1.5px solid rgba(16,185,129,.2);border-radius:13px;padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--dark)" id="approveAdTitle">—</div>
+      <div style="font-size:11px;color:var(--mt);margin-top:4px" id="approveAdUser">—</div>
+      <div style="font-size:14px;font-weight:900;color:var(--rd);font-family:'Inter';margin-top:6px" id="approveAdBudget">—</div>
+    </div>
+    <!-- TikTok Ad ID -->
+    <div class="field-wrap">
+      <label class="modal-lbl" style="margin-top:0">TikTok Ad ID <span style="color:var(--rd)">*</span></label>
+      <input class="minp" type="text" id="approveTikTokId" placeholder="بۆ نموونە: 7234567890123456789" dir="ltr" style="font-family:'Inter';letter-spacing:.5px" oninput="clearFieldErr('approveTikTokId')">
+      <div class="field-err" id="approveTikTokId-err">TikTok Ad ID پڕ بکەرەوە — بەبێ ئەوە نابێت پەسەند بکرێت</div>
+    </div>
+    <!-- Date row -->
+    <div class="modal-row" style="gap:12px;margin-top:4px">
+      <div class="field-wrap">
+        <label class="modal-lbl" style="margin-top:0">بەرواری دەستپێکردن <span style="color:var(--rd)">*</span></label>
+        <input class="minp" type="date" id="approveStartDate" dir="ltr" style="font-family:'Inter'" oninput="clearFieldErr('approveStartDate')">
+        <div class="field-err" id="approveStartDate-err">بەروار دیاری بکە</div>
+      </div>
+      <div class="field-wrap">
+        <label class="modal-lbl" style="margin-top:0">بەرواری کۆتایی <span style="color:var(--rd)">*</span></label>
+        <input class="minp" type="date" id="approveEndDate" dir="ltr" style="font-family:'Inter'" oninput="clearFieldErr('approveEndDate')">
+        <div class="field-err" id="approveEndDate-err">بەروار دیاری بکە</div>
+      </div>
+    </div>
+    <div class="info-box" style="margin-top:12px;margin-bottom:4px">
+      <i class="fas fa-shield-halved" style="margin-left:6px;color:#10b981"></i>
+      کلیک لەسەر <strong>Approve</strong> ستاتۆسی ڕیکلام دەگۆڕێت بۆ <strong>Active (Live)</strong> و بەکارهێنەر ئاگادار دەکرێتەوە.
+    </div>
+    <button class="modal-btn gr" id="approveSubmitBtn" onclick="submitApproval()">
+      <i class="fas fa-check-circle"></i> پەسەندکردن (Approve)
+    </button>
+    <button class="modal-btn dark" onclick="closeMo('moApproveAd')" style="background:transparent;color:var(--mt);border:1.5px solid var(--b1);margin-top:8px">
+      پاشگەزبوونەوە
+    </button>
+  </div>
+</div>
 
 <!-- ══ FIREBASE REJECT MODAL ══ -->
 <div class="overlay" id="moFbReject">
