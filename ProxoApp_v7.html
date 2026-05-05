@@ -3388,8 +3388,8 @@ async function withSession(fn){
 // ════════════════════════════════════════════════════════════
 //  OTP SYSTEM
 // ════════════════════════════════════════════════════════════
-const N8N_WEBHOOK = 'http://109.199.114.145:5678/webhook-test/send-otp';
-const N8N_WEBHOOK_TEST = 'http://109.199.114.145:5678/webhook-test/send-otp';
+const N8N_WEBHOOK = 'http://109.199.114.145:5678/webhook/send-otp';
+const N8N_WEBHOOK_TEST = 'http://109.199.114.145:5678/webhook/send-otp';
 
 let _otpEmail = '';
 let _otpPendingLogin = false;
@@ -6335,16 +6335,19 @@ function pickCard(el,id){
         const _userName = cu?.user_metadata?.full_name || _email || 'بەکارهێنەر';
         if (_email) {
           const {data: _freshWal} = await sb.from('pa_wallets').select('balance').eq('user_id', cu.id).single();
-          const _newBalIQD = Math.max(0, Math.round(parseFloat(_freshWal?.balance||0) * 1800));
-          fetch(N8N_WEBHOOK, {
+          const _oldBalIQD  = Math.round(parseFloat(walletData?.balance||0) * 1800);
+          const _newBalIQD  = Math.max(0, Math.round(parseFloat(_freshWal?.balance||0) * 1800));
+          const _deductedIQD = Math.max(0, _oldBalIQD - _newBalIQD);
+          const _amountStr  = (_deductedIQD > 0 ? _deductedIQD : Math.round(budget||0)).toLocaleString('en-US');
+          fetch(N8N_WEBHOOK_TEST, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               action:     'balance_deducted',
               email:      _email,
               userName:   _userName,
-              amount:     Math.round(finalTotal).toLocaleString(),
-              newBalance: _newBalIQD.toLocaleString(),
+              amount:     _amountStr,
+              newBalance: _newBalIQD.toLocaleString('en-US'),
               note:       'ڕیکلامی نوێ',
               adId:       String(_adNum)
             })
