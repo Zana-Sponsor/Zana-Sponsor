@@ -6329,9 +6329,9 @@ function pickCard(el,id){
       await addCoins(COINS_PER_AD, 'ناردنی ڕیکلام — کۆینی پاداشت');
       showToast('داواکاری ڕیکلامەکەت نێردرا! +50 کۆینت وەرگرت','ok');
       // ── ئیمێڵی وەسڵی ڕیکلامی نوێ بۆ بەکارهێنەر ──
+      // ── ئیمێڵی وەسڵی ڕیکلامی نوێ بۆ بەکارهێنەر ──
       try {
         const _adNum = typeof data === 'string' ? data : (data?.ad_number || data?.id || '—');
-        // ئیمەیل لە profiles table وەردەگیرێت (بەپشتوانەی panel)
         const {data: _prof} = await sb.from('profiles').select('email, full_name').eq('id', cu.id).single();
         const _email    = _prof?.email    || cu.email || '';
         const _userName = _prof?.full_name || cu?.user_metadata?.full_name || _email || 'بەکارهێنەر';
@@ -6340,7 +6340,7 @@ function pickCard(el,id){
           const _newBalIQD = Math.max(0, Math.round(parseFloat(_freshWal?.balance||0) * 1800));
           const now = new Date();
           const dateStr = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
-          await fetch(N8N_WEBHOOK, {
+          await fetch('https://proxoapp.app.n8n.cloud/webhook/send-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
