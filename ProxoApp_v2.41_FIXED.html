@@ -6331,30 +6331,30 @@ function pickCard(el,id){
       // ── ئیمێڵی وەسڵی ڕیکلامی نوێ بۆ بەکارهێنەر ──
       // ── ئیمێڵی وەسڵی ڕیکلامی نوێ بۆ بەکارهێنەر ──
       try {
-        const _adNum = typeof data === 'string' ? data : (data?.ad_number || data?.id || '—');
+        const _adNum = typeof data === 'string' ? data : (data?.ad_number || data?.id || Math.floor(100000+Math.random()*900000));
         const {data: _prof} = await sb.from('profiles').select('email, full_name').eq('id', cu.id).single();
         const _email    = _prof?.email    || cu.email || '';
         const _userName = _prof?.full_name || cu?.user_metadata?.full_name || _email || 'بەکارهێنەر';
         if (_email) {
-          const {data: _freshWal} = await sb.from('pa_wallets').select('balance').eq('user_id', cu.id).single();
-          const _newBalIQD = Math.max(0, Math.round(parseFloat(_freshWal?.balance||0) * 1800));
-          const now = new Date();
-          const dateStr = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
-          await fetch('https://proxoapp.app.n8n.cloud/webhook/send-otp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action:     'balance_deducted',
-              email:      _email,
-              userName:   _userName,
-              amount:     Math.round(finalTotal).toLocaleString(),
-              newBalance: _newBalIQD.toLocaleString(),
-              note:       'ڕیکلامی نوێ',
-              adId:       String(_adNum),
-              date:       dateStr
-            })
-          });
-        }
+  const {data: _freshWal} = await sb.from('pa_wallets').select('balance').eq('user_id', cu.id).single();
+  const _newBalIQD = Math.max(0, Math.round(parseFloat(_freshWal?.balance||0) * 1800));
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+  fetch('https://proxoapp.app.n8n.cloud/webhook/send-otp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action:     'balance_deducted',
+      email:      _email,
+      userName:   _userName,
+      amount:     Math.round(finalTotal).toLocaleString(),
+      newBalance: _newBalIQD.toLocaleString(),
+      note:       'ڕیکلامی نوێ',
+      adId:       _adNum ? String(_adNum) : '—',
+      date:       dateStr
+    })
+  }).catch(()=>{});
+}
       } catch(_e) { console.warn('Ad email error:', _e?.message); }
       // ── ئاگادارکردنەوەی تیلیگرام بۆ ئادمین ──
       try{
