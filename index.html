@@ -734,7 +734,16 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .asset-none{padding:14px;text-align:center;font-size:12px;color:var(--mt);}
 
 /* ══ SPONSORSHIP DASHBOARD CARDS ══ */
-.spons-card{background:var(--w);border:1.5px solid var(--b1);border-radius:22px;padding:16px;margin-bottom:12px;animation:fu .14s ease;box-shadow:0 4px 16px rgba(0,0,0,.06);contain:content;}
+.spons-card {
+  background: var(--w);
+  border: 1px solid #e8ebf1;
+  border-radius: 22px;
+  padding: 16px;
+  margin-bottom: 12px;
+  animation: fu .14s ease;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.07);
+  contain: content;
+}
 .spons-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .spons-order-id{font-size:11px;color:var(--mt);background:var(--bg);padding:4px 11px;border-radius:20px;border:1px solid var(--b1);font-family:'Inter',monospace;letter-spacing:.5px;}
 .spons-status-badge{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:700;display:flex;align-items:center;gap:4px;}
@@ -6319,7 +6328,6 @@ async function withSession(fn){
 //  OTP SYSTEM
 // ════════════════════════════════════════════════════════════
 const N8N_WEBHOOK = '';
-const N8N_WEBHOOK_TEST = 'https://email.proxopages.com/webhook/send_otp';
 
 let _otpEmail = '';
 let _otpPendingLogin = false;
