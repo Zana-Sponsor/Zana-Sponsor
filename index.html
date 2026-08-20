@@ -8190,7 +8190,24 @@ async function boot(){
   loadSidebarUser();
   loadMyCards();
   // دەستپێک لە هاشی URL — ئەگەر بەشێکی دیاریکراو هەبوو ئەویش بکەرەوە
-  (function(){const _h=window.location.hash.slice(1);const _hashable=pages.filter(x=>x!=='tutplayer');goPage(_hashable.includes(_h)?_h:'home');})();
+  (function () {
+  const path = window.location.pathname
+    .replace(/^\/+|\/+$/g, '');
+
+  const routablePages = pages.filter(x => x !== 'tutplayer');
+
+  const page = routablePages.includes(path)
+    ? path
+    : 'home';
+
+  goPage(page, false);
+
+  history.replaceState(
+    { page: page },
+    '',
+    '/' + page
+  );
+})();
   loadHomeBanner();
   loadUserStory(); // ── ستۆری بەکارهێنەران (یەک جار) ──
   startNotifListener(); // ── Firebase realtime notifications ──
@@ -9496,7 +9513,7 @@ window.addEventListener('beforeunload', () => {
   }
 });
 
-function goPage(p){
+function goPage(p, updateUrl = true){
   // چێکی قفڵ پێش کردنەوەی بەش
   const lockKey=_PAGE_LOCK_MAP[p];
   if(lockKey && checkSectionLock(lockKey)) return;
@@ -9509,11 +9526,19 @@ function goPage(p){
 
   _currentPage=p;
   // هاشی URL نوێ دەکاتەوە بۆ هەر بەشێک
-  if(p!=='tutplayer'){try{if(window.location.hash.slice(1)!==p)history.replaceState(null,'','#'+p);}catch(_){}}
-  // تەنها کاتی گۆڕینی بەش tracking بکە
-  if(_sessionId && _sessInfo && p !== _lastTrackedPage){
-    _updateSessionPage(p);
-  }
+  if (updateUrl && p !== 'tutplayer') {
+  try {
+    const newPath = '/' + p;
+
+    if (window.location.pathname !== newPath) {
+      history.pushState(
+        { page: p },
+        '',
+        newPath
+      );
+    }
+  } catch (_) {}
+}
 
   pages.forEach(x=>{
     const pg=document.getElementById('pg'+x.charAt(0).toUpperCase()+x.slice(1));
@@ -9550,10 +9575,17 @@ function goPage(p){
 }
 
 // hashchange — پشتگیری دوگمەی گەڕانەوەی براوسەر
-window.addEventListener('hashchange',function(){
-  const _h=window.location.hash.slice(1);
-  const _hashable=pages.filter(x=>x!=='tutplayer');
-  if(_hashable.includes(_h)&&_h!==_currentPage&&cu)goPage(_h);
+window.addEventListener('popstate', function () {
+  if (!cu) return;
+
+  const path = window.location.pathname
+    .replace(/^\/+|\/+$/g, '');
+
+  const page = pages.includes(path) ? path : 'home';
+
+  if (page !== _currentPage) {
+    goPage(page, false);
+  }
 });
 
 let _homeBannerNav='create';
