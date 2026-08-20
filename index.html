@@ -7995,7 +7995,11 @@ async function submitWalletDeposit() {
         note: (name ? 'ناو: ' + name : '') + (note ? ' | ' + note : '') || null,
         status: 'pending',
         type: 'deposit',
-        deposit_number: Math.floor(Math.random() * 900000) + 100000
+        deposit_number:
+  '006' +
+  Math.floor(Math.random() * 1000000000)
+    .toString()
+    .padStart(9, '0')
       });
     } catch(_) {}
     _wMsg('wdMsg', '✅ داواکارییەکەت ناردرا! ئادمین لە ناوماوەی ١ کاتژمێر پەسەند دەکات', true);
