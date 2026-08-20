@@ -10733,7 +10733,8 @@ function pickCard(el,id){
         const _rpcMissing=error.message?.includes('Could not find')||error.message?.includes('does not exist')||error?.code==='PGRST202';
         if(_rpcMissing){
           // 1. دروستکردنی ژمارەی تایبەتی 6-ژمارەیی بۆ ad_number
-          const adNumber = '007' +
+          const adNum =
+  '007' +
   Math.floor(Math.random() * 1000000000)
     .toString()
     .padStart(9, '0');
