@@ -8068,7 +8068,11 @@ async function submitWalletWithdraw() {
         note: note || null,
         status: 'pending',
         type: 'withdrawal',
-        deposit_number: Math.floor(Math.random() * 900000) + 100000
+        deposit_number:
+  '006' +
+  Math.floor(Math.random() * 1000000000)
+    .toString()
+    .padStart(9, '0')
       });
     } catch(_) {}
     _wMsg('wwMsg', '✅ داواکارییەکەت ناردرا! ئادمین پەسەند دەکات', true);
