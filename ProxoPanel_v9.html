@@ -194,6 +194,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .badge.scheduled{background:rgba(8,145,178,.08);color:#0891b2;border:1px solid rgba(8,145,178,.22);}
 .badge.review{background:rgba(37,99,235,.09);color:#1d4ed8;border:1px solid rgba(37,99,235,.22);}
 .badge.spent{background:rgba(220,38,38,.06);color:var(--rd);border:1px solid rgba(220,38,38,.18);}
+.badge.expired{background:rgba(107,117,133,.09);color:var(--mt2);border:1px solid rgba(107,117,133,.22);}
 
 /* ══ ACTION BUTTONS ══ */
 .act-btn{padding:6px 12px;border-radius:8px;font-family:'R',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
@@ -749,6 +750,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
           <div class="chip yw" data-df="pending" onclick="filterDeps(this)">چاوەڕوان</div>
           <div class="chip gr" data-df="approved" onclick="filterDeps(this)">پەسەندکراو</div>
           <div class="chip rd" data-df="rejected" onclick="filterDeps(this)">ڕەتکراو</div>
+          <div class="chip" data-df="expired" onclick="filterDeps(this)"><i class="fas fa-clock-rotate-left" style="font-size:10px;margin-left:4px"></i>بەسەرچووە</div>
         </div>
         <div class="dep-table-wrap tbl-scroll" id="depositsTableWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
@@ -2735,7 +2737,7 @@ async function loadDashDeposits(){
       </div>
       <div style="text-align:left">
         <div style="font-size:14px;font-weight:800;color:var(--dark);font-family:'Inter',sans-serif">${Math.round(parseFloat(d.amount||0)*1800).toLocaleString()} IQD</div>
-        <span class="badge ${d.status}" style="font-size:9.5px">${statusKu(d.status)}</span>
+        <span class="badge ${depStatusKey(d)}" style="font-size:9.5px">${depStatusKu(d)}</span>
       </div>
     </div>`).join('');
   wrap.innerHTML=`<div class="dash-dep-cards">${cardsHTML}</div><div class="dash-dep-table tbl-scroll">${renderDepTable(data,true)}</div>`;
@@ -2913,7 +2915,7 @@ async function showUserDetail(uid){
     <div class="detail-row"><span class="lbl">ژمارەی مۆبایل</span><span class="val" style="font-family:'Inter',sans-serif;direction:ltr">${u.phone||'<span style=\"color:var(--rd);font-size:11px\">نەداوە</span>'}</span></div>
     <div class="detail-row"><span class="lbl">User ID</span><span class="val" style="font-family:monospace;font-size:10px">${u.id}</span></div>
     ${ads?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین ڕیکلامەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${ads.map(a=>`<div onclick="showAdDetail('${a.id}')" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">#${a.ad_number} — ${a.title}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${a.status}">${statusKu(a.status)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
-    ${txs?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین مامەڵەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${txs.map(t=>`<div onclick="showDepDetail(_udetTxMap['${t.id}'])" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Math.round(parseFloat(t.amount)*1800).toLocaleString()} IQD — ${t.method||_txTypeKu(t.type,t.note).lbl}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${t.status}">${statusKu(t.status)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
+    ${txs?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین مامەڵەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${txs.map(t=>`<div onclick="showDepDetail(_udetTxMap['${t.id}'])" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Math.round(parseFloat(t.amount)*1800).toLocaleString()} IQD — ${t.method||_txTypeKu(t.type,t.note).lbl}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${depStatusKey(t)}">${depStatusKu(t)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
     <div class="sep"></div>
     <div style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:10px;display:flex;align-items:center;gap:6px">
       <i class="fas fa-history" style="color:var(--bl)"></i> سێشنە دوایینەکان
@@ -3370,7 +3372,7 @@ function renderTxLog(){
         </div></td>
         <td><span style="font-family:'Inter';font-weight:800;color:${amtColor}">${amtSign}${Math.round(parseFloat(t.amount||0)*1800).toLocaleString()} IQD</span></td>
         <td><span class="badge ${tt.cls}" style="font-size:10px">${tt.lbl}</span></td>
-        <td><span class="badge ${t.status||''}" style="font-size:10px">${statusKu(t.status)||'—'}</span></td>
+        <td><span class="badge ${depStatusKey(t)}" style="font-size:10px">${depStatusKu(t)||'—'}</span></td>
         <td style="font-size:11px;color:var(--mt);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td>
         <td style="font-size:10px;color:var(--mt);direction:ltr;white-space:nowrap">${dateStr}</td>
       </tr>`;
@@ -3417,10 +3419,17 @@ function filterDeps(el){
   renderDeposits((document.getElementById('depSearch')?.value||'').toLowerCase());
 }
 
+function depStatusKey(d){
+  return String(d?.gateway_status||'').toUpperCase()==='EXPIRED' ? 'expired' : (d?.status||'');
+}
+function depStatusKu(d){
+  return depStatusKey(d)==='expired' ? 'بەسەرچووە' : statusKu(d?.status);
+}
+
 function renderDeposits(q=''){
   _depMap={}; allDeposits.forEach(d=>{_depMap[d.id]=d;});
   let list=allDeposits;
-  if(depFilter!=='all')list=list.filter(d=>d.status===depFilter);
+  if(depFilter!=='all')list=list.filter(d=>depFilter==='expired'?depStatusKey(d)==='expired':(d.status===depFilter&&depStatusKey(d)!=='expired'));
   if(q)list=list.filter(d=>(d.profiles?.full_name||'').toLowerCase().includes(q)||(d.profiles?.email||'').toLowerCase().includes(q)||String(d.deposit_number||'').toLowerCase().includes(q)||String(d.id||'').toLowerCase().includes(q));
   document.getElementById('depositsTableWrap').innerHTML=renderDepTable(list,false);
 }
@@ -3437,7 +3446,7 @@ function renderDepTable(list,mini){
       </div></td>
       <td><span style="font-family:'Inter';font-weight:800;color:var(--gr)">${Math.round(parseFloat(d.amount)*1800).toLocaleString()} IQD</span></td>
       <td style="font-size:12px;font-weight:700">${mn[d.method]||d.method||'—'}</td>
-      <td><span class="badge ${d.status}">${statusKu(d.status)}</span></td>
+      <td><span class="badge ${depStatusKey(d)}">${depStatusKu(d)}</span></td>
       <td style="font-size:11px;color:var(--mt)">${new Date(d.created_at).toLocaleDateString('ku')}</td>
       <td onclick="event.stopPropagation()"><div class="act-grp">
         <div class="act-btn dark" onclick="showDepDetail(_depMap['${d.id}'])"><i class="fas fa-eye"></i></div>
@@ -3454,7 +3463,7 @@ function renderDepTable(list,mini){
           <div class="dep-card-name">${d.profiles?.full_name||'بێ ناو'}</div>
           <div class="dep-card-email">${d.profiles?.email||'—'}</div>
         </div>
-        <span class="badge ${d.status}">${statusKu(d.status)}</span>
+        <span class="badge ${depStatusKey(d)}">${depStatusKu(d)}</span>
       </div>
       <div class="dep-card-meta">
         <div class="user-card-stat gr"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(d.amount)*1800).toLocaleString()} IQD</div>
@@ -3477,7 +3486,7 @@ function showDepDetail(d){
     <div class="detail-row"><span class="lbl">ئیمەیل</span><span class="val">${d.profiles?.email||'—'}</span></div>
     <div class="detail-row"><span class="lbl">بڕ</span><span class="val" style="color:var(--gr)">${Math.round(parseFloat(d.amount)*1800).toLocaleString()} IQD</span></div>
     <div class="detail-row"><span class="lbl">ڕێگای پارەدان</span><span class="val">${mn[d.method]||d.method||'—'}</span></div>
-    <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${d.status}">${statusKu(d.status)}</span></span></div>
+    <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${depStatusKey(d)}">${depStatusKu(d)}</span></span></div>
     <div class="detail-row"><span class="lbl">ژمارەی مامەڵە</span><span class="val" style="font-family:monospace">${d.deposit_number||'—'}</span></div>
     <div class="detail-row"><span class="lbl">تێبینی</span><span class="val">${d.note||'—'}</span></div>
     <div class="detail-row"><span class="lbl">بەروار</span><span class="val">${new Date(d.created_at).toLocaleString('ku')}</span></div>
