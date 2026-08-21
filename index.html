@@ -9167,7 +9167,28 @@ function openWA(){window.open('https://wa.me/9647758887488','_blank');}
 
 const pages=['home','profile','create','myads','proxolink','notifications','support','tutorials','tutplayer','txhistory','promocodes','adcalc','wallet','challenges','levels','gifts'];
 let _currentPage='home';
+// Convert /home -> /#home, /profile -> /#profile, etc.
+(function () {
+  const path = window.location.pathname
+    .replace(/^\/+|\/+$/g, '')
+    .toLowerCase();
 
+  if (path && pages.includes(path)) {
+    window.location.replace(
+      '/' + window.location.search + '#' + path
+    );
+    return;
+  }
+
+  // Root URL -> #home
+  if (!path && !window.location.hash) {
+    history.replaceState(
+      null,
+      '',
+      '/' + window.location.search + '#home'
+    );
+  }
+})();
 // ══ SECTION LOCKS ══
 let _appLocks = {};
 async function loadAppSectionLocks(){
