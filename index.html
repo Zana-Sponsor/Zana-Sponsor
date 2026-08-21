@@ -9771,13 +9771,83 @@ function goToUpload(){
   // Legacy: route through goToInfo for old flow
   goToInfo();
 }
+const FASTPAY_ORDER_WEBHOOK =
+  'https://email.proxopages.com/webhook/fastpay/order-create';
+
+async function startFastPayPayment(amountIQD) {
+  try {
+
+    if (!cu || !cu.id) {
+      showToast('تکایە سەرەتا بچۆ ژوورەوە', 'err');
+      return;
+    }
+
+    const amount = Math.round(Number(amountIQD));
+
+    if (!amount || amount < 5000) {
+      showToast('کەمترین بڕ ٥,٠٠٠ دینارە', 'err');
+      return;
+    }
+
+    showToast('QR ـی FastPay دروست دەکرێت...', '');
+
+    const orderId =
+      'PX' +
+      Date.now().toString() +
+      Math.floor(Math.random() * 10000)
+        .toString()
+        .padStart(4, '0');
+
+    const response = await fetch(FASTPAY_ORDER_WEBHOOK, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: cu.id,
+        orderId: orderId,
+        billAmount: amount,
+        currency: 'IQD',
+        note: 'Proxo wallet deposit'
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.message ||
+        data.error ||
+        'نەتوانرا QR دروست بکرێت'
+      );
+    }
+
+    openFastPayQR(
+      data.qrUrl,
+      data.qrText,
+      data.orderId || orderId,
+      amount
+    );
+
+  } catch (error) {
+    console.error('[FastPay Error]', error);
+    showToast('هەڵەی FastPay: ' + error.message, 'err');
+  }
+}
 function goToInfo(){
+
   var amt=_depIqd||(parseFloat((document.getElementById('depDirectInput')||{}).value||0));
   if(!amt||amt<5000){
     showToast('کەمترین بڕ ٥,٠٠٠ دینارە ❌','err');return;
   }
   if(!method){
     alert('ڕێگای پارەدان هەڵبژێرە');return;
+  }
+    // FastPay ـە؟ ڕاستەوخۆ QR دروست بکە
+  if(method === 'fastpay'){
+    closeMo('moAmount');
+    startFastPayPayment(amt);
+    return;
   }
   // fill hidden field
   var ha=document.getElementById('wdAmt');
@@ -17474,5 +17544,173 @@ html[data-theme="dark"] .pxth-float button.on{background:#2f3a4f;color:#fff}
     var n=0,t=setInterval(function(){if(mount()||++n>40)clearInterval(t);},250);
   }
 })();
+</script>
+<!-- ══════ FASTPAY QR MODAL ══════ -->
+<div id="fastPayQrModal"
+     style="
+       display:none;
+       position:fixed;
+       inset:0;
+       z-index:999999;
+       background:rgba(0,0,0,.72);
+       align-items:center;
+       justify-content:center;
+       padding:20px;
+     ">
+
+  <div style="
+       width:100%;
+       max-width:370px;
+       background:var(--w);
+       border:1px solid var(--b1);
+       border-radius:24px;
+       padding:24px;
+       text-align:center;
+       box-shadow:0 15px 50px rgba(0,0,0,.35);
+     ">
+
+    <div style="
+      font-size:22px;
+      font-weight:900;
+      color:var(--dark);
+      margin-bottom:5px;
+    ">
+      FastPay
+    </div>
+
+    <div style="
+      font-size:12px;
+      color:var(--mt);
+      margin-bottom:18px;
+    ">
+      QR ـەکە بە ئەپی FastPay سکان بکە
+    </div>
+
+    <div style="
+      background:#ffffff;
+      border-radius:20px;
+      padding:12px;
+      width:254px;
+      max-width:100%;
+      margin:0 auto 18px;
+    ">
+
+      <img
+        id="fastPayQrImage"
+        alt="FastPay QR"
+        style="
+          display:none;
+          width:230px;
+          max-width:100%;
+          height:auto;
+          margin:auto;
+        "
+      >
+
+    </div>
+
+    <div id="fastPayQrAmount"
+         style="
+           font-size:24px;
+           font-weight:900;
+           color:var(--dark);
+           margin-bottom:8px;
+         ">
+    </div>
+
+    <div id="fastPayOrderId"
+         style="
+           font-family:monospace;
+           direction:ltr;
+           font-size:11px;
+           color:var(--mt);
+           margin-bottom:10px;
+         ">
+    </div>
+
+    <div id="fastPayQrText"
+         style="
+           display:none;
+           font-size:10px;
+           color:var(--mt);
+           direction:ltr;
+           word-break:break-all;
+           margin-bottom:15px;
+         ">
+    </div>
+
+    <div style="
+      padding:10px 12px;
+      border-radius:12px;
+      background:var(--bg);
+      color:var(--mt);
+      font-size:11px;
+      line-height:1.8;
+      margin-bottom:16px;
+    ">
+      دوای پارەدان باڵانسەکەت خۆکارانە زیاد دەبێت
+    </div>
+
+    <button
+      onclick="closeFastPayQR()"
+      style="
+        width:100%;
+        height:48px;
+        border:0;
+        border-radius:14px;
+        background:#0E78FF;
+        color:#fff;
+        font-family:'R',sans-serif;
+        font-size:14px;
+        font-weight:800;
+        cursor:pointer;
+      ">
+      داخستن
+    </button>
+
+  </div>
+</div>
+<script>
+function openFastPayQR(qrUrl, qrText, orderId, amount) {
+
+  const modal = document.getElementById('fastPayQrModal');
+  const img = document.getElementById('fastPayQrImage');
+  const txt = document.getElementById('fastPayQrText');
+
+  document.getElementById('fastPayQrAmount').textContent =
+    Math.round(Number(amount)).toLocaleString() + ' IQD';
+
+  document.getElementById('fastPayOrderId').textContent =
+    'Order ID: ' + orderId;
+
+  if (qrUrl) {
+    img.src = qrUrl;
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+  }
+
+  if (qrText) {
+    txt.textContent = qrText;
+  } else {
+    txt.textContent = '';
+  }
+
+  modal.style.display = 'flex';
+}
+
+
+function closeFastPayQR() {
+
+  const modal = document.getElementById('fastPayQrModal');
+
+  if (modal) {
+    modal.style.display = 'none';
+  }
+
+  if (typeof loadBal === 'function') {
+    loadBal();
+  }
+}
 </script>
 </html>
