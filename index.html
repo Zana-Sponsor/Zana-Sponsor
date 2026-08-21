@@ -8214,23 +8214,10 @@ async function boot(){
   loadSidebarUser();
   loadMyCards();
   // دەستپێک لە هاشی URL — ئەگەر بەشێکی دیاریکراو هەبوو ئەویش بکەرەوە
-  (function () {
-  const path = window.location.pathname
-    .replace(/^\/+|\/+$/g, '');
-
-  const routablePages = pages.filter(x => x !== 'tutplayer');
-
-  const page = routablePages.includes(path)
-    ? path
-    : 'home';
-
-  goPage(page, false);
-
-  history.replaceState(
-    { page: page },
-    '',
-    '/' + page
-  );
+  (function(){
+  const _h = window.location.hash.slice(1);
+  const _hashable = pages.filter(x => x !== 'tutplayer');
+  goPage(_hashable.includes(_h) ? _h : 'home', false);
 })();
   loadHomeBanner();
   loadUserStory(); // ── ستۆری بەکارهێنەران (یەک جار) ──
