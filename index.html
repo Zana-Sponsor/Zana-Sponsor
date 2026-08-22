@@ -7613,7 +7613,14 @@ function _wMsg(elId, txt, ok) {
 }
 
 // ── Real-time balance listener ──
+// گرنگ: Firebase تەنها وەک "زەنگ" بەکاردێت بۆ ئاگادارکردنەوە.
+// ژمارەکەی خۆی متمانەی پێ ناکرێت — چونکە لەوانەیە بە USD نێردرابێت
+// لە جیاتی IQD (بۆ نموونە 42 لە جیاتی 75,600).
+// سەرچاوەی ڕاستی هەمیشە Supabase (pa_wallets) ـە بە ڕێگەی loadBal().
 let _wBalUnsub = null;
+let _fwLastWritten = null;   // دوایین ژمارەی IQD کە خۆمان نێردمانە Firebase
+let _fwReloadTimer = null;
+
 function startWalletListener() {
   const db = getFwDb();
   if (!db || !cu) return;
@@ -7621,21 +7628,20 @@ function startWalletListener() {
   const ref = db.ref('wallets/' + uid + '/balance');
   if (_wBalUnsub) ref.off('value', _wBalUnsub);
   _wBalUnsub = ref.on('value', function(snap) {
-    // ── گرنگ: ئەگەر ئەم ڕێڕەوە هێشتا لە Firebase دروست نەکرابێت (snap بەتاڵە)
-    // مامەڵەی وەک 0 لەگەڵی مەکە، چونکە ئەوە باڵانسی ڕاستی کاش کراو لە Supabase دەسڕێتەوە.
-    // سەرچاوەی ڕاستی باڵانس هەمیشە Supabase (pa_wallets) ـە، ئەمە تەنها مرۆر بۆ realtime ـە.
     if (!snap.exists()) return;
-    const bal = Math.round(parseFloat(snap.val() || 0));
-    _runningBalIQD = bal;
-    const fmt = bal.toLocaleString();
-    const el = document.getElementById('wBal');
-    if (el) el.textContent = fmt;
-    const hb = document.getElementById('hBal');
-    if (hb) hb.textContent = fmt + ' IQD';
-    const pb = document.getElementById('profBal');
-    if (pb) pb.textContent = fmt + '.00';
-    const sb = document.getElementById('sidebarBal');
-    if (sb) sb.textContent = fmt + ' IQD';
+
+    const raw = Math.round(parseFloat(snap.val() || 0));
+
+    /* ئەگەر ئەمە هەمان ئەو ژمارەیە کە خۆمان نێردمان،
+       واتە echo ـە — پێویست ناکات دووبارە باری بکەین */
+    if (_fwLastWritten !== null && raw === _fwLastWritten) return;
+
+    /* گۆڕانکاری لە دەرەوە ڕوویدا (ئادمین / n8n).
+       ژمارەکەی متمانە پێ مەکە — ڕاستەوخۆ لە Supabase بیخوێنەرەوە */
+    clearTimeout(_fwReloadTimer);
+    _fwReloadTimer = setTimeout(function() {
+      if (typeof loadBal === 'function') loadBal();
+    }, 400);
   });
 }
 
@@ -8994,7 +9000,7 @@ async function loadBal(){
   // کاتێک ڕێڕەوی Firebase هێشتا دروست نەکراوە یان دەرکەوتووە.
   try{
     const _db=getFwDb();
-    if(_db&&cu)_db.ref('wallets/'+cu.id+'/balance').set(bIQD);
+    if(_db&&cu){_fwLastWritten=bIQD;_db.ref('wallets/'+cu.id+'/balance').set(bIQD);}
   }catch(_e){}
   return bIQD;
 }
@@ -17687,7 +17693,7 @@ html[data-theme="dark"] .pxth-float button.on{background:#2f3a4f;color:#fff}
    ═══════════════════════════════════════════════════════════ */
 
 /* ⚠️ ئەم دوو ناوە بگونجێنە لەگەڵ ستوونەکانی pa_transactions */
-const FP_ORDER_COL  = 'gateway_order_id';   // ستوونی order id
+const FP_ORDER_COL  = 'fastpay_order_id';   // ستوونی order id
 const FP_STATUS_COL = 'gateway_status';     // ستوونی دۆخ
 
 let _fpPollTimer = null;
@@ -17749,13 +17755,23 @@ async function _fpCheckStatus() {
   try {
     const { data, error } = await sb
       .from('pa_transactions')
-      .select('id,' + FP_STATUS_COL + ',status,amount')
+      .select('id,' + FP_STATUS_COL + ',status,paid_at,wallet_credited,fail_reason')
       .eq('user_id', cu.id)
       .eq(FP_ORDER_COL, _fpOrderId)
       .limit(1)
       .maybeSingle();
 
-    if (error || !data) return;
+    if (error) { console.error('[FastPay poll] db:', error); return; }
+    if (!data)  { console.warn('[FastPay poll] ڕیز نەدۆزرایەوە:', _fpOrderId); return; }
+
+    console.log('[FastPay poll]', data);
+
+    /* ئەگەر جزدان کریدیت کرابێت، بێ گوێدانە دۆخ سەرکەوتووە */
+    if (data.wallet_credited === true || data.paid_at) {
+      clearInterval(_fpPollTimer);
+      _fpShowSuccess();
+      return;
+    }
 
     const st = String(data[FP_STATUS_COL] || data.status || '').toUpperCase();
 
