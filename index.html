@@ -17743,7 +17743,10 @@ function _fpSetStatus(text, color) {
 
 /* ── پشکنینی دۆخ لە Supabase ── */
 async function _fpCheckStatus() {
-  if (!_fpOrderId || !window.sb || !cu || !cu.id) return;
+  /* گرنگ: sb بە let ڕاگەیەنراوە، بۆیە window.sb بوونی نییە */
+  if (!_fpOrderId) return;
+  if (typeof sb === 'undefined' || !sb) return;
+  if (typeof cu === 'undefined' || !cu || !cu.id) return;
 
   /* دوای ١٥ خولەک پشکنین ڕادەوەستێت */
   if (Date.now() - _fpStartedAt > 15 * 60 * 1000) {
