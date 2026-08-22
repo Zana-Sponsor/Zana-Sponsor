@@ -6189,7 +6189,7 @@ function genRefCode(userId){
 
 async function loadReferralSection(){
   const code = genRefCode(cu.id);
-  const link = `${window.location.origin}${window.location.pathname}?ref=${code}`;
+  const link = `${window.location.origin}/?ref=${code}`;
   document.getElementById('refLinkDisp').textContent = link;
 
   // ── دڵنیابوونەوە لەوەی ڕیکۆردی بانگێشت لە داتابەیسدا هەیە (upsert) ──
@@ -8145,7 +8145,11 @@ document.addEventListener('DOMContentLoaded',()=>{
       // تەنها کاتێک ?ref= هەیە پاشەکەوتبکە — هەرگیز پاکی مەکەرەوە ئەگەر نەبوو
       const code=ref.trim().toUpperCase();
       localStorage.setItem('proxo_ref',code);
-      window.history.replaceState({},document.title,window.location.pathname);
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname + (window.location.hash || '')
+      );
     }
     // هیچ else نییە — کۆدی پاشەکەوتکراو بەجێدەمێنێتەوە تا کاتی تۆمارکردن
   })();
@@ -9160,26 +9164,30 @@ function openWA(){window.open('https://wa.me/9647758887488','_blank');}
 
 const pages=['home','profile','create','myads','proxolink','notifications','support','tutorials','tutplayer','txhistory','promocodes','adcalc','wallet','challenges','levels','gifts'];
 let _currentPage='home';
-// Convert /home -> /#home, /profile -> /#profile, etc.
+// ── ڕێڕەوی URL: هەمیشە /#name — هەرگیز /name ──
+// هەر path ێک بگۆڕە بۆ هاش تاوەکو 404 نەیەت لە کاتی نوێکردنەوە/شەیرکردن
 (function () {
   const path = window.location.pathname
     .replace(/^\/+|\/+$/g, '')
     .toLowerCase();
 
+  // /name  →  /#name   (ئەگەر بەشێکی ناسراو بێت)
   if (path && pages.includes(path)) {
+    window.location.replace('/' + window.location.search + '#' + path);
+    return;
+  }
+
+  // هەر path ێکی تر (نموونە /foo/bar) → بگەڕێوە بۆ ڕەگ، بێ 404
+  if (path) {
     window.location.replace(
-      '/' + window.location.search + '#' + path
+      '/' + window.location.search + (window.location.hash || '#home')
     );
     return;
   }
 
-  // Root URL -> #home
-  if (!path && !window.location.hash) {
-    history.replaceState(
-      null,
-      '',
-      '/' + window.location.search + '#home'
-    );
+  // ڕەگی URL بێ هاش → #home
+  if (!window.location.hash) {
+    history.replaceState(null, '', '/' + window.location.search + '#home');
   }
 })();
 // ══ SECTION LOCKS ══
@@ -9563,20 +9571,21 @@ function goPage(p, updateUrl = true){
   }
 
   _currentPage=p;
-  // هاشی URL نوێ دەکاتەوە بۆ هەر بەشێک
+  // ڕێڕەوی URL — هەمیشە بە هاش (/#name)، نەک بە path (/name)
+  // بەم شێوەیە هیچ کاتێک 404 نایەت، چونکە سێرڤەر هەمیشە / وەردەگرێت
   if (updateUrl && p !== 'tutplayer') {
-  try {
-    const newPath = '/' + p;
-
-    if (window.location.pathname !== newPath) {
-      history.pushState(
-        { page: p },
-        '',
-        newPath
-      );
-    }
-  } catch (_) {}
-}
+    try {
+      const newHash = '#' + p;
+      if (window.location.hash !== newHash) {
+        history.pushState(
+          { page: p },
+          '',
+          window.location.pathname.replace(/^\/+.*$/, '/') +
+            window.location.search + newHash
+        );
+      }
+    } catch (_) {}
+  }
 
   pages.forEach(x=>{
     const pg=document.getElementById('pg'+x.charAt(0).toUpperCase()+x.slice(1));
@@ -9612,19 +9621,20 @@ function goPage(p, updateUrl = true){
   if(hcBtn)hcBtn.style.display='none';
 }
 
-// hashchange — پشتگیری دوگمەی گەڕانەوەی براوسەر
-window.addEventListener('popstate', function () {
+// ── گەڕان بەپێی هاش — دوگمەی گەڕانەوەی براوسەر + گۆڕانی دەستی لە هاش ──
+function _pageFromHash() {
+  const h = (window.location.hash || '').replace(/^#\/?/, '').toLowerCase();
+  return pages.includes(h) ? h : 'home';
+}
+
+function _onHashNav() {
   if (!cu) return;
+  const page = _pageFromHash();
+  if (page !== _currentPage) goPage(page, false);
+}
 
-  const path = window.location.pathname
-    .replace(/^\/+|\/+$/g, '');
-
-  const page = pages.includes(path) ? path : 'home';
-
-  if (page !== _currentPage) {
-    goPage(page, false);
-  }
-});
+window.addEventListener('popstate', _onHashNav);
+window.addEventListener('hashchange', _onHashNav);
 
 let _homeBannerNav='create';
 function homeBannerClick(){
@@ -11551,7 +11561,7 @@ async function shareAd(ad){
   const adLabel=ad.title||('New Ad '+new Date(ad.created_at||Date.now()).toLocaleDateString('en-GB').replace(/\//g,'/'));
   // ناوی ئەو بەکارهێنەرەی ڕیکلامەکە بەش دەکات — ئەگەر بەردەست بوو
   const sharerName=cu?.user_metadata?.full_name||cu?.email||'';
-  let link=`${window.location.origin}${window.location.pathname}?share_ad=${ad.id}`;
+  let link=`${window.location.origin}/?share_ad=${ad.id}`;
   if(sharerName)link+=`&by=${encodeURIComponent(sharerName)}`;
   const shareText=sharerName
     ? `ئەنجامی ڕیکلامی "${adLabel}"ی ${sharerName} بە ڕاستەوخۆ ببینە`
@@ -11634,7 +11644,7 @@ async function initPublicAdView(adId){
       if(ad.end_date)h+='<div class="pub-info-row"><span class="pub-info-lbl">ڕێکەوتی کۆتایی</span><span class="pub-info-val">'+ad.end_date+'</span></div>';
       h+='</div>';
       h+='<div class="pub-updated">دوایین نوێکردنەوە: '+new Date().toLocaleTimeString('en-GB')+' · هەموو 5 چرکە نوێ دەبێتەوە</div>';
-      h+='<div class="pub-cta"><b>ئەم ئامارە بە ڕاستەوخۆیی نوێ دەبێتەوە</b><span>بۆ بەڕێوەبردنی ڕیکلامەکانی خۆت، ئەپی Proxo دابمەزرێنە</span><a href="'+window.location.origin+window.location.pathname+'">کردنەوەی Proxo</a></div>';
+      h+='<div class="pub-cta"><b>ئەم ئامارە بە ڕاستەوخۆیی نوێ دەبێتەوە</b><span>بۆ بەڕێوەبردنی ڕیکلامەکانی خۆت، ئەپی Proxo دابمەزرێنە</span><a href="'+window.location.origin+'/'+'">کردنەوەی Proxo</a></div>';
       body.innerHTML=h;
     }catch(e){
       body.innerHTML=`<div class="empty-box"><div class="empty-box-ico" style="width:70px;height:70px;border-radius:22px;font-size:28px"><i class="fas fa-triangle-exclamation"></i></div><h3>هەڵەیەک ڕوویدا</h3><p>تکایە دواتر هەوڵ بدەرەوە</p></div>`;
@@ -17716,6 +17726,12 @@ function openFastPayQR(qrUrl, qrText, orderId, amount) {
   const oldOk = document.getElementById('fastPayOkMark');
   if (oldOk) oldOk.remove();
 
+  const btn = document.querySelector('#fastPayQrModal button');
+  if (btn) {
+    btn.style.background = '#0E78FF';
+    btn.textContent = 'داخستن';
+  }
+
   if (amtEl) amtEl.textContent =
     Math.round(Number(amount) || 0).toLocaleString() + ' IQD';
 
@@ -17828,12 +17844,19 @@ function _fpShowSuccess() {
 
   _fpSetStatus('✅ پارەدانەکە سەرکەوتوو بوو — باڵانس زیادکرا', '#2e7d32');
 
+  /* دوگمەی داخستن سەوز دەکەین تا ڕوون بێت کارەکە تەواوە */
+  const btn = document.querySelector('#fastPayQrModal button');
+  if (btn) {
+    btn.style.background = '#2e7d32';
+    btn.textContent = 'تەواو';
+  }
+
   if (typeof showToast === 'function') {
     showToast('✅ باڵانسەکەت زیادکرا', 'ok');
   }
   if (typeof loadBal === 'function') loadBal();
 
-  setTimeout(closeFastPayQR, 3500);
+  /* مۆداڵەکە خۆی دانەخرێت — بەکارهێنەر خۆی دایدەخات */
 }
 
 function closeFastPayQR() {
