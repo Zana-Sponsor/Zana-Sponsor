@@ -17679,46 +17679,135 @@ html[data-theme="dark"] .pxth-float button.on{background:#2f3a4f;color:#fff}
   </div>
 </div>
 <script>
-function openFastPayQR(qrUrl, qrText, orderId, amount) {
+/* ═══════════════════════════════════════════════════════════
+   FastPay QR — پشکنینی خۆکاری دۆخ (status polling)
+   ───────────────────────────────────────────────────────────
+   ئەم کۆدە جێگای openFastPayQR / closeFastPayQR ی کۆن
+   دەگرێتەوە لە کۆتایی index.html (دێڕی ~17681-17722).
+   ═══════════════════════════════════════════════════════════ */
 
+/* ⚠️ ئەم دوو ناوە بگونجێنە لەگەڵ ستوونەکانی pa_transactions */
+const FP_ORDER_COL  = 'gateway_order_id';   // ستوونی order id
+const FP_STATUS_COL = 'gateway_status';     // ستوونی دۆخ
+
+let _fpPollTimer = null;
+let _fpOrderId   = null;
+let _fpStartedAt = 0;
+
+function openFastPayQR(qrUrl, qrText, orderId, amount) {
   const modal = document.getElementById('fastPayQrModal');
-  const img = document.getElementById('fastPayQrImage');
-  const txt = document.getElementById('fastPayQrText');
+  const img   = document.getElementById('fastPayQrImage');
+  const txt   = document.getElementById('fastPayQrText');
+
+  _fpOrderId   = orderId;
+  _fpStartedAt = Date.now();
 
   document.getElementById('fastPayQrAmount').textContent =
     Math.round(Number(amount)).toLocaleString() + ' IQD';
 
-  document.getElementById('fastPayOrderId').textContent =
-    'Order ID: ' + orderId;
+  document.getElementById('fastPayOrderId').textContent = 'Order ID: ' + orderId;
 
-  if (qrUrl) {
-    img.src = qrUrl;
-    img.style.display = 'block';
-  } else {
-    img.style.display = 'none';
-  }
+  if (qrUrl) { img.src = qrUrl; img.style.display = 'block'; }
+  else       { img.style.display = 'none'; }
 
-  if (qrText) {
-    txt.textContent = qrText;
-  } else {
-    txt.textContent = '';
-  }
+  txt.textContent = qrText || '';
 
+  _fpSetStatus('⏳ چاوەڕوانی پارەدان...', '#888');
   modal.style.display = 'flex';
+
+  clearInterval(_fpPollTimer);
+  _fpPollTimer = setInterval(_fpCheckStatus, 4000);
+  _fpCheckStatus();
 }
 
+/* ── دروستکردن/نوێکردنەوەی دێڕی دۆخ لەژێر Order ID ── */
+function _fpSetStatus(text, color) {
+  let el = document.getElementById('fastPayStatusLine');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'fastPayStatusLine';
+    el.style.cssText =
+      'font-size:13px;font-weight:800;margin:4px 0 12px;';
+    const anchor = document.getElementById('fastPayOrderId');
+    anchor.parentNode.insertBefore(el, anchor.nextSibling);
+  }
+  el.textContent = text;
+  el.style.color = color;
+}
+
+/* ── پشکنینی دۆخ لە Supabase ── */
+async function _fpCheckStatus() {
+  if (!_fpOrderId || !window.sb || !cu || !cu.id) return;
+
+  /* دوای ١٥ خولەک پشکنین ڕادەوەستێت */
+  if (Date.now() - _fpStartedAt > 15 * 60 * 1000) {
+    clearInterval(_fpPollTimer);
+    _fpSetStatus('⌛ کاتی پارەدان تەواو بوو', '#e53935');
+    return;
+  }
+
+  try {
+    const { data, error } = await sb
+      .from('pa_transactions')
+      .select('id,' + FP_STATUS_COL + ',status,amount')
+      .eq('user_id', cu.id)
+      .eq(FP_ORDER_COL, _fpOrderId)
+      .limit(1)
+      .maybeSingle();
+
+    if (error || !data) return;
+
+    const st = String(data[FP_STATUS_COL] || data.status || '').toUpperCase();
+
+    if (st === 'PAID' || st === 'SUCCESS' || st === 'COMPLETED') {
+      clearInterval(_fpPollTimer);
+      _fpShowSuccess();
+    } else if (st === 'DECLINED' || st === 'FAILED' || st === 'CANCELLED') {
+      clearInterval(_fpPollTimer);
+      _fpSetStatus('❌ پارەدانەکە سەرکەوتوو نەبوو', '#e53935');
+    } else if (st === 'EXPIRED') {
+      clearInterval(_fpPollTimer);
+      _fpSetStatus('⌛ کاتی پارەدان تەواو بوو', '#e53935');
+    }
+  } catch (e) {
+    console.error('[FastPay poll]', e);
+  }
+}
+
+/* ── دۆخی سەرکەوتن ── */
+function _fpShowSuccess() {
+  const img = document.getElementById('fastPayQrImage');
+  const txt = document.getElementById('fastPayQrText');
+
+  if (img) img.style.display = 'none';
+  if (txt) txt.style.display = 'none';
+
+  /* ✅ لە شوێنی QR ــەکە */
+  const box = img ? img.parentNode : null;
+  if (box) {
+    box.innerHTML =
+      '<div style="font-size:64px;line-height:1;padding:28px 0;color:#2e7d32">✅</div>';
+  }
+
+  _fpSetStatus('✅ پارەدانەکە سەرکەوتوو بوو — باڵانس زیادکرا', '#2e7d32');
+
+  if (typeof showToast === 'function') {
+    showToast('✅ باڵانسەکەت زیادکرا', 'ok');
+  }
+  if (typeof loadBal === 'function') loadBal();
+
+  setTimeout(closeFastPayQR, 3500);
+}
 
 function closeFastPayQR() {
+  clearInterval(_fpPollTimer);
+  _fpPollTimer = null;
+  _fpOrderId   = null;
 
   const modal = document.getElementById('fastPayQrModal');
+  if (modal) modal.style.display = 'none';
 
-  if (modal) {
-    modal.style.display = 'none';
-  }
-
-  if (typeof loadBal === 'function') {
-    loadBal();
-  }
+  if (typeof loadBal === 'function') loadBal();
 }
 </script>
 </html>
