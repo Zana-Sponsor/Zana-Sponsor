@@ -194,6 +194,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .badge.scheduled{background:rgba(8,145,178,.08);color:#0891b2;border:1px solid rgba(8,145,178,.22);}
 .badge.review{background:rgba(37,99,235,.09);color:#1d4ed8;border:1px solid rgba(37,99,235,.22);}
 .badge.spent{background:rgba(220,38,38,.06);color:var(--rd);border:1px solid rgba(220,38,38,.18);}
+.badge.expired{background:rgba(107,117,133,.09);color:var(--mt2);border:1px solid rgba(107,117,133,.22);}
 
 /* ══ ACTION BUTTONS ══ */
 .act-btn{padding:6px 12px;border-radius:8px;font-family:'R',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
@@ -631,6 +632,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-item" onclick="goPage('deposits')"><i class="fas fa-money-bill-wave"></i> داواکاری پارەدان <span class="sb-badge yw" id="sbDepCount">0</span></div>
     <div class="sb-item" onclick="goPage('ads')"><i class="fas fa-rectangle-ad"></i> ڕیکلامەکان <span class="sb-badge yw" id="sbAdsCount">0</span></div>
     <div class="sb-item" onclick="goPage('adsData')"><i class="fas fa-chart-bar" style="color:#a855f7"></i> داتای وردەکاری ڕیکلامەکان</div>
+    <div class="sb-item" onclick="goPage('bestMetrics')"><i class="fas fa-trophy" style="color:#f59e0b"></i> باشترین ئامارەکان <span class="sb-badge yw" id="sbBmCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('approval')"><i class="fas fa-shield-check" style="color:#10b981"></i> Approval Workflow <span class="sb-badge yw" id="sbApprovalCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('txlog')"><i class="fas fa-list-check" style="color:#38bdf8"></i> مێژووی مامەڵەکان</div>
     <div class="sb-section">ئامرازەکان</div>
@@ -647,7 +649,6 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-item" onclick="goPage('revenue')"><i class="fas fa-chart-line" style="color:#16a34a"></i> داهاتی ڕیکلامەکان</div>
     <div class="sb-section">سیستەم</div>
     <div class="sb-item" onclick="goPage('otp')"><i class="fas fa-key" style="color:#eab308"></i> کۆدەکانی OTP <span class="sb-badge" id="sbOtpCount">0</span></div>
-    <div class="sb-item" onclick="goPage('ipbans')"><i class="fas fa-shield-halved" style="color:#dc2626"></i> IP بلۆککراوەکان <span class="sb-badge rd" id="sbIpBanCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('maintenance')"><i class="fas fa-triangle-exclamation" style="color:#ef4444"></i> ڕاگرتنی پەڕەکە</div>
     <div class="sb-item" onclick="goPage('appAnnouncement')"><i class="fas fa-bullhorn" style="color:#f59e0b"></i> ئاگاداری گشتی</div>
     <div class="sb-item" onclick="goPage('userStory')"><i class="fas fa-circle-play" style="color:#db2777"></i> ستۆری بەکارهێنەران</div>
@@ -750,6 +751,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
           <div class="chip yw" data-df="pending" onclick="filterDeps(this)">چاوەڕوان</div>
           <div class="chip gr" data-df="approved" onclick="filterDeps(this)">پەسەندکراو</div>
           <div class="chip rd" data-df="rejected" onclick="filterDeps(this)">ڕەتکراو</div>
+          <div class="chip" data-df="expired" onclick="filterDeps(this)"><i class="fas fa-clock-rotate-left" style="font-size:10px;margin-left:4px"></i>بەسەرچووە</div>
         </div>
         <div class="dep-table-wrap tbl-scroll" id="depositsTableWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
@@ -1115,6 +1117,52 @@ tr:hover td{background:rgba(28,35,51,.015);}
     </div>
 
     <!-- ══ USER STORY ══ -->
+    <!-- ══ BEST METRICS (باشترین ئامارەکان) ══ -->
+    <div class="pg" id="pgBestMetrics">
+      <div class="sec-hdr">
+        <h3><i class="fas fa-trophy" style="margin-left:8px;color:#f59e0b"></i>باشترین ئامارەکان</h3>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select class="minp" id="bmMonth" onchange="loadBestMetrics()" style="width:auto;font-size:12px;padding:8px 12px;margin:0"></select>
+          <select class="minp" id="bmYear"  onchange="loadBestMetrics()" style="width:auto;font-size:12px;padding:8px 12px;margin:0"></select>
+        </div>
+      </div>
+
+      <!-- ستاتیستیک -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
+        <div class="stat-card">
+          <div class="stat-ico" style="background:rgba(245,158,11,.12);color:#f59e0b"><i class="fas fa-trophy"></i></div>
+          <div class="stat-info"><div class="stat-val" id="bmStatTotal">—</div><div class="stat-lbl">هەڵبژێردراو</div></div>
+        </div>
+        <div class="stat-card" style="background:rgba(22,163,74,.04);border-color:rgba(22,163,74,.15)">
+          <div class="stat-ico" style="background:rgba(22,163,74,.12);color:#16a34a"><i class="fas fa-image"></i></div>
+          <div class="stat-info"><div class="stat-val" id="bmStatWithThumb" style="color:#16a34a">—</div><div class="stat-lbl">وێنۆچکەی هەیە</div></div>
+        </div>
+        <div class="stat-card" style="background:rgba(220,38,38,.04);border-color:rgba(220,38,38,.15)">
+          <div class="stat-ico" style="background:rgba(220,38,38,.12);color:var(--rd)"><i class="fas fa-triangle-exclamation"></i></div>
+          <div class="stat-info"><div class="stat-val" id="bmStatNoThumb" style="color:var(--rd)">—</div><div class="stat-lbl">بێ وێنۆچکە</div></div>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-bottom:16px;border-right-color:#f59e0b">
+        <i class="fas fa-info-circle" style="margin-left:6px;color:#f59e0b"></i>
+        وێنۆچکەی ڤیدیۆ <b>بە دەستی</b> دادەنرێت — TikTok ڕێگا بە داگرتنی خۆکاری وێنۆچکە لە سێرڤەرەوە نادات.
+        وێنەکە خۆکارانە بۆ ٣٦٠ پیکسل بچووک دەکرێتەوە (~٣٠ کیلۆبایت) پێش پاشەکەوتکردن.
+        ڕیزبەندی لێرەوە دیاری دەکرێت و هەر ئەو ڕیزەیە کە لە ئەپەکەدا دەردەکەوێت.
+      </div>
+
+      <!-- زیادکردنی ڕیکلام -->
+      <div style="background:var(--w);border:1.5px solid var(--b1);border-radius:16px;padding:16px;margin-bottom:16px">
+        <label class="modal-lbl" style="margin-top:0">زیادکردنی ڕیکلام بۆ ئەم مانگە</label>
+        <input class="minp" id="bmSearchInp" type="text" placeholder="گەڕان بە ناونیشان / ژمارەی ڕیکلام / ناوی بەکارهێنەر..." style="margin:0" oninput="bmRenderCandidates()">
+        <div id="bmCandidates" style="margin-top:10px"></div>
+      </div>
+
+      <!-- لیستی هەڵبژێردراوەکان -->
+      <div class="tbl-wrap">
+        <div id="bmList"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+      </div>
+    </div>
+
     <div class="pg" id="pgUserStory">
       <div class="sec-hdr">
         <h3><i class="fas fa-circle-play" style="margin-left:8px;color:#db2777"></i>ستۆری بەکارهێنەران</h3>
@@ -1610,11 +1658,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="pg" id="pgOtp">
       <div class="sec-hdr" style="flex-wrap:wrap;gap:10px">
         <h3><i class="fas fa-key" style="margin-left:8px;color:#eab308"></i>کۆدەکانی OTP</h3>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <div class="act-btn gr" onclick="openOtpEditor(null)" style="padding:8px 14px"><i class="fas fa-plus"></i> کۆدی نوێ</div>
-          <div class="act-btn rd" onclick="deleteExpiredOtp()" style="padding:8px 14px"><i class="fas fa-broom"></i> سڕینەوەی بەسەرچووەکان</div>
-          <div class="act-btn dark" onclick="loadOtpCodes()" style="padding:8px 14px"><i class="fas fa-rotate-right"></i> نوێکردنەوە</div>
-        </div>
+        <div class="act-btn dark" onclick="loadOtpCodes()" style="padding:8px 14px"><i class="fas fa-rotate-right"></i> نوێکردنەوە</div>
       </div>
       <!-- ستاتیستیک -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px">
@@ -1644,48 +1688,6 @@ tr:hover td{background:rgba(28,35,51,.015);}
           <div class="chip rd" data-of="expired" onclick="filterOtpCodes(this)">بەسەرچوو</div>
         </div>
         <div class="ad-table-wrap tbl-scroll" id="otpTableWrap">
-          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ══ IP BANS ══ -->
-    <div class="pg" id="pgIpbans">
-      <div class="sec-hdr" style="flex-wrap:wrap;gap:10px">
-        <h3><i class="fas fa-shield-halved" style="margin-left:8px;color:#dc2626"></i>بلۆککردنی IP</h3>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <div class="act-btn rd" onclick="openBanIpModal(null)" style="padding:8px 14px"><i class="fas fa-ban"></i> بلۆککردنی IP</div>
-          <div class="act-btn dark" onclick="loadIpBans()" style="padding:8px 14px"><i class="fas fa-rotate-right"></i> نوێکردنەوە</div>
-        </div>
-      </div>
-
-      <div style="background:rgba(220,38,38,.05);border:1.5px dashed rgba(220,38,38,.25);border-radius:12px;padding:11px 14px;font-size:11.5px;color:var(--mt);line-height:1.8;margin-bottom:16px">
-        <i class="fas fa-circle-info" style="color:#dc2626;margin-left:5px"></i>
-        ئەم IPـانە ناتوانن هەژماری نوێ دروست بکەن و ناتوانن بچنە ناو هیچ هەژمارێکەوە. هەر هەوڵێکی چوونەژوورەوە لەم IPـانەوە یەکسەر سێشنەکە دەسڕێتەوە.
-        مەبەست IPـی ئینتەرنێتی گشتی ئامێرەکەیە (مۆبایل/وایفای).
-      </div>
-
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
-        <div class="stat-card">
-          <div class="stat-ico rd"><i class="fas fa-ban"></i></div>
-          <div><div class="stat-val" id="ipStatTotal">—</div><div class="stat-lbl">کۆی بلۆککراو</div></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-ico yw"><i class="fas fa-bolt"></i></div>
-          <div><div class="stat-val" id="ipStatHits">—</div><div class="stat-lbl">هەوڵی ڕاگیراو</div></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-ico dark"><i class="fas fa-clock"></i></div>
-          <div><div class="stat-val" id="ipStatTemp">—</div><div class="stat-lbl">کاتی (بەسەردەچێت)</div></div>
-        </div>
-      </div>
-
-      <div class="tbl-wrap">
-        <div class="tbl-filter" style="flex-wrap:wrap">
-          <input class="tbl-search" id="ipBanSearch" placeholder="گەڕان بەپێی IP، هۆکار، یان ئیمەیلی ئادمین..." oninput="renderIpBans(this.value.toLowerCase())" style="min-width:220px">
-        </div>
-        <div class="ad-table-wrap tbl-scroll" id="ipBansWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
       </div>
@@ -1889,21 +1891,6 @@ tr:hover td{background:rgba(28,35,51,.015);}
       <div class="modal-close" onclick="closeMo('moEditUser')"><i class="fas fa-xmark"></i></div>
     </div>
     <input type="hidden" id="editUserId">
-    <input type="hidden" id="editUserAvatarB64">
-    <!-- وێنەی پرۆفایل -->
-    <div style="display:flex;align-items:center;gap:14px;background:var(--bg);border:1.5px dashed var(--b2);border-radius:13px;padding:12px 14px;margin-bottom:14px">
-      <div id="editUserAvPrev" style="width:62px;height:62px;border-radius:50%;background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;overflow:hidden;flex-shrink:0"></div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:6px">وێنەی هەژمار</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <label class="act-btn bl" style="cursor:pointer;margin:0"><i class="fas fa-upload"></i> هەڵبژاردنی وێنە
-            <input type="file" accept="image/*" style="display:none" onchange="onEditUserAvatarPick(this)">
-          </label>
-          <div class="act-btn rd" onclick="clearEditUserAvatar()"><i class="fas fa-trash"></i> لابردن</div>
-        </div>
-        <div style="font-size:10px;color:var(--mt);margin-top:6px">وێنەکە خۆکارانە بچووک دەکرێتەوە بۆ 400×400</div>
-      </div>
-    </div>
     <label class="modal-lbl">ناوی تەواو</label>
     <input class="minp" type="text" id="editUserName" placeholder="ناو">
     <label class="modal-lbl">ئیمەیل</label>
@@ -2587,11 +2574,11 @@ const pageConfig={
   users:{title:'بەکارهێنەران',sub:'بەڕێوەبردنی هەژمارەکان',load:loadUsers},
   deposits:{title:'داواکاریەکانی پارەدان',sub:'پەسەندکردن و ڕەتکردنەوەی داواکاریەکان',load:loadDeposits},
   ads:{title:'ڕیکلامەکان',sub:'بەڕێوەبردنی ڕیکلامەکان',load:loadAds},
+  bestMetrics:{title:'باشترین ئامارەکان',sub:'هەڵبژاردنی ڕیکلامەکان و دانانی وێنۆچکە بۆ هەر مانگێک',load:loadBestMetrics},
   adsData:{title:'داتای وردەکاری ڕیکلامەکان',sub:'ئایدی ڕیکلام، زانیاری ئەڤدەرتایزەر، بینین، کلیک، بودجەی خەرجکراو',load:loadAdsData},
   approval:{title:'Approval Workflow',sub:'پەسەندکردنی داواکاریەکانی چاوەڕوان — TikTok Ad ID و بەروار',load:loadApprovalWorkflow},
   txlog:{title:'مێژووی مامەڵەکان',sub:'هەموو مامەڵەکانی دارایی سیستەم',load:loadTxLog},
-  otp:{title:'کۆدەکانی OTP',sub:'هەموو کۆدەکانی دووپاتکردنەوە (otp_codes) — گەڕان، دەستکاری و سڕینەوە',load:loadOtpCodes},
-  ipbans:{title:'بلۆککردنی IP',sub:'IPـە بلۆککراوەکان — ڕێگری لە چوونەژوورەوە و دروستکردنی هەژمار',load:loadIpBans},
+  otp:{title:'کۆدەکانی OTP',sub:'هەموو کۆدەکانی دووپاتکردنەوە (otp_codes) — گەڕان و پاڵاوتن',load:loadOtpCodes},
   promo:{title:'کۆدەکانی داشکاندن',sub:'دروستکردن و بەڕێوەبردنی کۆدەکان',load:async()=>{await Promise.all([loadPromos(),loadGlobalAdDiscountConfig(),loadDirectDiscountsAdmin()])}},
   voucher:{title:'کۆدەکانی ڤاوچەر',sub:'دروستکردن و بەڕێوەبردنی کۆدەکانی ڤاوچەر (بارکردنی باڵانس)',load:async()=>{await Promise.all([loadVouchers(),loadSignupGiftConfig()])}},
   notifications:{title:'ناردنی ئاگاداری',sub:'ناردن بۆ بەکارهێنەران',load:loadNotifHistory},
@@ -2695,10 +2682,12 @@ function setupRealtime(){
     .on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads'},()=>{
       loadAdBadge(); loadDashboardStats();
       if(_curPage==='ads')loadAds();
+      if(_curPage==='bestMetrics')loadBestMetrics();
     })
     .on('postgres_changes',{event:'DELETE',schema:'public',table:'pa_ads'},()=>{
       loadAdBadge(); loadDashboardStats();
       if(_curPage==='ads')loadAds();
+      if(_curPage==='bestMetrics')loadBestMetrics();
     })
     .on('postgres_changes',{event:'*',schema:'public',table:'profiles'},()=>{
       loadDashboardStats();
@@ -2724,15 +2713,7 @@ function setupRealtime(){
       if(_curPage==='revenue')loadRevenue();
     })
     .on('postgres_changes',{event:'*',schema:'public',table:'otp_codes'},()=>{
-      loadOtpBadge();
       if(_curPage==='otp')loadOtpCodes();
-    })
-    .on('postgres_changes',{event:'*',schema:'public',table:'pa_banned_ips'},()=>{
-      loadIpBanBadge();
-      if(_curPage==='ipbans')loadIpBans();
-    })
-    .on('postgres_changes',{event:'*',schema:'public',table:'pa_user_sessions'},()=>{
-      if(_curPage==='ipbans')loadIpBans();
     })
     .subscribe((status)=>{
       const dot=document.querySelector('.rt-dot');
@@ -2761,13 +2742,7 @@ async function loadDashboardStats(){
   document.getElementById('stBanned').textContent=banned||0;
   document.getElementById('stCoins').textContent=(totalCoins||0).toLocaleString();
   document.getElementById('sbUsersCount').textContent=users||0;
-  loadDepBadge();loadAdBadge();loadOtpBadge();loadIpBanBadge();
-}
-
-async function loadIpBanBadge(){
-  const{count}=await sb.from('pa_banned_ips').select('*',{count:'exact',head:true}).eq('is_active',true);
-  const el=document.getElementById('sbIpBanCount');
-  if(el){el.textContent=count||0;el.style.display=(count||0)>0?'inline-flex':'none';}
+  loadDepBadge();loadAdBadge();loadOtpBadge();
 }
 
 async function loadOtpBadge(){
@@ -2812,7 +2787,7 @@ async function loadDashDeposits(){
       </div>
       <div style="text-align:left">
         <div style="font-size:14px;font-weight:800;color:var(--dark);font-family:'Inter',sans-serif">${Math.round(parseFloat(d.amount||0)*1800).toLocaleString()} IQD</div>
-        <span class="badge ${d.status}" style="font-size:9.5px">${statusKu(d.status)}</span>
+        <span class="badge ${depStatusKey(d)}" style="font-size:9.5px">${depStatusKu(d)}</span>
       </div>
     </div>`).join('');
   wrap.innerHTML=`<div class="dash-dep-cards">${cardsHTML}</div><div class="dash-dep-table tbl-scroll">${renderDepTable(data,true)}</div>`;
@@ -2865,7 +2840,7 @@ function renderUsers(q=''){
       </div></td>
       <td><span style="font-family:'Inter';font-weight:800;color:var(--gr)">${Math.round(parseFloat(u.pa_wallets?.balance||0)*1800).toLocaleString()} IQD</span></td>
       <td><span style="font-family:'Inter';font-weight:700;color:#d97706">${parseInt(u.pa_coins?.coins_balance||0).toLocaleString()}</span></td>
-      <td><span class="badge ${u.is_banned?'banned':'approved'}">${u.is_banned?'بانکراو':'چالاک'}</span>${u.balance_locked?' <span class="badge banned" style="background:rgba(217,119,6,.12);color:#b45309;border-color:rgba(217,119,6,.25)"><i class="fas fa-lock"></i> باڵانس قفڵ</span>':''}</td>
+      <td><span class="badge ${u.is_banned?'banned':'approved'}">${u.is_banned?'بانکراو':'چالاک'}</span></td>
       <td style="font-size:11px;color:var(--mt)">${new Date(u.created_at).toLocaleDateString('ku')}</td>
       <td><div class="act-grp">
         <div class="act-btn dark" onclick="showUserDetail('${u.id}')"><i class="fas fa-eye"></i></div>
@@ -2873,8 +2848,6 @@ function renderUsers(q=''){
         <div class="act-btn bl" onclick="openEditUser(allUsers.find(x=>x.id==='${u.id}'))"><i class="fas fa-pen"></i></div>
         <div class="act-btn gr" onclick="openAddBalanceUser('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-plus"></i></div>
         <div class="act-btn yw" onclick="openDeductBalance('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-minus"></i></div>
-        <div class="act-btn ${u.balance_locked?'gr':'yw'}" title="${u.balance_locked?'کردنەوەی باڵانس':'قفڵکردنی باڵانس'}" onclick="toggleBalanceLock('${u.id}',${!!u.balance_locked})"><i class="fas fa-${u.balance_locked?'lock-open':'lock'}"></i></div>
-        <div class="act-btn rd" title="بلۆککردنی IP" onclick="openBanIpModal('${u.id}')"><i class="fas fa-shield-halved"></i></div>
         <div class="act-btn ${u.is_banned?'gr':'rd'}" onclick="toggleBan('${u.id}',${u.is_banned})">${u.is_banned?'<i class="fas fa-unlock"></i>':'<i class="fas fa-ban"></i>'}</div>
       </div></td>
     </tr>`).join('')}</tbody></table>`;
@@ -2890,7 +2863,6 @@ function renderUsers(q=''){
         </div>
         <span class="badge ${u.is_banned?'banned':'approved'}">${u.is_banned?'بانکراو':'چالاک'}</span>
       </div>
-      ${u.balance_locked?'<div style="display:flex;align-items:center;gap:6px;background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2);border-radius:9px;padding:5px 9px;margin-bottom:8px;font-size:11px;font-weight:700;color:#b45309"><i class="fas fa-lock" style="font-size:10px"></i> باڵانس قفڵکراوە</div>':''}
       <div class="user-card-meta">
         <div class="user-card-stat gr"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(u.pa_wallets?.balance||0)*1800).toLocaleString()} IQD</div>
         <div class="user-card-stat yw"><i class="fas fa-coins" style="font-size:10px"></i> ${parseInt(u.pa_coins?.coins_balance||0).toLocaleString()}</div>
@@ -2902,8 +2874,6 @@ function renderUsers(q=''){
         <div class="act-btn pu" onclick="showUserPassword('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}','${(u.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> پاسۆرد</div>
         <div class="act-btn gr" onclick="openAddBalanceUser('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-plus"></i> باڵانس</div>
         <div class="act-btn yw" onclick="openDeductBalance('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-minus"></i> وەرگرتن</div>
-        <div class="act-btn ${u.balance_locked?'gr':'yw'}" onclick="toggleBalanceLock('${u.id}',${!!u.balance_locked})"><i class="fas fa-${u.balance_locked?'lock-open':'lock'}"></i> ${u.balance_locked?'کردنەوەی باڵانس':'قفڵی باڵانس'}</div>
-        <div class="act-btn rd" onclick="openBanIpModal('${u.id}')"><i class="fas fa-shield-halved"></i> بلۆکی IP</div>
         <div class="act-btn ${u.is_banned?'gr':'rd'}" onclick="toggleBan('${u.id}',${u.is_banned})">${u.is_banned?'<i class="fas fa-unlock"></i> ئازادکردن':'<i class="fas fa-ban"></i> بانکردن'}</div>
       </div>
     </div>`).join('')}</div>`;
@@ -2991,13 +2961,11 @@ async function showUserDetail(uid){
     <div class="detail-row"><span class="lbl">باڵانس</span><span class="val" style="color:var(--gr)">${Math.round(parseFloat(u.pa_wallets?.balance||0)*1800).toLocaleString()} IQD</span></div>
     <div class="detail-row"><span class="lbl">کۆین</span><span class="val" style="color:#d97706">${parseInt(u.pa_coins?.coins_balance||0).toLocaleString()}</span></div>
     <div class="detail-row"><span class="lbl">باری ئەکاونت</span><span class="val"><span class="badge ${u.is_banned?'banned':'approved'}">${u.is_banned?'بانکراو':'چالاک'}</span></span></div>
-    <div class="detail-row"><span class="lbl">باری باڵانس</span><span class="val">${u.balance_locked?`<span class="badge banned" style="background:rgba(217,119,6,.12);color:#b45309;border-color:rgba(217,119,6,.25)"><i class="fas fa-lock"></i> قفڵکراو</span>`:`<span class="badge approved"><i class="fas fa-lock-open"></i> کراوە</span>`}</span></div>
-    ${u.balance_locked&&u.balance_lock_reason?`<div class="detail-row"><span class="lbl">هۆکاری قفڵ</span><span class="val" style="color:#b45309">${u.balance_lock_reason}</span></div>`:''}
     <div class="detail-row"><span class="lbl">بەرواری تۆمارکردن</span><span class="val">${new Date(u.created_at).toLocaleDateString('ku')}</span></div>
     <div class="detail-row"><span class="lbl">ژمارەی مۆبایل</span><span class="val" style="font-family:'Inter',sans-serif;direction:ltr">${u.phone||'<span style=\"color:var(--rd);font-size:11px\">نەداوە</span>'}</span></div>
     <div class="detail-row"><span class="lbl">User ID</span><span class="val" style="font-family:monospace;font-size:10px">${u.id}</span></div>
     ${ads?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین ڕیکلامەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${ads.map(a=>`<div onclick="showAdDetail('${a.id}')" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">#${a.ad_number} — ${a.title}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${a.status}">${statusKu(a.status)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
-    ${txs?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین مامەڵەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${txs.map(t=>`<div onclick="showDepDetail(_udetTxMap['${t.id}'])" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Math.round(parseFloat(t.amount)*1800).toLocaleString()} IQD — ${t.method||_txTypeKu(t.type,t.note).lbl}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${t.status}">${statusKu(t.status)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
+    ${txs?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین مامەڵەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${txs.map(t=>`<div onclick="showDepDetail(_udetTxMap['${t.id}'])" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Math.round(parseFloat(t.amount)*1800).toLocaleString()} IQD — ${t.method||_txTypeKu(t.type,t.note).lbl}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${depStatusKey(t)}">${depStatusKu(t)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
     <div class="sep"></div>
     <div style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:10px;display:flex;align-items:center;gap:6px">
       <i class="fas fa-history" style="color:var(--bl)"></i> سێشنە دوایینەکان
@@ -3025,9 +2993,6 @@ async function showUserDetail(uid){
       <div class="act-btn gr" style="flex:1" onclick="openAddBalanceUser('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}');closeMo('moUser')"><i class="fas fa-plus"></i> زیادکردنی باڵانس</div>
       <div class="act-btn yw" style="flex:1" onclick="openDeductBalance('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}');closeMo('moUser')"><i class="fas fa-minus"></i> وەرگرتن</div>
       <div class="act-btn pu" style="flex:1" onclick="showUserPassword('${u.id}','${(u.full_name||u.email||'').replace(/'/g,"\\'")}','${(u.email||'').replace(/'/g,"\\'")}');closeMo('moUser')"><i class="fas fa-key"></i> پاسۆرد</div>
-      <div class="act-btn ${u.balance_locked?'gr':'yw'}" style="flex:1" onclick="toggleBalanceLock('${u.id}',${!!u.balance_locked});closeMo('moUser')"><i class="fas fa-${u.balance_locked?'lock-open':'lock'}"></i> ${u.balance_locked?'کردنەوەی باڵانس':'قفڵکردنی باڵانس'}</div>
-      <div class="act-btn dark" style="flex:1" onclick="forceLogoutUser('${u.id}')"><i class="fas fa-right-from-bracket"></i> دەرکردن لە هەژمار</div>
-      <div class="act-btn rd" style="flex:1" onclick="openBanIpModal('${u.id}');closeMo('moUser')"><i class="fas fa-shield-halved"></i> بلۆککردنی IP</div>
       <div class="act-btn ${u.is_banned?'gr':'rd'}" style="flex:1" onclick="toggleBan('${u.id}',${u.is_banned});closeMo('moUser')">${u.is_banned?'<i class="fas fa-unlock"></i> بانەکردنەوە':'<i class="fas fa-ban"></i> بانکردن'}</div>
     </div>`;
   openMo('moUser');
@@ -3070,50 +3035,7 @@ function openEditUser(u){
   document.getElementById('editUserEmail').value=u.email||'';
   document.getElementById('editUserPhone').value=u.phone||'';
   document.getElementById('editUserPass').value='';
-  document.getElementById('editUserAvatarB64').value=u.avatar_b64||'';
-  _renderEditUserAvatar(u.avatar_b64||'', u.full_name||u.email||'?');
   openMo('moEditUser');
-}
-
-function _renderEditUserAvatar(b64,name){
-  const el=document.getElementById('editUserAvPrev');
-  if(!el)return;
-  el.innerHTML = b64
-    ? `<img src="${b64}" style="width:100%;height:100%;object-fit:cover">`
-    : (String(name||'?')[0]||'?').toUpperCase();
-}
-
-function clearEditUserAvatar(){
-  document.getElementById('editUserAvatarB64').value='';
-  _renderEditUserAvatar('', document.getElementById('editUserName').value||'?');
-}
-
-// وێنەکە بچووک دەکرێتەوە پێش پاشەکەوتکردن (پاراستنی قەبارەی داتابەیس)
-function onEditUserAvatarPick(inp){
-  const f=inp.files&&inp.files[0];
-  if(!f)return;
-  if(!/^image\//.test(f.type)){showToast('تەنها وێنە ڕێگەپێدراوە','rd');inp.value='';return;}
-  const rd=new FileReader();
-  rd.onload=e=>{
-    const img=new Image();
-    img.onload=()=>{
-      const MAX=400;
-      let w=img.width,h=img.height;
-      if(w>h&&w>MAX){h=Math.round(h*MAX/w);w=MAX;}
-      else if(h>=w&&h>MAX){w=Math.round(w*MAX/h);h=MAX;}
-      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
-      cv.getContext('2d').drawImage(img,0,0,w,h);
-      const b64=cv.toDataURL('image/jpeg',0.82);
-      document.getElementById('editUserAvatarB64').value=b64;
-      _renderEditUserAvatar(b64,'');
-      showToast('وێنە ئامادەیە — پاشەکەوتی بکە','gr');
-    };
-    img.onerror=()=>showToast('نەتوانرا وێنەکە بخوێنرێتەوە','rd');
-    img.src=e.target.result;
-  };
-  rd.onerror=()=>showToast('هەڵە لە خوێندنەوەی فایل','rd');
-  rd.readAsDataURL(f);
-  inp.value='';
 }
 
 async function saveEditUser(){
@@ -3121,100 +3043,14 @@ async function saveEditUser(){
   const name=document.getElementById('editUserName').value.trim();
   const phone=document.getElementById('editUserPhone').value.trim();
   const pass=document.getElementById('editUserPass').value;
-  const avatar=document.getElementById('editUserAvatarB64').value;
-  const prev=allUsers.find(x=>x.id===id);
   if(!name){showToast('ناو پڕ بکەرەوە','rd');return;}
   const upd={full_name:name};
   if(phone) upd.phone=phone;
-  // وێنە تەنها کاتێک دەنێردرێت کە گۆڕاوە (لابردنیش وەک گۆڕان دەژمێردرێت)
-  if((prev?.avatar_b64||'')!==(avatar||'')){
-    upd.avatar_b64 = avatar || null;
-    upd.avatar_updated_at = new Date().toISOString();
-  }
   const{error}=await sb.from('profiles').update(upd).eq('id',id);
   if(error){showToast('هەڵە: '+error.message,'rd');return;}
-  // پاسۆردی نوێ (ئەگەر نووسرابێت) — بێ هیچ ئیمەیل و نامەیەک، لەگەڵ دەرکردنی خێرا
-  if(pass){
-    if(pass.length<6){showToast('⚠️ پرۆفایل پاشەکەوتکرا بەڵام پاسۆرد کەمی ٦ پیت دەوێت','yw');}
-    else{
-      const{data:pr,error:pe}=await sb.rpc('pa_admin_set_password',{p_user_id:id,p_new_password:pass});
-      if(pe||pr?.success===false) showToast('⚠️ پرۆفایل پاشەکەوتکرا بەڵام پاسۆرد نەگۆڕا: '+(pe?.message||pr?.message||''),'rd');
-      else showToast('✅ پرۆفایل و پاسۆرد گۆڕدران — بەکارهێنەر دەرکرا','gr');
-    }
-  } else {
-    showToast('✅ پرۆفایل نوێکرایەوە','gr');
-  }
+  showToast('✅ پرۆفایل نوێکرایەوە','gr');
   _fbTriggerProfile(id);
   closeMo('moEditUser');loadUsers();
-}
-
-// ══ قفڵکردن / کردنەوەی باڵانس ══
-async function toggleBalanceLock(uid,isLocked){
-  const u=allUsers.find(x=>x.id===uid);
-  const balTxt=Math.round(parseFloat(u?.pa_wallets?.balance||0)*1800).toLocaleString()+' IQD';
-  if(isLocked){
-    confirm2('کردنەوەی باڵانس',
-      'باڵانسی ئەم بەکارهێنەرە دەکرێتەوە و دەتوانێت دووبارە بەکاری بهێنێت.',
-      'fas fa-lock-open','var(--gr)',
-      async()=>{
-        const{error}=await sb.from('profiles').update({
-          balance_locked:false,balance_lock_reason:null,balance_locked_at:null,balance_locked_by:null
-        }).eq('id',uid);
-        if(error){showToast('هەڵە: '+error.message,'rd');return;}
-        showToast('✅ باڵانس کرایەوە','gr');
-        _fbTriggerProfile(uid);
-        loadUsers();
-      });
-    return;
-  }
-  // قفڵکردن — داواکردنی هۆکار
-  const content=document.getElementById('balLockContent');
-  content.innerHTML=`
-    <div style="text-align:center;padding:10px 0 14px">
-      <div style="width:56px;height:56px;border-radius:50%;background:rgba(217,119,6,.1);border:2px solid rgba(217,119,6,.25);display:flex;align-items:center;justify-content:center;font-size:22px;color:#d97706;margin:0 auto 12px">
-        <i class="fas fa-lock"></i>
-      </div>
-      <div style="font-size:15px;font-weight:800;color:var(--dark)">${(u?.full_name||u?.email||'بەکارهێنەر').replace(/</g,'&lt;')}</div>
-      <div style="font-size:12px;color:var(--mt);direction:ltr;margin-top:4px">${(u?.email||'').replace(/</g,'&lt;')}</div>
-      <div style="margin-top:10px;font-family:'Inter';font-weight:800;font-size:17px;color:var(--gr)">${balTxt}</div>
-    </div>
-    <div style="background:rgba(217,119,6,.05);border:1.5px dashed rgba(217,119,6,.25);border-radius:12px;padding:11px 13px;font-size:11.5px;color:var(--mt);line-height:1.8;margin-bottom:12px">
-      <i class="fas fa-circle-info" style="color:#d97706;margin-left:5px"></i>
-      دوای قفڵکردن، بەکارهێنەر ناتوانێت هیچ بڕێک لە باڵانسەکەی خەرج بکات (ڕیکلام دروستکردن و هتد)، تەنانەت ئەگەر ملیۆنێکیشی تێدابێت.
-      پارە زیادکردن و وەرگرتنی ئادمین کاردەکات وەک خۆی.
-    </div>
-    <label class="modal-lbl" style="margin-top:0">هۆکاری قفڵکردن <span style="font-size:10px;color:var(--mt)">(بەکارهێنەر دەیبینێت)</span></label>
-    <input class="minp" type="text" id="balLockReason" placeholder="بۆ نموونە: پشکنینی هەژمار">
-    <button class="modal-btn dark" style="background:#d97706" onclick="confirmBalanceLock('${uid}')"><i class="fas fa-lock"></i> قفڵکردنی باڵانس</button>`;
-  openMo('moBalanceLock');
-}
-
-async function confirmBalanceLock(uid){
-  const reason=(document.getElementById('balLockReason')?.value||'').trim();
-  const{error}=await sb.from('profiles').update({
-    balance_locked:true,
-    balance_lock_reason:reason||null,
-    balance_locked_at:new Date().toISOString(),
-    balance_locked_by:adminUser?.id||null
-  }).eq('id',uid);
-  if(error){showToast('هەڵە: '+error.message,'rd');return;}
-  showToast('✅ باڵانس قفڵکرا','gr');
-  _fbTriggerProfile(uid);
-  closeMo('moBalanceLock');
-  loadUsers();
-}
-
-// ══ دەرکردنی خێرای بەکارهێنەر لە هەموو ئامێرەکان ══
-async function forceLogoutUser(uid){
-  confirm2('دەرکردن لە هەژمار',
-    'هەموو سێشنەکانی ئەم بەکارهێنەرە دەسڕدرێنەوە و یەکسەر لە هەموو ئامێرەکان دەردەچێت.',
-    'fas fa-right-from-bracket','var(--dark)',
-    async()=>{
-      const{error}=await sb.rpc('pa_admin_force_logout',{p_user_id:uid});
-      if(error){showToast('هەڵە: '+error.message,'rd');return;}
-      showToast('✅ بەکارهێنەر دەرکرا','gr');
-      closeMo('moUser');
-    });
 }
 
 async function toggleBan(uid,isBanned){
@@ -3222,21 +3058,14 @@ async function toggleBan(uid,isBanned){
     isBanned?'ئایا دەتەوێت بانەکردن هەڵبیگریتەوە؟':'ئایا دەتەوێت ئەم بەکارهێنەرە بان بکەی؟',
     isBanned?'fas fa-unlock':'fas fa-ban',isBanned?'var(--gr)':'var(--rd)',
     async()=>{
-      const{error:_banErr}=await sb.from('profiles').update({
-        is_banned:!isBanned,
-        banned_at:isBanned?null:new Date().toISOString(),
-        ...(isBanned?{force_logout_at:null}:{})
-      }).eq('id',uid);
-      if(_banErr){showToast('هەڵە: '+_banErr.message,'rd');return;}
-      // ── دەرکردنی یەکسەری (سڕینەوەی سێشنەکانی auth) ──
-      if(!isBanned){ try{ await sb.rpc('pa_admin_force_logout',{p_user_id:uid}); }catch(_){} }
+      await sb.from('profiles').update({is_banned:!isBanned}).eq('id',uid);
       await sb.from('pa_notifications').insert({user_id:uid,type:isBanned?'general':'warning',
         title:isBanned?'ئەکاونتت دووبارە چالاکبوو ✅':'ئەکاونتت بانکرا ⛔',
         body:isBanned?'ئادمین ئەکاونتەکەت دووبارە چالاک کردەوە.':'ئادمین ئەکاونتەکەت بانی کردووە.',is_read:false});
       // ── Firebase realtime push (بانکردن/بانەکردنەوە) ──
       _fbPushNotif(uid,isBanned?'ئەکاونتت دووبارە چالاکبوو ✅':'ئەکاونتت بانکرا ⛔',isBanned?'ئادمین ئەکاونتەکەت دووبارە چالاک کردەوە.':'ئادمین ئەکاونتەکەت بانی کردووە.',isBanned?'general':'warning');
       _fbTriggerProfile(uid);
-      showToast(isBanned?'✅ بانەکردن هەڵگیرا':'✅ بەکارهێنەر بانکرا و یەکسەر دەرکرا','gr');
+      showToast(isBanned?'✅ بانەکردن هەڵگیرا':'✅ بەکارهێنەر بانکرا','gr');
       loadUsers();
     });
 }
@@ -3593,7 +3422,7 @@ function renderTxLog(){
         </div></td>
         <td><span style="font-family:'Inter';font-weight:800;color:${amtColor}">${amtSign}${Math.round(parseFloat(t.amount||0)*1800).toLocaleString()} IQD</span></td>
         <td><span class="badge ${tt.cls}" style="font-size:10px">${tt.lbl}</span></td>
-        <td><span class="badge ${t.status||''}" style="font-size:10px">${statusKu(t.status)||'—'}</span></td>
+        <td><span class="badge ${depStatusKey(t)}" style="font-size:10px">${depStatusKu(t)||'—'}</span></td>
         <td style="font-size:11px;color:var(--mt);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td>
         <td style="font-size:10px;color:var(--mt);direction:ltr;white-space:nowrap">${dateStr}</td>
       </tr>`;
@@ -3640,10 +3469,17 @@ function filterDeps(el){
   renderDeposits((document.getElementById('depSearch')?.value||'').toLowerCase());
 }
 
+function depStatusKey(d){
+  return String(d?.gateway_status||'').toUpperCase()==='EXPIRED' ? 'expired' : (d?.status||'');
+}
+function depStatusKu(d){
+  return depStatusKey(d)==='expired' ? 'بەسەرچووە' : statusKu(d?.status);
+}
+
 function renderDeposits(q=''){
   _depMap={}; allDeposits.forEach(d=>{_depMap[d.id]=d;});
   let list=allDeposits;
-  if(depFilter!=='all')list=list.filter(d=>d.status===depFilter);
+  if(depFilter!=='all')list=list.filter(d=>depFilter==='expired'?depStatusKey(d)==='expired':(d.status===depFilter&&depStatusKey(d)!=='expired'));
   if(q)list=list.filter(d=>(d.profiles?.full_name||'').toLowerCase().includes(q)||(d.profiles?.email||'').toLowerCase().includes(q)||String(d.deposit_number||'').toLowerCase().includes(q)||String(d.id||'').toLowerCase().includes(q));
   document.getElementById('depositsTableWrap').innerHTML=renderDepTable(list,false);
 }
@@ -3660,7 +3496,7 @@ function renderDepTable(list,mini){
       </div></td>
       <td><span style="font-family:'Inter';font-weight:800;color:var(--gr)">${Math.round(parseFloat(d.amount)*1800).toLocaleString()} IQD</span></td>
       <td style="font-size:12px;font-weight:700">${mn[d.method]||d.method||'—'}</td>
-      <td><span class="badge ${d.status}">${statusKu(d.status)}</span></td>
+      <td><span class="badge ${depStatusKey(d)}">${depStatusKu(d)}</span></td>
       <td style="font-size:11px;color:var(--mt)">${new Date(d.created_at).toLocaleDateString('ku')}</td>
       <td onclick="event.stopPropagation()"><div class="act-grp">
         <div class="act-btn dark" onclick="showDepDetail(_depMap['${d.id}'])"><i class="fas fa-eye"></i></div>
@@ -3677,7 +3513,7 @@ function renderDepTable(list,mini){
           <div class="dep-card-name">${d.profiles?.full_name||'بێ ناو'}</div>
           <div class="dep-card-email">${d.profiles?.email||'—'}</div>
         </div>
-        <span class="badge ${d.status}">${statusKu(d.status)}</span>
+        <span class="badge ${depStatusKey(d)}">${depStatusKu(d)}</span>
       </div>
       <div class="dep-card-meta">
         <div class="user-card-stat gr"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(d.amount)*1800).toLocaleString()} IQD</div>
@@ -3700,7 +3536,7 @@ function showDepDetail(d){
     <div class="detail-row"><span class="lbl">ئیمەیل</span><span class="val">${d.profiles?.email||'—'}</span></div>
     <div class="detail-row"><span class="lbl">بڕ</span><span class="val" style="color:var(--gr)">${Math.round(parseFloat(d.amount)*1800).toLocaleString()} IQD</span></div>
     <div class="detail-row"><span class="lbl">ڕێگای پارەدان</span><span class="val">${mn[d.method]||d.method||'—'}</span></div>
-    <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${d.status}">${statusKu(d.status)}</span></span></div>
+    <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${depStatusKey(d)}">${depStatusKu(d)}</span></span></div>
     <div class="detail-row"><span class="lbl">ژمارەی مامەڵە</span><span class="val" style="font-family:monospace">${d.deposit_number||'—'}</span></div>
     <div class="detail-row"><span class="lbl">تێبینی</span><span class="val">${d.note||'—'}</span></div>
     <div class="detail-row"><span class="lbl">بەروار</span><span class="val">${new Date(d.created_at).toLocaleString('ku')}</span></div>
@@ -4397,7 +4233,6 @@ function renderOtpTable(q=''){
       <th>بەرواری دروستکردن</th>
       <th>بەرواری بەسەرچوون</th>
       <th>User ID</th>
-      <th>کردارەکان</th>
     </tr></thead>
     <tbody>${list.map(o=>`<tr>
       <td style="font-family:'Inter';font-size:11.5px;direction:ltr;text-align:left">${o.email||'—'}</td>
@@ -4418,11 +4253,6 @@ function renderOtpTable(q=''){
           ${copyBtn(o.user_id,'User ID')}
         </div>
       </td>
-      <td><div class="act-grp">
-        <div class="act-btn bl" title="دەستکاری" onclick="openOtpEditor('${o.id}')"><i class="fas fa-pen"></i></div>
-        <div class="act-btn ${o.is_used?'yw':'gr'}" title="${o.is_used?'گەڕاندنەوە بۆ بەکارنەهاتوو':'نیشانکردن وەک بەکارهاتوو'}" onclick="toggleOtpUsed('${o.id}',${!!o.is_used})"><i class="fas fa-${o.is_used?'rotate-left':'check'}"></i></div>
-        <div class="act-btn rd" title="سڕینەوە" onclick="deleteOtpRow('${o.id}')"><i class="fas fa-trash"></i></div>
-      </div></td>
     </tr>`).join('')}</tbody></table>`;
 
   const cardsHTML=`<div class="ad-cards">${list.map(o=>`<div class="ad-card">
@@ -4444,353 +4274,9 @@ function renderOtpTable(q=''){
     </div>
     <div style="font-size:10.5px;color:var(--mt)">بەسەرچوون: <span style="font-weight:700;color:var(--dark)">${fmtDt(o.expires_at)}</span></div>
     <div style="font-size:10px;color:var(--mt);direction:ltr;background:var(--bg);border:1px solid var(--b1);border-radius:8px;padding:5px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">UID: ${o.user_id||'—'}</div>
-    <div class="act-grp" style="flex-wrap:wrap">
-      <div class="act-btn bl" style="flex:1" onclick="openOtpEditor('${o.id}')"><i class="fas fa-pen"></i> دەستکاری</div>
-      <div class="act-btn ${o.is_used?'yw':'gr'}" style="flex:1" onclick="toggleOtpUsed('${o.id}',${!!o.is_used})"><i class="fas fa-${o.is_used?'rotate-left':'check'}"></i> ${o.is_used?'گەڕاندنەوە':'بەکارهاتوو'}</div>
-      <div class="act-btn rd" style="flex:1" onclick="deleteOtpRow('${o.id}')"><i class="fas fa-trash"></i> سڕینەوە</div>
-    </div>
   </div>`).join('')}</div>`;
 
   wrap.innerHTML=tableHTML+cardsHTML;
-}
-
-// ══════════════════════════════════════════════════════════════
-// ══ OTP EDITOR — دەستکاریکردنی هەموو خانەکانی otp_codes ══
-// ══════════════════════════════════════════════════════════════
-// گۆڕینی timestamp بۆ فۆرماتی datetime-local (بە کاتی ناوخۆیی)
-function _toLocalInput(v){
-  if(!v)return '';
-  const d=new Date(v);
-  if(isNaN(d))return '';
-  const p=n=>String(n).padStart(2,'0');
-  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
-}
-function _fromLocalInput(v){
-  if(!v)return null;
-  const d=new Date(v);
-  return isNaN(d)?null:d.toISOString();
-}
-
-function openOtpEditor(id){
-  const o = id ? _allOtpCodes.find(x=>x.id===id) : null;
-  const isNew = !o;
-  const purposes=['signup','login','reset_password','verify_email','delete_account','change_email','other'];
-  const curPurpose=o?.purpose||'';
-  const inList=purposes.includes(curPurpose);
-  document.getElementById('otpEditorTitle').innerHTML = isNew
-    ? '<i class="fas fa-plus" style="margin-left:8px;color:#16a34a"></i>کۆدی OTP نوێ'
-    : '<i class="fas fa-pen" style="margin-left:8px;color:var(--bl)"></i>دەستکاری کۆدی OTP';
-  document.getElementById('otpEditorContent').innerHTML=`
-    <input type="hidden" id="otpEdId" value="${o?.id||''}">
-    ${o?`<div style="display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--b1);border-radius:11px;padding:8px 12px;margin-bottom:12px;font-size:10px;color:var(--mt);direction:ltr;overflow:hidden">
-      <i class="fas fa-fingerprint" style="color:var(--mt)"></i>
-      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace">${o.id}</span>
-    </div>`:''}
-    <label class="modal-lbl" style="margin-top:0">ئیمەیل</label>
-    <input class="minp" type="email" id="otpEdEmail" dir="ltr" placeholder="user@example.com" value="${(o?.email||'').replace(/"/g,'&quot;')}">
-    <label class="modal-lbl">کۆد <span style="font-size:10px;color:var(--mt)">(پێویستە)</span></label>
-    <div style="display:flex;gap:8px">
-      <input class="minp" type="text" id="otpEdCode" dir="ltr" placeholder="123456" style="flex:1;margin:0;font-family:'Inter';font-weight:800;letter-spacing:2px" value="${(o?.code||'').replace(/"/g,'&quot;')}">
-      <div class="act-btn dark" style="align-self:center;white-space:nowrap" onclick="document.getElementById('otpEdCode').value=String(Math.floor(100000+Math.random()*900000))"><i class="fas fa-dice"></i></div>
-    </div>
-    <label class="modal-lbl">مەبەست (purpose)</label>
-    <select class="minp" id="otpEdPurposeSel" onchange="document.getElementById('otpEdPurposeWrap').style.display=this.value==='__custom'?'block':'none'">
-      <option value="">— بەتاڵ —</option>
-      ${purposes.map(p=>`<option value="${p}" ${curPurpose===p?'selected':''}>${p}</option>`).join('')}
-      <option value="__custom" ${(!inList&&curPurpose)?'selected':''}>خۆم دەینووسم…</option>
-    </select>
-    <div id="otpEdPurposeWrap" style="display:${(!inList&&curPurpose)?'block':'none'}">
-      <input class="minp" type="text" id="otpEdPurposeCustom" dir="ltr" placeholder="purpose" value="${(!inList?(o?.purpose||''):'').replace(/"/g,'&quot;')}">
-    </div>
-    <label class="modal-lbl">User ID <span style="font-size:10px;color:var(--mt)">(ئۆپشنی)</span></label>
-    <input class="minp" type="text" id="otpEdUserId" dir="ltr" placeholder="uuid…" style="font-family:monospace;font-size:11px" value="${o?.user_id||''}">
-    <label class="modal-lbl">بەرواری دروستکردن</label>
-    <input class="minp" type="datetime-local" id="otpEdCreated" dir="ltr" value="${_toLocalInput(o?.created_at||new Date())}">
-    <label class="modal-lbl">بەرواری بەسەرچوون <span style="font-size:10px;color:var(--mt)">(پێویستە)</span></label>
-    <input class="minp" type="datetime-local" id="otpEdExpires" dir="ltr" value="${_toLocalInput(o?.expires_at||new Date(Date.now()+10*60000))}">
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 10px">
-      <div class="act-btn dark" onclick="_otpBumpExpiry(5)">+٥ خولەک</div>
-      <div class="act-btn dark" onclick="_otpBumpExpiry(10)">+١٠ خولەک</div>
-      <div class="act-btn dark" onclick="_otpBumpExpiry(60)">+١ کاتژمێر</div>
-      <div class="act-btn dark" onclick="_otpBumpExpiry(1440)">+١ ڕۆژ</div>
-    </div>
-    <label class="modal-lbl">بارودۆخ</label>
-    <div style="display:flex;gap:8px;align-items:center;background:var(--bg);border:1.5px solid var(--b2);border-radius:12px;padding:11px 14px;margin-bottom:6px">
-      <input type="checkbox" id="otpEdUsed" ${o?.is_used?'checked':''} style="width:18px;height:18px;accent-color:#16a34a;cursor:pointer">
-      <label for="otpEdUsed" style="font-size:12.5px;font-weight:700;color:var(--dark);cursor:pointer;margin:0">بەکارهاتووە (is_used)</label>
-    </div>
-    <button class="modal-btn dark" onclick="saveOtpEditor()"><i class="fas fa-check"></i> ${isNew?'دروستکردن':'پاشەکەوتکردن'}</button>`;
-  openMo('moOtpEditor');
-}
-
-function _otpBumpExpiry(mins){
-  const el=document.getElementById('otpEdExpires');
-  const base=el.value?new Date(el.value):new Date();
-  el.value=_toLocalInput(new Date(base.getTime()+mins*60000));
-}
-
-async function saveOtpEditor(){
-  const id=document.getElementById('otpEdId').value;
-  const code=document.getElementById('otpEdCode').value.trim();
-  const email=document.getElementById('otpEdEmail').value.trim();
-  const uid=document.getElementById('otpEdUserId').value.trim();
-  const expires=_fromLocalInput(document.getElementById('otpEdExpires').value);
-  const created=_fromLocalInput(document.getElementById('otpEdCreated').value);
-  let purpose=document.getElementById('otpEdPurposeSel').value;
-  if(purpose==='__custom')purpose=document.getElementById('otpEdPurposeCustom').value.trim();
-  if(!code){showToast('کۆد پڕ بکەرەوە','rd');return;}
-  if(!expires){showToast('بەرواری بەسەرچوون پڕ بکەرەوە','rd');return;}
-  const uuidRe=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  if(uid&&!uuidRe.test(uid)){showToast('User ID دروست نییە (UUID پێویستە)','rd');return;}
-
-  const row={
-    code, email:email||null, purpose:purpose||null,
-    user_id:uid||null, expires_at:expires,
-    is_used:document.getElementById('otpEdUsed').checked
-  };
-  if(created) row.created_at=created;
-
-  let error;
-  if(id){ ({error}=await sb.from('otp_codes').update(row).eq('id',id)); }
-  else   { ({error}=await sb.from('otp_codes').insert(row)); }
-  if(error){showToast('هەڵە: '+error.message,'rd');return;}
-  showToast(id?'✅ کۆد نوێکرایەوە':'✅ کۆد دروستکرا','gr');
-  closeMo('moOtpEditor');
-  loadOtpCodes();
-}
-
-async function toggleOtpUsed(id,isUsed){
-  const{error}=await sb.from('otp_codes').update({is_used:!isUsed}).eq('id',id);
-  if(error){showToast('هەڵە: '+error.message,'rd');return;}
-  showToast(isUsed?'✅ گەڕێندرایەوە بۆ بەکارنەهاتوو':'✅ نیشانکرا وەک بەکارهاتوو','gr');
-  loadOtpCodes();
-}
-
-async function deleteOtpRow(id){
-  const o=_allOtpCodes.find(x=>x.id===id);
-  confirm2('سڕینەوەی کۆد',
-    'ئایا دڵنیایت لە سڕینەوەی کۆدی '+(o?.code||'')+(o?.email?(' — '+o.email):'')+'؟',
-    'fas fa-trash','var(--rd)',
-    async()=>{
-      const{error}=await sb.from('otp_codes').delete().eq('id',id);
-      if(error){showToast('هەڵە: '+error.message,'rd');return;}
-      showToast('✅ کۆد سڕایەوە','gr');
-      loadOtpCodes();
-    });
-}
-
-async function deleteExpiredOtp(){
-  const n=_allOtpCodes.filter(o=>_otpStatus(o)==='expired').length;
-  if(!n){showToast('هیچ کۆدێکی بەسەرچوو نییە','yw');return;}
-  confirm2('سڕینەوەی بەسەرچووەکان',
-    n+' کۆدی بەسەرچوو دەسڕدرێنەوە. بەردەوام دەبیت؟',
-    'fas fa-broom','var(--rd)',
-    async()=>{
-      const{error}=await sb.from('otp_codes').delete().lt('expires_at',new Date().toISOString());
-      if(error){showToast('هەڵە: '+error.message,'rd');return;}
-      showToast('✅ کۆدە بەسەرچووەکان سڕانەوە','gr');
-      loadOtpCodes();
-    });
-}
-
-// ══════════════════════════════════════════════════════════════
-// ══ IP BANS — بلۆککردنی IP ══
-// ══════════════════════════════════════════════════════════════
-let _allIpBans=[];
-
-async function loadIpBans(){
-  const wrap=document.getElementById('ipBansWrap');
-  if(wrap)wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>';
-  const{data,error}=await sb.from('pa_banned_ips').select('*').order('created_at',{ascending:false});
-  if(error){
-    if(wrap)wrap.innerHTML='<div class="empty"><i class="fas fa-exclamation-triangle" style="color:var(--rd)"></i><p>هەڵە لە بارکردن: '+error.message+'</p></div>';
-    return;
-  }
-  _allIpBans=data||[];
-  const active=_allIpBans.filter(r=>r.is_active&&(!r.expires_at||new Date(r.expires_at)>new Date()));
-  const hits=_allIpBans.reduce((a,r)=>a+parseInt(r.hit_count||0),0);
-  const temp=active.filter(r=>r.expires_at).length;
-  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  set('ipStatTotal',active.length);set('ipStatHits',hits.toLocaleString());set('ipStatTemp',temp);
-  loadIpBanBadge();
-  renderIpBans((document.getElementById('ipBanSearch')?.value||'').toLowerCase());
-}
-
-function renderIpBans(q=''){
-  const wrap=document.getElementById('ipBansWrap');
-  if(!wrap)return;
-  let list=_allIpBans;
-  if(q)list=list.filter(r=>
-    (r.ip||'').toLowerCase().includes(q)||
-    (r.reason||'').toLowerCase().includes(q)||
-    (r.banned_by_email||'').toLowerCase().includes(q)||
-    (r.note||'').toLowerCase().includes(q));
-  if(!list.length){
-    wrap.innerHTML='<div class="empty"><i class="fas fa-shield-halved"></i><p>هیچ IPـێکی بلۆککراو نییە</p><p style="font-size:11px;margin-top:8px;color:var(--mt)">دووگمەی «بلۆککردنی IP» بەکاربهێنە</p></div>';
-    return;
-  }
-  const fmtDt=v=>v?new Date(v).toLocaleString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
-  const st=r=>{
-    if(!r.is_active)return '<span class="badge rejected">ناچالاک</span>';
-    if(r.expires_at&&new Date(r.expires_at)<=new Date())return '<span class="badge rejected">بەسەرچووە</span>';
-    if(r.expires_at)return '<span class="badge active"><i class="fas fa-clock"></i> کاتی</span>';
-    return '<span class="badge banned"><i class="fas fa-ban"></i> هەمیشەیی</span>';
-  };
-  const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-  const jsq=v=>String(v==null?'':v).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-
-  const tableHTML=`<table>
-    <thead><tr>
-      <th>IP</th><th>جۆر</th><th>هۆکار</th><th>بارودۆخ</th>
-      <th>هەوڵی ڕاگیراو</th><th>دوایین هەوڵ</th><th>بلۆککەر</th><th>بەروار</th><th>کردارەکان</th>
-    </tr></thead>
-    <tbody>${list.map(r=>`<tr>
-      <td style="font-family:'Inter';font-weight:800;font-size:12.5px;direction:ltr;text-align:left;color:var(--dark)">${esc(r.ip)}</td>
-      <td style="font-size:11px;color:var(--mt)">${esc(r.ip_version||'—')}</td>
-      <td style="font-size:11.5px">${esc(r.reason||'—')}</td>
-      <td>${st(r)}${r.expires_at?`<div style="font-size:9.5px;color:var(--mt);margin-top:3px">تا ${fmtDt(r.expires_at)}</div>`:''}</td>
-      <td><span style="font-family:'Inter';font-weight:800;color:${parseInt(r.hit_count||0)>0?'var(--rd)':'var(--mt)'}">${parseInt(r.hit_count||0).toLocaleString()}</span></td>
-      <td style="font-size:10.5px;color:var(--mt);white-space:nowrap">${fmtDt(r.last_hit_at)}</td>
-      <td style="font-size:10.5px;color:var(--mt);direction:ltr">${esc(r.banned_by_email||'—')}</td>
-      <td style="font-size:10.5px;color:var(--mt);white-space:nowrap">${fmtDt(r.created_at)}</td>
-      <td><div class="act-grp">
-        <div class="act-btn gr" title="لابردنی بلۆک" onclick="unbanIp('${jsq(r.ip)}')"><i class="fas fa-unlock"></i></div>
-      </div></td>
-    </tr>`).join('')}</tbody></table>`;
-
-  const cardsHTML=`<div class="ad-cards">${list.map(r=>`<div class="ad-card">
-    <div class="ad-card-top">
-      <div class="mini-av" style="background:linear-gradient(135deg,#dc2626,#991b1b)"><i class="fas fa-shield-halved"></i></div>
-      <div class="ad-card-info">
-        <div class="ad-card-name" style="direction:ltr;text-align:right;font-family:'Inter'">${esc(r.ip)}</div>
-        <div class="ad-card-sub">${esc(r.reason||'بێ هۆکار')}</div>
-      </div>
-      ${st(r)}
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10.5px;color:var(--mt)">
-      <div>هەوڵی ڕاگیراو<div style="font-size:13px;font-weight:800;color:${parseInt(r.hit_count||0)>0?'var(--rd)':'var(--dark)'};margin-top:2px;font-family:'Inter'">${parseInt(r.hit_count||0).toLocaleString()}</div></div>
-      <div>دوایین هەوڵ<div style="font-size:11px;font-weight:700;color:var(--dark);margin-top:2px">${fmtDt(r.last_hit_at)}</div></div>
-    </div>
-    <div style="font-size:10.5px;color:var(--mt)">بلۆککرا لە: <span style="font-weight:700;color:var(--dark)">${fmtDt(r.created_at)}</span></div>
-    <div class="act-grp">
-      <div class="act-btn gr" style="flex:1" onclick="unbanIp('${jsq(r.ip)}')"><i class="fas fa-unlock"></i> لابردنی بلۆک</div>
-    </div>
-  </div>`).join('')}</div>`;
-
-  wrap.innerHTML=tableHTML+cardsHTML;
-}
-
-// کردنەوەی مۆدالی بلۆککردن — ئەگەر uid هەبوو، IPـەکانی ئەو بەکارهێنەرە پیشان دەدرێن
-async function openBanIpModal(uid){
-  const u=uid?allUsers.find(x=>x.id===uid):null;
-  const c=document.getElementById('banIpContent');
-  c.innerHTML=`
-    <input type="hidden" id="banIpUserId" value="${uid||''}">
-    ${u?`<div style="display:flex;align-items:center;gap:10px;background:var(--bg);border:1.5px solid var(--b2);border-radius:12px;padding:10px 13px;margin-bottom:12px">
-      <div class="mini-av">${u.avatar_b64?`<img src="${u.avatar_b64}">`:(u.full_name||u.email||'?')[0].toUpperCase()}</div>
-      <div style="min-width:0">
-        <div style="font-size:13px;font-weight:800;color:var(--dark)">${(u.full_name||'بێ ناو')}</div>
-        <div style="font-size:11px;color:var(--mt);direction:ltr">${u.email||'—'}</div>
-      </div>
-    </div>`:''}
-    <div style="background:rgba(220,38,38,.05);border:1.5px dashed rgba(220,38,38,.25);border-radius:12px;padding:10px 12px;font-size:11.5px;color:var(--mt);line-height:1.8;margin-bottom:12px">
-      <i class="fas fa-circle-info" style="color:#dc2626;margin-left:5px"></i>
-      ئەم IPـە ناتوانێت هەژماری نوێ دروست بکات و ناتوانێت بچێتە ناو هیچ هەژمارێکەوە. هەموو ئەو بەکارهێنەرانەی لەم IPـەوە چوونەتە ژوورەوە یەکسەر دەردەچن.
-    </div>
-    ${uid?`<div id="banIpUserIps" style="margin-bottom:12px"><div style="font-size:11px;color:var(--mt);text-align:center;padding:6px 0"><i class="fas fa-circle-notch fa-spin"></i> گەڕان بەدوای IPـەکانی بەکارهێنەر...</div></div>`:''}
-    <label class="modal-lbl" style="margin-top:0">IP <span style="font-size:10px;color:var(--mt)">(IPv4 یان IPv6)</span></label>
-    <input class="minp" type="text" id="banIpValue" dir="ltr" placeholder="185.xx.xx.xx" style="font-family:'Inter';font-weight:700">
-    <label class="modal-lbl">هۆکار <span style="font-size:10px;color:var(--mt)">(ئۆپشنی)</span></label>
-    <input class="minp" type="text" id="banIpReason" placeholder="بۆ نموونە: دروستکردنی هەژماری زۆر">
-    <label class="modal-lbl">ماوەی بلۆککردن</label>
-    <select class="minp" id="banIpDuration">
-      <option value="0">هەمیشەیی</option>
-      <option value="1">١ ڕۆژ</option>
-      <option value="7">٧ ڕۆژ</option>
-      <option value="30">٣٠ ڕۆژ</option>
-      <option value="90">٩٠ ڕۆژ</option>
-    </select>
-    <button class="modal-btn dark" style="background:#dc2626" onclick="submitBanIp()"><i class="fas fa-ban"></i> بلۆککردنی IP</button>`;
-  openMo('moBanIp');
-
-  if(!uid)return;
-  // ── هێنانی IPـە دواییەکانی بەکارهێنەر ──
-  try{
-    const[{data:sess},{data:lh}]=await Promise.all([
-      sb.from('pa_user_sessions').select('ip_address,city,country,created_at').eq('user_id',uid).not('ip_address','is',null).order('created_at',{ascending:false}).limit(60),
-      sb.from('pa_login_history').select('ip_address,city,country,created_at,isp').eq('user_id',uid).not('ip_address','is',null).order('created_at',{ascending:false}).limit(60)
-    ]);
-    const map=new Map();
-    [...(lh||[]),...(sess||[])].forEach(r=>{
-      const ip=(r.ip_address||'').trim();
-      if(!ip)return;
-      if(!map.has(ip))map.set(ip,{ip,city:r.city||'',country:r.country||'',isp:r.isp||'',last:r.created_at,n:0});
-      const e=map.get(ip);e.n++;
-      if(new Date(r.created_at)>new Date(e.last))e.last=r.created_at;
-      if(!e.city&&r.city)e.city=r.city;
-      if(!e.country&&r.country)e.country=r.country;
-      if(!e.isp&&r.isp)e.isp=r.isp;
-    });
-    const ips=[...map.values()].sort((a,b)=>new Date(b.last)-new Date(a.last)).slice(0,8);
-    const box=document.getElementById('banIpUserIps');
-    if(!box)return;
-    if(!ips.length){
-      box.innerHTML='<div style="font-size:11.5px;color:var(--mt);background:var(--bg);border:1px dashed var(--b2);border-radius:11px;padding:10px 12px;text-align:center">هیچ IPـێک بۆ ئەم بەکارهێنەرە تۆمار نەکراوە — دەستی بنووسە</div>';
-      return;
-    }
-    const jsq=v=>String(v||'').replace(/'/g,"\\'");
-    box.innerHTML=`
-      <div style="font-size:11px;font-weight:800;color:var(--mt);margin-bottom:7px"><i class="fas fa-location-dot" style="margin-left:4px"></i> IPـە دواییەکانی ئەم بەکارهێنەرە — کلیک بکە بۆ هەڵبژاردن</div>
-      <div style="display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto">
-        ${ips.map(r=>`<div onclick="document.getElementById('banIpValue').value='${jsq(r.ip)}';showToast('IP هەڵبژێردرا','gr')"
-          style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border:1.5px solid var(--b1);border-radius:10px;padding:8px 11px;cursor:pointer;transition:.15s"
-          onmouseover="this.style.borderColor='rgba(220,38,38,.35)'" onmouseout="this.style.borderColor='var(--b1)'">
-          <div style="min-width:0">
-            <div style="font-family:'Inter';font-weight:800;font-size:12.5px;color:var(--dark);direction:ltr;text-align:right">${r.ip}</div>
-            <div style="font-size:10px;color:var(--mt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${[r.city,r.country,r.isp].filter(Boolean).join(' · ')||'—'}</div>
-          </div>
-          <div style="text-align:left;flex-shrink:0">
-            <div style="font-size:10px;color:var(--mt)">${new Date(r.last).toLocaleDateString('en-GB')}</div>
-            <div style="font-size:10px;font-weight:700;color:var(--mt2)">${r.n} جار</div>
-          </div>
-        </div>`).join('')}
-      </div>`;
-  }catch(e){
-    const box=document.getElementById('banIpUserIps');
-    if(box)box.innerHTML='<div style="font-size:11px;color:var(--mt);text-align:center">نەتوانرا IPـەکان بهێنرێن</div>';
-  }
-}
-
-async function submitBanIp(){
-  const ip=(document.getElementById('banIpValue').value||'').trim();
-  const reason=(document.getElementById('banIpReason').value||'').trim();
-  const days=parseInt(document.getElementById('banIpDuration').value||'0');
-  const uid=document.getElementById('banIpUserId').value||null;
-  if(!ip){showToast('IP پڕ بکەرەوە','rd');return;}
-  const v4=/^(\d{1,3}\.){3}\d{1,3}$/, v6=/^[0-9a-fA-F:]+$/;
-  if(!v4.test(ip)&&!(ip.includes(':')&&v6.test(ip))){showToast('فۆرماتی IP دروست نییە','rd');return;}
-  const expires=days>0?new Date(Date.now()+days*86400000).toISOString():null;
-  const{data,error}=await sb.rpc('pa_admin_ban_ip',{
-    p_ip:ip, p_reason:reason||null, p_user_id:uid||null, p_expires_at:expires, p_note:null
-  });
-  if(error){showToast('هەڵە: '+error.message,'rd');return;}
-  const kicked=data?.logged_out_users||0;
-  showToast('✅ IP بلۆککرا'+(kicked?(' — '+kicked+' بەکارهێنەر دەرکرا'):''),'gr');
-  closeMo('moBanIp');
-  loadIpBans();
-  loadUsers();
-}
-
-async function unbanIp(ip){
-  confirm2('لابردنی بلۆک',
-    'بلۆکی '+ip+' لادەبرێت و دووبارە دەتوانێت بچێتە ژوورەوە.',
-    'fas fa-unlock','var(--gr)',
-    async()=>{
-      const{error}=await sb.rpc('pa_admin_unban_ip',{p_ip:ip});
-      if(error){showToast('هەڵە: '+error.message,'rd');return;}
-      showToast('✅ بلۆک لابرا','gr');
-      loadIpBans();
-    });
 }
 
 async function updateAdStatus(id,userId,newStatus,budget){
@@ -4865,10 +4351,266 @@ async function updateAdStatus(id,userId,newStatus,budget){
 // ══ FEATURED / BEST RESULT TOGGLE ══
 async function toggleFeatured(id, current){
   const newVal = !current;
-  const {error} = await sb.from('pa_ads').update({is_featured: newVal}).eq('id', id);
+  // مانگ و ساڵ لە تریگەری داتابەیسەوە خۆکارانە پڕدەکرێنەوە کاتێک
+  // `is_featured` هەڵدەکرێت، بۆیە لێرە تەنها ڕیزبەندی زیاد دەکرێت.
+  const payload = newVal ? {is_featured:true} : {is_featured:false, featured_sort:null};
+  const {error} = await sb.from('pa_ads').update(payload).eq('id', id);
   if(error && !isNetHttpErr(error)){showToast('هەڵە: '+error.message,'rd');return;}
-  showToast(newVal ? '⭐ باشترین ئەنجام هەڵبژێردرا' : 'ئەستێرە لابرا','gr');
+  showToast(newVal
+    ? '⭐ هەڵبژێردرا — لە «باشترین ئامارەکان» وێنۆچکەیەکی بۆ دابنێ'
+    : 'ئەستێرە لابرا','gr');
   loadAds();
+  if(_curPage==='bestMetrics') loadBestMetrics();
+}
+
+// ════════════════════════════════════════════════════════════
+// ═══ BEST METRICS — باشترین ئامارەکان ═══════════════════════
+// ════════════════════════════════════════════════════════════
+// خانەکانی داتابەیس: is_featured / featured_month / featured_year /
+// featured_sort / thumbnail_url  (هەموویان پێشتر هەن — هیچ خانەیەکی نوێ)
+//
+// ⚠ وێنۆچکە بە دەستی دادەنرێت. دروستکردنی خۆکار لە TikTokـەوە تاقی
+// کرایەوە و کارناکات: TikTok داواکاریی سێرڤەری لە IPـی داتاسەنتەر بلۆک
+// دەکات (oembed → HTML، پەڕە → بێ og:image، api/img → 403).
+//
+// ⚠ مەرجی داتابەیس `pa_ads_thumbnail_url_shape_chk` تەنها ئەمانە قبوڵ
+// دەکات:  data:image/…;base64,…   یان   https://…
+// بۆیە هەر نرخێکی تر لە کاتی نووسیندا ڕەت دەکرێتەوە.
+
+let _bmAds = [];        // ڕیکلامە هەڵبژێردراوەکانی ئەم مانگە
+let _bmAllAds = [];     // هەموو ڕیکلامەکان بۆ گەڕان
+const BM_THUMB_W = 360;         // پانی وێنۆچکەی پاشەکەوتکراو
+const BM_THUMB_Q = 0.78;        // کوالیتی JPEG
+const BM_MAX_CHARS = 400 * 1024; // سنووری قەبارەی data-URL
+
+const _bmMonthNames = ['کانوونی دووەم','شوبات','ئازار','نیسان','ئایار','حوزەیران',
+                       'تەمووز','ئاب','ئەیلوول','تشرینی یەکەم','تشرینی دووەم','کانوونی یەکەم'];
+
+function _bmFillPickers(){
+  const mSel = document.getElementById('bmMonth');
+  const ySel = document.getElementById('bmYear');
+  if(!mSel || !ySel || mSel.options.length) return;
+  const now = new Date();
+  _bmMonthNames.forEach((n,i)=>{
+    const o=document.createElement('option'); o.value=i+1; o.textContent=n;
+    if(i+1===now.getMonth()+1) o.selected=true; mSel.appendChild(o);
+  });
+  for(let y=now.getFullYear()+1; y>=now.getFullYear()-3; y--){
+    const o=document.createElement('option'); o.value=y; o.textContent=y;
+    if(y===now.getFullYear()) o.selected=true; ySel.appendChild(o);
+  }
+}
+
+function _bmPeriod(){
+  return {
+    month: parseInt(document.getElementById('bmMonth')?.value || (new Date().getMonth()+1), 10),
+    year:  parseInt(document.getElementById('bmYear')?.value  || new Date().getFullYear(), 10),
+  };
+}
+
+async function loadBestMetrics(){
+  _bmFillPickers();
+  const {month, year} = _bmPeriod();
+  const list = document.getElementById('bmList');
+  if(list) list.innerHTML = '<div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>';
+
+  const {data: featured} = await sb.from('pa_ads').select('*')
+    .eq('is_featured', true).eq('featured_year', year).eq('featured_month', month)
+    .order('featured_sort',{ascending:true, nullsFirst:false})
+    .order('created_at',{ascending:false});
+
+  const {data: allAds} = await sb.from('pa_ads').select('*')
+    .order('created_at',{ascending:false}).limit(300);
+
+  const uids = [...new Set([...(featured||[]),...(allAds||[])].map(a=>a.user_id).filter(Boolean))];
+  const {data: profs} = await (uids.length
+    ? sb.from('profiles').select('id,full_name,email').in('id',uids)
+    : Promise.resolve({data:[]}));
+  const pm = {}; (profs||[]).forEach(x=>{pm[x.id]=x;});
+
+  _bmAds    = (featured||[]).map(a=>({...a, profiles: pm[a.user_id]||null}));
+  _bmAllAds = (allAds||[]).map(a=>({...a, profiles: pm[a.user_id]||null}));
+
+  const withT = _bmAds.filter(a=>(a.thumbnail_url||'').trim()).length;
+  const set=(id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v;};
+  set('bmStatTotal', _bmAds.length);
+  set('bmStatWithThumb', withT);
+  set('bmStatNoThumb', _bmAds.length - withT);
+
+  const badge = document.getElementById('sbBmCount');
+  if(badge){ badge.textContent=_bmAds.length; badge.style.display=_bmAds.length?'inline-flex':'none'; }
+
+  bmRender();
+  bmRenderCandidates();
+}
+
+function _bmEsc(t){ return String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function bmRender(){
+  const wrap = document.getElementById('bmList');
+  if(!wrap) return;
+  if(!_bmAds.length){
+    wrap.innerHTML = '<div class="empty"><i class="fas fa-trophy"></i><p>هیچ ڕیکلامێک بۆ ئەم مانگە هەڵنەبژێردراوە</p></div>';
+    return;
+  }
+  wrap.innerHTML = _bmAds.map((a,i)=>{
+    const t = (a.thumbnail_url||'').trim();
+    const thumb = t
+      ? `<img src="${_bmEsc(t)}" style="width:100%;height:100%;object-fit:cover">`
+      : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--mt2)"><i class="fas fa-image" style="font-size:20px"></i></div>`;
+    const iqd = Math.round(parseFloat(a.spend||0)*1800).toLocaleString();
+    return `
+    <div style="display:flex;gap:14px;align-items:flex-start;padding:14px;border-bottom:1px solid var(--b1)">
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:center;flex-shrink:0">
+        <div style="width:30px;height:30px;border-radius:9px;background:rgba(245,158,11,.12);color:#f59e0b;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">${i+1}</div>
+        <div class="act-btn dark" style="width:26px;height:22px" onclick="bmMove('${a.id}',-1)" title="سەرەوە"><i class="fas fa-chevron-up"></i></div>
+        <div class="act-btn dark" style="width:26px;height:22px" onclick="bmMove('${a.id}',1)" title="خوارەوە"><i class="fas fa-chevron-down"></i></div>
+      </div>
+
+      <div style="width:62px;height:82px;border-radius:12px;overflow:hidden;background:var(--bg);border:1.5px solid ${t?'var(--b1)':'rgba(220,38,38,.35)'};flex-shrink:0">${thumb}</div>
+
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13.5px;font-weight:800;color:var(--dark)">${_bmEsc(a.title||'—')}</div>
+        <div style="font-size:11px;color:var(--mt);margin-top:2px">#${_bmEsc(a.ad_number||'—')} · ${_bmEsc(a.profiles?.full_name||'—')}</div>
+        <div style="font-size:11px;color:var(--mt);margin-top:4px;font-family:'Inter';direction:ltr;text-align:right">
+          ${(a.clicks||0).toLocaleString()} clicks · ${(a.impressions||0).toLocaleString()} views · ${iqd} IQD
+        </div>
+        ${!t?'<div style="font-size:11px;font-weight:700;color:var(--rd);margin-top:5px"><i class="fas fa-triangle-exclamation"></i> بێ وێنۆچکە — لە ئەپەکەدا جێگرەوە پیشان دەدرێت</div>':''}
+
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:9px">
+          <label class="act-btn gr" style="cursor:pointer">
+            <i class="fas fa-upload"></i> بارکردنی وێنە
+            <input type="file" accept="image/*" style="display:none" onchange="bmUploadThumb('${a.id}', this)">
+          </label>
+          <div class="act-btn dark" onclick="bmPasteUrl('${a.id}')"><i class="fas fa-link"></i> لینک</div>
+          ${t?`<div class="act-btn rd" onclick="bmClearThumb('${a.id}')"><i class="fas fa-eraser"></i> سڕینەوەی وێنۆچکە</div>`:''}
+          <div class="act-btn rd" onclick="bmUnfeature('${a.id}')"><i class="fas fa-star-half-stroke"></i> لابردن</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function bmRenderCandidates(){
+  const q = (document.getElementById('bmSearchInp')?.value||'').trim().toLowerCase();
+  const box = document.getElementById('bmCandidates');
+  if(!box) return;
+  if(!q){ box.innerHTML=''; return; }
+  const chosen = new Set(_bmAds.map(a=>a.id));
+  const hits = _bmAllAds.filter(a=>!chosen.has(a.id) && (
+      (a.title||'').toLowerCase().includes(q) ||
+      String(a.ad_number||'').toLowerCase().includes(q) ||
+      (a.profiles?.full_name||'').toLowerCase().includes(q)
+    )).slice(0,8);
+  if(!hits.length){ box.innerHTML='<div style="font-size:12px;color:var(--mt);padding:8px">هیچ ئەنجامێک نەدۆزرایەوە</div>'; return; }
+  box.innerHTML = hits.map(a=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;background:var(--bg);border:1px solid var(--b1);border-radius:11px;margin-bottom:6px">
+      <div style="min-width:0">
+        <div style="font-size:12.5px;font-weight:700;color:var(--dark)">${_bmEsc(a.title||'—')}</div>
+        <div style="font-size:10.5px;color:var(--mt)">#${_bmEsc(a.ad_number||'—')} · ${_bmEsc(a.profiles?.full_name||'—')}</div>
+      </div>
+      <div class="act-btn gr" onclick="bmFeature('${a.id}')"><i class="fas fa-plus"></i> زیادکردن</div>
+    </div>`).join('');
+}
+
+// ── هەڵبژاردن / لابردن ───────────────────────────────────────────────────
+async function bmFeature(id){
+  const {month, year} = _bmPeriod();
+  const nextSort = _bmAds.length ? Math.max(..._bmAds.map(a=>a.featured_sort||0)) + 1 : 1;
+  const {error} = await sb.from('pa_ads').update({
+    is_featured:true, featured_month:month, featured_year:year, featured_sort:nextSort
+  }).eq('id', id);
+  if(error && !isNetHttpErr(error)){ showToast('هەڵە: '+error.message,'rd'); return; }
+  document.getElementById('bmSearchInp').value='';
+  showToast('⭐ زیادکرا','gr');
+  loadBestMetrics();
+}
+
+async function bmUnfeature(id){
+  confirm2('لابردن','ئەم ڕیکلامە لە باشترین ئامارەکان لادەبرێت. وێنۆچکەکەی دەمێنێتەوە.','fas fa-star-half-stroke','#dc2626',async()=>{
+    const {error} = await sb.from('pa_ads').update({is_featured:false, featured_sort:null}).eq('id', id);
+    if(error && !isNetHttpErr(error)){ showToast('هەڵە: '+error.message,'rd'); return; }
+    showToast('لابرا','gr'); loadBestMetrics();
+  });
+}
+
+// ── ڕیزبەندی ─────────────────────────────────────────────────────────────
+async function bmMove(id, dir){
+  const i = _bmAds.findIndex(a=>a.id===id);
+  const j = i + dir;
+  if(i<0 || j<0 || j>=_bmAds.length) return;
+  const arr = _bmAds.slice();
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+  _bmAds = arr; bmRender();  // وەڵامی خێرا
+  for(let k=0;k<arr.length;k++){
+    const {error} = await sb.from('pa_ads').update({featured_sort:k+1}).eq('id', arr[k].id);
+    if(error && !isNetHttpErr(error)){ showToast('هەڵە لە ڕیزبەندی: '+error.message,'rd'); break; }
+  }
+  loadBestMetrics();
+}
+
+// ── وێنۆچکە ──────────────────────────────────────────────────────────────
+/** وێنەی هەڵبژێردراو بۆ ٣٦٠ پیکسل بچووک دەکاتەوە و دەیکات بە data-URL. */
+function _bmToDataUrl(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onerror = ()=>reject(new Error('نەتوانرا فایلەکە بخوێندرێتەوە'));
+    r.onload = e=>{
+      const img = new Image();
+      img.onerror = ()=>reject(new Error('فایلەکە وێنەیەکی دروست نییە'));
+      img.onload = ()=>{
+        const w = Math.min(BM_THUMB_W, img.width || BM_THUMB_W);
+        const h = Math.max(1, Math.round((img.height||1) * (w / (img.width||w))));
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', BM_THUMB_Q));
+      };
+      img.src = e.target.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+async function bmUploadThumb(id, inp){
+  const f = inp.files && inp.files[0];
+  inp.value = '';
+  if(!f) return;
+  try{
+    const dataUrl = await _bmToDataUrl(f);
+    if(dataUrl.length > BM_MAX_CHARS){
+      showToast('وێنەکە زۆر گەورەیە — وێنەیەکی بچووکتر هەڵبژێرە','rd'); return;
+    }
+    await _bmSaveThumb(id, dataUrl, `وێنۆچکە پاشەکەوتکرا (${Math.round(dataUrl.length/1024)} KB)`);
+  }catch(e){ showToast('هەڵە: '+e.message,'rd'); }
+}
+
+function bmPasteUrl(id){
+  const cur = (_bmAds.find(a=>a.id===id)?.thumbnail_url)||'';
+  const v = prompt('لینکی وێنۆچکە (دەبێت بە https:// دەست پێبکات):', cur.startsWith('https://')?cur:'https://');
+  if(v===null) return;
+  const url = v.trim();
+  if(!/^https:\/\/.+/.test(url)){ showToast('لینک دەبێت بە https:// دەست پێبکات','rd'); return; }
+  _bmSaveThumb(id, url, 'لینکی وێنۆچکە پاشەکەوتکرا');
+}
+
+async function bmClearThumb(id){
+  await _bmSaveThumb(id, null, 'وێنۆچکە سڕایەوە');
+}
+
+async function _bmSaveThumb(id, value, okMsg){
+  const {error} = await sb.from('pa_ads').update({thumbnail_url: value}).eq('id', id);
+  if(error && !isNetHttpErr(error)){
+    // مەرجی شێوەی داتابەیس ڕەتی کردەوە
+    if(String(error.message||'').includes('pa_ads_thumbnail_url_shape_chk')){
+      showToast('شێوەی وێنۆچکە نادروستە — تەنها بارکردنی وێنە یان لینکی https قبوڵ دەکرێت','rd');
+    }else{
+      showToast('هەڵە: '+error.message,'rd');
+    }
+    return;
+  }
+  showToast(okMsg,'gr');
+  loadBestMetrics();
 }
 
 // ══ APPROVAL WORKFLOW ══
@@ -5888,11 +5630,7 @@ async function showUserPassword(uid, name, email) {
       <input class="minp" type="text" id="newPassInp" placeholder="پاسۆردی نوێ..." dir="ltr" style="flex:1;margin:0">
       <div class="act-btn dark" onclick="genPassword()" style="align-self:center;white-space:nowrap"><i class="fas fa-dice"></i> ئۆتۆماتیک</div>
     </div>
-    <div style="background:rgba(220,38,38,.05);border:1.5px dashed rgba(220,38,38,.22);border-radius:12px;padding:10px 12px;font-size:11.5px;color:var(--mt);line-height:1.8;margin:10px 0 4px">
-      <i class="fas fa-triangle-exclamation" style="color:#dc2626;margin-left:5px"></i>
-      دوای گۆڕین، بەکارهێنەر یەکسەر لە هەموو ئامێرەکان دەردەچێت و <b>هیچ ئیمەیل یان ئاگادارییەکی بۆ نانێردرێت</b>.
-    </div>
-    <button class="modal-btn pu" style="background:var(--pu)" onclick="setNewPassword('${uid}','${email}')"><i class="fas fa-key"></i> گۆڕینی پاسۆرد و دەرکردن</button>
+    <button class="modal-btn pu" style="background:var(--pu)" onclick="setNewPassword('${uid}','${email}')"><i class="fas fa-key"></i> گۆڕینی پاسۆرد</button>
   `;
   openMo('moUserPassword');
 }
@@ -5912,11 +5650,9 @@ async function setNewPassword(uid, email) {
   // کە app-ی mobile لە forgot-password-دا بەکاری دەهێنێت (reset_user_password) —
   // ئەمە SECURITY DEFINER function-ە و ڕاستەوخۆ بە anon key کاردەکات.
   try {
-    // pa_admin_set_password: تەنها ئادمین — پاسۆرد ڕاستەوخۆ لە auth.users دەگۆڕێت،
-    // هیچ ئیمەیلێک نانێردرێت، و هەموو سێشنەکانی بەکارهێنەر دەسڕدرێنەوە.
-    const { data, error } = await sb.rpc('pa_admin_set_password', {
-      p_user_id: uid,
-      p_new_password: pass
+    const { data, error } = await sb.rpc('reset_user_password', {
+      user_email: email,
+      new_pass: pass
     });
     if (error) {
       showToast('❌ گۆڕینی پاسۆرد سەرنەکەوت: ' + error.message, 'rd');
@@ -5926,8 +5662,15 @@ async function setNewPassword(uid, email) {
       showToast('❌ ' + (data.message || 'گۆڕینی پاسۆرد سەرنەکەوت'), 'rd');
       return;
     }
-    // ⚠️ بە ئەنقەست: هیچ ئاگاداری/ئیمەیلێک بۆ بەکارهێنەر نانێردرێت.
-    showToast('✅ پاسۆرد گۆڕدرا — بەکارهێنەر یەکسەر دەرکرا', 'gr');
+    await sb.from('pa_notifications').insert({
+      user_id: uid,
+      type: 'admin_msg',
+      title: 'پاسۆردەکەت گۆڕدرا 🔑',
+      body: 'ئادمین پاسۆردی ئەکاونتەکەت گۆڕی.',
+      is_read: false
+    });
+    _fbPushNotif(uid,'پاسۆردەکەت گۆڕدرا 🔑','ئادمین پاسۆردی ئەکاونتەکەت گۆڕی.','admin_msg');
+    showToast('✅ پاسۆرد گۆڕدرا', 'gr');
   } catch (err) {
     showToast('❌ هەڵەیەک ڕوویدا: ' + err.message, 'rd');
   }
@@ -9666,40 +9409,6 @@ async function _notifyCardEditTelegram(cardId, cardName, userId) {
   </div>
 </div>
 
-
-
-<!-- ══ مۆدالی قفڵکردنی باڵانس ══ -->
-<div class="overlay" id="moBalanceLock">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h3><i class="fas fa-lock" style="margin-left:8px;color:#d97706"></i>قفڵکردنی باڵانس</h3>
-      <div class="modal-close" onclick="closeMo('moBalanceLock')"><i class="fas fa-xmark"></i></div>
-    </div>
-    <div id="balLockContent"></div>
-  </div>
-</div>
-
-<!-- ══ مۆدالی بلۆککردنی IP ══ -->
-<div class="overlay" id="moBanIp">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h3><i class="fas fa-shield-halved" style="margin-left:8px;color:#dc2626"></i>بلۆککردنی IP</h3>
-      <div class="modal-close" onclick="closeMo('moBanIp')"><i class="fas fa-xmark"></i></div>
-    </div>
-    <div id="banIpContent"></div>
-  </div>
-</div>
-
-<!-- ══ مۆدالی دەستکاری کۆدی OTP ══ -->
-<div class="overlay" id="moOtpEditor">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h3 id="otpEditorTitle"><i class="fas fa-pen" style="margin-left:8px;color:var(--bl)"></i>دەستکاری کۆدی OTP</h3>
-      <div class="modal-close" onclick="closeMo('moOtpEditor')"><i class="fas fa-xmark"></i></div>
-    </div>
-    <div id="otpEditorContent"></div>
-  </div>
-</div>
 
 <div class="overlay" id="moEditUserLevel">
   <div class="modal">
