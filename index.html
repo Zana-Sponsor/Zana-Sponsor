@@ -1729,17 +1729,6 @@ html{scroll-behavior:smooth;}
 .story-tap-prev{left:0;width:32%;}
 .story-tap-next{right:0;width:68%;}
 .story-link-btn{position:absolute;bottom:calc(28px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:none;align-items:center;gap:8px;padding:13px 26px;background:#fff;color:var(--dark);border-radius:30px;font-family:'R',sans-serif;font-size:14px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.35);cursor:pointer;z-index:4;white-space:nowrap;}
-
-/* ══ GOOGLE PLAY BANNER ══ */
-#gplayBanner{display:flex;align-items:center;gap:10px;background:#1a1a2e;color:#fff;padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.1);}
-#gplayBanner.gp-hidden{display:none!important;}
-.gplay-icon-wrap{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#01875f,#00a86b);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.gplay-icon-wrap i{font-size:17px;color:#fff;}
-.gplay-texts{flex:1;min-width:0;}
-.gplay-sub{font-size:10px;color:rgba(255,255,255,.55);font-weight:600;font-family:'R',sans-serif;}
-.gplay-title{font-size:13px;font-weight:800;color:#fff;font-family:'R',sans-serif;}
-.gplay-cta{background:linear-gradient(135deg,#01875f,#00a86b);color:#fff;border:none;border-radius:16px;padding:6px 12px;font-size:11px;font-weight:700;font-family:'R',sans-serif;white-space:nowrap;flex-shrink:0;cursor:pointer;pointer-events:none;}
-.gplay-dismiss{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.12);border:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;flex-shrink:0;margin-right:4px;}
 </style>
 <script>
 // ══ RESOURCE CACHE — فۆنت و وێنەکان ناو localStorage پاشەکەوت دەبن ══
@@ -3595,8 +3584,6 @@ html[data-theme="dark"] .story-img-wrap img,html[data-theme="dark"] .story-img-w
 html[data-theme="dark"] .story-bar-seg{background:rgba(255,255,255,0.252)}
 html[data-theme="dark"] .story-bar-fill{background:#000000}
 html[data-theme="dark"] .story-link-btn{background:#000000;color:#eaeef7}
-html[data-theme="dark"] #gplayBanner{background:#323258;border-bottom:1px solid rgba(255,255,255,0.06)}
-html[data-theme="dark"] .gplay-dismiss{background:rgba(255,255,255,0.086)}
 html[data-theme="dark"] .cstep{color:#93a1bd;background:#000000;border:1px solid #242424}
 html[data-theme="dark"] .csub{color:#a6b3cc}
 html[data-theme="dark"] .prof-hero{background:linear-gradient(160deg,#152149 0%,#000000 60%,#151a49 100%);box-shadow:0 4px 28px rgba(35,35,47,0.09),0 1px 4px rgba(28,35,51,.04);border:1.5px solid rgba(77,81,239,0.24)}
@@ -4221,16 +4208,6 @@ window.PROXO_SPLASH_MIN_MS = 2600;
 
   <!-- HOME -->
   <div class="pg" id="pgHome">
-    <!-- ══ GOOGLE PLAY DOWNLOAD BANNER ══ -->
-    <div id="gplayBanner" onclick="gplayBannerGo()">
-      <div class="gplay-icon-wrap"><i class="fas fa-play"></i></div>
-      <div class="gplay-texts">
-        <div class="gplay-sub">ئەپەکەمان بەردەستە</div>
-        <div class="gplay-title">Proxo App — دایبەزێنە لە گۆگڵ پلەی</div>
-      </div>
-      <button class="gplay-cta">گۆگڵ پلەی</button>
-      <button class="gplay-dismiss" onclick="gplayDismiss(event)"><i class="fas fa-times"></i></button>
-    </div>
     <!-- ══ SUPABASE TEXT BANNER (homeHero) ══ -->
     <div id="homeHero" class="home-hero" style="display:none;cursor:pointer" onclick="homeBannerClick()">
       <h2 id="heroBannerTitle">ڕیکلامی تیک تۆک بەردەستە</h2>
@@ -17460,26 +17437,6 @@ if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostn
   </div>
 </div>
 
-<script>
-/* ══ GOOGLE PLAY BANNER ══ */
-(function(){
-  try{
-    if(localStorage.getItem("gp_dismissed")==="1"){
-      var b=document.getElementById("gplayBanner");
-      if(b) b.classList.add("gp-hidden");
-    }
-  }catch(e){}
-})();
-function gplayDismiss(ev){
-  ev.stopPropagation();
-  try{localStorage.setItem("gp_dismissed","1");}catch(e){}
-  var b=document.getElementById("gplayBanner");
-  if(b) b.classList.add("gp-hidden");
-}
-function gplayBannerGo(){
-  window.open("https://play.google.com/store/apps/details?id=com.proxo.proxoapp","_blank","noopener,noreferrer");
-}
-</script>
 <!-- ══ THEME SWITCHER (ڕووناک / تاریک / سیستەم) ══ -->
 <style id="proxo-theme-ui-css">
 /* ══ THEME SWITCHER UI ══ */
