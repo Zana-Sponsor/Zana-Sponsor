@@ -17602,7 +17602,8 @@ html[data-theme="dark"] .pxth-float button.on{background:#2f3a4f;color:#fff}
       FastPay
     </div>
 
-    <div style="
+    <div id="fastPayQrSubtitle"
+         style="
       font-size:12px;
       color:var(--mt);
       margin-bottom:18px;
@@ -17663,7 +17664,7 @@ html[data-theme="dark"] .pxth-float button.on{background:#2f3a4f;color:#fff}
          ">
     </div>
 
-    <div style="
+    <div id="fastPayHintBox" style="
       padding:10px 12px;
       border-radius:12px;
       background:var(--bg);
@@ -17730,6 +17731,18 @@ function openFastPayQR(qrUrl, qrText, orderId, amount) {
   if (btn) {
     btn.style.background = '#0E78FF';
     btn.textContent = 'داخستن';
+  }
+
+  const sub = document.getElementById('fastPayQrSubtitle');
+  if (sub) {
+    sub.textContent = 'QR ـەکە بە ئەپی FastPay سکان بکە';
+    sub.style.color = 'var(--mt)';
+  }
+
+  const hint = document.getElementById('fastPayHintBox');
+  if (hint) {
+    hint.textContent = 'دوای پارەدان باڵانسەکەت خۆکارانە زیاد دەبێت';
+    hint.style.color = 'var(--mt)';
   }
 
   if (amtEl) amtEl.textContent =
@@ -17837,12 +17850,25 @@ function _fpShowSuccess() {
     const ok = document.createElement('div');
     ok.id = 'fastPayOkMark';
     ok.style.cssText =
-      'font-size:64px;line-height:1;padding:28px 0;color:#2e7d32';
+      'font-size:52px;line-height:1;padding:34px 0;color:#2e7d32';
     ok.textContent = '✅';
     box.appendChild(ok);
   }
 
   _fpSetStatus('✅ پارەدانەکە سەرکەوتوو بوو — باڵانس زیادکرا', '#2e7d32');
+
+  /* دەقەکان بگۆڕە — ئیتر باسی سکانکردن و چاوەڕوانی ناکەن */
+  const sub = document.getElementById('fastPayQrSubtitle');
+  if (sub) {
+    sub.textContent = 'پارەدانەکەت تۆمارکرا';
+    sub.style.color = '#2e7d32';
+  }
+
+  const hint = document.getElementById('fastPayHintBox');
+  if (hint) {
+    hint.textContent = 'باڵانسەکەت زیادکرا — دەتوانیت بەردەوام بیت';
+    hint.style.color = '#2e7d32';
+  }
 
   /* دوگمەی داخستن سەوز دەکەین تا ڕوون بێت کارەکە تەواوە */
   const btn = document.querySelector('#fastPayQrModal button');
