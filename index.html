@@ -17704,19 +17704,32 @@ function openFastPayQR(qrUrl, qrText, orderId, amount) {
   const modal = document.getElementById('fastPayQrModal');
   const img   = document.getElementById('fastPayQrImage');
   const txt   = document.getElementById('fastPayQrText');
+  const amtEl = document.getElementById('fastPayQrAmount');
+  const oidEl = document.getElementById('fastPayOrderId');
+
+  if (!modal) { console.error('[FastPay] مۆداڵەکە نەدۆزرایەوە'); return; }
 
   _fpOrderId   = orderId;
   _fpStartedAt = Date.now();
 
-  document.getElementById('fastPayQrAmount').textContent =
-    Math.round(Number(amount)).toLocaleString() + ' IQD';
+  /* پاککردنەوەی دۆخی سەرکەوتنی پارەدانی پێشوو */
+  const oldOk = document.getElementById('fastPayOkMark');
+  if (oldOk) oldOk.remove();
 
-  document.getElementById('fastPayOrderId').textContent = 'Order ID: ' + orderId;
+  if (amtEl) amtEl.textContent =
+    Math.round(Number(amount) || 0).toLocaleString() + ' IQD';
 
-  if (qrUrl) { img.src = qrUrl; img.style.display = 'block'; }
-  else       { img.style.display = 'none'; }
+  if (oidEl) oidEl.textContent = 'Order ID: ' + orderId;
 
-  txt.textContent = qrText || '';
+  if (img) {
+    if (qrUrl) { img.src = qrUrl; img.style.display = 'block'; }
+    else       { img.removeAttribute('src'); img.style.display = 'none'; }
+  }
+
+  if (txt) {
+    txt.textContent = qrText || '';
+    txt.style.display = qrText ? 'block' : 'none';
+  }
 
   _fpSetStatus('⏳ چاوەڕوانی پارەدان...', '#888');
   modal.style.display = 'flex';
@@ -17801,11 +17814,16 @@ function _fpShowSuccess() {
   if (img) img.style.display = 'none';
   if (txt) txt.style.display = 'none';
 
-  /* ✅ لە شوێنی QR ــەکە */
+  /* ✅ لە شوێنی QR ــەکە — تاگی img ناسڕێتەوە،
+     تەنها دەشاردرێتەوە و نیشانەیەک لەتەنیشتی زیاد دەکرێت */
   const box = img ? img.parentNode : null;
-  if (box) {
-    box.innerHTML =
-      '<div style="font-size:64px;line-height:1;padding:28px 0;color:#2e7d32">✅</div>';
+  if (box && !document.getElementById('fastPayOkMark')) {
+    const ok = document.createElement('div');
+    ok.id = 'fastPayOkMark';
+    ok.style.cssText =
+      'font-size:64px;line-height:1;padding:28px 0;color:#2e7d32';
+    ok.textContent = '✅';
+    box.appendChild(ok);
   }
 
   _fpSetStatus('✅ پارەدانەکە سەرکەوتوو بوو — باڵانس زیادکرا', '#2e7d32');
