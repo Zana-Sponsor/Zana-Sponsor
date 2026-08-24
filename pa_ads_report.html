@@ -302,6 +302,7 @@ a.vlink:hover{text-decoration:underline}
     <div class="chip"><span class="cv c-pause" id="s-pause">—</span><span class="cl">وەستاو</span></div>
     <div class="chip"><span class="cv" style="color:#7c3aed" id="s-impressions">—</span><span class="cl">کۆی بینەر</span></div>
     <div class="chip"><span class="cv" style="color:#2563eb" id="s-clicks">—</span><span class="cl">کۆی کلیک</span></div>
+    <div class="chip"><span class="cv" style="color:#0891b2" id="s-conversions">—</span><span class="cl">کۆی کۆنڤێرشن</span></div>
     <div class="chip"><span class="cv c-spend" id="s-spend">—</span><span class="cl">$ خەرجکراو</span></div>
   </div>
 </header>
@@ -411,9 +412,10 @@ function updateStats(){
   document.getElementById('s-sched').textContent=f('scheduled');
   document.getElementById('s-rej').textContent=f('rejected');
   document.getElementById('s-pause').textContent=f('paused');
-  const totals=ADS.reduce((t,a)=>{const x=adMetrics(a);t.impressions+=x.impressions;t.clicks+=x.clicks;return t;},{impressions:0,clicks:0});
+  const totals=ADS.reduce((t,a)=>{const x=adMetrics(a);t.impressions+=x.impressions;t.clicks+=x.clicks;t.conversions+=x.conversions;return t;},{impressions:0,clicks:0,conversions:0});
   document.getElementById('s-impressions').textContent=totals.impressions.toLocaleString();
   document.getElementById('s-clicks').textContent=totals.clicks.toLocaleString();
+  document.getElementById('s-conversions').textContent=totals.conversions.toLocaleString();
   document.getElementById('s-spend').textContent='$'+spend.toFixed(1);
 }
 function render(){
@@ -439,6 +441,7 @@ const numMetric=(v)=>{const n=Number(v);return Number.isFinite(n)?n:0;};
 const adMetrics=(ad)=>({
   impressions:numMetric(ad?.prev_impressions)+numMetric(ad?.impressions),
   clicks:numMetric(ad?.prev_clicks)+numMetric(ad?.clicks),
+  conversions:numMetric(ad?.prev_conversions)+numMetric(ad?.conversions),
   spend:numMetric(ad?.prev_spend)+numMetric(ad?.current_spend!=null?ad.current_spend:ad?.spend)
 });
 const dt=(v)=>!v?'—':String(v).replace('T',' ').replace(/\.\d+.*/,'').replace('+00:00','');
@@ -466,7 +469,7 @@ function buildCard(ad){
     <div class="metrics">
       <div class="metric"><div class="ml">Impressions</div><div class="mv">${metrics.impressions.toLocaleString()}</div></div>
       <div class="metric"><div class="ml">Clicks</div><div class="mv">${metrics.clicks.toLocaleString()}</div></div>
-      <div class="metric"><div class="ml">Conversions</div><div class="mv">${(ad.conversions??0).toLocaleString()}</div></div>
+      <div class="metric"><div class="ml">Conversions</div><div class="mv">${metrics.conversions.toLocaleString()}</div></div>
       <div class="metric"><div class="ml">Spend $</div><div class="mv">${m(metrics.spend)}</div></div>
       <div class="metric"><div class="ml">CPM $</div><div class="mv">${m(ad.cpm)}</div></div>
       <div class="metric"><div class="ml">Conv %</div><div class="mv">${m(ad.conversion_rate)}</div></div>
