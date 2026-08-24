@@ -11153,6 +11153,21 @@ function _fmtOrderId(n){
   return s.padStart(6,'0');
 }
 
+// ══ یەکخستنی metrics ـی ڕیکلام ══
+// prev_* داتای قۆناغی پێشووە و خانەکانی تر داتای قۆناغی ئێستان.
+// prev_clicks ئەگەر لە دیتابەیس هەبێت کۆ دەکرێتەوە؛ ئەگەر نەبێت بە 0 هەژمار دەکرێت.
+function _numMetric(v){
+  const n=Number(v);
+  return Number.isFinite(n)?n:0;
+}
+function _adMetrics(ad){
+  return {
+    impressions:_numMetric(ad?.prev_impressions)+_numMetric(ad?.impressions),
+    clicks:_numMetric(ad?.prev_clicks)+_numMetric(ad?.clicks),
+    spend:_numMetric(ad?.prev_spend)+_numMetric(ad?.current_spend!=null?ad.current_spend:ad?.spend)
+  };
+}
+
 // ══════════════════════════════════════════
 // ══ CANCEL AD ══
 // ══════════════════════════════════════════
@@ -11338,9 +11353,10 @@ function renderAds(){
     }
 
     const _hasRealData=isActive||isTerminal;
-    const spend=_hasRealData?(parseFloat(ad.prev_spend||0)+parseFloat(ad.spend||0)):0;
-    const clicks=_hasRealData?parseInt(ad.clicks||0):0;
-    const impr=_hasRealData?(parseInt(ad.prev_impressions||0)+parseInt(ad.impressions||0)):0;
+    const metrics=_adMetrics(ad);
+    const spend=_hasRealData?metrics.spend:0;
+    const clicks=_hasRealData?metrics.clicks:0;
+    const impr=_hasRealData?metrics.impressions:0;
     const spendFmt='$'+(spend>0?spend.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'0.00');
 
     const orderId=_fmtOrderId(ad.ad_number);
@@ -11605,9 +11621,10 @@ async function initPublicAdView(adId){
       const statusMap={pending:'چاوەڕوان',review:'لەژێر پێداچوونەوەدایە',active:'چالاک',rejected:'ڕەتکراوە',completed:'تەواوبوو',paused:'وەستا'};
       const adLabel=ad.title||'ڕیکلامی Proxo';
       document.getElementById('pubAdTitle').textContent=adLabel;
-      const impr=_fmtNum(parseInt(ad.prev_impressions||0)+parseInt(ad.impressions||0));
-      const clicks=_fmtNum(parseInt(ad.clicks||0));
-      const spend='$'+(parseFloat(ad.prev_spend||0)+parseFloat(ad.spend||0)).toFixed(2);
+      const metrics=_adMetrics(ad);
+      const impr=_fmtNum(metrics.impressions);
+      const clicks=_fmtNum(metrics.clicks);
+      const spend='$'+metrics.spend.toFixed(2);
       let h='';
       h+='<div class="pub-stats-grid">';
       var _pubIsAr=typeof ProxoLang!=='undefined'&&ProxoLang.getLang()==='ar';
@@ -11641,8 +11658,12 @@ function _startMetricsRealtime(){
       if(!changed)return;
       // پاڵاوتنی ئایا گۆڕانکاری لە metrics بووە
       const metricsChanged=(
+        payload.old?.prev_spend!==changed.prev_spend||
+        payload.old?.current_spend!==changed.current_spend||
         payload.old?.spend!==changed.spend||
+        payload.old?.prev_clicks!==changed.prev_clicks||
         payload.old?.clicks!==changed.clicks||
+        payload.old?.prev_impressions!==changed.prev_impressions||
         payload.old?.impressions!==changed.impressions||
         payload.old?.tiktok_ad_id!==changed.tiktok_ad_id
       );
@@ -11756,9 +11777,10 @@ async function showAdDetail(ad){
   if(ad.location&&ad.location!=='all') h+='<div class="ad-sheet-row"><span class="ad-sheet-lbl">شوێن</span><span class="ad-sheet-val" style="direction:rtl;text-align:right">'+(locMap[ad.location]||ad.location)+'</span></div>';
   if(ad.reject_reason) h+='<div style="background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.12);border-radius:10px;padding:9px 12px;margin-top:10px;font-size:11.5px;color:rgba(185,28,28,.8);line-height:1.7"><i class="fas fa-circle-exclamation" style="margin-left:6px;opacity:.65;font-size:11px"></i>'+ad.reject_reason+'</div>';
   // ── ئامارەکان بە ئایکۆنی جوان ──
-  var adSpend=parseFloat(ad.prev_spend||0)+parseFloat(ad.spend||0);
-  var adClicks=parseInt(ad.clicks||0);
-  var adImpr=parseInt(ad.prev_impressions||0)+parseInt(ad.impressions||0);
+  var _detailMetrics=_adMetrics(ad);
+  var adSpend=_detailMetrics.spend;
+  var adClicks=_detailMetrics.clicks;
+  var adImpr=_detailMetrics.impressions;
   var isActive2=!!ad.tiktok_ad_id&&ad.status!=='rejected'&&ad.status!=='completed';
   if(isActive2||adImpr>0||adClicks>0||adSpend>0){
     h+='<div class="ad-sheet-sec" style="margin-top:16px"><i class="fas fa-chart-bar" style="margin-left:5px"></i>ئەنجامەکان</div>';

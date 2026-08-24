@@ -300,6 +300,8 @@ a.vlink:hover{text-decoration:underline}
     <div class="chip"><span class="cv c-sched" id="s-sched">—</span><span class="cl">پلانگیراو</span></div>
     <div class="chip"><span class="cv c-rej"  id="s-rej">—</span><span class="cl">ڕەتکراو</span></div>
     <div class="chip"><span class="cv c-pause" id="s-pause">—</span><span class="cl">وەستاو</span></div>
+    <div class="chip"><span class="cv" style="color:#7c3aed" id="s-impressions">—</span><span class="cl">کۆی بینەر</span></div>
+    <div class="chip"><span class="cv" style="color:#2563eb" id="s-clicks">—</span><span class="cl">کۆی کلیک</span></div>
     <div class="chip"><span class="cv c-spend" id="s-spend">—</span><span class="cl">$ خەرجکراو</span></div>
   </div>
 </header>
@@ -400,7 +402,7 @@ function setStatus(msg,type){
 }
 function updateStats(){
   const f=(s)=>ADS.filter(a=>a.status===s).length;
-  const spend=ADS.reduce((s,a)=>s+(parseFloat(a.prev_spend||0)+parseFloat(a.current_spend||a.spend||0)),0);
+  const spend=ADS.reduce((s,a)=>s+adMetrics(a).spend,0);
   document.getElementById('s-total').textContent=ADS.length;
   document.getElementById('s-active').textContent=f('active');
   document.getElementById('s-pending').textContent=f('pending');
@@ -409,6 +411,9 @@ function updateStats(){
   document.getElementById('s-sched').textContent=f('scheduled');
   document.getElementById('s-rej').textContent=f('rejected');
   document.getElementById('s-pause').textContent=f('paused');
+  const totals=ADS.reduce((t,a)=>{const x=adMetrics(a);t.impressions+=x.impressions;t.clicks+=x.clicks;return t;},{impressions:0,clicks:0});
+  document.getElementById('s-impressions').textContent=totals.impressions.toLocaleString();
+  document.getElementById('s-clicks').textContent=totals.clicks.toLocaleString();
   document.getElementById('s-spend').textContent='$'+spend.toFixed(1);
 }
 function render(){
@@ -430,6 +435,12 @@ function render(){
 
 const PILL={active:{c:'p-active',l:'چالاک'},completed:{c:'p-completed',l:'تەواوبوو'},scheduled:{c:'p-scheduled',l:'پلانگیراو'},rejected:{c:'p-rejected',l:'ڕەتکراوە'},paused:{c:'p-paused',l:'وەستاو'},pending:{c:'p-pending',l:'چاوەڕوان'},review:{c:'p-review',l:'پێداچوونەوە'}};
 const m=(v,d=2)=>v==null?'—':parseFloat(v).toFixed(d);
+const numMetric=(v)=>{const n=Number(v);return Number.isFinite(n)?n:0;};
+const adMetrics=(ad)=>({
+  impressions:numMetric(ad?.prev_impressions)+numMetric(ad?.impressions),
+  clicks:numMetric(ad?.prev_clicks)+numMetric(ad?.clicks),
+  spend:numMetric(ad?.prev_spend)+numMetric(ad?.current_spend!=null?ad.current_spend:ad?.spend)
+});
 const dt=(v)=>!v?'—':String(v).replace('T',' ').replace(/\.\d+.*/,'').replace('+00:00','');
 const ag=(ad)=>{try{const r=ad.age_groups;if(!r)return ad.target_ages||'—';const p=typeof r==='string'?JSON.parse(r):r;return Array.isArray(p)?p.join(', '):String(p);}catch{return ad.target_ages||'—';}};
 
@@ -437,7 +448,8 @@ function buildCard(ad){
   const el=document.createElement('div');el.className='card';
   const title=ad.title||('ڕیکلام #'+(ad.ad_number||ad.id?.slice(0,8)||'?'));
   const budget=parseFloat(ad.budget||0);
-  const spend=parseFloat(ad.prev_spend||0)+parseFloat(ad.current_spend||ad.spend||0);
+  const metrics=adMetrics(ad);
+  const spend=metrics.spend;
   const pct=budget>0?Math.min(100,Math.round(spend/budget*100)):0;
   const pd=PILL[ad.status]||{c:'p-default',l:ad.status||'نەزانراو'};
 
@@ -452,10 +464,10 @@ function buildCard(ad){
   </div>
   <div class="cb">
     <div class="metrics">
-      <div class="metric"><div class="ml">Impressions</div><div class="mv">${(parseInt(ad.prev_impressions||0)+parseInt(ad.impressions||0)).toLocaleString()}</div></div>
-      <div class="metric"><div class="ml">Clicks</div><div class="mv">${(ad.clicks??0).toLocaleString()}</div></div>
+      <div class="metric"><div class="ml">Impressions</div><div class="mv">${metrics.impressions.toLocaleString()}</div></div>
+      <div class="metric"><div class="ml">Clicks</div><div class="mv">${metrics.clicks.toLocaleString()}</div></div>
       <div class="metric"><div class="ml">Conversions</div><div class="mv">${(ad.conversions??0).toLocaleString()}</div></div>
-      <div class="metric"><div class="ml">Spend $</div><div class="mv">${m(parseFloat(ad.prev_spend||0)+parseFloat(ad.spend||0))}</div></div>
+      <div class="metric"><div class="ml">Spend $</div><div class="mv">${m(metrics.spend)}</div></div>
       <div class="metric"><div class="ml">CPM $</div><div class="mv">${m(ad.cpm)}</div></div>
       <div class="metric"><div class="ml">Conv %</div><div class="mv">${m(ad.conversion_rate)}</div></div>
     </div>
