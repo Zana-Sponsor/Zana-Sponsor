@@ -4738,12 +4738,17 @@ async function saveTikTokEdit(){
   btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> چاوەڕوانبە...';
   try{
     const payload = { tiktok_ad_id: newTtId, tiktok_campaign_id: newCampaignId };
-    // ── ئەگەر Ad ID ڕاستەوخۆ گۆڕدرا، spend/impressions ـی ئێستا پاشەکەوتی کۆی مێژوویی بکە ──
+    // ── ئەگەر Ad ID ڕاستەوخۆ گۆڕدرا، هەموو metrics ـی ئێستا پاشەکەوتی کۆی مێژوویی بکە ──
     if(ad.tiktok_ad_id && ad.tiktok_ad_id !== newTtId){
-      payload.prev_spend = parseFloat(ad.prev_spend||0) + parseFloat(ad.spend||0);
+      payload.prev_spend = parseFloat(ad.prev_spend||0) + parseFloat(ad.current_spend!=null ? ad.current_spend : ad.spend||0);
       payload.prev_impressions = parseInt(ad.prev_impressions||0) + parseInt(ad.impressions||0);
+      payload.prev_clicks = parseInt(ad.prev_clicks||0) + parseInt(ad.clicks||0);
+      payload.prev_conversions = parseInt(ad.prev_conversions||0) + parseInt(ad.conversions||0);
       payload.spend = 0;
+      payload.current_spend = 0;
       payload.impressions = 0;
+      payload.clicks = 0;
+      payload.conversions = 0;
     }
     const {error} = await sb.from('pa_ads').update(payload).eq('id', ad.id);
     if(error && !isNetHttpErr(error)){ showToast('هەڵە: '+error.message,'rd'); btn.disabled=false; btn.innerHTML='<i class="fas fa-save"></i> پاشەکەوتکردن'; return; }
@@ -4808,7 +4813,7 @@ async function submitApproval(){
     const targetBudget = parseFloat(document.getElementById('approveTargetBudget').value||'0') || 0;
     const _todayStr = new Date().toISOString().split('T')[0];
     const _finalStatus = (startDate && startDate > _todayStr) ? 'scheduled' : 'active';
-    // ── ئەگەر tiktok_ad_id گۆڕدرابوو، spend/impressions ـی کۆنەکە کۆبکەرەوە پێش سڕینەوەیان ──
+    // ── ئەگەر tiktok_ad_id گۆڕدرابوو، هەموو metrics ـی کۆنەکە کۆبکەرەوە پێش سڕینەوەیان ──
     const _updatePayload = {
       status: _finalStatus,
       tiktok_ad_id: tiktokId,
@@ -4818,10 +4823,15 @@ async function submitApproval(){
       target_budget: targetBudget
     };
     if(ad.tiktok_ad_id && ad.tiktok_ad_id !== tiktokId){
-      _updatePayload.prev_spend = parseFloat(ad.prev_spend||0) + parseFloat(ad.spend||0);
+      _updatePayload.prev_spend = parseFloat(ad.prev_spend||0) + parseFloat(ad.current_spend!=null ? ad.current_spend : ad.spend||0);
       _updatePayload.prev_impressions = parseInt(ad.prev_impressions||0) + parseInt(ad.impressions||0);
+      _updatePayload.prev_clicks = parseInt(ad.prev_clicks||0) + parseInt(ad.clicks||0);
+      _updatePayload.prev_conversions = parseInt(ad.prev_conversions||0) + parseInt(ad.conversions||0);
       _updatePayload.spend = 0;
+      _updatePayload.current_spend = 0;
       _updatePayload.impressions = 0;
+      _updatePayload.clicks = 0;
+      _updatePayload.conversions = 0;
     }
     const {error} = await sb.from('pa_ads').update(_updatePayload).eq('id', _approveAdId);
     if(error && !isNetHttpErr(error)){ showToast('هەڵە: '+error.message,'rd'); btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> پەسەندکردن (Approve)'; return; }
@@ -9338,7 +9348,7 @@ async function _notifyCardEditTelegram(cardId, cardName, userId) {
     </div>
     <div class="info-box" style="margin-top:4px;margin-bottom:4px" id="editTtWarnBox">
       <i class="fas fa-shield-halved" style="margin-left:6px;color:#f59e0b"></i>
-      ئەگەر Ad ID بگۆڕیت، Spend و Impressions ـی ئێستا بە شێوەی خۆکار پاشەکەوت دەکرێن و لەگەڵ داتای ئایدی نوێدا کۆدەکرێنەوە — هیچ داتایەک لەناوناچێت.
+      ئەگەر Ad ID بگۆڕیت، Spend، Impressions، Clicks و Conversions ـی ئێستا بە شێوەی خۆکار پاشەکەوت دەکرێن و ID ـی کۆن و نوێش لە مێژووی Supabase تۆمار دەبن — هیچ داتایەک لەناوناچێت.
     </div>
     <button class="modal-btn bl" id="editTtSubmitBtn" onclick="saveTikTokEdit()">
       <i class="fas fa-save"></i> پاشەکەوتکردن
