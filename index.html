@@ -1322,6 +1322,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .ad-price-grand-total>span:first-child{font-size:13px;font-weight:900;color:var(--dark);}
 .ad-price-grand-total>span:last-child{font-size:15px;font-weight:900;color:var(--gr);font-family:'Inter',sans-serif;}
 .service-fee-label{display:inline-flex!important;align-items:center;gap:7px;}
+.price-split-badge{display:inline-flex;align-items:center;justify-content:center;min-width:30px;padding:2px 6px;border-radius:999px;background:rgba(14,120,255,.09);border:1px solid rgba(14,120,255,.14);color:#0E78FF;font:800 10px/1 Inter,sans-serif;direction:ltr;}
 .service-fee-info-btn{width:18px;height:18px;padding:0;border:0;border-radius:50%;background:#0E78FF;color:#fff;font:700 12px/18px Inter,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(14,120,255,.25);}
 .service-fee-info-btn:active{transform:scale(.94);}
 .service-fee-overlay{position:fixed;inset:0;z-index:9800;display:flex;align-items:flex-end;justify-content:center;padding:0;background:rgba(15,23,42,.42);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);opacity:0;visibility:hidden;transition:opacity .24s ease,visibility .24s ease;direction:rtl;}
@@ -1330,8 +1331,10 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .service-fee-overlay.on .service-fee-modal{transform:translateY(0);}
 .service-fee-handle{width:42px;height:4px;border-radius:99px;background:var(--b1);margin:0 auto 19px;}
 .service-fee-close{position:absolute;top:26px;left:16px;width:32px;height:32px;border:0;border-radius:50%;background:var(--bg);color:var(--mt);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.service-fee-icon{width:52px;height:52px;border-radius:50%;background:linear-gradient(145deg,#0E78FF,#54A3FF);color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:16px;box-shadow:0 8px 18px rgba(14,120,255,.25);}
-.service-fee-modal h3{font-size:18px;font-weight:900;color:var(--dark);margin:0 0 9px;}
+.service-fee-title-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.service-fee-icon{width:30px;height:30px;border-radius:10px;background:rgba(14,120,255,.09);border:1px solid rgba(14,120,255,.16);color:#0E78FF;display:flex;align-items:center;justify-content:center;flex:0 0 30px;}
+.service-fee-icon svg{width:17px;height:17px;display:block;}
+.service-fee-modal h3{font-size:18px;font-weight:900;color:var(--dark);margin:0;}
 .service-fee-modal p{font-size:13px;line-height:2;color:var(--mt2);margin:0;max-width:480px;}
 @media(max-width:420px){.ad-detail-info-grid{grid-template-columns:1fr;}.ad-detail-info-grid .ad-sheet-row.full{grid-column:auto;}.service-fee-modal{padding:11px 19px calc(21px + env(safe-area-inset-bottom));border-radius:23px 23px 0 0;}.service-fee-close{top:23px;left:13px;}.ad-detail-identity{padding:14px;}}
 
@@ -11996,8 +11999,8 @@ async function showAdDetail(ad){
   var grandTotalIQD=basePriceIQD===null?null:basePriceIQD+serviceFeeIQD;
   var formatPriceIQD=function(value){return value===null?'نرخ بەردەست نییە':value.toLocaleString('en-US')+' د.ع';};
   h+='<div class="ad-price-box ad-price-box-modern">';
-  h+='<div class="ad-price-row"><span>نرخی ڕیکلام</span><span>'+formatPriceIQD(basePriceIQD)+'</span></div>';
-  h+='<div class="ad-price-row"><span class="service-fee-label">تێچووی خزمەتگوزاری <button type="button" class="service-fee-info-btn" onclick="event.stopPropagation();openServiceFeeInfo()" aria-label="تێچووی خزمەتگوزاری">!</button></span><span>'+formatPriceIQD(serviceFeeIQD)+'</span></div>';
+  h+='<div class="ad-price-row"><span>نرخی ڕیکلام <span class="price-split-badge">80%</span></span><span>'+formatPriceIQD(basePriceIQD)+'</span></div>';
+  h+='<div class="ad-price-row"><span class="service-fee-label">تێچووی خزمەتگوزاری <span class="price-split-badge">20%</span><button type="button" class="service-fee-info-btn" onclick="event.stopPropagation();openServiceFeeInfo()" aria-label="تێچووی خزمەتگوزاری">!</button></span><span>'+formatPriceIQD(serviceFeeIQD)+'</span></div>';
   h+='<div class="ad-price-row ad-price-grand-total"><span>کۆی گشتی (د.ع)</span><span>'+formatPriceIQD(grandTotalIQD)+'</span></div>';
   h+='</div>';
   var _isCancellable2=ad.status==='pending'&&!ad.tiktok_ad_id;
@@ -16338,8 +16341,12 @@ function _resetTermsAgree() {
     <div class="service-fee-modal" role="dialog" aria-modal="true" aria-labelledby="serviceFeeTitle">
       <div class="service-fee-handle" aria-hidden="true"></div>
       <button type="button" class="service-fee-close" onclick="closeServiceFeeInfo()" aria-label="داخستن"><i class="fas fa-xmark"></i></button>
-      <div class="service-fee-icon"><i class="fas fa-info"></i></div>
-      <h3 id="serviceFeeTitle">تێچووی خزمەتگوزاری</h3>
+      <div class="service-fee-title-row">
+        <div class="service-fee-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="2.2"></circle><circle cx="17" cy="17" r="2.2"></circle><path d="M6 18 18 6"></path></svg>
+        </div>
+        <h3 id="serviceFeeTitle">تێچووی خزمەتگوزاری</h3>
+      </div>
       <p>ئێمە بڕی 20% وەردەگرین وەک تێچووی خزمەتگوزاری، ئەمە یارمەتیمان دەدات بۆ پێشکەشکردنی خزمەتگوزاریەکان بەشێوەیەکی باشتر!</p>
     </div>
   </div>
