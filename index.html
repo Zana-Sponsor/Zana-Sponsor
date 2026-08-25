@@ -11309,6 +11309,16 @@ async function submitCancelAd(){
   }
 }
 
+function copyAdId(event,adId){
+  event.preventDefault();
+  event.stopPropagation();
+  _safeCopy(String(adId),function(){
+    showToast('Ad ID copied','ok');
+  },function(){
+    showToast('Unable to copy Ad ID','err');
+  });
+}
+
 function renderAds(){
   const filtered=filterStatus==='all'?allAds:allAds.filter(a=>a.status===filterStatus);
   const wrap=document.getElementById('myAdsWrap');
@@ -11426,7 +11436,7 @@ function renderAds(){
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px">
         <span class="spons-status-badge ${statusCls}">${statusLbl}</span>
         <div style="display:flex;align-items:center;gap:7px">
-          <span style="font-size:11px;color:var(--mt);background:var(--bg);padding:4px 11px;border-radius:20px;border:1px solid var(--b1);font-family:'Inter',monospace;letter-spacing:.5px">#${orderId}</span>
+          <span class="ad-id-copy" onclick="copyAdId(event,'${orderId}')" title="Copy Ad ID" style="font-size:11px;color:var(--mt);background:var(--bg);padding:4px 11px;border-radius:20px;border:1px solid var(--b1);font-family:'Inter',monospace;letter-spacing:.5px;cursor:pointer;user-select:none">#${orderId}</span>
           <div class="spons-share-btn" onclick="event.stopPropagation();shareAd(allAds.find(x=>x.id==='${ad.id}'))" title="بەشکردن"><i class="fas fa-share-nodes"></i></div>
         </div>
       </div>
