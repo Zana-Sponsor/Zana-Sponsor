@@ -1318,18 +1318,22 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .ad-price-box-modern{margin-top:0;background:linear-gradient(135deg,rgba(22,163,74,.07),rgba(22,163,74,.02));border-color:rgba(22,163,74,.2);border-radius:17px;padding:8px 15px;}
 .ad-price-box-modern .ad-price-row{padding:12px 0;}
 .ad-price-box-modern .ad-price-row+ .ad-price-row{border-top:1px dashed rgba(22,163,74,.18);}
+.ad-price-grand-total{margin-top:4px;padding-top:14px!important;border-top:1px solid rgba(22,163,74,.28)!important;font-weight:900;}
+.ad-price-grand-total>span:first-child{font-size:13px;font-weight:900;color:var(--dark);}
+.ad-price-grand-total>span:last-child{font-size:15px;font-weight:900;color:var(--gr);font-family:'Inter',sans-serif;}
 .service-fee-label{display:inline-flex!important;align-items:center;gap:7px;}
 .service-fee-info-btn{width:18px;height:18px;padding:0;border:0;border-radius:50%;background:#0E78FF;color:#fff;font:700 12px/18px Inter,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(14,120,255,.25);}
 .service-fee-info-btn:active{transform:scale(.94);}
-.service-fee-overlay{position:fixed;inset:0;z-index:9800;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.48);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease;direction:rtl;}
+.service-fee-overlay{position:fixed;inset:0;z-index:9800;display:flex;align-items:flex-end;justify-content:center;padding:0;background:rgba(15,23,42,.42);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);opacity:0;visibility:hidden;transition:opacity .24s ease,visibility .24s ease;direction:rtl;}
 .service-fee-overlay.on{opacity:1;visibility:visible;}
-.service-fee-modal{position:relative;width:min(100%,390px);background:var(--w);border:1px solid rgba(255,255,255,.5);border-radius:24px;padding:27px 23px 23px;box-shadow:0 24px 70px rgba(15,23,42,.25);transform:translateY(14px) scale(.97);transition:transform .24s cubic-bezier(.16,1,.3,1);text-align:right;}
-.service-fee-overlay.on .service-fee-modal{transform:translateY(0) scale(1);}
-.service-fee-close{position:absolute;top:14px;left:14px;width:30px;height:30px;border:0;border-radius:50%;background:var(--bg);color:var(--mt);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.service-fee-icon{width:48px;height:48px;border-radius:16px;background:rgba(14,120,255,.1);color:#0E78FF;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:15px;}
+.service-fee-modal{position:relative;width:min(100%,560px);background:var(--w);border:1px solid rgba(255,255,255,.5);border-bottom:0;border-radius:27px 27px 0 0;padding:12px 23px calc(25px + env(safe-area-inset-bottom));box-shadow:0 -18px 55px rgba(15,23,42,.2);transform:translateY(100%);transition:transform .34s cubic-bezier(.16,1,.3,1);text-align:right;touch-action:none;}
+.service-fee-overlay.on .service-fee-modal{transform:translateY(0);}
+.service-fee-handle{width:42px;height:4px;border-radius:99px;background:var(--b1);margin:0 auto 19px;}
+.service-fee-close{position:absolute;top:26px;left:16px;width:32px;height:32px;border:0;border-radius:50%;background:var(--bg);color:var(--mt);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.service-fee-icon{width:52px;height:52px;border-radius:50%;background:linear-gradient(145deg,#0E78FF,#54A3FF);color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:16px;box-shadow:0 8px 18px rgba(14,120,255,.25);}
 .service-fee-modal h3{font-size:18px;font-weight:900;color:var(--dark);margin:0 0 9px;}
-.service-fee-modal p{font-size:13px;line-height:2;color:var(--mt2);margin:0;}
-@media(max-width:420px){.ad-detail-info-grid{grid-template-columns:1fr;}.ad-detail-info-grid .ad-sheet-row.full{grid-column:auto;}.service-fee-modal{padding:25px 19px 20px;border-radius:21px;}.ad-detail-identity{padding:14px;}}
+.service-fee-modal p{font-size:13px;line-height:2;color:var(--mt2);margin:0;max-width:480px;}
+@media(max-width:420px){.ad-detail-info-grid{grid-template-columns:1fr;}.ad-detail-info-grid .ad-sheet-row.full{grid-column:auto;}.service-fee-modal{padding:11px 19px calc(21px + env(safe-area-inset-bottom));border-radius:23px 23px 0 0;}.service-fee-close{top:23px;left:13px;}.ad-detail-identity{padding:14px;}}
 
 .ad-price-total{border-top:1px dashed rgba(22,163,74,.3);margin-top:8px;padding-top:8px !important;}
 .ad-price-total>span:first-child{font-size:13px;font-weight:800;color:var(--dark);}
@@ -11854,13 +11858,56 @@ function _formatAdAgeRange(raw){
     return nums.length===1?nums[0]+'+':String(group||'');
   }).filter(Boolean).join('، ');
 }
+let _serviceFeeDragStartY=0;
+let _serviceFeeDragDistance=0;
+let _serviceFeeDragging=false;
+function _bindServiceFeeSheetDrag(){
+  const sheet=document.querySelector('#serviceFeeOverlay .service-fee-modal');
+  if(!sheet||sheet.dataset.dragBound==='1')return;
+  sheet.dataset.dragBound='1';
+  sheet.addEventListener('pointerdown',function(event){
+    if(event.target.closest('.service-fee-close'))return;
+    _serviceFeeDragging=true;
+    _serviceFeeDragStartY=event.clientY;
+    _serviceFeeDragDistance=0;
+    sheet.style.transition='none';
+    try{sheet.setPointerCapture(event.pointerId);}catch(e){}
+  });
+  sheet.addEventListener('pointermove',function(event){
+    if(!_serviceFeeDragging)return;
+    _serviceFeeDragDistance=Math.max(0,event.clientY-_serviceFeeDragStartY);
+    sheet.style.transform='translateY('+_serviceFeeDragDistance+'px)';
+  });
+  const finish=function(event){
+    if(!_serviceFeeDragging)return;
+    _serviceFeeDragging=false;
+    if(_serviceFeeDragDistance>90){
+      sheet.style.transition='transform .24s ease';
+      closeServiceFeeInfo();
+    }else{
+      sheet.style.transition='transform .24s cubic-bezier(.16,1,.3,1)';
+      sheet.style.transform='translateY(0)';
+    }
+    try{sheet.releasePointerCapture(event.pointerId);}catch(e){}
+  };
+  sheet.addEventListener('pointerup',finish);
+  sheet.addEventListener('pointercancel',finish);
+}
 function openServiceFeeInfo(){
   const overlay=document.getElementById('serviceFeeOverlay');
-  if(overlay)overlay.classList.add('on');
+  if(overlay){
+    _bindServiceFeeSheetDrag();
+    overlay.classList.add('on');
+  }
 }
 function closeServiceFeeInfo(){
   const overlay=document.getElementById('serviceFeeOverlay');
+  const sheet=overlay&&overlay.querySelector('.service-fee-modal');
   if(overlay)overlay.classList.remove('on');
+  if(sheet){
+    sheet.style.transition='transform .24s ease';
+    sheet.style.transform='';
+  }
 }
 
 function closeAdSheet(){
@@ -11911,22 +11958,6 @@ async function showAdDetail(ad){
 
   var promoCode=usage&&usage.promo_codes?usage.promo_codes.code:null;
 
-  // ── ئەنجامی چاوەڕوانکراو — حساب ناوخۆیی، IQD هەرگیز بە دۆلار پیشان نادرێت ──
-  var internalExchangeRate=1800;
-  var budgetIQD=finalTotal;
-  var budgetUSD=budgetIQD/internalExchangeRate;
-  var estLabel=null,estValue=null;
-  var _goal=(ad.goal||'').toLowerCase();
-  if(_goal==='messages'||ad.goal==='\u0646\u0627\u0645\u06d5'){
-    estLabel='\u06a9\u0644\u06cc\u06a9\u06cc \u0686\u0627\u0648\u06d5\u0695\u0648\u0627\u0646\u06a9\u0631\u0627\u0648';
-    estValue=Math.round(budgetUSD/0.20);
-  }else if(_goal==='views'||ad.goal==='\u06a4\u06cc\u0648'){
-    estLabel='\u0628\u06cc\u0646\u06cc\u0646\u06cc \u0686\u0627\u0648\u06d5\u0695\u0648\u0627\u0646\u06a9\u0631\u0627\u0648';
-    estValue=Math.round((budgetUSD/0.15)*1000);
-  }else if(_goal==='engagement'){
-    estLabel='\u06a9\u0644\u06cc\u06a9\u06cc \u0686\u0627\u0648\u06d5\u0695\u0648\u0627\u0646\u06a9\u0631\u0627\u0648';
-    estValue=Math.round(budgetUSD/0.20);
-  }
 
   var sm=statusMap[ad.status]||statusMap.pending;
   var sc=sm[0],sl=sm[1];
@@ -11956,10 +11987,18 @@ async function showAdDetail(ad){
 
   if(ad.reject_reason) h+='<div style="background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.12);border-radius:10px;padding:9px 12px;margin-top:10px;font-size:11.5px;color:rgba(185,28,28,.8);line-height:1.7"><i class="fas fa-circle-exclamation" style="margin-left:6px;opacity:.65;font-size:11px"></i>'+ad.reject_reason+'</div>';
   h+='<div class="ad-detail-section-title"><i class="fas fa-receipt"></i><span>وردەکاری نرخ</span></div>';
-  var serviceFeeIQD=Math.round(finalTotal*0.20);
+  // pa_ads.budget is the existing persisted ad-price field (stored in USD).
+  // Convert that stored value to IQD only for presentation; never invent a fallback price.
+  var basePriceUSD=Number(ad&&ad.budget);
+  var hasBasePrice=Number.isFinite(basePriceUSD)&&basePriceUSD>=0;
+  var basePriceIQD=hasBasePrice?Math.round(basePriceUSD*ARC_IQD_RATE):null;
+  var serviceFeeIQD=basePriceIQD===null?null:Math.round(basePriceIQD*0.20);
+  var grandTotalIQD=basePriceIQD===null?null:basePriceIQD+serviceFeeIQD;
+  var formatPriceIQD=function(value){return value===null?'نرخ بەردەست نییە':value.toLocaleString('en-US')+' د.ع';};
   h+='<div class="ad-price-box ad-price-box-modern">';
-  h+='<div class="ad-price-row"><span>نرخی ڕیکلام</span><span>'+finalTotal.toLocaleString()+' IQD</span></div>';
-  h+='<div class="ad-price-row"><span class="service-fee-label">تێچووی خزمەتگوزاری <button type="button" class="service-fee-info-btn" onclick="event.stopPropagation();openServiceFeeInfo()" aria-label="تێچووی خزمەتگوزاری">!</button></span><span>'+serviceFeeIQD.toLocaleString()+' IQD</span></div>';
+  h+='<div class="ad-price-row"><span>نرخی ڕیکلام</span><span>'+formatPriceIQD(basePriceIQD)+'</span></div>';
+  h+='<div class="ad-price-row"><span class="service-fee-label">تێچووی خزمەتگوزاری <button type="button" class="service-fee-info-btn" onclick="event.stopPropagation();openServiceFeeInfo()" aria-label="تێچووی خزمەتگوزاری">!</button></span><span>'+formatPriceIQD(serviceFeeIQD)+'</span></div>';
+  h+='<div class="ad-price-row ad-price-grand-total"><span>کۆی گشتی (د.ع)</span><span>'+formatPriceIQD(grandTotalIQD)+'</span></div>';
   h+='</div>';
   var _isCancellable2=ad.status==='pending'&&!ad.tiktok_ad_id;
   if(_isCancellable2){
@@ -16297,6 +16336,7 @@ function _resetTermsAgree() {
     </div>
   <div class="service-fee-overlay" id="serviceFeeOverlay" onclick="if(event.target===this)closeServiceFeeInfo()">
     <div class="service-fee-modal" role="dialog" aria-modal="true" aria-labelledby="serviceFeeTitle">
+      <div class="service-fee-handle" aria-hidden="true"></div>
       <button type="button" class="service-fee-close" onclick="closeServiceFeeInfo()" aria-label="داخستن"><i class="fas fa-xmark"></i></button>
       <div class="service-fee-icon"><i class="fas fa-info"></i></div>
       <h3 id="serviceFeeTitle">تێچووی خزمەتگوزاری</h3>
