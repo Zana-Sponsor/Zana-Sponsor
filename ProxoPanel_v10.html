@@ -2964,7 +2964,7 @@ async function showUserDetail(uid){
     <div class="detail-row"><span class="lbl">بەرواری تۆمارکردن</span><span class="val">${new Date(u.created_at).toLocaleDateString('ku')}</span></div>
     <div class="detail-row"><span class="lbl">ژمارەی مۆبایل</span><span class="val" style="font-family:'Inter',sans-serif;direction:ltr">${u.phone||'<span style=\"color:var(--rd);font-size:11px\">نەداوە</span>'}</span></div>
     <div class="detail-row"><span class="lbl">User ID</span><span class="val" style="font-family:monospace;font-size:10px">${u.id}</span></div>
-    ${ads?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین ڕیکلامەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${ads.map(a=>`<div onclick="showAdDetail('${a.id}')" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">#${a.ad_number} — ${a.title}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${a.status}">${statusKu(a.status)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
+    ${ads?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین ڕیکلامەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${ads.map(a=>`<div onclick="showAdDetail('${a.id}')" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${_adminPublicAdIdLabel(a)} — ${a.title}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${a.status}">${statusKu(a.status)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
     ${txs?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین مامەڵەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${txs.map(t=>`<div onclick="showDepDetail(_udetTxMap['${t.id}'])" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Math.round(parseFloat(t.amount)*1800).toLocaleString()} IQD — ${t.method||_txTypeKu(t.type,t.note).lbl}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${depStatusKey(t)}">${depStatusKu(t)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
     <div class="sep"></div>
     <div style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:10px;display:flex;align-items:center;gap:6px">
@@ -3614,6 +3614,14 @@ async function approveDeposit(id,userId,amount){
 }
 
 // ══ ADS ══
+function _adminPublicAdId(ad){
+  const value=ad&&ad.public_ad_id;
+  return /^P[A-Z]{11}$/.test(String(value||''))?String(value):String(ad?.ad_number||'');
+}
+function _adminPublicAdIdLabel(ad){
+  const value=_adminPublicAdId(ad);
+  return value?'#'+value:'—';
+}
 async function loadAds(){
   const{data:adsRaw}=await sb.from('pa_ads').select('*').order('created_at',{ascending:false}).limit(200);
   const _adUids=[...new Set((adsRaw||[]).map(a=>a.user_id).filter(Boolean))];
@@ -3639,7 +3647,7 @@ function renderAdsTable(q=''){
   const tableHTML=`<table>
     <thead><tr><th>#</th><th>ناونیشان</th><th>بەکارهێنەر</th><th>بودجە</th><th>ئامانج</th><th>باری</th><th>بەروار</th><th>کردارەکان</th></tr></thead>
     <tbody>${list.map(a=>`<tr style="cursor:pointer" onclick="showAdDetail('${a.id}')">
-      <td style="font-family:monospace;font-size:11px">#${a.ad_number||'—'}</td>
+      <td style="font-family:monospace;font-size:11px">${_adminPublicAdIdLabel(a)}</td>
       <td style="font-size:13px;font-weight:700">${a.title||'—'}</td>
       <td style="font-size:12px;color:var(--mt)">${a.profiles?.full_name||'—'}<br><span style="font-size:10px">${a.profiles?.email||'—'}</span></td>
       <td>
@@ -3665,9 +3673,9 @@ function renderAdsTable(q=''){
   const cardsHTML=`<div class="ad-cards">${list.map(a=>`
     <div class="ad-card" onclick="showAdDetail('${a.id}')">
       <div class="ad-card-top">
-        <div class="mini-av" style="background:var(--bl);font-size:10px;font-weight:900">#${a.ad_number||'?'}</div>
+        <div class="mini-av" style="background:var(--bl);font-size:10px;font-weight:900">${_adminPublicAdIdLabel(a)}</div>
         <div class="ad-card-info">
-          <div class="ad-card-name" style="display:flex;align-items:center;gap:6px">${a.is_featured?'<span class="feat-badge"><i class="fas fa-star" style="font-size:9px"></i> باشترین</span>':''} ${a.title||(a.created_at?'New Ad '+new Date(a.created_at).toLocaleDateString('en-GB').replace(/\//g,'/'):'ڕیکلامی #'+(a.ad_number||'?'))}</div>
+          <div class="ad-card-name" style="display:flex;align-items:center;gap:6px">${a.is_featured?'<span class="feat-badge"><i class="fas fa-star" style="font-size:9px"></i> باشترین</span>':''} ${a.title||(a.created_at?'New Ad '+new Date(a.created_at).toLocaleDateString('en-GB').replace(/\//g,'/'):'ڕیکلامی '+(_adminPublicAdIdLabel(a)||'?'))}</div>
           <div class="ad-card-sub">${a.profiles?.full_name||'—'} • ${a.profiles?.email||'—'}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
@@ -3865,7 +3873,7 @@ async function showAdDetail(id){
   const statusColorMap={pending:'#d97706',review:'#0891b2',active:'#16a34a',paused:'#d97706',completed:'#2563eb',rejected:'#dc2626',scheduled:'#0891b2'};
   const heroColor=statusColorMap[a.status]||'#8b95a8';
   const adDays=calcAdDays(a.start_date,a.end_date);
-  const adTitle=a.title||(a.created_at?'New Ad '+new Date(a.created_at).toLocaleDateString('en-GB').replace(/\//g,'/'):'ڕیکلامی #'+(a.ad_number||'?'));
+  const adTitle=a.title||(a.created_at?'New Ad '+new Date(a.created_at).toLocaleDateString('en-GB').replace(/\//g,'/'):'ڕیکلامی '+(_adminPublicAdIdLabel(a)||'?'));
   const _sh=(ico,color,txt)=>`<div style="display:flex;align-items:center;gap:8px;margin:20px 0 10px"><div style="width:24px;height:24px;border-radius:7px;background:${color}1a;color:${color};display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0"><i class="fas ${ico}"></i></div><span style="font-size:11.5px;font-weight:800;color:var(--mt2);letter-spacing:.3px">${txt}</span></div>`;
 
   const heroHTML=`<div style="background:linear-gradient(145deg,${heroColor}17,${heroColor}05 65%);border:1.5px solid ${heroColor}30;border-radius:18px;padding:16px">
@@ -3876,7 +3884,7 @@ async function showAdDetail(id){
           <div style="font-size:15px;font-weight:900;color:var(--dark);line-height:1.3">${adTitle}</div>
           <span class="badge ${a.status}" style="flex-shrink:0">${statusKu(a.status)}</span>
         </div>
-        <div style="font-size:11px;color:var(--mt);font-family:'Inter';margin-top:3px;direction:ltr;text-align:right">#${a.ad_number||'—'}${a.tiktok_ad_id?' · TikTok ID '+a.tiktok_ad_id:''}</div>
+        <div style="font-size:11px;color:var(--mt);font-family:'Inter';margin-top:3px;direction:ltr;text-align:right">${_adminPublicAdIdLabel(a)}${a.tiktok_ad_id?' · TikTok ID '+a.tiktok_ad_id:''}</div>
       </div>
     </div>
     <div style="display:flex;align-items:baseline;gap:8px;margin-top:14px;padding-top:14px;border-top:1px dashed ${heroColor}35;flex-wrap:wrap">
@@ -4077,9 +4085,9 @@ function renderAdsDataTable(q=''){
       const clicks=parseInt(a.clicks||0);
       const ctr=views>0?(clicks/views*100).toFixed(1):0;
       return`<tr style="cursor:pointer" onclick="showAdDetail('${a.id}')">
-        <td style="font-family:monospace;font-size:11px;white-space:nowrap">#${a.ad_number||'—'}</td>
+        <td style="font-family:monospace;font-size:11px;white-space:nowrap">${_adminPublicAdIdLabel(a)}</td>
         <td>
-          <div style="font-size:13px;font-weight:700;color:var(--dark)">${a.title||('ڕیکلامی #'+(a.ad_number||'?'))}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--dark)">${a.title||('ڕیکلامی '+(_adminPublicAdIdLabel(a)||'?'))}</div>
           ${a.tiktok_ad_id?`<div style="font-size:10px;color:var(--mt);font-family:'Inter';direction:ltr;margin-top:2px">TT: ${a.tiktok_ad_id}</div>`:''}
         </td>
         <td>
@@ -4121,9 +4129,9 @@ function renderAdsDataTable(q=''){
     const clicks=parseInt(a.clicks||0);
     return`<div class="ad-card" onclick="showAdDetail('${a.id}')">
       <div class="ad-card-top">
-        <div class="mini-av" style="background:linear-gradient(135deg,#a855f7,#7c3aed);font-size:10px;font-weight:900;flex-shrink:0">#${a.ad_number||'?'}</div>
+        <div class="mini-av" style="background:linear-gradient(135deg,#a855f7,#7c3aed);font-size:10px;font-weight:900;flex-shrink:0">${_adminPublicAdIdLabel(a)}</div>
         <div class="ad-card-info" style="flex:1;min-width:0">
-          <div class="ad-card-name">${a.title||(a.created_at?'New Ad '+new Date(a.created_at).toLocaleDateString('en-GB').replace(/\//g,'/'):'ڕیکلامی #'+(a.ad_number||'?'))}</div>
+          <div class="ad-card-name">${a.title||(a.created_at?'New Ad '+new Date(a.created_at).toLocaleDateString('en-GB').replace(/\//g,'/'):'ڕیکلامی '+(_adminPublicAdIdLabel(a)||'?'))}</div>
           <div class="ad-card-sub">${a.profiles?.full_name||'—'}</div>
           <div class="ad-card-sub" style="font-size:10px;direction:ltr">${a.profiles?.email||'—'}</div>
         </div>
@@ -4325,19 +4333,19 @@ async function updateAdStatus(id,userId,newStatus,budget){
     try{
       if(newStatus==='paused'){
         const _psLang = await _getUserLang(userId).catch(()=>'ku');
-        const _psAdNum = (allAds.find(a => a.id === id) || {}).ad_number || id;
+        const _psAdNum = _adminPublicAdId(allAds.find(a => a.id === id) || {}) || id;
         const _psN = _adNotifTexts(_psAdNum, 'paused', _psLang);
         await sb.from('pa_notifications').insert({user_id:userId,type:'ad_paused',title:_psN.title,body:_psN.body,is_read:false});
         _fbPushNotif(userId, _psN.title, _psN.body, 'ad_paused');
       } else if(newStatus==='completed'){
         const _cpLang = await _getUserLang(userId).catch(()=>'ku');
-        const _cpAdNum = (allAds.find(a=>a.id===id)||{}).ad_number || id;
+        const _cpAdNum = _adminPublicAdId(allAds.find(a=>a.id===id)||{}) || id;
         const _cpN = _adNotifTexts(_cpAdNum, 'completed', _cpLang);
         await sb.from('pa_notifications').insert({user_id:userId,type:'ad_completed',title:_cpN.title,body:_cpN.body,is_read:false});
         _fbPushNotif(userId, _cpN.title, _cpN.body, 'ad_completed');
       } else if(newStatus==='active' && parseFloat(budget||0)<20){
         const _acLang = await _getUserLang(userId).catch(()=>'ku');
-        const _acAdNum = (allAds.find(a => a.id === id) || {}).ad_number || id;
+        const _acAdNum = _adminPublicAdId(allAds.find(a => a.id === id) || {}) || id;
         const _acN = _adNotifTexts(_acAdNum, 'active', _acLang);
         await sb.from('pa_notifications').insert({user_id:userId,type:'ad_active',title:_acN.title,body:_acN.body,is_read:false});
         _fbPushNotif(userId, _acN.title, _acN.body, 'ad_active');
@@ -4471,7 +4479,7 @@ function bmRender(){
 
       <div style="flex:1;min-width:0">
         <div style="font-size:13.5px;font-weight:800;color:var(--dark)">${_bmEsc(a.title||'—')}</div>
-        <div style="font-size:11px;color:var(--mt);margin-top:2px">#${_bmEsc(a.ad_number||'—')} · ${_bmEsc(a.profiles?.full_name||'—')}</div>
+        <div style="font-size:11px;color:var(--mt);margin-top:2px">${_bmEsc(_adminPublicAdIdLabel(a))} · ${_bmEsc(a.profiles?.full_name||'—')}</div>
         <div style="font-size:11px;color:var(--mt);margin-top:4px;font-family:'Inter';direction:ltr;text-align:right">
           ${(a.clicks||0).toLocaleString()} clicks · ${(a.impressions||0).toLocaleString()} views · ${iqd} IQD
         </div>
@@ -4507,7 +4515,7 @@ function bmRenderCandidates(){
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;background:var(--bg);border:1px solid var(--b1);border-radius:11px;margin-bottom:6px">
       <div style="min-width:0">
         <div style="font-size:12.5px;font-weight:700;color:var(--dark)">${_bmEsc(a.title||'—')}</div>
-        <div style="font-size:10.5px;color:var(--mt)">#${_bmEsc(a.ad_number||'—')} · ${_bmEsc(a.profiles?.full_name||'—')}</div>
+        <div style="font-size:10.5px;color:var(--mt)">${_bmEsc(_adminPublicAdIdLabel(a))} · ${_bmEsc(a.profiles?.full_name||'—')}</div>
       </div>
       <div class="act-btn gr" onclick="bmFeature('${a.id}')"><i class="fas fa-plus"></i> زیادکردن</div>
     </div>`).join('');
@@ -4639,7 +4647,7 @@ async function loadApprovalWorkflow(){
   const tableHTML = `<table>
     <thead><tr><th>#</th><th>ناونیشان</th><th>بەکارهێنەر</th><th>بودجە</th><th>ئامانج</th><th>بەروار</th><th>کردارەکان</th></tr></thead>
     <tbody>${_approvalPendingAds.map(a=>`<tr>
-      <td style="font-family:monospace;font-size:11px">#${a.ad_number||'—'}</td>
+      <td style="font-family:monospace;font-size:11px">${_adminPublicAdIdLabel(a)}</td>
       <td style="font-size:13px;font-weight:700">${a.title||'—'}</td>
       <td style="font-size:12px;color:var(--mt)">${a.profiles?.full_name||'—'}<br><span style="font-size:10px">${a.profiles?.email||'—'}</span></td>
       <td>
@@ -4658,9 +4666,9 @@ async function loadApprovalWorkflow(){
   const cardsHTML = `<div class="ad-cards">${_approvalPendingAds.map(a=>`
     <div class="ad-card">
       <div class="ad-card-top">
-        <div class="mini-av" style="background:var(--bl);font-size:10px;font-weight:900">#${a.ad_number||'?'}</div>
+        <div class="mini-av" style="background:var(--bl);font-size:10px;font-weight:900">${_adminPublicAdIdLabel(a)}</div>
         <div class="ad-card-info">
-          <div class="ad-card-name">${a.title||(a.created_at?'New Ad '+new Date(a.created_at).toLocaleDateString('en-GB').replace(/\//g,'/'):'ڕیکلامی #'+(a.ad_number||'?'))}</div>
+          <div class="ad-card-name">${a.title||(a.created_at?'New Ad '+new Date(a.created_at).toLocaleDateString('en-GB').replace(/\//g,'/'):'ڕیکلامی '+(_adminPublicAdIdLabel(a)||'?'))}</div>
           <div class="ad-card-sub">${a.profiles?.full_name||'—'} • ${a.profiles?.email||'—'}</div>
         </div>
         <span class="badge ${a.status==='review'?'review':'pending'}">${a.status==='review'?'لەژێر پێداچوونەوەدایە':'چاوەڕوان'}</span>
@@ -4680,7 +4688,7 @@ async function loadApprovalWorkflow(){
   wrap.innerHTML = tableHTML + cardsHTML;
 }
 
-let _approveAdId = '', _approveUserId = '', _approveAdBudget = 0, _approveAdNumber = '';
+let _approveAdId = '', _approveUserId = '', _approveAdBudget = 0, _approveAdNumber = '', _approveAdPublicId = '';
 
 // ══ START REVIEW: دۆخ دەگۆڕێت بۆ 'review' و ئاگاداری بەکارهێنەر دەنێردرێت ══
 async function startReview(adId){
@@ -4715,7 +4723,7 @@ function openEditTikTokModal(adId){
   const ad = allAds.find(a=>a.id===adId) || _allAdsData.find(a=>a.id===adId);
   if(!ad){ showToast('ڕیکلام نەدۆزرایەوە','rd'); return; }
   _editTtAdId = ad.id;
-  document.getElementById('editTtAdTitle').textContent = ad.title || (ad.ad_number ? 'ڕیکلامی #'+ad.ad_number : '—');
+  document.getElementById('editTtAdTitle').textContent = ad.title || (ad.ad_number ? 'ڕیکلامی '+_adminPublicAdIdLabel(ad) : '—');
   document.getElementById('editTtCurrentId').textContent = 'ئێستا: ' + (ad.tiktok_ad_id||'—') + '  ·  Campaign: ' + (ad.tiktok_campaign_id||'—');
   document.getElementById('editTtAdId').value = ad.tiktok_ad_id || '';
   document.getElementById('editTtCampaignId').value = ad.tiktok_campaign_id || '';
@@ -4770,8 +4778,9 @@ function openApproveModal(adId){
   _approveUserId = ad.user_id;
   _approveAdBudget = parseFloat(ad.budget||0);
   _approveAdNumber = ad.ad_number || '';
+  _approveAdPublicId = _adminPublicAdId(ad) || String(ad.id||'');
   // Populate info
-  document.getElementById('approveAdTitle').textContent = ad.title || (ad.ad_number ? 'ڕیکلامی #'+ad.ad_number : '—');
+  document.getElementById('approveAdTitle').textContent = ad.title || (ad.ad_number ? 'ڕیکلامی '+_adminPublicAdIdLabel(ad) : '—');
   document.getElementById('approveAdUser').textContent = (ad.profiles?.full_name||'—') + ' · ' + (ad.profiles?.email||'—');
   document.getElementById('approveAdBudget').textContent = Math.round(_approveAdBudget * 1800).toLocaleString() + ' IQD';
   document.getElementById('approveAdUSD').textContent = '$' + _approveAdBudget.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -4860,7 +4869,7 @@ async function submitApproval(){
     try{ await updateChallengeProgress(_approveUserId, _approveAdBudget); }catch(e){}
     // User notification — bilingual ad_approved
     const _apLang = await _getUserLang(_approveUserId);
-    const _apN = _adNotifTexts(_approveAdNumber, 'approved', _apLang);
+    const _apN = _adNotifTexts(_approveAdPublicId, 'approved', _apLang);
     await sb.from('pa_notifications').insert({
       user_id: _approveUserId,
       type: 'ad_approved',
@@ -4975,12 +4984,12 @@ async function confirmReject(){
           kind:'refund',
           status:'approved',
           ad_number:adObj.ad_number||null,
-          note:`گەڕانەوەی پارەی ڕیکلام #${adObj.ad_number||''} — ${refundIQD.toLocaleString()} IQD`,
+          note:`گەڕانەوەی پارەی ڕیکلام ${_adminPublicAdIdLabel(adObj)} — ${refundIQD.toLocaleString()} IQD`,
           balance_before:Math.round(oldRefBal*1800),
           balance_after:Math.round(newRefBal*1800)
         });
         const _rfLang = await _getUserLang(adObj.user_id).catch(()=>'ku');
-        const _rfN = _txNotifTexts('refund_rejected_ad', _rfLang, {amtIQD: refundIQD, adNum: adObj.ad_number||null});
+        const _rfN = _txNotifTexts('refund_rejected_ad', _rfLang, {amtIQD: refundIQD, adNum: _adminPublicAdId(adObj)||null});
         await sb.from('pa_notifications').insert({
           user_id:adObj.user_id,
           type:'refund_rejected_ad',
@@ -5037,14 +5046,14 @@ async function confirmReject(){
     // ئاگادارکردنەوەی بەکارهێنەر
     if(adObj?.user_id){
       try{
-        const adLabel=adObj.ad_number?`ڕیکلامی #${adObj.ad_number}`:'ڕیکلامەکەت';
+        const adLabel=_adminPublicAdIdLabel(adObj)!=='—'?`ڕیکلامی ${_adminPublicAdIdLabel(adObj)}`:'ڕیکلامەکەت';
         // FIX: Insert pa_notifications record for ad_rejected so the notification
         // appears in the notification list inside the app. Previously this insert
         // was missing — only refund_rejected_ad was inserted — so ads without a
         // budget (or when refund was not triggered) showed no notification at all.
         try{
           const _rjLang = await _getUserLang(adObj.user_id);
-          const _rjN = _adNotifTexts(adObj.ad_number || id, 'rejected', _rjLang);
+          const _rjN = _adNotifTexts(_adminPublicAdId(adObj) || id, 'rejected', _rjLang);
           await sb.from('pa_notifications').insert({
             user_id:adObj.user_id,
             type:'ad_rejected',
@@ -5055,7 +5064,7 @@ async function confirmReject(){
         }catch(_niErr){ console.warn('[ad_rejected] notification insert failed:',_niErr); }
         // ── Firebase realtime push (ڕەتکردنی ڕیکلام) ──
         const _rjLang2 = await _getUserLang(adObj.user_id).catch(()=>'ku');
-        const _rjN2 = _adNotifTexts(adObj.ad_number || id, 'rejected', _rjLang2);
+        const _rjN2 = _adNotifTexts(_adminPublicAdId(adObj) || id, 'rejected', _rjLang2);
         _fbPushNotif(adObj.user_id, _rjN2.title, _rjN2.body, 'ad_rejected');
         _fbTriggerAds(adObj.user_id, id, 'rejected');
         // ══ ناردنی ئیمەیلی ڕەتکردنەوەی ڕیکلام لە ڕێگای webhook ══
@@ -5857,7 +5866,7 @@ function _renderPromoUsages(promoId){
     <div style="font-size:11px;font-weight:700;color:var(--mt);margin-bottom:8px"><i class="fas fa-users" style="margin-left:4px"></i>وردەکاری بەکارهێنان</div>
     ${usages.map(u=>{
       const prof=u._profile;
-      const adNum=u._ad?.ad_number;
+      const adNum=u._ad?_adminPublicAdIdLabel(u._ad):'';
       const usedAt=u.created_at?new Date(u.created_at).toLocaleString('ku',{year:'2-digit',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
       const discIQD=u.discount_applied?Math.round(parseFloat(u.discount_applied)).toLocaleString()+' IQD':'—';
       return`<div style="display:flex;align-items:center;gap:10px;background:rgba(219,39,119,.04);border:1px solid rgba(219,39,119,.1);border-radius:10px;padding:8px 10px;margin-bottom:6px">
@@ -5867,7 +5876,7 @@ function _renderPromoUsages(promoId){
           <div style="font-size:10px;color:var(--mt)">${prof?.email||'—'}</div>
         </div>
         <div style="text-align:center;flex-shrink:0">
-          ${adNum?`<div style="font-size:11px;font-weight:700;color:var(--bl);font-family:'Inter'">ڕیکلام #${adNum}</div>`:''}
+          ${adNum?`<div style="font-size:11px;font-weight:700;color:var(--bl);font-family:'Inter'">ڕیکلام ${adNum}</div>`:''}
           <div style="font-size:10px;color:var(--gr);font-weight:700">-${discIQD}</div>
         </div>
         <div style="font-size:10px;color:var(--mt);white-space:nowrap;flex-shrink:0;direction:ltr">${usedAt}</div>
@@ -5908,7 +5917,7 @@ function renderPromos(){
       ${usages.length?`<tr id="${rowId}" style="display:none"><td colspan="8" style="padding:0 12px 12px;background:rgba(219,39,119,.02)">
         ${usages.map(u=>{
           const prof=u._profile;
-          const adNum=u._ad?.ad_number;
+          const adNum=u._ad?_adminPublicAdIdLabel(u._ad):'';
           const usedAt=u.created_at?new Date(u.created_at).toLocaleString('ku',{year:'2-digit',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
           const discIQD=u.discount_applied?Math.round(parseFloat(u.discount_applied)).toLocaleString()+' IQD':'—';
           return`<div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid rgba(219,39,119,.15);border-radius:10px;padding:8px 12px;margin-top:6px">
@@ -5917,7 +5926,7 @@ function renderPromos(){
               <div style="font-size:12px;font-weight:700;color:var(--dark)">${prof?.full_name||'—'}</div>
               <div style="font-size:10px;color:var(--mt)">${prof?.email||'—'}</div>
             </div>
-            ${adNum?`<div style="font-size:11px;font-weight:800;color:var(--bl);font-family:'Inter';flex-shrink:0">ڕیکلام #${adNum}</div>`:''}
+            ${adNum?`<div style="font-size:11px;font-weight:800;color:var(--bl);font-family:'Inter';flex-shrink:0">ڕیکلام ${adNum}</div>`:''}
             <div style="font-size:10px;font-weight:700;color:var(--gr);flex-shrink:0">-${discIQD}</div>
             <div style="font-size:10px;color:var(--mt);direction:ltr;white-space:nowrap;flex-shrink:0">${usedAt}</div>
           </div>`;
