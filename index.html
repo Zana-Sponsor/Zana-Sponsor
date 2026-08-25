@@ -11241,11 +11241,11 @@ function _getPublicAdIdByNumber(adNumber){
 }
 function _publicAdIdLabel(ad){
   const id=_getPublicAdId(ad);
-  return id?'#'+id:'—';
+  return id||'—';
 }
 function _publicAdIdLabelByNumber(adNumber){
   const id=_getPublicAdIdByNumber(adNumber);
-  return id?'#'+id:'—';
+  return id||'—';
 }
 async function _persistPublicAdId(ad,publicId){
   if(!ad||!_isPublicAdId(publicId))return;
