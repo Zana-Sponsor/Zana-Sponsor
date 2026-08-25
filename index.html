@@ -8362,7 +8362,7 @@ async function boot(){
   sb.channel('coins_ads_'+cu.id)
     .on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads',filter:`user_id=eq.${cu.id}`},async(payload)=>{
       if(payload.new?.status==='rejected' && payload.old?.status!=='rejected'){
-        await addCoins(-COINS_PER_AD, 'ڕەتکردنەوەی ڕیکلام '+_getPublicAdId(payload.new||{}));
+        await addCoins(-COINS_PER_AD, 'ڕەتکردنەوەی ڕیکلام '+_publicAdIdLabel(payload.new||{}));
         loadCoins();
         loadBal();
         showToast('ڕیکلامەکەت ڕەتکرا — 50 کۆین کەمکرایەوە','err');
@@ -11239,6 +11239,14 @@ function _getPublicAdIdByNumber(adNumber){
   const ad=ads.find(x=>String(x.ad_number)===String(adNumber));
   return ad?_getPublicAdId(ad):_getPublicAdId({ad_number:adNumber});
 }
+function _publicAdIdLabel(ad){
+  const id=_getPublicAdId(ad);
+  return id?'#'+id:'—';
+}
+function _publicAdIdLabelByNumber(adNumber){
+  const id=_getPublicAdIdByNumber(adNumber);
+  return id?'#'+id:'—';
+}
 async function _persistPublicAdId(ad,publicId){
   if(!ad||!_isPublicAdId(publicId))return;
   ad.public_ad_id=publicId;
@@ -11373,7 +11381,7 @@ async function submitCancelAd(){
       kind:'refund',
       status:'approved',
       ad_number:ad.ad_number,
-      note:'گەڕانەوەی پارەی ڕیکلام '+_getPublicAdId(ad)+' — '+budgetIQD.toLocaleString()+' IQD (ڕەتکردنەوە لەلایەن بەکارهێنەر)',
+      note:'گەڕانەوەی پارەی ڕیکلام '+_publicAdIdLabel(ad)+' — '+budgetIQD.toLocaleString()+' IQD (ڕەتکردنەوە لەلایەن بەکارهێنەر)',
       balance_after:newBalIQD
     });
 
@@ -11382,7 +11390,7 @@ async function submitCancelAd(){
       user_id:cu.id,
       type:'refund',
       title:'پارەکەت گەڕایەوە',
-      body:'ڕیکلامی '+_getPublicAdId(ad)+' ڕەتکرایەوە و '+budgetIQD.toLocaleString()+' IQD گەڕایەوە بۆ باڵانسەکەت.',
+      body:'ڕیکلامی '+_publicAdIdLabel(ad)+' ڕەتکرایەوە و '+budgetIQD.toLocaleString()+' IQD گەڕایەوە بۆ باڵانسەکەت.',
       is_read:false,
       created_at:new Date().toISOString()
     });
@@ -11482,7 +11490,7 @@ function renderAds(){
     const impr=_hasRealData?metrics.impressions:0;
     const spendFmt='$'+(spend>0?spend.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'0.00');
 
-    const publicAdId=_getPublicAdId(ad);
+    const publicAdId=_publicAdIdLabel(ad);
     const adName=ad.title||('New Ad '+new Date(ad.created_at||Date.now()).toLocaleDateString('en-GB').replace(/\//g,'/'));
 
     let endDateStr='—';
@@ -11878,7 +11886,7 @@ async function showAdDetail(ad){
   var h='';
   h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
   h+='<span class="ad-status '+sc+'">'+sl+'</span>';
-  h+='<span style="font-size:11px;color:var(--mt);font-family:Inter,sans-serif">'+_getPublicAdId(ad)+'</span>';
+  h+='<span style="font-size:11px;color:var(--mt);font-family:Inter,sans-serif">'+_publicAdIdLabel(ad)+'</span>';
   h+='</div>';
   var _adLabel=ad.title||('New Ad '+new Date(ad.created_at||Date.now()).toLocaleDateString('en-GB').replace(/\//g,'/'));
   var _adVideoLink=ad.video_link||ad.video_code||'—';
@@ -12040,7 +12048,7 @@ async function submitAdFeedback(adId){
       await sb.from('pa_transactions').insert({
         user_id:cu.id,amount:1000/1800,type:'voucher',status:'approved',
         ad_number:ad.ad_number,
-        note:'پاداشتی فیدباک بۆ ڕیکلامی '+_getPublicAdId(ad)+' — 1,000 IQD',
+        note:'پاداشتی فیدباک بۆ ڕیکلامی '+_publicAdIdLabel(ad)+' — 1,000 IQD',
         created_at:nowIso,
         balance_after:Math.round(newBal*1800)
       });
@@ -13995,14 +14003,14 @@ async function loadNotifications(){
           <span style="font-size:10px;color:var(--mt)">بڕی گەڕانەوە</span>
           <span style="font-size:15px;font-weight:900;color:var(--gr);direction:ltr">+${Math.round(parseFloat(n.meta.amount||0)*1800).toLocaleString()} IQD</span>
         </div>
-        ${n.meta.ad_number?`<div style="font-size:10px;color:var(--mt2);display:flex;align-items:center;gap:4px"><i class="fas fa-rectangle-ad" style="font-size:9px"></i>ڕیکلام <span style="font-family:monospace;background:var(--bg);padding:1px 6px;border-radius:5px;border:1px solid var(--b1)">${_getPublicAdIdByNumber(n.meta.ad_number)}</span>${n.meta.ad_title?`— ${n.meta.ad_title}`:''}</div>`:''}
+        ${n.meta.ad_number?`<div style="font-size:10px;color:var(--mt2);display:flex;align-items:center;gap:4px"><i class="fas fa-rectangle-ad" style="font-size:9px"></i>ڕیکلام <span style="font-family:monospace;background:var(--bg);padding:1px 6px;border-radius:5px;border:1px solid var(--b1)">${_publicAdIdLabelByNumber(n.meta.ad_number)}</span>${n.meta.ad_title?`— ${n.meta.ad_title}`:''}</div>`:''}
         ${n.meta.reason?`<div style="font-size:10px;color:var(--mt);margin-top:4px;padding-top:4px;border-top:1px dashed rgba(22,163,74,.2)"><i class="fas fa-info-circle" style="margin-left:3px;opacity:.6"></i>${n.meta.reason}</div>`:''}
       </div>`:
     discountExtra?discountExtra:
     (n.meta?.ad_number&&!isRefund)?`
       <div style="margin-top:6px;display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--b1);border-radius:8px;padding:3px 9px;font-size:10px;color:var(--dark2)">
         <i class="fas fa-rectangle-ad" style="font-size:9px;opacity:.6"></i>
-        ڕیکلام <span style="font-family:monospace;font-weight:700">${_getPublicAdIdByNumber(n.meta.ad_number)}</span>
+        ڕیکلام <span style="font-family:monospace;font-weight:700">${_publicAdIdLabelByNumber(n.meta.ad_number)}</span>
         ${n.meta.ad_title?`<span style="color:var(--mt)">— ${n.meta.ad_title}</span>`:''}
       </div>`:'';
     return`<div class="notif-item ${n.is_read?'':'unread'}" id="notif-${n.id}" style="position:relative">
@@ -14372,7 +14380,7 @@ async function loadTxHistory(){
   const ads      = await _ensurePublicAdIds(adsRes.data || []);
   const publicIdForNumber = n => {
     const ad=ads.find(a=>String(a.ad_number)===String(n));
-    return ad?_getPublicAdId(ad):_getPublicAdIdByNumber(n);
+    return ad?_publicAdIdLabel(ad):_publicAdIdLabelByNumber(n);
   };
   const coinTxs  = coinRes.data || [];
 
@@ -14451,7 +14459,7 @@ async function loadTxHistory(){
   const _adSpendNumbers = new Set(txItems.filter(t=>t.kind==='spend' && t.ad_number!=null).map(t=>String(t.ad_number)));
   const spendItems = ads.filter(a=>!_adSpendNumbers.has(String(a.ad_number))).map(a=>{
     const amtIQD = Math.round(parseFloat(a.budget||0)*1800);
-    const adLabel = 'ڕیکلامی نوێ' + (a.ad_number?' — '+_getPublicAdId(a):'');
+    const adLabel = 'ڕیکلامی نوێ' + (a.ad_number?' — '+_publicAdIdLabel(a):'');
     return {id:a.id, kind:'spend', label:adLabel,
       sub:'',
       amount:parseFloat(a.budget||0), amtIQD,
