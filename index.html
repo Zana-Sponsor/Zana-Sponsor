@@ -363,8 +363,12 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .topbar-brand-proxo{color:var(--dark);}
 .topbar-brand-app{color:#0E78FF;}
 .topbar-right-col{display:flex;align-items:center;justify-content:flex-end;gap:5px;overflow:visible;}
-.ham-btn-v2{width:34px;height:34px;border-radius:10px;background:var(--dark);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:14px;box-shadow:0 2px 10px rgba(28,35,51,.2);transition:transform .15s,opacity .15s;}
-.ham-btn-v2:active{opacity:.85;transform:scale(.94);}
+.ham-btn-v2{width:34px;height:34px;border-radius:10px;background:var(--dark);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:14px;box-shadow:0 2px 10px rgba(28,35,51,.2);position:relative;overflow:hidden;isolation:isolate;touch-action:manipulation;user-select:none;}
+.ham-btn-v2:active{opacity:1;transform:none;}
+.ham-btn-v2 .ripple{position:absolute;left:0;top:0;width:0;height:0;border-radius:50%;background:rgba(255,255,255,.34);pointer-events:none;transform:translate(-50%,-50%) scale(0);opacity:1;transition:transform .42s cubic-bezier(.2,.75,.35,1),opacity .18s ease-out;z-index:0;}
+.ham-btn-v2 .ripple.is-visible{transform:translate(-50%,-50%) scale(1);}
+.ham-btn-v2 .ripple.is-fading{opacity:0;}
+.ham-btn-v2>i{position:relative;z-index:1;}
 .ham-line{width:14px;height:2px;border-radius:2px;background:#fff;transition:all .2s;}
 .ham-line:nth-child(2){width:10px;align-self:flex-start;margin-right:2px;}
 .topbar-greet{display:flex;flex-direction:column;justify-content:center;}
@@ -17868,11 +17872,62 @@ function closeFastPayQR() {
   clearInterval(_fpPollTimer);
   _fpPollTimer = null;
   _fpOrderId   = null;
-
   const modal = document.getElementById('fastPayQrModal');
   if (modal) modal.style.display = 'none';
-
   if (typeof loadBal === 'function') loadBal();
 }
+
+/* ══ MENU BUTTON RIPPLE ══ */
+(function(){
+  document.querySelectorAll('.ham-btn-v2').forEach(function(button){
+    var ripple = null;
+    var fadeTimer = null;
+
+    function fadeRipple(){
+      if(!ripple) return;
+      ripple.classList.add('is-fading');
+      clearTimeout(fadeTimer);
+      fadeTimer = setTimeout(function(){
+        if(ripple){
+          ripple.remove();
+          ripple = null;
+        }
+      },220);
+    }
+
+    button.addEventListener('pointerdown',function(event){
+      if(event.pointerType === 'mouse' && event.button !== 0) return;
+
+      if(ripple) ripple.remove();
+      clearTimeout(fadeTimer);
+
+      var rect = button.getBoundingClientRect();
+      var x = event.clientX - rect.left;
+      var y = event.clientY - rect.top;
+      var diameter = Math.hypot(
+        Math.max(x, rect.width - x),
+        Math.max(y, rect.height - y)
+      ) * 2;
+
+      ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      ripple.style.width = diameter + 'px';
+      ripple.style.height = diameter + 'px';
+      button.appendChild(ripple);
+
+      requestAnimationFrame(function(){
+        if(ripple) ripple.classList.add('is-visible');
+      });
+
+      if(button.setPointerCapture) button.setPointerCapture(event.pointerId);
+    });
+
+    button.addEventListener('pointerup',fadeRipple);
+    button.addEventListener('pointercancel',fadeRipple);
+    button.addEventListener('lostpointercapture',fadeRipple);
+  });
+})();
 </script>
 </html>
