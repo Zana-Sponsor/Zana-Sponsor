@@ -12105,11 +12105,13 @@ function _fmtAdUpdateBox(ad){
     var optsL={kurdistan:'کوردستان',iraq:'عێراق',all:'کورد و عەرەب'};
     inputHTML='<select id="auInputEl" class="finp">'+Object.keys(optsL).map(function(k){return '<option value="'+k+'"'+(curVal===k?' selected':'')+'>'+optsL[k]+'</option>';}).join('')+'</select>';
   }else if(ad.update_field==='start_date'){
-    inputHTML='<input type="date" id="auInputEl" class="finp" value="'+(curVal||'')+'">';
+    inputHTML='<input type="date" id="auInputEl" class="finp" dir="ltr" style="direction:ltr;text-align:left" value="'+(curVal||'')+'">';
   }else if(ad.update_field==='start_time'){
-    inputHTML='<input type="time" id="auInputEl" class="finp" value="'+(curVal||'')+'">';
+    inputHTML='<input type="time" id="auInputEl" class="finp" dir="ltr" style="direction:ltr;text-align:left" value="'+(curVal||'')+'">';
   }else{
-    inputHTML='<input type="text" id="auInputEl" class="finp" value="'+String(curVal||'').replace(/"/g,'&quot;')+'" placeholder="'+fLabel+'">';
+    var _isLtrField=(ad.update_field==='video_code'||ad.update_field==='video_link');
+    var _dirAttr=_isLtrField?' dir="ltr" style="direction:ltr;text-align:left;font-family:\'Inter\',sans-serif"':'';
+    inputHTML='<input type="text" id="auInputEl" class="finp"'+_dirAttr+' value="'+String(curVal||'').replace(/"/g,'&quot;')+'" placeholder="'+fLabel+'">';
   }
   return '<div style="background:rgba(219,39,119,.05);border:1.5px solid rgba(219,39,119,.22);border-radius:14px;padding:14px;margin:4px 0 14px">'
     +'<div style="display:flex;align-items:center;gap:9px;margin-bottom:8px"><div style="width:30px;height:30px;border-radius:9px;background:rgba(219,39,119,.14);color:#db2777;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0"><i class="fas fa-pen"></i></div><div style="font-size:12.5px;font-weight:900;color:#db2777">پێویستە '+fLabel+' نوێبکەیتەوە</div></div>'
