@@ -758,6 +758,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .spons-status-paused{background:rgba(107,114,128,.09);color:#4b5563;border:1px solid rgba(107,114,128,.25);}
 .spons-status-scheduled{background:linear-gradient(135deg,rgba(8,145,178,.13),rgba(6,182,212,.09));color:#0891b2;border:1px solid rgba(8,145,178,.3);font-weight:800;}
 .spons-status-review{background:rgba(37,99,235,.09);color:#1d4ed8;border:1px solid rgba(37,99,235,.22);}
+.spons-status-needsupdate{background:rgba(219,39,119,.09);color:#db2777;border:1px solid rgba(219,39,119,.25);}
 @keyframes sched-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
 .sched-dot{width:7px;height:7px;border-radius:50%;background:#0891b2;display:inline-block;animation:sched-pulse 1.6s ease-in-out infinite;margin-left:5px;vertical-align:middle;}
 .spons-title{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:12px;line-height:1.4;direction:rtl;text-align:right;}
@@ -798,6 +799,7 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .as-c{background:rgba(37,99,235,.08);color:var(--bl);border:1px solid rgba(37,99,235,.2);}
 .as-pa{background:var(--bg);color:var(--mt);border:1px solid var(--b1);}
 .as-sc{background:rgba(8,145,178,.08);color:#0891b2;border:1px solid rgba(8,145,178,.22);}
+.as-nu{background:rgba(219,39,119,.08);color:#db2777;border:1px solid rgba(219,39,119,.22);}
 .ad-title{font-size:16px;font-weight:800;color:var(--dark);margin-bottom:8px;}
 .ad-metas{display:flex;gap:8px;flex-wrap:wrap;}
 .ad-m{font-size:11px;color:var(--mt2);display:flex;align-items:center;gap:4px;background:var(--bg);padding:4px 10px;border-radius:20px;border:1px solid var(--b1);}
@@ -3195,6 +3197,7 @@ html[data-theme="dark"] .spons-status-completed{background:rgba(99,102,241,0.18)
 html[data-theme="dark"] .spons-status-paused{background:rgba(107,114,128,0.18);color:#7daae8;border:1px solid rgba(107,114,128,0.425)}
 html[data-theme="dark"] .spons-status-scheduled{background:linear-gradient(135deg,rgba(8,145,178,0.26),rgba(6,182,212,0.18));color:#6dddf8;border:1px solid rgba(10,183,225,0.51)}
 html[data-theme="dark"] .spons-status-review{background:rgba(37,99,235,0.18);color:#819eee;border:1px solid rgba(37,99,235,0.374)}
+html[data-theme="dark"] .spons-status-needsupdate{background:rgba(219,39,119,0.18);color:#f472b6;border:1px solid rgba(219,39,119,0.34)}
 html[data-theme="dark"] .spons-title{color:#eaeef7}
 html[data-theme="dark"] .spons-metric-box{background:#000000;border:1px solid #242424}
 html[data-theme="dark"] .spons-metric-val{color:#eaeef7}
@@ -3220,6 +3223,7 @@ html[data-theme="dark"] .as-r{background:rgba(220,38,38,0.16);color:#ec8383;bord
 html[data-theme="dark"] .as-c{background:rgba(37,99,235,0.16);color:#7ca1f3;border:1px solid rgba(37,99,235,0.34)}
 html[data-theme="dark"] .as-pa{background:#000000;color:#93a1bd;border:1px solid #242424}
 html[data-theme="dark"] .as-sc{background:rgba(8,145,178,0.16);color:#6dddf8;border:1px solid rgba(10,183,225,0.374)}
+html[data-theme="dark"] .as-nu{background:rgba(219,39,119,0.16);color:#f472b6;border:1px solid rgba(219,39,119,0.34)}
 html[data-theme="dark"] .ad-title{color:#eaeef7}
 html[data-theme="dark"] .ad-m{color:#a6b3cc;background:#000000;border:1px solid #242424}
 html[data-theme="dark"] .ad-reject{background:rgba(220,38,38,0.14);border:1px solid rgba(220,38,38,0.24);color:#ec8383}
@@ -11500,6 +11504,9 @@ function renderAds(){
     const isTerminal=(st==='rejected'||st==='completed'||st==='paused'||st==='done');
     const isActive=!isTerminal&&!!ad.tiktok_ad_id;
     const isCancellable=st==='pending'&&!ad.tiktok_ad_id;
+    const needsUpdate=!!ad.needs_update;
+    const needsUpdateAwaitingUser=needsUpdate&&!ad.update_submitted_at;
+    const needsUpdateAwaitingAdmin=needsUpdate&&!!ad.update_submitted_at;
 
     let statusCls,statusLbl;
     if(st==='rejected'){
@@ -11525,6 +11532,14 @@ function renderAds(){
       statusLbl='<i class="fas fa-clock" style="font-size:9px;margin-left:4px"></i>چاوەڕوان';
     }
 
+    if(needsUpdateAwaitingUser){
+      statusCls='spons-status-needsupdate';
+      statusLbl='<i class="fas fa-pen" style="font-size:9px;margin-left:4px"></i>پێویستی بە نوێکردنەوەیە';
+    }else if(needsUpdateAwaitingAdmin){
+      statusCls='spons-status-pending';
+      statusLbl='<i class="fas fa-clock" style="font-size:9px;margin-left:4px"></i>چاوەڕوان';
+    }
+
     const _hasRealData=isActive||isTerminal;
     const metrics=_adMetrics(ad);
     const spend=_hasRealData?metrics.spend:0;
@@ -11545,11 +11560,24 @@ function renderAds(){
       endDateStr=sd.toISOString().split('T')[0];
     }
 
-    // تێبینی چاوەڕوانی تەنها بۆ ئەوانەی نە تەرمینالن و نە چالاکن
-    const pendingNote=(!isTerminal&&!isActive&&st!=='scheduled')
+    // تێبینی چاوەڕوانی تەنها بۆ ئەوانەی نە تەرمینالن و نە چالاکن (و پێویستی بە نوێکردنەوە نییە)
+    const pendingNote=(!isTerminal&&!isActive&&st!=='scheduled'&&!needsUpdate)
       ? (st==='review'
           ? `<div class="spons-pending-overlay" style="background:rgba(37,99,235,.06);border-color:rgba(37,99,235,.25);color:#1d4ed8"><i class="fas fa-magnifying-glass" style="flex-shrink:0"></i><span>ڕیکلامەکەت پێداچوونەوەی بۆ دەکرێت لەلایەن تیمەکەمانەوە تکایە چاوەڕوان بن ...</span></div>`
           : `<div class="spons-pending-overlay"><i class="fas fa-hourglass-half" style="flex-shrink:0"></i><span>ڕیکلامەکەت لەئێستادا لەچاوەڕوانی دایە نەگەیشتۆتە قۆناغی پێداچوونەوە -  چاوەڕوان بن تاوەکوو دەگاتە لای کارمەندێک !</span></div>`)
+      : '';
+
+    // تێبینی پێویستی بە نوێکردنەوە
+    const needsUpdateNote=needsUpdateAwaitingUser
+      ? `<div style="background:linear-gradient(135deg,rgba(219,39,119,.08) 0%,rgba(219,39,119,.03) 100%);border:1.5px solid rgba(219,39,119,.28);border-radius:16px;padding:13px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+          <div style="width:30px;height:30px;border-radius:10px;background:rgba(219,39,119,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-pen" style="font-size:13px;color:#db2777"></i></div>
+          <span style="font-size:12px;font-weight:700;color:#db2777;line-height:1.6">پێویستی بە نوێکردنەوەیە — کلیک بکە بۆ دیتنی وردەکاری و ڕاستکردنەوەی</span>
+        </div>`
+      : needsUpdateAwaitingAdmin
+      ? `<div style="background:rgba(8,145,178,.06);border:1.5px solid rgba(8,145,178,.22);border-radius:16px;padding:13px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+          <div style="width:30px;height:30px;border-radius:10px;background:rgba(8,145,178,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-clock" style="font-size:13px;color:#0891b2"></i></div>
+          <span style="font-size:12px;font-weight:700;color:#0891b2;line-height:1.6">نوێکردنەوەکەت نێردرا — چاوەڕوانی پێداچوونەوەی ئادمین بە</span>
+        </div>`
       : '';
 
     // کات بۆ دانراو note
@@ -11604,6 +11632,7 @@ function renderAds(){
       <div style="font-size:15px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.5;text-align:right">${adName}</div>
 
       ${scheduledNote}
+      ${needsUpdateNote}
       ${pendingNote}
 
       <!-- ── سێ metric (تەنها بۆ چالاک و تەواوبوو) ── -->
@@ -11970,6 +11999,10 @@ async function showAdDetail(ad){
 
   var sm=statusMap[ad.status]||statusMap.pending;
   var sc=sm[0],sl=sm[1];
+  if(ad.needs_update){
+    if(!ad.update_submitted_at){sc='as-nu';sl='پێویستی بە نوێکردنەوەیە';}
+    else{sc='as-p';sl='چاوەڕوان';}
+  }
   var ageStr=null;try{ageStr=ad.age_groups?_formatAdAgeRange(JSON.parse(ad.age_groups)):_formatAdAgeRange(ad.age_groups);}catch(e){ageStr=_formatAdAgeRange(ad.age_groups);}
 
   var _adLabel=ad.title||('New Ad '+new Date(ad.created_at||Date.now()).toLocaleDateString('en-GB').replace(/\//g,'/'));
@@ -11979,6 +12012,7 @@ async function showAdDetail(ad){
   h+='<div style="min-width:0"><div class="ad-detail-title">'+_adLabel+'</div><div class="ad-detail-sub">'+_publicAdIdLabel(ad)+'</div></div>';
   h+='<span class="ad-detail-status '+sc+'">'+sl+'</span>';
   h+='</div>';
+  h+=_fmtAdUpdateBox(ad);
   h+='<div class="ad-detail-info-grid">';
   h+='<div class="ad-sheet-row full"><span class="ad-sheet-lbl">لینکی ڤیدیۆ</span><span class="ad-sheet-val" style="direction:ltr;text-align:left;font-size:11px;word-break:break-all">'+_adVideoLink+'</span></div>';
   h+='<div class="ad-sheet-row"><span class="ad-sheet-lbl">ئامانجی ڕیکلام</span><span class="ad-sheet-val">'+(goalMap[ad.goal]||ad.goal||'—')+'</span></div>';
@@ -12044,6 +12078,78 @@ async function showAdDetail(ad){
 
   h+='</div>';
   body.innerHTML=h;
+}
+
+// ══ پێویستی بە نوێکردنەوە — بۆکسی داواکاری ئادمین بۆ خانەی ڕیکلام ══
+var AD_UPDATE_FIELD_LABELS={video_code:'کۆدی ڤیدیۆ',video_link:'لینکی ڤیدیۆ',title:'ناونیشانی ڕیکلام',goal:'ئامانجی ڕیکلام',gender:'ڕەگەز',location:'شوێن',start_date:'ڕێکەوتی دەستپێکردن',start_time:'کاتی دەستپێکردن'};
+
+function _fmtAdUpdateBox(ad){
+  if(!ad||!ad.needs_update)return '';
+  var fLabel=AD_UPDATE_FIELD_LABELS[ad.update_field]||ad.update_field||'—';
+  if(ad.update_submitted_at){
+    // بەکارهێنەر پێشتر وەڵامی داوەتەوە — چاوەڕوانی پێداچوونەوەی ئادمینە
+    return '<div style="background:rgba(8,145,178,.05);border:1.5px solid rgba(8,145,178,.2);border-radius:14px;padding:14px;margin:4px 0 14px">'
+      +'<div style="display:flex;align-items:center;gap:9px;margin-bottom:6px"><div style="width:30px;height:30px;border-radius:9px;background:rgba(8,145,178,.14);color:#0891b2;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0"><i class="fas fa-clock"></i></div><div style="font-size:12.5px;font-weight:900;color:#0891b2">داواکارییەکەت نێردرا</div></div>'
+      +'<div style="font-size:12px;color:var(--mt2);line-height:1.7">نوێکردنەوەی '+fLabel+' نێردرا بۆ پێداچوونەوە، چاوەڕوانی پەسەندکردنی ئادمین بە.</div>'
+      +'</div>';
+  }
+  var curVal=ad[ad.update_field];
+  var inputHTML;
+  if(ad.update_field==='goal'){
+    var optsG={messages:'نامە',engagement:'کارلێک',views:'بینین'};
+    inputHTML='<select id="auInputEl" class="finp">'+Object.keys(optsG).map(function(k){return '<option value="'+k+'"'+(curVal===k?' selected':'')+'>'+optsG[k]+'</option>';}).join('')+'</select>';
+  }else if(ad.update_field==='gender'){
+    var optsGe={all:'هەموو',male:'پیاو',female:'ژن'};
+    inputHTML='<select id="auInputEl" class="finp">'+Object.keys(optsGe).map(function(k){return '<option value="'+k+'"'+(curVal===k?' selected':'')+'>'+optsGe[k]+'</option>';}).join('')+'</select>';
+  }else if(ad.update_field==='location'){
+    var optsL={kurdistan:'کوردستان',iraq:'عێراق',all:'کورد و عەرەب'};
+    inputHTML='<select id="auInputEl" class="finp">'+Object.keys(optsL).map(function(k){return '<option value="'+k+'"'+(curVal===k?' selected':'')+'>'+optsL[k]+'</option>';}).join('')+'</select>';
+  }else if(ad.update_field==='start_date'){
+    inputHTML='<input type="date" id="auInputEl" class="finp" value="'+(curVal||'')+'">';
+  }else if(ad.update_field==='start_time'){
+    inputHTML='<input type="time" id="auInputEl" class="finp" value="'+(curVal||'')+'">';
+  }else{
+    inputHTML='<input type="text" id="auInputEl" class="finp" value="'+String(curVal||'').replace(/"/g,'&quot;')+'" placeholder="'+fLabel+'">';
+  }
+  return '<div style="background:rgba(219,39,119,.05);border:1.5px solid rgba(219,39,119,.22);border-radius:14px;padding:14px;margin:4px 0 14px">'
+    +'<div style="display:flex;align-items:center;gap:9px;margin-bottom:8px"><div style="width:30px;height:30px;border-radius:9px;background:rgba(219,39,119,.14);color:#db2777;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0"><i class="fas fa-pen"></i></div><div style="font-size:12.5px;font-weight:900;color:#db2777">پێویستە '+fLabel+' نوێبکەیتەوە</div></div>'
+    +(ad.update_reason?'<div style="font-size:12px;color:var(--dark);font-weight:600;line-height:1.7;background:var(--w);border-radius:9px;padding:9px 11px;margin-bottom:10px">'+ad.update_reason+'</div>':'')
+    +'<label style="display:block;font-size:11px;color:var(--mt);font-weight:700;margin-bottom:5px">'+fLabel+' ی نوێ</label>'
+    +inputHTML
+    +'<div id="auMsg" style="display:none;font-size:11.5px;font-weight:600;padding:8px 11px;border-radius:10px;margin-top:8px;text-align:center"></div>'
+    +'<button id="auSubmitBtn" onclick="submitAdUpdate(\''+ad.id+'\')" style="width:100%;margin-top:10px;padding:12px;border:none;border-radius:12px;background:#db2777;color:#fff;font-family:R,sans-serif;font-size:13px;font-weight:800;cursor:pointer"><i class="fas fa-paper-plane"></i> ناردنی نوێکردنەوە</button>'
+    +'</div>';
+}
+
+async function submitAdUpdate(adId){
+  var ad=allAds.find(function(a){return a.id===adId;});
+  if(!ad||!ad.update_field)return;
+  var el=document.getElementById('auInputEl');
+  if(!el)return;
+  var val=el.value;
+  var msg=document.getElementById('auMsg');
+  if(!val||!String(val).trim()){
+    if(msg){msg.style.display='block';msg.style.background='rgba(239,68,68,.08)';msg.style.color='#dc2626';msg.textContent='تکایە نرخێک بنووسە';}
+    return;
+  }
+  var btn=document.getElementById('auSubmitBtn');
+  if(btn){btn.disabled=true;btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> چاوەڕوانبە...';}
+  if(msg)msg.style.display='none';
+  try{
+    var patch={update_submitted_at:new Date().toISOString()};
+    patch[ad.update_field]=val;
+    var res=await sb.from('pa_ads').update(patch).eq('id',ad.id).eq('user_id',cu.id);
+    if(res.error)throw new Error(res.error.message);
+    var idx=allAds.findIndex(function(a){return a.id===ad.id;});
+    if(idx>=0)allAds[idx]=Object.assign({},allAds[idx],patch);
+    renderAds();
+    var ov=document.getElementById('adSheetOv');var sh=document.getElementById('adDetailSheet');
+    if(ov&&ov.classList.contains('on')){ov.classList.remove('on');if(sh)sh.classList.remove('on');}
+    showToast('✅ نوێکردنەوەکەت نێردرا بۆ پێداچوونەوە','ok');
+  }catch(e){
+    if(msg){msg.style.display='block';msg.style.background='rgba(239,68,68,.08)';msg.style.color='#dc2626';msg.textContent='هەڵە: '+e.message;}
+    if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردنی نوێکردنەوە';}
+  }
 }
 
 // ══ FEEDBACK: خاڵدانان بۆ ڕیکلامی تەواوبوو + پاداشتی 1,000 IQD (فاوچەر) ══

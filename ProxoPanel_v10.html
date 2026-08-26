@@ -195,6 +195,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .badge.review{background:rgba(37,99,235,.09);color:#1d4ed8;border:1px solid rgba(37,99,235,.22);}
 .badge.spent{background:rgba(220,38,38,.06);color:var(--rd);border:1px solid rgba(220,38,38,.18);}
 .badge.expired{background:rgba(107,117,133,.09);color:var(--mt2);border:1px solid rgba(107,117,133,.22);}
+.badge.needs_update{background:rgba(219,39,119,.09);color:#db2777;border:1px solid rgba(219,39,119,.25);}
 
 /* ══ ACTION BUTTONS ══ */
 .act-btn{padding:6px 12px;border-radius:8px;font-family:'R',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
@@ -2419,6 +2420,30 @@ tr:hover td{background:rgba(28,35,51,.015);}
   </div>
 </div>
 
+<div class="overlay" id="moAdUpdateRequest">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3><i class="fas fa-pen" style="margin-left:8px;color:#db2777"></i>داواکاری نوێکردنەوە</h3>
+      <div class="modal-close" onclick="closeMo('moAdUpdateRequest')"><i class="fas fa-xmark"></i></div>
+    </div>
+    <input type="hidden" id="auTargetId">
+    <label class="modal-lbl">کام خانە پێویستی نوێکردنەوەیە</label>
+    <select class="minp" id="auFieldSelect">
+      <option value="video_code">کۆدی ڤیدیۆ</option>
+      <option value="video_link">لینکی ڤیدیۆ</option>
+      <option value="title">ناونیشانی ڕیکلام</option>
+      <option value="goal">ئامانجی ڕیکلام</option>
+      <option value="gender">ڕەگەز</option>
+      <option value="location">شوێن</option>
+      <option value="start_date">ڕێکەوتی دەستپێکردن</option>
+      <option value="start_time">کاتی دەستپێکردن</option>
+    </select>
+    <label class="modal-lbl">هۆکار (بۆ بەکارهێنەر)</label>
+    <textarea class="minp mta" id="auReasonTxt" placeholder="بۆ نموونە: کۆدی ڤیدیۆکە هەڵەیە، تکایە کۆدێکی ڕاست بنێرە..."></textarea>
+    <button class="modal-btn" id="auSubmitBtn" style="background:#db2777;color:#fff" onclick="confirmAdUpdateRequest()"><i class="fas fa-paper-plane"></i> ناردنی داواکاری</button>
+  </div>
+</div>
+
 <div class="overlay" id="moConfirm">
   <div class="modal" style="max-width:360px;text-align:center">
     <div style="width:60px;height:60px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:24px" id="confirmIco"></div>
@@ -3698,7 +3723,7 @@ function renderAdsTable(q=''){
         ${(()=>{const _d=calcAdDays(a.start_date,a.end_date);return _d?'<span style="font-size:10.5px;font-weight:700;color:#0891b2"><i class=\"fas fa-clock\" style=\"font-size:9px;margin-left:3px\"></i>'+_d+' ڕۆژ</span>':''})()}
       </td>
       <td style="font-size:11px">${gs[a.goal]||a.goal||'—'}</td>
-      <td><span class="badge ${a.status}">${statusKu(a.status)}</span></td>
+      <td><span class="badge ${a.status}">${statusKu(a.status)}</span>${a.needs_update?`<div style="margin-top:4px">${_needsUpdateTag(a)}</div>`:''}</td>
       <td style="font-size:11px;color:var(--mt);white-space:nowrap">${new Date(a.created_at).toLocaleDateString('ku')}<br><span style="font-size:10px;color:var(--mt2);font-family:'Inter';direction:ltr">${new Date(a.created_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span></td>
       <td onclick="event.stopPropagation()"><div class="act-grp">
         <div class="act-btn dark" onclick="showAdDetail('${a.id}')"><i class="fas fa-eye"></i></div>
@@ -3722,6 +3747,7 @@ function renderAdsTable(q=''){
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
           <span class="badge ${a.status}">${statusKu(a.status)}</span>
+          ${_needsUpdateTag(a)}
           <div class="act-btn ${a.is_featured?'star-on':'star-off'}" style="padding:5px 8px;font-size:11px" onclick="event.stopPropagation();toggleFeatured('${a.id}',${!!a.is_featured})" title="باشترین ئەنجام"><i class="fas fa-star"></i></div>
         </div>
       </div>
@@ -3769,6 +3795,48 @@ function _fmtAdRejectReason(reason){
     </div>`;
   }
   return `<div class="reject-reason-box"><i class="fas fa-info-circle" style="margin-left:6px"></i>${reason}</div>`;
+}
+
+// ══ داواکاری نوێکردنەوەی خانەکانی ڕیکلام (Admin → User) ══
+const AD_UPDATE_FIELDS={video_code:'کۆدی ڤیدیۆ',video_link:'لینکی ڤیدیۆ',title:'ناونیشانی ڕیکلام',goal:'ئامانجی ڕیکلام',gender:'ڕەگەز',location:'شوێن',start_date:'ڕێکەوتی دەستپێکردن',start_time:'کاتی دەستپێکردن'};
+
+function _needsUpdateTag(a){
+  if(!a?.needs_update)return '';
+  return a.update_submitted_at
+    ? '<span class="badge" style="background:rgba(8,145,178,.09);color:#0891b2;border:1px solid rgba(8,145,178,.25)"><i class="fas fa-rotate" style="font-size:9px;margin-left:3px"></i>وەڵامی هات</span>'
+    : '<span class="badge needs_update"><i class="fas fa-pen" style="font-size:9px;margin-left:3px"></i>داواکراوە نوێکردنەوە</span>';
+}
+
+function _fmtAdUpdateBox(a){
+  if(!a?.needs_update)return '';
+  const fLabel=AD_UPDATE_FIELDS[a.update_field]||a.update_field||'—';
+  if(!a.update_submitted_at){
+    // چاوەڕوانی وەڵامی بەکارهێنەرین
+    return `<div style="background:rgba(219,39,119,.05);border:1.5px solid rgba(219,39,119,.22);border-radius:12px;padding:12px 14px;margin:10px 0">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+        <div style="width:30px;height:30px;border-radius:9px;background:rgba(219,39,119,.14);color:#db2777;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0"><i class="fas fa-hourglass-half"></i></div>
+        <div style="font-size:12.5px;font-weight:900;color:#db2777">چاوەڕوانی نوێکردنەوەی بەکارهێنەر</div>
+      </div>
+      <div style="font-size:11.5px;color:var(--mt);font-weight:700;margin-bottom:4px">خانە: <span style="color:var(--dark)">${fLabel}</span></div>
+      ${a.update_reason?`<div style="font-size:12px;color:var(--dark);font-weight:600;line-height:1.7">${a.update_reason}</div>`:''}
+      <div style="margin-top:10px"><span class="act-btn" style="background:transparent;border:1.5px solid var(--b1);color:var(--mt);font-size:11px" onclick="cancelAdUpdateRequest('${a.id}')"><i class="fas fa-xmark"></i> پاشگەزبوونەوە لە داواکاری</span></div>
+    </div>`;
+  }
+  // بەکارهێنەر وەڵامی داوەتەوە — چاوەڕوانی پێداچوونەوەی ئادمینە
+  const newVal=a[a.update_field];
+  return `<div style="background:rgba(8,145,178,.05);border:1.5px solid rgba(8,145,178,.22);border-radius:12px;padding:12px 14px;margin:10px 0">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+      <div style="width:30px;height:30px;border-radius:9px;background:rgba(8,145,178,.14);color:#0891b2;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0"><i class="fas fa-rotate"></i></div>
+      <div style="font-size:12.5px;font-weight:900;color:#0891b2">بەکارهێنەر نوێکردنەوەی نارد — پێویستی پێداچوونەوەیە</div>
+    </div>
+    <div style="font-size:11.5px;color:var(--mt);font-weight:700;margin-bottom:4px">خانە: <span style="color:var(--dark)">${fLabel}</span></div>
+    <div style="font-size:12px;color:var(--dark);font-weight:800;background:var(--w);border-radius:9px;padding:9px 11px;direction:ltr;text-align:left;word-break:break-all;margin-bottom:6px">${(newVal!==undefined&&newVal!==null&&newVal!=='')?newVal:'—'}</div>
+    ${a.update_reason?`<div style="font-size:11px;color:var(--mt);line-height:1.6;margin-bottom:8px"><i class="fas fa-info-circle" style="margin-left:4px"></i>هۆکاری داواکاری: ${a.update_reason}</div>`:''}
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <div class="act-btn gr" style="flex:1;justify-content:center" onclick="approveAdUpdate('${a.id}')"><i class="fas fa-check"></i> پەسەندکردن</div>
+      <div class="act-btn" style="flex:1;justify-content:center;background:rgba(217,119,6,.08);color:#d97706;border-color:rgba(217,119,6,.25)" onclick="openAdUpdateRequest('${a.id}')"><i class="fas fa-rotate-left"></i> دووبارە داواکردن</div>
+    </div>
+  </div>`;
 }
 
 // ══ فیدباک و خاڵی کڕیار بۆ ڕیکلامی تەواوبوو (لای ئادمین) ══
@@ -3925,6 +3993,7 @@ async function showAdDetail(id){
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <div style="font-size:15px;font-weight:900;color:var(--dark);line-height:1.3">${adTitle}</div>
           <span class="badge ${a.status}" style="flex-shrink:0">${statusKu(a.status)}</span>
+          ${_needsUpdateTag(a)}
         </div>
         <div style="font-size:11px;color:var(--mt);font-family:'Inter';margin-top:3px;direction:ltr;text-align:right">${_adminPublicAdIdLabel(a)}${a.tiktok_ad_id?' · TikTok ID '+a.tiktok_ad_id:''}</div>
       </div>
@@ -3993,6 +4062,7 @@ async function showAdDetail(id){
     ${_sh('fa-chart-simple','#2563eb','ئاماری کارایی')}
     ${adStatsHTML}
     ${mediaCardHTML||assetHTML?`${_sh('fa-photo-film','#6366f1','میدیا و ئامرازەکان')}${mediaCardHTML}${assetHTML}`:''}
+    ${_fmtAdUpdateBox(a)}
     ${_fmtAdRejectReason(a.reject_reason)}
     ${_sh('fa-receipt','#6b7585','وردەکاری نرخ')}
     ${priceBreakdownHTML}
@@ -4011,6 +4081,7 @@ async function showAdDetail(id){
       ${a.status==='paused'?`<div class="act-btn gr" style="flex:1" onclick="updateAdStatus('${a.id}','${a.user_id}','active',0);closeMo('moAdDetail')"><i class="fas fa-play"></i> دووبارە چالاک</div>`:''}
       ${['active','paused'].includes(a.status)?`<div class="act-btn bl" style="flex:1" onclick="updateAdStatus('${a.id}','${a.user_id}','completed',0);closeMo('moAdDetail')"><i class="fas fa-flag-checkered"></i> تەواوبوو</div>`:''}
       ${a.tiktok_ad_id&&['active','paused','scheduled','completed'].includes(a.status)?`<div class="act-btn" style="flex:1;background:rgba(37,99,235,.08);color:#2563eb;border-color:rgba(37,99,235,.25)" onclick="openEditTikTokModal('${a.id}')"><i class="fab fa-tiktok"></i> دەستکاری TikTok ID</div>`:''}
+      ${!a.needs_update?`<div class="act-btn" style="flex:1;background:rgba(219,39,119,.08);color:#db2777;border-color:rgba(219,39,119,.25)" onclick="openAdUpdateRequest('${a.id}')"><i class="fas fa-pen"></i> ناردنی داواکاری نوێکردنەوە</div>`:''}
     </div>
     <div style="font-size:10.5px;color:var(--mt);font-weight:700;margin:18px 0 8px;text-align:center;letter-spacing:.3px">⚠️ ناوچەی مەترسیدار</div>
     <div class="act-btn" style="width:100%;justify-content:center;background:transparent;border:1.5px solid var(--rd);color:var(--rd)" onclick="deleteAdRecord('${a.id}')"><i class="fas fa-trash"></i> سڕینەوەی ڕیکلام بە تەواوی</div>`;
@@ -5139,6 +5210,83 @@ async function confirmReject(){
   if(_rb){ _rb.disabled=false; _rb.innerHTML='<i class="fas fa-times"></i> ڕەتکردنەوە'; }
   closeMo('moRejectReason');
   showToast('✅ ڕیکلامەکە ڕەتکرا','gr');
+}
+
+// ══ داواکاری نوێکردنەوەی خانەی ڕیکلام (Admin → User) ══
+function openAdUpdateRequest(id){
+  const ad=allAds.find(x=>x.id===id)||_allAdsData.find(x=>x.id===id);
+  document.getElementById('auTargetId').value=id;
+  const sel=document.getElementById('auFieldSelect');
+  if(sel)sel.value=(ad&&ad.update_field)||'video_code';
+  document.getElementById('auReasonTxt').value='';
+  openMo('moAdUpdateRequest');
+}
+
+async function confirmAdUpdateRequest(){
+  const btn=document.getElementById('auSubmitBtn');
+  if(btn?.disabled)return;
+  const id=document.getElementById('auTargetId').value;
+  const field=document.getElementById('auFieldSelect').value;
+  const reason=document.getElementById('auReasonTxt').value.trim();
+  if(!reason){showToast('هۆکار بنووسە','rd');return;}
+  if(btn){btn.disabled=true;btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> چاوەڕوانبە...';}
+  const adObj=allAds.find(a=>a.id===id)||_allAdsData.find(a=>a.id===id);
+  try{
+    const{error}=await sb.from('pa_ads').update({
+      needs_update:true,
+      update_field:field,
+      update_reason:reason,
+      update_requested_at:new Date().toISOString(),
+      update_submitted_at:null
+    }).eq('id',id);
+    if(error)throw new Error(error.message);
+    if(adObj?.user_id){
+      try{
+        const _uLang=await _getUserLang(adObj.user_id).catch(()=>'ku');
+        const _uN=_adNotifTexts(_adminPublicAdId(adObj)||id,'needs_update',_uLang,{field});
+        await sb.from('pa_notifications').insert({user_id:adObj.user_id,type:'ad_needs_update',title:_uN.title,body:_uN.body,is_read:false});
+        _fbPushNotif(adObj.user_id,_uN.title,_uN.body,'ad_needs_update');
+        _fbTriggerAds(adObj.user_id,id,'needs_update');
+      }catch(_){}
+    }
+    [allAds,_allAdsData].forEach(arr=>{const idx=arr.findIndex(a=>a.id===id);if(idx>-1)arr[idx]={...arr[idx],needs_update:true,update_field:field,update_reason:reason,update_submitted_at:null};});
+    try{renderAdsTable();}catch(e){}
+    try{renderAdsDataTable();}catch(e){}
+    closeMo('moAdUpdateRequest');
+    showToast('✅ داواکاری نوێکردنەوە نێردرا بۆ بەکارهێنەر','gr');
+    if(document.getElementById('moAdDetail')?.classList.contains('on'))showAdDetail(id);
+  }catch(e){
+    showToast('هەڵە: '+e.message,'rd');
+  }
+  if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردنی داواکاری';}
+}
+
+async function approveAdUpdate(id){
+  try{
+    const{error}=await sb.from('pa_ads').update({needs_update:false,update_field:null,update_reason:null,update_requested_at:null,update_submitted_at:null}).eq('id',id);
+    if(error)throw new Error(error.message);
+    const adObj=allAds.find(a=>a.id===id)||_allAdsData.find(a=>a.id===id);
+    [allAds,_allAdsData].forEach(arr=>{const idx=arr.findIndex(a=>a.id===id);if(idx>-1)arr[idx]={...arr[idx],needs_update:false,update_field:null,update_reason:null,update_requested_at:null,update_submitted_at:null};});
+    if(adObj?.user_id){try{_fbTriggerAds(adObj.user_id,id,'update_approved');}catch(_){}}
+    try{renderAdsTable();}catch(e){}
+    try{renderAdsDataTable();}catch(e){}
+    showToast('✅ نوێکردنەوەکە پەسەندکرا','gr');
+    if(document.getElementById('moAdDetail')?.classList.contains('on'))showAdDetail(id);
+  }catch(e){showToast('هەڵە: '+e.message,'rd');}
+}
+
+async function cancelAdUpdateRequest(id){
+  try{
+    const{error}=await sb.from('pa_ads').update({needs_update:false,update_field:null,update_reason:null,update_requested_at:null,update_submitted_at:null}).eq('id',id);
+    if(error)throw new Error(error.message);
+    const adObj=allAds.find(a=>a.id===id)||_allAdsData.find(a=>a.id===id);
+    [allAds,_allAdsData].forEach(arr=>{const idx=arr.findIndex(a=>a.id===id);if(idx>-1)arr[idx]={...arr[idx],needs_update:false,update_field:null,update_reason:null,update_requested_at:null,update_submitted_at:null};});
+    if(adObj?.user_id){try{_fbTriggerAds(adObj.user_id,id,'update_cancelled');}catch(_){}}
+    try{renderAdsTable();}catch(e){}
+    try{renderAdsDataTable();}catch(e){}
+    showToast('داواکارییەکە هەڵوەشێنرایەوە','gr');
+    if(document.getElementById('moAdDetail')?.classList.contains('on'))showAdDetail(id);
+  }catch(e){showToast('هەڵە: '+e.message,'rd');}
 }
 
 // ══ NOTIFICATIONS ══
@@ -8281,8 +8429,14 @@ async function _getUserLang(userId) {
   } catch(e) { return 'ku'; }
 }
 
-function _adNotifTexts(adNum, type, lang) {
+function _adNotifTexts(adNum, type, lang, extra) {
   const n = adNum ? '#' + adNum : '';
+  extra = extra || {};
+  const _fieldLabels = {
+    ku: {video_code:'کۆدی ڤیدیۆ',video_link:'لینکی ڤیدیۆ',title:'ناونیشانی ڕیکلام',goal:'ئامانجی ڕیکلام',gender:'ڕەگەز',location:'شوێن',start_date:'ڕێکەوتی دەستپێکردن',start_time:'کاتی دەستپێکردن'},
+    ar: {video_code:'كود الفيديو',video_link:'رابط الفيديو',title:'عنوان الإعلان',goal:'هدف الإعلان',gender:'الجنس',location:'الموقع',start_date:'تاريخ البدء',start_time:'وقت البدء'}
+  };
+  const fLabel = extra.field ? (_fieldLabels[lang==='ar'?'ar':'ku'][extra.field] || extra.field) : '';
   const ku = {
     review:    { title: 'ڕیکلامەکەت لەژێر پێداچوونەوەدایە',  body: 'ڕیکلامی ژمارە ' + n + ' - لەژێر پێداچوونەوەدایە' },
     approved:  { title: 'ڕیکلامەکەت پەسەندکرا ✅',            body: 'ڕیکلامی ژمارە ' + n + ' - پەسەندکرا' },
@@ -8294,6 +8448,7 @@ function _adNotifTexts(adNum, type, lang) {
     
     active: { title: '▶️ ڕیکلامەکەت چالاک بوو',
     body: 'ڕیکلامی ژمارە ' + n + ' - دووبارە چالاکە'},
+    needs_update: { title: 'پێویستە ڕیکلامەکەت نوێبکەیتەوە ✏️', body: 'ڕیکلامی ژمارە ' + n + (fLabel?' - '+fLabel:'') + ' پێویستی بە نوێکردنەوەیە، کلیک بکە بۆ وردەکاری' },
   };
   const ar = {
     review:    { title: 'إعلانك قيد المراجعة',      body: 'الإعلان رقم ' + n + ' - قيد المراجعة' },
@@ -8302,6 +8457,7 @@ function _adNotifTexts(adNum, type, lang) {
     completed: { title: 'اكتمل إعلانك 🏁',           body: 'الإعلان رقم ' + n + ' - اكتمل' },
     paused:    { title: 'إعلانك متوقف مؤقتاً ⏸',    body: 'تم إيقاف إعلانك مؤقتاً من قِبَل الإدارة.' },
     active:    { title: 'إعلانك نشط مجدداً ▶️',      body: 'تم تفعيل إعلانك مجدداً من قِبَل الإدارة — هو الآن مباشر.' },
+    needs_update: { title: 'يجب تحديث إعلانك ✏️', body: 'الإعلان رقم ' + n + (fLabel?' - '+fLabel:'') + ' يحتاج إلى تحديث، اضغط لعرض التفاصيل' },
   };
   return (lang === 'ar' ? ar : ku)[type] || ku[type];
 }
