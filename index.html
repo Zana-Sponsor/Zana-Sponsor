@@ -14900,8 +14900,7 @@ window.LIVE_SUPPORT_ENABLED = false;
 // زیادکراو بێ دەستکاری کۆدی کونی
 // ════════════════════════════════════════════════════════
 (function(){
-  // Temporary feature switch: do not initialize Firebase listeners, overlay behavior, or FAB logic.
-  if (window.LIVE_SUPPORT_ENABLED === false) return;
+  // Firebase remains initialized because the home banner and wallet realtime features use it.
 const LC_FB_CONFIG = {
   apiKey:atob("QUl6YVN5QWtIYTB1NVprUFBCUjFJZnRTRTVIUHAxSDRySDVCb3lV"),
   authDomain:atob("bXlsaXZlY2hhdC00NjJkMy5maXJlYmFzZWFwcC5jb20="),
@@ -14930,6 +14929,7 @@ try{
   lcDb = { ref: ()=>_noopRef };
 }
 
+if (window.LIVE_SUPPORT_ENABLED !== false) {
 const LC_KEY = 'proxo_lc_session_id';
 const LC_HIST_KEY = 'proxo_lc_history';
 let lcSessionId = null;
@@ -16021,6 +16021,8 @@ window.lcSubmitFeedback=async function(){
   lcSessionId=null;
   lcShowStage('lcStageDone');
 };
+
+}
 
 // ══ FIREBASE IMAGE BANNER SLIDER LOADER ══
 (function(){
