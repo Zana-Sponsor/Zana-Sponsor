@@ -12140,8 +12140,15 @@ async function submitAdUpdate(adId){
   try{
     var patch={update_submitted_at:new Date().toISOString()};
     patch[ad.update_field]=val;
-    var res=await sb.from('pa_ads').update(patch).eq('id',ad.id).eq('user_id',cu.id);
-    if(res.error)throw new Error(res.error.message);
+    // خانەکانی وەک video_code/title/goal/... لەسەر pa_ads بە تریگەر پارێزراون و
+    // تەنها لە ڕێگەی RPC-ی SECURITY DEFINER دەتوانرێت بگۆڕدرێن، نەک ڕاستەوخۆ .update()
+    var res=await sb.rpc('submit_ad_update',{p_ad_id:ad.id,p_field:ad.update_field,p_value:val});
+    if(res.error){
+      // fallback بۆ داتابەیسی کۆن کە هێشتا RPC-ەکەی تێدا دروست نەکراوە
+      console.warn('[submitAdUpdate] RPC submit_ad_update failed, falling back to direct update:',res.error);
+      var res2=await sb.from('pa_ads').update(patch).eq('id',ad.id).eq('user_id',cu.id);
+      if(res2.error)throw new Error(res2.error.message);
+    }
     var idx=allAds.findIndex(function(a){return a.id===ad.id;});
     if(idx>=0)allAds[idx]=Object.assign({},allAds[idx],patch);
     renderAds();
