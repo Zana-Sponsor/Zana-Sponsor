@@ -3834,23 +3834,33 @@ html[data-theme="dark"] img:not([src*=".svg"]){filter:brightness(.94)}
    BEST STATISTICS RANKING — Home carousel + full ranking screen
    ═══════════════════════════════════════════════════════════════ */
 .best-home-section{
+  position:relative;
   margin:16px 0 12px;
-  padding:16px;
+  padding:18px 16px 16px;
   overflow:hidden;
   background:var(--w);
   border:1px solid #D4D9E1;
-  border-radius:22px;
-  box-shadow:0 8px 30px rgba(15,23,42,.07);
+  border-radius:24px;
+  box-shadow:0 10px 32px rgba(15,23,42,.08);
   contain:layout paint;
+  isolation:isolate;
 }
-.best-home-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px;}
-.best-home-title{min-width:0;font-size:15px;font-weight:800;color:var(--dark);line-height:1.55;text-align:right;}
+.best-home-section::before{
+  content:'';position:absolute;inset:0 0 auto 0;height:3px;
+  background:linear-gradient(90deg,#4f6ef7,#7c5cfc 55%,#c084fc);
+  opacity:.9;
+}
+.best-home-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.best-home-heading{min-width:0;display:flex;flex-direction:column;gap:4px;}
+.best-home-eyebrow{display:inline-flex;align-items:center;gap:5px;width:fit-content;font-size:9.5px;font-weight:800;letter-spacing:.2px;color:#4f6ef7;}
+.best-home-eyebrow i{font-size:9px;}
+.best-home-title{min-width:0;font-size:15.5px;font-weight:850;color:var(--dark);line-height:1.5;text-align:right;}
 .best-all-btn,.best-refresh-btn,.best-back-btn{
   appearance:none;-webkit-appearance:none;border:1px solid var(--b1);background:var(--bg);color:var(--dark);
   font-family:'R',sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;flex-shrink:0;
 }
-.best-all-btn{min-height:34px;padding:6px 13px;border-radius:17px;font-size:11.5px;font-weight:700;gap:6px;white-space:nowrap;}
+.best-all-btn{min-height:34px;padding:6px 13px;border-radius:17px;font-size:11.5px;font-weight:750;gap:6px;white-space:nowrap;margin-top:2px;}
 .best-all-btn:active,.best-refresh-btn:active,.best-back-btn:active{background:var(--b1);}
 .best-carousel{
   display:flex;gap:11px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
@@ -3862,27 +3872,40 @@ html[data-theme="dark"] img:not([src*=".svg"]){filter:brightness(.94)}
 .best-slide-card,.best-full-main{
   display:grid;grid-template-columns:minmax(92px,35%) minmax(0,1fr);gap:10px;direction:ltr;
   background:var(--bg);border:1px solid var(--b1);border-radius:20px;
-  corner-shape:squircle;padding:10px;min-width:0;
+  corner-shape:squircle;padding:10px;min-width:0;position:relative;
+  transition:box-shadow .2s ease;
+}
+.best-slide-card.is-top,.best-full-card.is-top .best-full-main{
+  box-shadow:0 0 0 1.5px rgba(245,185,40,.55),0 10px 26px rgba(245,185,40,.16);
 }
 .best-thumb{
-  position:relative;min-width:0;height:148px;overflow:hidden;border-radius:17px;corner-shape:squircle;
-  background:linear-gradient(145deg,#eef1f7,#e4e8f0);border:1px solid rgba(212,217,225,.9);
+  position:relative;min-width:0;height:148px;overflow:hidden;border-radius:16px;corner-shape:squircle;
+  background:linear-gradient(150deg,#eef1f8,#e2e7f2);border:1px solid rgba(212,217,225,.9);
   display:flex;align-items:center;justify-content:center;color:var(--mt);
 }
-.best-thumb img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;}
-.best-thumb-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:10px;color:var(--mt);text-align:center;padding:8px;}
-.best-thumb-placeholder i{font-size:24px;color:var(--mt);opacity:.7;}
+.best-thumb img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;opacity:0;transition:opacity .35s ease;}
+.best-thumb img.is-loaded{opacity:1;}
+.best-thumb-scrim{position:absolute;inset:auto 0 0 0;height:58%;background:linear-gradient(0deg,rgba(10,14,26,.5),rgba(10,14,26,0));pointer-events:none;opacity:0;transition:opacity .35s ease;}
+.best-thumb-scrim.is-on{opacity:1;}
+.best-thumb-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:10px;color:var(--mt2);text-align:center;padding:8px;}
+.best-ph-ico{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,rgba(79,110,247,.14),rgba(124,92,252,.14));display:flex;align-items:center;justify-content:center;color:#4f6ef7;font-size:15px;}
+.best-play-badge{
+  position:absolute;bottom:9px;right:9px;width:26px;height:26px;border-radius:50%;
+  background:rgba(10,14,26,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;
+  border:1px solid rgba(255,255,255,.35);
+}
 .best-rank-badge{
-  position:absolute;z-index:2;top:7px;left:7px;min-width:31px;height:31px;padding:0 8px;border-radius:11px;
-  display:flex;align-items:center;justify-content:center;gap:4px;border:1px solid rgba(255,255,255,.7);
-  box-shadow:0 5px 14px rgba(15,23,42,.18);font-family:'Inter',sans-serif;font-size:11px;font-weight:800;
+  position:absolute;z-index:3;top:7px;left:7px;min-width:31px;height:31px;padding:0 8px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;gap:4px;border:1px solid rgba(255,255,255,.75);
+  box-shadow:0 5px 14px rgba(15,23,42,.2);font-family:'Inter',sans-serif;font-size:11px;font-weight:850;
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
 }
 .best-rank-badge i{font-size:13px;}
-.best-rank-gold{background:linear-gradient(145deg,#fff2af,#f5b928);color:#7c4a00;}
-.best-rank-silver{background:linear-gradient(145deg,#f8fafc,#b9c2cf);color:#435063;}
-.best-rank-bronze{background:linear-gradient(145deg,#ffd0ae,#c8793e);color:#6d3415;}
-.best-rank-number{background:rgba(28,35,51,.88);color:#fff;}
+.best-rank-gold{background:radial-gradient(120% 130% at 30% 20%,#fff6d8,#f8ce4e 45%,#e0a51c 100%);color:#6b4400;box-shadow:0 5px 16px rgba(224,165,28,.45),0 0 0 1px rgba(255,255,255,.5) inset;}
+.best-rank-silver{background:radial-gradient(120% 130% at 30% 20%,#ffffff,#d7dee7 45%,#a9b4c2 100%);color:#3c4759;box-shadow:0 5px 16px rgba(120,135,155,.4),0 0 0 1px rgba(255,255,255,.5) inset;}
+.best-rank-bronze{background:radial-gradient(120% 130% at 30% 20%,#ffe1c2,#d99257 45%,#a85f2e 100%);color:#5c2c0c;box-shadow:0 5px 16px rgba(168,95,46,.4),0 0 0 1px rgba(255,255,255,.5) inset;}
+.best-rank-number{background:rgba(20,26,41,.9);color:#fff;}
 .best-metrics{display:grid;gap:7px;min-width:0;direction:rtl;align-content:stretch;}
 .best-metrics.is-three{grid-template-rows:repeat(3,minmax(0,1fr));}
 .best-metrics.is-two{grid-template-rows:repeat(2,minmax(0,1fr));}
@@ -3902,9 +3925,10 @@ html[data-theme="dark"] img:not([src*=".svg"]){filter:brightness(.94)}
 .best-metric.spent .best-metric-val{color:#15803d;}
 .best-carousel-dots{display:flex;justify-content:center;align-items:center;gap:5px;min-height:8px;margin-top:11px;direction:ltr;}
 .best-dot{width:6px;height:6px;border:0;border-radius:999px;background:var(--b2);padding:0;cursor:pointer;transition:width .2s ease,background .2s ease;}
-.best-dot.on{width:18px;background:var(--dark);}
+.best-dot.on{width:18px;background:linear-gradient(90deg,#4f6ef7,#7c5cfc);}
 .best-state{min-height:150px;border:1px dashed var(--b2);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--mt);gap:8px;}
-.best-state i{font-size:23px;color:var(--mt2);}
+.best-state-ico{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(79,110,247,.12),rgba(124,92,252,.12));display:flex;align-items:center;justify-content:center;}
+.best-state-ico i{font-size:21px;color:#4f6ef7;}
 .best-state strong{font-size:13px;color:var(--dark);font-weight:750;}
 .best-state span{font-size:11px;line-height:1.7;}
 .best-retry-btn{border:1px solid var(--b1);background:var(--w);color:var(--dark);font-family:'R',sans-serif;font-size:11px;font-weight:700;border-radius:14px;padding:7px 14px;cursor:pointer;margin-top:3px;}
@@ -3917,16 +3941,21 @@ html[data-theme="dark"] img:not([src*=".svg"]){filter:brightness(.94)}
 
 /* Full ranking screen */
 #pgBeststats{overflow-anchor:none;}
-.best-page-head{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;gap:10px;margin-bottom:16px;direction:ltr;}
-.best-page-title{font-size:19px;font-weight:850;color:var(--dark);text-align:center;direction:rtl;line-height:1.5;}
+.best-page-head{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;gap:10px;margin-bottom:4px;direction:ltr;}
+.best-page-title{font-size:19px;font-weight:870;color:var(--dark);text-align:center;direction:rtl;line-height:1.5;}
+.best-page-eyebrow{display:flex;align-items:center;justify-content:center;gap:5px;font-size:10px;font-weight:800;color:#4f6ef7;text-align:center;margin-bottom:16px;}
+.best-page-eyebrow i{font-size:9px;}
 .best-back-btn,.best-refresh-btn{width:40px;height:40px;border-radius:14px;font-size:13px;}
 .best-refresh-btn.is-loading i{animation:sponsRefreshSpin .7s linear infinite;}
 .best-full-list{display:grid;gap:12px;}
 .best-full-card{
+  position:relative;overflow:hidden;
   background:var(--w);border:1px solid #D4D9E1;border-radius:22px;corner-shape:squircle;padding:13px;
   box-shadow:0 8px 30px rgba(15,23,42,.07);cursor:pointer;outline:none;overflow-anchor:none;
   transition:border-color .2s ease,box-shadow .2s ease,transform .16s ease;
 }
+.best-full-card::before{content:'';position:absolute;inset:0 0 auto 0;height:0;background:linear-gradient(90deg,#f8ce4e,#e0a51c);transition:height .2s ease;}
+.best-full-card.is-top::before{height:3px;}
 .best-full-card:focus-visible{box-shadow:0 0 0 3px rgba(37,99,235,.17),0 8px 30px rgba(15,23,42,.07);border-color:rgba(37,99,235,.45);}
 .best-full-card.is-open{border-color:rgba(37,99,235,.28);box-shadow:0 12px 34px rgba(15,23,42,.095);}
 .best-full-main{grid-template-columns:minmax(102px,34%) minmax(0,1fr);padding:0;border:0;background:transparent;border-radius:0;}
@@ -3955,7 +3984,7 @@ html[data-theme="dark"] img:not([src*=".svg"]){filter:brightness(.94)}
 .best-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;}
 
 @media(max-width:350px){
-  .best-home-section{padding:13px;}
+  .best-home-section{padding:14px 13px 13px;}
   .best-slide-card,.best-skeleton{grid-template-columns:88px minmax(0,1fr);gap:8px;padding:8px;}
   .best-full-main{grid-template-columns:94px minmax(0,1fr);gap:8px;}
   .best-thumb,.best-skeleton>.best-skel-block{height:142px;}
@@ -3970,14 +3999,16 @@ html[data-theme="dark"] img:not([src*=".svg"]){filter:brightness(.94)}
 @media(prefers-reduced-motion:reduce){
   .best-carousel{scroll-behavior:auto;}
   .best-skel-block{animation:none;}
-  .best-expand-shell,.best-expand-cue i,.best-dot{transition:none;}
+  .best-expand-shell,.best-expand-cue i,.best-dot,.best-thumb img{transition:none;}
 }
 html[data-theme="dark"] .best-home-section,
 html[data-theme="dark"] .best-full-card{background:#000;border-color:#242424;box-shadow:0 8px 30px rgba(0,0,0,.28);}
 html[data-theme="dark"] .best-slide-card,
 html[data-theme="dark"] .best-state,
 html[data-theme="dark"] .best-skeleton{background:#080808;border-color:#242424;}
-html[data-theme="dark"] .best-thumb{background:linear-gradient(145deg,#151515,#090909);border-color:#242424;}
+html[data-theme="dark"] .best-thumb{background:linear-gradient(150deg,#151515,#090909);border-color:#242424;}
+html[data-theme="dark"] .best-ph-ico,
+html[data-theme="dark"] .best-state-ico{background:linear-gradient(135deg,rgba(79,110,247,.22),rgba(124,92,252,.22));}
 html[data-theme="dark"] .best-metric{background:#000;border-color:#242424;}
 html[data-theme="dark"] .best-home-title,
 html[data-theme="dark"] .best-page-title,
@@ -3992,7 +4023,6 @@ html[data-theme="dark"] .best-all-btn:active,
 html[data-theme="dark"] .best-refresh-btn:active,
 html[data-theme="dark"] .best-back-btn:active{background:#171717;}
 html[data-theme="dark"] .best-dot{background:#333;}
-html[data-theme="dark"] .best-dot.on{background:#1470ee;}
 html[data-theme="dark"] .best-extra-chip{background:#090909;border-color:#242424;}
 html[data-theme="dark"] .best-soft-divider{background:linear-gradient(90deg,transparent,#242424 13%,#242424 87%,transparent);}
 html[data-theme="dark"] .best-skel-block{background:linear-gradient(90deg,#171717 20%,#292929 48%,#171717 76%);background-size:220% 100%;}
@@ -4454,7 +4484,10 @@ window.PROXO_SPLASH_MIN_MS = 2600;
     <!-- ══ BEST STATISTICS RANKING — admin-selected ads ══ -->
     <section class="best-home-section" id="bestStatsHome" aria-labelledby="bestStatsHomeTitle">
       <div class="best-home-header">
-        <h2 class="best-home-title" id="bestStatsHomeTitle">ڕێزبەندی باشترین ئامارەکان</h2>
+        <div class="best-home-heading">
+          <span class="best-home-eyebrow"><i class="fas fa-certificate" aria-hidden="true"></i>دیاریکراو لەلایەن تیمی Proxo</span>
+          <h2 class="best-home-title" id="bestStatsHomeTitle">ڕێزبەندی باشترین ئامارەکان</h2>
+        </div>
         <button type="button" class="best-all-btn" onclick="goPage('beststats')" aria-label="بینینی هەموو باشترین ئامارەکان">
           <span>هەموو</span><i class="fas fa-chevron-left" aria-hidden="true"></i>
         </button>
@@ -4916,6 +4949,7 @@ window.PROXO_SPLASH_MIN_MS = 2600;
         <i class="fas fa-rotate-right" aria-hidden="true"></i>
       </button>
     </div>
+    <div class="best-page-eyebrow"><i class="fas fa-certificate" aria-hidden="true"></i><span>دیاریکراو و پشتڕاستکراوەتەوە لەلایەن تیمی Proxo</span></div>
     <div id="bestStatsFullWrap" class="best-full-list" aria-live="polite" aria-busy="true">
       <div class="best-skeleton" aria-hidden="true">
         <div class="best-skel-block"></div>
@@ -11614,9 +11648,12 @@ function _bestRankMarkup(rank){
 
 function _bestThumbMarkup(ad,rank,eager){
   const src=_bestSafeThumb(ad?.thumbnail_url);
+  const hasVideo=!!_bestSafeVideo(ad?.video_link);
   return '<div class="best-thumb">'+
-    '<div class="best-thumb-placeholder"><i class="fas fa-image" aria-hidden="true"></i><span>وێنە بەردەست نییە</span></div>'+
-    (src?'<img src="'+_bestEsc(src)+'" alt="" '+(eager?'loading="eager"':'loading="lazy"')+' decoding="async" onerror="this.style.display=\'none\'">':'')+
+    '<div class="best-thumb-placeholder"><span class="best-ph-ico"><i class="fas fa-image" aria-hidden="true"></i></span><span>وێنە بەردەست نییە</span></div>'+
+    (src?'<img src="'+_bestEsc(src)+'" alt="" '+(eager?'loading="eager"':'loading="lazy"')+' decoding="async" onload="this.classList.add(\'is-loaded\');var s=this.nextElementSibling;if(s&&s.classList&&s.classList.contains(\'best-thumb-scrim\'))s.classList.add(\'is-on\');" onerror="this.style.display=\'none\'">':'')+
+    (src?'<div class="best-thumb-scrim" aria-hidden="true"></div>':'')+
+    (hasVideo?'<span class="best-play-badge" aria-hidden="true"><i class="fas fa-play" aria-hidden="true"></i></span>':'')+
     _bestRankMarkup(rank)+
   '</div>';
 }
@@ -11630,9 +11667,9 @@ function _bestSkeletonMarkup(){
 
 function _bestStateMarkup(kind){
   if(kind==='error'){
-    return '<div class="best-state"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i><strong>نەتوانرا ئامارەکان باربکرێن</strong><span>تکایە پەیوەندیی ئینتەرنێت بپشکنە و دووبارە هەوڵ بدەرەوە.</span><button type="button" class="best-retry-btn" onclick="loadBestStats({force:true})">دووبارە هەوڵدانەوە</button></div>';
+    return '<div class="best-state"><span class="best-state-ico"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i></span><strong>نەتوانرا ئامارەکان باربکرێن</strong><span>تکایە پەیوەندیی ئینتەرنێت بپشکنە و دووبارە هەوڵ بدەرەوە.</span><button type="button" class="best-retry-btn" onclick="loadBestStats({force:true})">دووبارە هەوڵدانەوە</button></div>';
   }
-  return '<div class="best-state"><i class="fas fa-ranking-star" aria-hidden="true"></i><strong>هێشتا هیچ ڕیکلامێک دیاری نەکراوە</strong><span>کاتێک ئادمین ڕیکلامێک هەڵدەبژێرێت، لێرە دەردەکەوێت.</span></div>';
+  return '<div class="best-state"><span class="best-state-ico"><i class="fas fa-ranking-star" aria-hidden="true"></i></span><strong>هێشتا هیچ ڕیکلامێک دیاری نەکراوە</strong><span>کاتێک تیمی Proxo ڕیکلامێک هەڵدەبژێرێت، لێرە دەردەکەوێت.</span></div>';
 }
 
 function _bestSetBusy(isBusy){
@@ -11677,7 +11714,7 @@ function _bestRenderHome(){
   const slides=bestStatsAds.map(function(ad,index){
     const rank=index+1;
     return '<article class="best-home-slide" aria-label="پلەی '+rank+'">'+
-      '<div class="best-slide-card">'+_bestThumbMarkup(ad,rank,index===0)+_bestMetricsMarkup(ad)+'</div>'+
+      '<div class="best-slide-card'+(rank===1?' is-top':'')+'">'+_bestThumbMarkup(ad,rank,index===0)+_bestMetricsMarkup(ad)+'</div>'+
     '</article>';
   }).join('');
   const dots=bestStatsAds.length>1?'<div class="best-carousel-dots" aria-label="هەڵبژاردنی سلاید">'+bestStatsAds.map(function(_,i){return '<button type="button" class="best-dot '+(i===0?'on':'')+'" onclick="bestGoToSlide('+i+')" aria-label="سلایدی '+(i+1)+'"></button>';}).join('')+'</div>':'';
@@ -11727,7 +11764,7 @@ function _bestRenderFull(){
     const videoButton=video
       ? '<button type="button" class="best-video-btn" data-video="'+_bestEsc(video)+'" onclick="bestOpenVideo(event,this.dataset.video)"><span class="best-video-label"><span class="best-video-ico"><i class="fas fa-play" aria-hidden="true"></i></span><span>بینینی ڤیدیۆ</span></span><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></button>'
       : '<button type="button" class="best-video-btn" disabled><span class="best-video-label"><span class="best-video-ico"><i class="fas fa-video-slash" aria-hidden="true"></i></span><span>لینکی ڤیدیۆ بەردەست نییە</span></span></button>';
-    return '<article class="best-full-card" tabindex="0" role="button" aria-expanded="false" onclick="bestToggleCard(event,this)" onkeydown="bestCardKey(event,this)">'+
+    return '<article class="best-full-card'+(rank===1?' is-top':'')+'" tabindex="0" role="button" aria-expanded="false" onclick="bestToggleCard(event,this)" onkeydown="bestCardKey(event,this)">'+
       '<div class="best-full-main">'+_bestThumbMarkup(ad,rank,index<2)+_bestMetricsMarkup(ad)+'</div>'+
       '<div class="best-video-row">'+videoButton+'</div>'+
       '<div class="best-soft-divider"></div>'+
