@@ -1223,7 +1223,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
       <div class="sec-hdr">
         <h3><i class="fas fa-id-card" style="margin-left:8px;color:#7c3aed"></i>کەرەستەی پەیوەندی</h3>
         <div style="display:flex;gap:8px;align-items:center">
-          <input class="minp" id="matSearchInp" type="text" placeholder="گەڕان بە ناو / ژمارە..." style="width:180px;font-size:12px;padding:8px 12px;margin:0" oninput="renderMaterials()">
+          <input class="minp" id="matSearchInp" type="text" placeholder="گەڕان بە ناو / ژمارە / ئایدی..." style="width:180px;font-size:12px;padding:8px 12px;margin:0" oninput="renderMaterials()">
         </div>
       </div>
       <!-- ستاتیستیک -->
@@ -9029,6 +9029,7 @@ function renderMaterials() {
     ? _allMaterials.filter(function(m){
         return (m.card.name||'').toLowerCase().includes(q) ||
                String(m.card.card_number||'').includes(q)  ||
+               String(m.card.id||'').toLowerCase().includes(q) ||
                (m.ownerName||'').toLowerCase().includes(q);
       })
     : _allMaterials;
@@ -9043,7 +9044,7 @@ function renderMaterials() {
   var SAFE_STYLES = Object.keys(styleColors);
 
   var tableHTML = '<div class="tut-tbl-wrap tbl-scroll"><table>'
-    + '<thead><tr><th>#</th><th>ناوی کارت</th><th>خاوەن</th><th>ژمارە</th><th>شێواز</th><th>بەروار</th><th>کردار</th></tr></thead>'
+    + '<thead><tr><th>#</th><th>ئایدی</th><th>ناوی کارت</th><th>خاوەن</th><th>ژمارە</th><th>شێواز</th><th>بەروار</th><th>کردار</th></tr></thead>'
     + '<tbody>'
     + list.map(function(m, i) {
         var card       = m.card;
@@ -9061,6 +9062,8 @@ function renderMaterials() {
           : '<div style="width:36px;height:36px;border-radius:50%;background:rgba(124,58,237,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-id-card" style="font-size:13px;color:#7c3aed"></i></div>';
         return '<tr>'
           + '<td style="font-family:monospace;font-size:11px">'+(i+1)+'</td>'
+          + '<td><div style="display:flex;align-items:center;gap:5px"><span style="font-family:monospace;font-size:10.5px;color:var(--mt2);direction:ltr" title="'+safeId+'">'+(safeId?safeId.slice(0,8)+'…':'—')+'</span>'
+          +   (safeId?'<button onclick="navigator.clipboard.writeText(\''+safeId+'\');showToast(\'ئایدی کۆپی کرا\',\'gr\')" style="background:rgba(124,58,237,.1);border:none;border-radius:6px;color:#7c3aed;cursor:pointer;padding:3px 6px;font-size:10px" title="کۆپیکردنی ئایدی"><i class="fas fa-copy"></i></button>':'')+'</div></td>'
           + '<td><div style="display:flex;align-items:center;gap:8px">'+avHtml
           +   '<div><div style="font-size:13px;font-weight:700;color:var(--dark)">'+safeName+'</div>'
           +   '<div style="font-size:10px;color:var(--mt);max-width:140px">'+safeBio+'</div></div></div></td>'
@@ -9092,6 +9095,10 @@ function renderMaterials() {
           + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+avHtml
           +   '<div><div style="font-weight:700;font-size:14px;color:var(--dark)">'+safeName+'</div>'
           +   '<div style="font-size:11px;color:var(--mt)">#'+safeNum+' · '+safeOwn+'</div></div></div>'
+          + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;padding:6px 9px;background:var(--bg);border-radius:9px">'
+          +   '<span style="font-size:10px;color:var(--mt);flex-shrink:0">ئایدی:</span>'
+          +   '<span style="font-family:monospace;font-size:10.5px;color:var(--mt2);direction:ltr;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1" title="'+safeId+'">'+(safeId||'—')+'</span>'
+          +   (safeId?'<button onclick="navigator.clipboard.writeText(\''+safeId+'\');showToast(\'ئایدی کۆپی کرا\',\'gr\')" style="background:rgba(124,58,237,.1);border:none;border-radius:6px;color:#7c3aed;cursor:pointer;padding:3px 7px;font-size:10px;flex-shrink:0"><i class="fas fa-copy"></i></button>':'')+'</div>'
           + '<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">'
           +   '<div class="act-btn" style="flex:1;justify-content:center;background:rgba(124,58,237,.08);color:#7c3aed;border-color:rgba(124,58,237,.2)" onclick="openEditCard(\''+safeId+'\')"><i class="fas fa-pen-to-square"></i> دەستکاری</div>'
           +   '<div class="act-btn" style="flex:1;justify-content:center;background:rgba(14,165,233,.08);color:#0ea5e9;border-color:rgba(14,165,233,.2)" onclick="viewCard(\''+safeId+'\')"><i class="fas fa-eye"></i> پێشبینی</div>'
