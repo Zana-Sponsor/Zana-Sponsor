@@ -10144,7 +10144,7 @@ async function loadMaterials() {
     // بارکردنی هەموو کارتەکان لەگەڵ user_id
     const { data: cards, error } = await sb
       .from('proxolink_cards')
-      .select('id,user_id,name,bio,style,color_theme,card_number,html_content,created_at')
+      .select('id,user_id,name,bio,style,color_theme,card_number,html_content,created_at,avatar_b64,platforms,tt')
       .order('created_at', { ascending: false });
     if (error) throw error;
 
