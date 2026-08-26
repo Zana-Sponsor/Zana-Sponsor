@@ -585,6 +585,66 @@ button,a,.home-card,.ad-card,.plist-item,.bn,.hbal,.hcoins,.notif-btn{touch-acti
 .home-card-title{font-size:15px;font-weight:700;color:var(--dark);}
 .home-card-sub{font-size:13px;color:var(--mt);margin-top:2px;}
 .home-card-arr{color:var(--mt);font-size:14px;}
+/* ══ BEST STATISTICS RANKING ══ */
+.best-ranking-card{direction:rtl;background:var(--w);border:1px solid rgba(232,234,240,.9);border-radius:22px;padding:17px 15px 15px;margin:16px 0;box-shadow:0 5px 18px rgba(0,0,0,.045);}
+.best-ranking-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
+.best-ranking-title{font-size:15px;font-weight:900;color:var(--dark);}
+.best-ranking-all-btn{border:0;border-radius:999px;background:rgba(14,120,255,.09);color:#0E78FF;padding:7px 13px;font:800 11px 'R',sans-serif;cursor:pointer;white-space:nowrap;}
+.best-ranking-carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;padding:1px 1px 6px;scrollbar-width:none;direction:rtl;}
+.best-ranking-carousel::-webkit-scrollbar{display:none;}
+.best-ranking-slide{position:relative;flex:0 0 min(82%,290px);scroll-snap-align:start;border:1px solid var(--b1);border-radius:19px;overflow:hidden;background:var(--w);}
+.best-ranking-thumb{height:145px;background:linear-gradient(135deg,rgba(14,120,255,.11),rgba(14,120,255,.035));position:relative;overflow:hidden;}
+.best-ranking-thumb img{width:100%;height:100%;display:block;object-fit:cover;}
+.best-ranking-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(14,120,255,.55);font-size:30px;}
+.best-rank-badge{position:absolute;top:10px;right:10px;min-width:31px;height:31px;padding:0 8px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;gap:4px;color:#fff;background:rgba(15,23,42,.78);border:1px solid rgba(255,255,255,.45);font:900 12px 'Inter',sans-serif;direction:ltr;box-shadow:0 4px 12px rgba(0,0,0,.2);}
+.best-rank-badge svg{width:16px;height:16px;}
+.best-rank-badge.gold{background:linear-gradient(145deg,#f7c948,#b7791f);}
+.best-rank-badge.silver{background:linear-gradient(145deg,#cbd5e1,#64748b);}
+.best-rank-badge.bronze{background:linear-gradient(145deg,#d99a5b,#8b4513);}
+.best-ranking-body{padding:13px 13px 14px;}
+.best-ranking-name{font-size:13px;font-weight:900;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:10px;}
+.best-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.best-stats-row.two{grid-template-columns:repeat(2,1fr);}
+.best-stat{min-width:0;padding:8px 6px;border-radius:11px;background:var(--bg);text-align:center;}
+.best-stat-value{font:900 12px 'Inter',sans-serif;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;}
+.best-stat-label{font-size:9.5px;color:var(--mt);font-weight:700;margin-top:3px;white-space:nowrap;}
+.best-ranking-dots{display:flex;justify-content:center;gap:5px;margin-top:10px;direction:ltr;}
+.best-ranking-dot{width:6px;height:6px;border-radius:50%;background:var(--b1);}
+.best-ranking-dot.on{width:18px;border-radius:8px;background:#0E78FF;}
+.best-page-head{direction:rtl;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.best-page-back{width:34px;height:34px;border:1px solid var(--b1);border-radius:11px;background:var(--w);color:var(--mt);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.best-page-title{font-size:21px;font-weight:900;color:var(--dark);}
+.best-page-sub{font-size:11.5px;color:var(--mt);margin-top:3px;}
+.best-full-list{direction:rtl;display:grid;gap:12px;}
+.best-full-card{background:var(--w);border:1px solid var(--b1);border-radius:19px;overflow:hidden;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.035);transition:box-shadow .2s ease,border-color .2s ease;}
+.best-full-card.open{border-color:rgba(14,120,255,.3);box-shadow:0 8px 24px rgba(14,120,255,.09);}
+.best-full-top{display:flex;align-items:center;gap:12px;padding:12px;}
+.best-full-thumb{width:102px;height:84px;border-radius:14px;overflow:hidden;background:var(--bg);position:relative;flex-shrink:0;}
+.best-full-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.best-full-thumb .best-rank-badge{top:7px;right:7px;min-width:25px;height:25px;padding:0 5px;border-radius:8px;font-size:10px;}
+.best-full-thumb .best-rank-badge svg{width:13px;height:13px;}
+.best-full-copy{min-width:0;flex:1;}
+.best-full-name{font-size:13px;font-weight:900;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:9px;}
+.best-full-stats{display:flex;flex-wrap:wrap;gap:6px;}
+.best-full-stats .best-stat{padding:6px 8px;display:flex;align-items:center;gap:5px;}
+.best-full-stats .best-stat-label{margin:0;}
+.best-full-expand{color:var(--mt);font-size:12px;transition:transform .2s ease;flex-shrink:0;}
+.best-full-card.open .best-full-expand{transform:rotate(180deg);}
+.best-full-extra{max-height:0;overflow:hidden;opacity:0;transition:max-height .28s ease,opacity .22s ease,padding .28s ease;padding:0 12px;}
+.best-full-card.open .best-full-extra{max-height:180px;opacity:1;padding:0 12px 13px;}
+.best-full-divider{height:1px;background:var(--b1);margin-bottom:11px;}
+.best-full-chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px;}
+.best-full-chip{background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:9px 10px;min-width:0;}
+.best-full-chip-label{font-size:9.5px;color:var(--mt);font-weight:700;margin-bottom:4px;}
+.best-full-chip-value{font-size:12px;color:var(--dark);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.best-video-link{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;box-sizing:border-box;padding:9px 12px;border-radius:11px;background:rgba(14,120,255,.08);color:#0E78FF;font-size:11.5px;font-weight:800;text-decoration:none;}
+.best-empty{direction:rtl;background:var(--w);border:1px dashed var(--b1);border-radius:18px;padding:30px 18px;text-align:center;color:var(--mt);}
+.best-empty i{font-size:24px;color:rgba(14,120,255,.55);margin-bottom:10px;}
+.best-loading-grid{display:grid;gap:10px;}
+.best-loading-card{height:155px;border-radius:18px;background:linear-gradient(90deg,var(--bg) 25%,rgba(255,255,255,.65) 37%,var(--bg) 63%);background-size:400% 100%;animation:bestLoading 1.3s ease infinite;}
+@keyframes bestLoading{0%{background-position:100% 0}100%{background-position:-100% 0}}
+@media(max-width:420px){.best-ranking-card{padding:15px 12px 13px;}.best-ranking-slide{flex-basis:86%;}.best-full-top{padding:10px;gap:9px;}.best-full-thumb{width:91px;height:78px;}.best-full-stats{gap:4px;}.best-full-stats .best-stat{padding:5px 6px;}}
+
 
 /* ══ PROFILE ══ */
 .prof-top{background:var(--w);border:1px solid var(--b1);border-radius:20px;padding:24px 20px;margin-bottom:14px;display:flex;align-items:center;gap:14px;}
@@ -4283,8 +4343,26 @@ window.PROXO_SPLASH_MIN_MS = 2600;
       <i class="fas fa-chevron-left home-card-arr"></i>
     </div>
 
+    <section class="best-ranking-card" id="homeBestStats" aria-labelledby="homeBestStatsTitle">
+      <div class="best-ranking-head">
+        <div class="best-ranking-title" id="homeBestStatsTitle">ڕێزبەندی باشترین ئامارەکان</div>
+        <button type="button" class="best-ranking-all-btn" onclick="event.stopPropagation();goPage('beststats')">هەموو</button>
+      </div>
+      <div id="homeBestStatsBody">
+        <div class="best-loading-grid"><div class="best-loading-card"></div></div>
+      </div>
+    </section>
 
     <div style="text-align:center;padding:10px 0 6px;font-size:11px;color:var(--mt);font-family:'Inter',sans-serif;letter-spacing:.5px">v<span id="dashVersionLbl">1.0.1</span></div>
+  </div>
+
+  <!-- BEST STATISTICS -->
+  <div class="pg" id="pgBeststats">
+    <div class="best-page-head">
+      <button type="button" class="best-page-back" onclick="goPage('home')" aria-label="گەڕانەوە"><i class="fas fa-arrow-right"></i></button>
+      <div><div class="best-page-title">ڕێزبەندی باشترین ئامارەکان</div><div class="best-page-sub">ڕیکلامە هەڵبژێردراوەکان لەلایەن بەڕێوەبەرەوە</div></div>
+    </div>
+    <div id="bestStatsFullBody"><div class="best-loading-grid"><div class="best-loading-card"></div><div class="best-loading-card"></div></div></div>
   </div>
 
   <!-- PROFILE -->
@@ -9179,7 +9257,7 @@ async function exchangeCoins(){
 }
 function openWA(){window.open('https://wa.me/9647758887488','_blank');}
 
-const pages=['home','profile','create','myads','proxolink','notifications','support','tutorials','tutplayer','txhistory','promocodes','adcalc','wallet','challenges','levels','gifts'];
+const pages=['home','beststats','profile','create','myads','proxolink','notifications','support','tutorials','tutplayer','txhistory','promocodes','adcalc','wallet','challenges','levels','gifts'];
 let _currentPage='home';
 // ── ڕێڕەوی URL: هەمیشە /#name — هەرگیز /name ──
 // هەر path ێک بگۆڕە بۆ هاش تاوەکو 404 نەیەت لە کاتی نوێکردنەوە/شەیرکردن
@@ -9616,7 +9694,8 @@ function goPage(p, updateUrl = true){
   if(p==='notifications'){loadNotifications();setTimeout(markAllRead,2500);}
   if(p==='support')loadChat();
   if(p==='profile'){loadBal();loadReferralSection();loadProfile();}
-  if(p==='home'){loadCoins();}
+  if(p==='home'){loadCoins();loadBestStatisticsHome();}
+  if(p==='beststats'){loadBestStatisticsFull();}
   if(p==='create'){selectedAssetId=null;cardId=null;goal='messages';days=1;dailyUSD=10;dailyCost=18500;budget=18500;budgetTier=0;tierIndex=0;gender='all';adLocation='all';document.querySelectorAll('.loc-chips-wrap .fchip').forEach(function(x){x.classList.toggle('on',x.dataset.loc==='all');});document.querySelectorAll('.gender-pill').forEach(function(x){x.classList.toggle('on',x.dataset.gen==='all');});document.querySelectorAll('.bud-daily-btn').forEach((b,i)=>{b.classList.toggle('sel',i===0);});clearAssetSel&&clearAssetSel();document.querySelectorAll('.card-pick').forEach(x=>x.classList.remove('sel'));document.querySelectorAll('.goal-tab,.goal-tab-v2,.gseg-opt').forEach(x=>x.classList.toggle('on',x.dataset.g==='messages'));setTimeout(function(){if(typeof _animGoalPill==='function')_animGoalPill();if(typeof _animGenDark==='function')_animGenDark();if(typeof _animLocDark==='function')_animLocDark();},60);var _ani=document.getElementById('adNameTitle');var _nd2=new Date();if(_ani)_ani.value='New Ad '+_nd2.toLocaleDateString('en-GB').replace(/\//g,'/');var _tl2=document.getElementById('todayLbl');if(_tl2)_tl2.textContent=_nd2.toLocaleDateString('en-GB').replace(/\//g,'/');const _al=document.getElementById('adLink');if(_al)_al.value='';const _ac=document.getElementById('adCode');if(_ac)_ac.value='';const _pi=document.getElementById('promoCodeInp');if(_pi)_pi.value='';if(typeof clearPromoResult==='function')clearPromoResult();_levelDiscountPercent=0;_levelDiscountName='';if(typeof _directDiscountApplied!=='undefined'){_directDiscountApplied=null;}const _ddr=document.getElementById('bdDirectDiscountRow');if(_ddr)_ddr.style.display='none';updateBudgetDisplay();loadAssetsForDropdown();if(typeof _loadAdLevelDiscount==='function')_loadAdLevelDiscount();}
   if(p==='txhistory')loadTxHistory();
   if(p==='tutorials')loadTutorials();
@@ -9652,6 +9731,135 @@ function _onHashNav() {
 
 window.addEventListener('popstate', _onHashNav);
 window.addEventListener('hashchange', _onHashNav);
+
+let _bestStatsAds=[];
+let _bestStatsRequest=null;
+let _bestStatsRealtime=null;
+function _bestStatsEsc(value){
+  return String(value??'').replace(/[&<>"']/g,function(ch){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch];});
+}
+function _bestStatsNumber(value){
+  if(value===null||value===undefined||value==='')return '—';
+  const number=Number(value);
+  return Number.isFinite(number)?number.toLocaleString('en-US'):'—';
+}
+function _bestStatsSpend(value){
+  if(value===null||value===undefined||value==='')return '—';
+  const number=Number(value);
+  return Number.isFinite(number)?'$'+number.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+}
+function _bestStatsBudget(value){
+  if(value===null||value===undefined||value==='')return '—';
+  const number=Number(value);
+  return Number.isFinite(number)?'$'+number.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+}
+function _bestStatsObjective(goal){
+  return({messages:'نامە',views:'بینراو',engagement:'کارلێک و بینەر'})[goal]||String(goal||'—');
+}
+function _bestStatsImage(ad){
+  const source=String(ad?.thumbnail_url||'');
+  const safe=/^(data:image\/|https?:\/\/)/i.test(source)?_bestStatsEsc(source):'';
+  return safe?'<img src="'+safe+'" alt="" loading="lazy" decoding="async">':'<div class="best-ranking-placeholder"><i class="fas fa-image"></i></div>';
+}
+function _bestStatsRankBadge(rank){
+  const r=Number(rank)||0;
+  if(r===1)return '<span class="best-rank-badge gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 4 4 3 4-3 3 2v5c0 3.2-2.4 6.1-7 8-4.6-1.9-7-4.8-7-8V6l3-2Z"></path><path d="m9.5 11 1.7 1.7 3.5-3.5"></path></svg></span>';
+  if(r===2)return '<span class="best-rank-badge silver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><path d="M8.5 9.5h5l-3.5 3h2a2 2 0 1 1-1.5 3"></path></svg></span>';
+  if(r===3)return '<span class="best-rank-badge bronze"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"></path><path d="M8 6H5a4 4 0 0 0 4 4M16 6h3a4 4 0 0 1-4 4M12 12v5M8 20h8"></path></svg></span>';
+  return '<span class="best-rank-badge">'+r+'</span>';
+}
+function _bestStatsMetrics(ad,compact){
+  const stats=[];
+  if(String(ad?.goal||'').toLowerCase()==='messages')stats.push({label:'کلیک',value:_bestStatsNumber(ad.clicks)});
+  stats.push({label:'بینراو',value:_bestStatsNumber(ad.impressions)});
+  stats.push({label:'خەرجکراو',value:_bestStatsSpend(ad.spend)});
+  const use=compact?stats.slice(0):stats;
+  return '<div class="best-stats-row '+(use.length===2?'two':'')+'">'+use.map(s=>'<div class="best-stat"><div class="best-stat-value">'+_bestStatsEsc(s.value)+'</div><div class="best-stat-label">'+s.label+'</div></div>').join('')+'</div>';
+}
+function _bestStatsSafeVideoUrl(value){
+  try{
+    const url=new URL(String(value||''),window.location.href);
+    return /^https?:$/.test(url.protocol)?url.href:'';
+  }catch(e){return '';}
+}
+function _bestStatsVideoAction(ad){
+  const url=_bestStatsSafeVideoUrl(ad?.video_link);
+  if(!url)return '<div class="best-video-link" style="opacity:.55;cursor:default"><i class="fas fa-link-slash"></i> لینک بەردەست نییە</div>';
+  return '<a class="best-video-link" href="'+_bestStatsEsc(url)+'" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"><i class="fas fa-arrow-up-right-from-square"></i> بینینی ڤیدیۆ</a>';
+}
+async function _fetchBestStatsAds(){
+  if(!sb)throw new Error('Supabase is not ready');
+  const{data,error}=await sb.from('pa_ads')
+    .select('id,title,goal,clicks,impressions,spend,budget,thumbnail_url,video_link,is_featured,featured_sort,featured_month,featured_year,created_at')
+    .eq('is_featured',true)
+    .order('featured_sort',{ascending:true})
+    .order('created_at',{ascending:false});
+  if(error)throw error;
+  return Array.isArray(data)?data:[];
+}
+function _bestStatsEmpty(message,icon){
+  return '<div class="best-empty"><i class="fas '+(icon||'fa-chart-simple')+'"></i><div>'+message+'</div></div>';
+}
+function _bestStatsError(){
+  return _bestStatsEmpty('نەتوانرا باشترین ئامارەکان باربکرێن — تکایە دووبارە هەوڵبدەرەوە','fa-triangle-exclamation');
+}
+function _bestStatsLoading(count){
+  return '<div class="best-loading-grid">'+Array.from({length:count||1},function(){return '<div class="best-loading-card"></div>';}).join('')+'</div>';
+}
+function _renderBestStatsHome(ads){
+  const body=document.getElementById('homeBestStatsBody');
+  if(!body)return;
+  if(!ads.length){body.innerHTML=_bestStatsEmpty('هیچ ڕیکلامێکی باشترین هەڵنەبژێردراوە');return;}
+  const slides=ads.slice(0,6);
+  body.innerHTML='<div class="best-ranking-carousel">'+slides.map(function(ad,index){
+    return '<article class="best-ranking-slide">'+
+      '<div class="best-ranking-thumb">'+_bestStatsImage(ad)+_bestStatsRankBadge(index+1)+'</div>'+
+      '<div class="best-ranking-body"><div class="best-ranking-name">'+_bestStatsEsc(ad.title||'ڕیکلامی بێ ناونیشان')+'</div>'+_bestStatsMetrics(ad,true)+'</div>'+
+      '</article>';
+  }).join('')+'</div>'+ (slides.length>1?'<div class="best-ranking-dots">'+slides.map(function(_,i){return '<span class="best-ranking-dot '+(i===0?'on':'')+'"></span>';}).join('')+'</div>':'');
+}
+function _renderBestStatsFull(ads){
+  const body=document.getElementById('bestStatsFullBody');
+  if(!body)return;
+  if(!ads.length){body.innerHTML=_bestStatsEmpty('هیچ ڕیکلامێکی باشترین هەڵنەبژێردراوە');return;}
+  body.innerHTML='<div class="best-full-list">'+ads.map(function(ad,index){
+    const id=_bestStatsEsc(ad.id);
+    const objective=_bestStatsEsc(_bestStatsObjective(ad.goal));
+    return '<article class="best-full-card" data-best-id="'+id+'" onclick="toggleBestStatsCard(\''+id+'\')">'+
+      '<div class="best-full-top"><div class="best-full-thumb">'+_bestStatsImage(ad)+_bestStatsRankBadge(index+1)+'</div>'+ 
+      '<div class="best-full-copy"><div class="best-full-name">'+_bestStatsEsc(ad.title||'ڕیکلامی بێ ناونیشان')+'</div>'+_bestStatsMetrics(ad,false)+'</div>'+ 
+      '<i class="fas fa-chevron-down best-full-expand"></i></div>'+ 
+      '<div class="best-full-extra"><div class="best-full-divider"></div><div class="best-full-chips">'+
+      '<div class="best-full-chip"><div class="best-full-chip-label">ئامانج</div><div class="best-full-chip-value">'+objective+'</div></div>'+ 
+      '<div class="best-full-chip"><div class="best-full-chip-label">بودجەی ڕیکلام</div><div class="best-full-chip-value" dir="ltr">'+_bestStatsEsc(_bestStatsBudget(ad.budget))+'</div></div></div>'+_bestStatsVideoAction(ad)+'</div>'+ 
+      '</article>';
+  }).join('')+'</div>';
+}
+function toggleBestStatsCard(id){
+  const card=document.querySelector('.best-full-card[data-best-id="'+CSS.escape(String(id))+'"]');
+  if(card)card.classList.toggle('open');
+}
+async function _loadBestStats(target){
+  const body=document.getElementById(target==='full'?'bestStatsFullBody':'homeBestStatsBody');
+  if(body)body.innerHTML=_bestStatsLoading(target==='full'?2:1);
+  try{
+    if(!_bestStatsRequest)_bestStatsRequest=_fetchBestStatsAds().finally(function(){_bestStatsRequest=null;});
+    _bestStatsAds=await _bestStatsRequest;
+    if(target==='full')_renderBestStatsFull(_bestStatsAds);else _renderBestStatsHome(_bestStatsAds);
+  }catch(error){
+    console.warn('[best statistics]',error);
+    if(body)body.innerHTML=_bestStatsError();
+  }
+}
+function _ensureBestStatsRealtime(){
+  if(_bestStatsRealtime||!sb)return;
+  _bestStatsRealtime=sb.channel('best_statistics_rt').on('postgres_changes',{event:'*',schema:'public',table:'pa_ads'},function(){
+    if(document.getElementById('pgHome')?.classList.contains('on'))_loadBestStats('home');
+    if(document.getElementById('pgBeststats')?.classList.contains('on'))_loadBestStats('full');
+  }).subscribe();
+}
+function loadBestStatisticsHome(){_ensureBestStatsRealtime();_loadBestStats('home');}
+function loadBestStatisticsFull(){_ensureBestStatsRealtime();_loadBestStats('full');}
 
 let _homeBannerNav='create';
 function homeBannerClick(){
