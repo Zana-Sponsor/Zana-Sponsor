@@ -356,30 +356,22 @@ a.vlink:hover{text-decoration:underline}
 <script>
 // ══════════════════════════════════════════
 //  ⚙️  CONFIGURATION
-//  URL و KEY ی خۆت لێرە بنووسە
+//  هیچ کلیلێکی Supabase لێرە نییە — هەموو داواکارییەکان
+//  دەچنە /api/ads (Vercel serverless function) کە service_role
+//  key لەلایەن سێرڤەرەوە بەکاردەهێنێت، نەک لە browser.
 // ══════════════════════════════════════════
-const SUPABASE_URL = 'https://cojchkwssmasiejcgvbk.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvamNoa3dzc21hc2llamNndmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTE1MTIsImV4cCI6MjA5Mjg4NzUxMn0.RCALy3wpKHGAkmXWcBqEb_QFEUmh6ErdRbfrBmagvtw';
+const API_BASE = '/api/ads';
 const AUTO_REFRESH_SEC = 30;
 // ══════════════════════════════════════════
 
 let ADS=[], editingId=null, refreshTimer=null, countdown=AUTO_REFRESH_SEC;
 
-const H = { headers:{ 'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Accept':'application/json' }};
-
 async function load(silent=false){
   if(!silent) setStatus('داتا دەهێنرێت...','spin');
   try{
-    let rows=[],from=0,PAGE=1000;
-    while(true){
-      const r=await fetch(`${SUPABASE_URL}/rest/v1/pa_ads?select=*&order=created_at.desc&offset=${from}&limit=${PAGE}`,H);
-      if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
-      const chunk=await r.json();
-      rows=rows.concat(chunk);
-      if(chunk.length<PAGE)break;
-      from+=PAGE;
-    }
-    ADS=rows;
+    const r=await fetch(API_BASE);
+    if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
+    ADS=await r.json();
     updateStats();render();
     const t=new Date().toLocaleTimeString();
     document.getElementById('ri-time').textContent=t;
@@ -652,9 +644,9 @@ async function saveEdit(){
   };
 
   try{
-    const res=await fetch(`${SUPABASE_URL}/rest/v1/pa_ads?id=eq.${editingId}`,{
+    const res=await fetch(`${API_BASE}?id=${editingId}`,{
       method:'PATCH',
-      headers:{...H.headers,'Content-Type':'application/json','Prefer':'return=minimal'},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload)
     });
     if(!res.ok){const t=await res.text();throw new Error(t);}
@@ -668,9 +660,9 @@ async function saveEdit(){
 async function toggleStatus(id,cur){
   const next=cur==='active'?'paused':'active';
   try{
-    const res=await fetch(`${SUPABASE_URL}/rest/v1/pa_ads?id=eq.${id}`,{
+    const res=await fetch(`${API_BASE}?id=${id}`,{
       method:'PATCH',
-      headers:{...H.headers,'Content-Type':'application/json','Prefer':'return=minimal'},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({status:next})
     });
     if(!res.ok){const t=await res.text();throw new Error(t);}
@@ -683,7 +675,7 @@ async function deleteAd(id){
   const ad=ADS.find(a=>a.id===id);
   if(!confirm('دڵنیایت لە سڕینەوەی "'+( ad?.title||'ڕیکلام #'+ad?.ad_number||id.slice(0,8))+'"؟'))return;
   try{
-    const res=await fetch(`${SUPABASE_URL}/rest/v1/pa_ads?id=eq.${id}`,{method:'DELETE',headers:H.headers});
+    const res=await fetch(`${API_BASE}?id=${id}`,{method:'DELETE'});
     if(!res.ok){const t=await res.text();throw new Error(t);}
     showToast('🗑 سڕایەوە','ok');
     await load(true);
