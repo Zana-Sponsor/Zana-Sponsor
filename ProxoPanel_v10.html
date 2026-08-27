@@ -220,6 +220,16 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .feat-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800;background:rgba(245,158,11,.12);color:#d97706;border:1px solid rgba(245,158,11,.3);}
 .act-grp{display:flex;gap:6px;flex-wrap:wrap;}
 
+/* ══ AD PERFORMANCE CARDS ══ */
+.ad-performance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0;}
+.ad-performance-card{--metric:#2563eb;--metric-soft:rgba(37,99,235,.06);position:relative;min-width:0;overflow:hidden;background:linear-gradient(145deg,var(--metric-soft),var(--w) 78%);border:1px solid var(--b1);border-radius:14px;padding:12px 10px 11px;text-align:center;box-shadow:0 5px 18px rgba(15,23,42,.035);}
+.ad-performance-card::after{content:'';position:absolute;width:42px;height:42px;border-radius:50%;background:var(--metric-soft);left:-16px;bottom:-18px;pointer-events:none;}
+.ad-performance-icon{width:30px;height:30px;border-radius:9px;margin:0 auto 8px;background:var(--metric-soft);color:var(--metric);display:flex;align-items:center;justify-content:center;font-size:12px;}
+.ad-performance-value{direction:ltr;font-family:'Inter',sans-serif;font-size:clamp(16px,4.8vw,21px);font-weight:900;line-height:1.15;color:var(--metric);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ad-performance-label{font-size:10.5px;font-weight:800;color:var(--dark);margin-top:5px;white-space:nowrap;}
+.ad-performance-note{direction:ltr;font-family:'Inter','R',sans-serif;font-size:9px;color:var(--mt);margin-top:3px;min-height:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+@media(max-width:380px){.ad-performance-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+
 /* ══ MODAL ══ */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);z-index:5000;display:none;align-items:flex-end;justify-content:center;padding:0;}
 @media(min-width:601px){.overlay{align-items:center;padding:20px;}}
@@ -3946,44 +3956,38 @@ async function showAdDetail(id){
       <div class="price-row total"><span class="plbl">کۆی گشتی</span><span class="pval" style="color:var(--gr)">${finalIQD.toLocaleString()+' IQD'}</span></div>
     </div>`;
 
-  // ── ئاماری ڕاستەقینە لە خشتەی pa_ads: impressions/clicks/spend (+ prev_* بۆ کاتێک TikTok ID گۆڕدراوە) ──
-  const adViews=parseInt(a.impressions||0)+parseInt(a.prev_impressions||0);
-  const adClicks=parseInt(a.clicks||0);
-  const adSpent=parseFloat(a.spend||0)+parseFloat(a.prev_spend||0);
-  const adCTR=adViews>0?(adClicks/adViews*100).toFixed(2):0;
+  // ── کۆی ئاماری ئێستا + TikTok ID ـەکانی پێشوو ──
+  const _int=v=>Number.parseInt(v||0,10)||0;
+  const _num=v=>Number.parseFloat(v||0)||0;
+  const adPrevViews=_int(a.prev_impressions);
+  const adPrevClicks=_int(a.prev_clicks);
+  const adPrevSpent=_num(a.prev_spend);
+  const adPrevLikes=_int(a.prev_likes);
+  const adPrevComments=_int(a.prev_comments);
+  const adPrevFollows=_int(a.prev_follows);
+  const adViews=_int(a.impressions)+adPrevViews;
+  const adClicks=_int(a.clicks)+adPrevClicks;
+  const adSpent=_num(a.spend)+adPrevSpent;
+  const adLikes=_int(a.likes)+adPrevLikes;
+  const adComments=_int(a.comments)+adPrevComments;
+  const adFollows=_int(a.follows)+adPrevFollows;
   const adSpentPct=adPrice>0?Math.min(100,Math.round(adSpent/adPrice*100)):0;
-  const adLikes=parseInt(a.likes||0);
-  const adComments=parseInt(a.comments||0);
-  const adFollows=parseInt(a.follows||0);
+  const _prevNote=(value,prefix='')=>value>0?`پێشوو: ${prefix}${value.toLocaleString('en-US',{maximumFractionDigits:2})}`:'کۆی گشتی';
+  const _metricCard=(icon,label,value,color,soft,note)=>`<div class="ad-performance-card" style="--metric:${color};--metric-soft:${soft}">
+    <div class="ad-performance-icon"><i class="fas ${icon}"></i></div>
+    <div class="ad-performance-value">${value}</div>
+    <div class="ad-performance-label">${label}</div>
+    <div class="ad-performance-note">${note}</div>
+  </div>`;
 
   const adStatsHTML=`
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0">
-      <div style="background:rgba(37,99,235,.05);border:1.5px solid rgba(37,99,235,.18);border-radius:12px;padding:11px;text-align:center">
-        <div style="font-size:22px;font-weight:900;color:#2563eb;font-family:'Inter'">${adViews.toLocaleString()}</div>
-        <div style="font-size:10.5px;color:var(--mt);margin-top:3px"><i class="fas fa-eye" style="font-size:9px;margin-left:3px"></i>بینین</div>
-      </div>
-      <div style="background:rgba(245,158,11,.05);border:1.5px solid rgba(245,158,11,.18);border-radius:12px;padding:11px;text-align:center">
-        <div style="font-size:22px;font-weight:900;color:#f59e0b;font-family:'Inter'">${adClicks.toLocaleString()}</div>
-        <div style="font-size:10.5px;color:var(--mt);margin-top:3px"><i class="fas fa-hand-pointer" style="font-size:9px;margin-left:3px"></i>کلیک</div>
-      </div>
-      <div style="background:rgba(168,85,247,.05);border:1.5px solid rgba(168,85,247,.18);border-radius:12px;padding:11px;text-align:center">
-        <div style="font-size:16px;font-weight:900;color:#a855f7;font-family:'Inter'">${adCTR}%</div>
-        <div style="font-size:10.5px;color:var(--mt);margin-top:3px"><i class="fas fa-chart-line" style="font-size:9px;margin-left:3px"></i>CTR</div>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 14px">
-      <div style="background:rgba(225,29,72,.05);border:1.5px solid rgba(225,29,72,.18);border-radius:12px;padding:11px;text-align:center">
-        <div style="font-size:22px;font-weight:900;color:#e11d48;font-family:'Inter'">${adLikes.toLocaleString()}</div>
-        <div style="font-size:10.5px;color:var(--mt);margin-top:3px"><i class="fas fa-heart" style="font-size:9px;margin-left:3px"></i>لایک</div>
-      </div>
-      <div style="background:rgba(14,165,233,.05);border:1.5px solid rgba(14,165,233,.18);border-radius:12px;padding:11px;text-align:center">
-        <div style="font-size:22px;font-weight:900;color:#0ea5e9;font-family:'Inter'">${adComments.toLocaleString()}</div>
-        <div style="font-size:10.5px;color:var(--mt);margin-top:3px"><i class="fas fa-comment" style="font-size:9px;margin-left:3px"></i>کۆمێنت</div>
-      </div>
-      <div style="background:rgba(22,163,74,.05);border:1.5px solid rgba(22,163,74,.18);border-radius:12px;padding:11px;text-align:center">
-        <div style="font-size:22px;font-weight:900;color:#16a34a;font-family:'Inter'">${adFollows.toLocaleString()}</div>
-        <div style="font-size:10.5px;color:var(--mt);margin-top:3px"><i class="fas fa-user-plus" style="font-size:9px;margin-left:3px"></i>فۆڵۆ</div>
-      </div>
+    <div class="ad-performance-grid">
+      ${_metricCard('fa-hand-pointer','کلیک',adClicks.toLocaleString(),'#f59e0b','rgba(245,158,11,.10)',_prevNote(adPrevClicks))}
+      ${_metricCard('fa-eye','بینین',adViews.toLocaleString(),'#2563eb','rgba(37,99,235,.09)',_prevNote(adPrevViews))}
+      ${_metricCard('fa-coins','خەرجکراو','$'+adSpent.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),'#7c3aed','rgba(124,58,237,.09)',adPrevSpent>0?_prevNote(adPrevSpent,'$'):Math.round(adSpent*1800).toLocaleString()+' د.ع')}
+      ${_metricCard('fa-heart','لایک',adLikes.toLocaleString(),'#e11d48','rgba(225,29,72,.09)',_prevNote(adPrevLikes))}
+      ${_metricCard('fa-comment','کۆمێنت',adComments.toLocaleString(),'#0ea5e9','rgba(14,165,233,.09)',_prevNote(adPrevComments))}
+      ${_metricCard('fa-user-plus','فۆڵۆ',adFollows.toLocaleString(),'#16a34a','rgba(22,163,74,.09)',_prevNote(adPrevFollows))}
     </div>
     <div style="background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:12px;margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
@@ -4152,12 +4156,12 @@ function _renderAdsDataStats(){
   const total=_allAdsData.length;
   const active=_allAdsData.filter(a=>a.status==='active').length;
   const totalViews=_allAdsData.reduce((s,a)=>s+parseInt(a.impressions||0)+parseInt(a.prev_impressions||0),0);
-  const totalClicks=_allAdsData.reduce((s,a)=>s+parseInt(a.clicks||0),0);
+  const totalClicks=_allAdsData.reduce((s,a)=>s+parseInt(a.clicks||0)+parseInt(a.prev_clicks||0),0);
   const totalSpent=_allAdsData.reduce((s,a)=>s+parseFloat(a.spend||0)+parseFloat(a.prev_spend||0),0);
   const totalBudget=_allAdsData.reduce((s,a)=>s+parseFloat(a.budget||0),0);
-  const totalLikes=_allAdsData.reduce((s,a)=>s+parseInt(a.likes||0),0);
-  const totalComments=_allAdsData.reduce((s,a)=>s+parseInt(a.comments||0),0);
-  const totalFollows=_allAdsData.reduce((s,a)=>s+parseInt(a.follows||0),0);
+  const totalLikes=_allAdsData.reduce((s,a)=>s+parseInt(a.likes||0)+parseInt(a.prev_likes||0),0);
+  const totalComments=_allAdsData.reduce((s,a)=>s+parseInt(a.comments||0)+parseInt(a.prev_comments||0),0);
+  const totalFollows=_allAdsData.reduce((s,a)=>s+parseInt(a.follows||0)+parseInt(a.prev_follows||0),0);
   const statCard=(ico,color,val,lbl)=>`<div style="background:var(--w);border:1px solid var(--b1);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px">
     <div style="width:42px;height:42px;border-radius:12px;background:${color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;color:${color}"><i class="fas ${ico}"></i></div>
     <div><div style="font-size:20px;font-weight:900;color:var(--dark);font-family:'Inter'">${val}</div><div style="font-size:11px;color:var(--mt);margin-top:2px">${lbl}</div></div>
@@ -4167,6 +4171,7 @@ function _renderAdsDataStats(){
     statCard('fa-rectangle-ad','#a855f7',total,'کۆی ڕیکلامەکان')+
     statCard('fa-play-circle','#16a34a',active,'ڕیکلامی چالاک')+
     statCard('fa-eye','#2563eb',totalViews.toLocaleString(),'کۆی ئیمپرێشن')+
+    statCard('fa-hand-pointer','#f59e0b',totalClicks.toLocaleString(),'کۆی کلیک')+
     statCard('fa-dollar-sign','#f59e0b',fmtUSD(totalSpent),'کۆی خەرجکراو (Spend)')+
     statCard('fa-heart','#e11d48',totalLikes.toLocaleString(),'کۆی لایک')+
     statCard('fa-comment','#0ea5e9',totalComments.toLocaleString(),'کۆی کۆمێنت')+
@@ -4196,6 +4201,10 @@ function renderAdsDataTable(q=''){
   const fmtIQD=v=>(Math.round(parseFloat(v||0)*1800)).toLocaleString()+' IQD';
   const totSpend=a=>parseFloat(a.spend||0)+parseFloat(a.prev_spend||0);
   const totImpr=a=>parseInt(a.impressions||0)+parseInt(a.prev_impressions||0);
+  const totClicks=a=>parseInt(a.clicks||0)+parseInt(a.prev_clicks||0);
+  const totLikes=a=>parseInt(a.likes||0)+parseInt(a.prev_likes||0);
+  const totComments=a=>parseInt(a.comments||0)+parseInt(a.prev_comments||0);
+  const totFollows=a=>parseInt(a.follows||0)+parseInt(a.prev_follows||0);
   const pctSpent=a=>{const b=parseFloat(a.budget||0);const s=totSpend(a);if(!b)return 0;return Math.min(100,Math.round(s/b*100));};
 
   const tableHTML=`<table>
@@ -4221,7 +4230,7 @@ function renderAdsDataTable(q=''){
       const budget=parseFloat(a.budget||0);
       const pct=pctSpent(a);
       const views=totImpr(a);
-      const clicks=parseInt(a.clicks||0);
+      const clicks=totClicks(a);
       const ctr=views>0?(clicks/views*100).toFixed(1):0;
       return`<tr style="cursor:pointer" onclick="showAdDetail('${a.id}')">
         <td style="font-family:monospace;font-size:11px;white-space:nowrap">${_adminPublicAdIdLabel(a)}</td>
@@ -4253,9 +4262,9 @@ function renderAdsDataTable(q=''){
         <td>
           ${a.clicks!=null?`<div><span style="font-family:'Inter';font-weight:800;color:#f59e0b;font-size:13px">${fmtN(clicks)}</span></div>${views>0?`<div style="font-size:9px;color:var(--mt)">CTR: ${ctr}%</div>`:''}`:`<span style="color:var(--mt);font-size:12px">—</span>`}
         </td>
-        <td><span style="font-family:'Inter';font-weight:800;color:#e11d48;font-size:13px">${fmtN(a.likes)}</span></td>
-        <td><span style="font-family:'Inter';font-weight:800;color:#0ea5e9;font-size:13px">${fmtN(a.comments)}</span></td>
-        <td><span style="font-family:'Inter';font-weight:800;color:#16a34a;font-size:13px">${fmtN(a.follows)}</span></td>
+        <td><span style="font-family:'Inter';font-weight:800;color:#e11d48;font-size:13px">${fmtN(totLikes(a))}</span></td>
+        <td><span style="font-family:'Inter';font-weight:800;color:#0ea5e9;font-size:13px">${fmtN(totComments(a))}</span></td>
+        <td><span style="font-family:'Inter';font-weight:800;color:#16a34a;font-size:13px">${fmtN(totFollows(a))}</span></td>
         <td style="font-size:11px">${gs[a.goal]||a.goal||'—'}</td>
         <td><span class="badge ${a.status}">${statusKu(a.status)}</span>${_isUserCancelAd(a.reject_reason)?'<span style="display:block;font-size:9px;background:rgba(245,158,11,.1);color:#d97706;border-radius:5px;padding:2px 6px;margin-top:3px;white-space:nowrap"><i class="fas fa-user-xmark" style="font-size:8px;margin-left:3px"></i>خۆی ڕەتی کردەوە</span>':''}${a.feedback_rating?'<span style="display:flex;align-items:center;gap:3px;font-size:10px;font-weight:800;color:#b45309;background:rgba(255,159,10,.1);border-radius:5px;padding:2px 6px;margin-top:3px;white-space:nowrap"><i class="fas fa-star" style="font-size:8px;color:#ff9f0a"></i>'+a.feedback_rating+'/5</span>':(a.status==='completed'?'<span style="display:block;font-size:9px;color:var(--mt);margin-top:3px;white-space:nowrap"><i class="fas fa-star-half-stroke" style="font-size:8px;margin-left:3px"></i>خاڵی نەدراوە</span>':'')}</td>
         <td style="font-size:10px;color:var(--mt);white-space:nowrap">${new Date(a.created_at).toLocaleDateString('ku')}</td>
@@ -4268,7 +4277,7 @@ function renderAdsDataTable(q=''){
     const budget=parseFloat(a.budget||0);
     const pct=pctSpent(a);
     const views=totImpr(a);
-    const clicks=parseInt(a.clicks||0);
+    const clicks=totClicks(a);
     return`<div class="ad-card" onclick="showAdDetail('${a.id}')">
       <div class="ad-card-top">
         <div class="mini-av" style="background:linear-gradient(135deg,#a855f7,#7c3aed);font-size:10px;font-weight:900;flex-shrink:0">${_adminPublicAdIdLabel(a)}</div>
@@ -4295,15 +4304,15 @@ function renderAdsDataTable(q=''){
       <!-- Engagement row: likes/comments/follows -->
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
         <div style="background:rgba(225,29,72,.05);border:1px solid rgba(225,29,72,.15);border-radius:10px;padding:8px 6px;text-align:center">
-          <div style="font-size:15px;font-weight:900;color:#e11d48;font-family:'Inter'">${parseInt(a.likes||0).toLocaleString()}</div>
+          <div style="font-size:15px;font-weight:900;color:#e11d48;font-family:'Inter'">${totLikes(a).toLocaleString()}</div>
           <div style="font-size:9.5px;color:var(--mt);margin-top:2px"><i class="fas fa-heart" style="font-size:8px;margin-left:2px"></i>لایک</div>
         </div>
         <div style="background:rgba(14,165,233,.05);border:1px solid rgba(14,165,233,.15);border-radius:10px;padding:8px 6px;text-align:center">
-          <div style="font-size:15px;font-weight:900;color:#0ea5e9;font-family:'Inter'">${parseInt(a.comments||0).toLocaleString()}</div>
+          <div style="font-size:15px;font-weight:900;color:#0ea5e9;font-family:'Inter'">${totComments(a).toLocaleString()}</div>
           <div style="font-size:9.5px;color:var(--mt);margin-top:2px"><i class="fas fa-comment" style="font-size:8px;margin-left:2px"></i>کۆمێنت</div>
         </div>
         <div style="background:rgba(22,163,74,.05);border:1px solid rgba(22,163,74,.15);border-radius:10px;padding:8px 6px;text-align:center">
-          <div style="font-size:15px;font-weight:900;color:#16a34a;font-family:'Inter'">${parseInt(a.follows||0).toLocaleString()}</div>
+          <div style="font-size:15px;font-weight:900;color:#16a34a;font-family:'Inter'">${totFollows(a).toLocaleString()}</div>
           <div style="font-size:9.5px;color:var(--mt);margin-top:2px"><i class="fas fa-user-plus" style="font-size:8px;margin-left:2px"></i>فۆڵۆ</div>
         </div>
       </div>
@@ -4906,15 +4915,23 @@ async function saveTikTokEdit(){
     const payload = { tiktok_ad_id: newTtId, tiktok_campaign_id: newCampaignId };
     // ── ئەگەر Ad ID ڕاستەوخۆ گۆڕدرا، هەموو metrics ـی ئێستا پاشەکەوتی کۆی مێژوویی بکە ──
     if(ad.tiktok_ad_id && ad.tiktok_ad_id !== newTtId){
+      payload.previous_tiktok_ad_id = ad.tiktok_ad_id;
       payload.prev_spend = parseFloat(ad.prev_spend||0) + parseFloat(ad.current_spend!=null ? ad.current_spend : ad.spend||0);
       payload.prev_impressions = parseInt(ad.prev_impressions||0) + parseInt(ad.impressions||0);
       payload.prev_clicks = parseInt(ad.prev_clicks||0) + parseInt(ad.clicks||0);
       payload.prev_conversions = parseInt(ad.prev_conversions||0) + parseInt(ad.conversions||0);
+      payload.prev_likes = parseInt(ad.prev_likes||0) + parseInt(ad.likes||0);
+      payload.prev_comments = parseInt(ad.prev_comments||0) + parseInt(ad.comments||0);
+      payload.prev_follows = parseInt(ad.prev_follows||0) + parseInt(ad.follows||0);
+      payload.final_metrics_synced_at = null;
       payload.spend = 0;
       payload.current_spend = 0;
       payload.impressions = 0;
       payload.clicks = 0;
       payload.conversions = 0;
+      payload.likes = 0;
+      payload.comments = 0;
+      payload.follows = 0;
     }
     const {error} = await sb.from('pa_ads').update(payload).eq('id', ad.id);
     if(error && !isNetHttpErr(error)){ showToast('هەڵە: '+error.message,'rd'); btn.disabled=false; btn.innerHTML='<i class="fas fa-save"></i> پاشەکەوتکردن'; return; }
@@ -4987,18 +5004,26 @@ async function submitApproval(){
       tiktok_campaign_id: campaignId,
       start_date: startDateTime,
       end_date: endDate,
-      target_budget: targetBudget
+      target_budget: targetBudget,
+      final_metrics_synced_at: null
     };
     if(ad.tiktok_ad_id && ad.tiktok_ad_id !== tiktokId){
+      _updatePayload.previous_tiktok_ad_id = ad.tiktok_ad_id;
       _updatePayload.prev_spend = parseFloat(ad.prev_spend||0) + parseFloat(ad.current_spend!=null ? ad.current_spend : ad.spend||0);
       _updatePayload.prev_impressions = parseInt(ad.prev_impressions||0) + parseInt(ad.impressions||0);
       _updatePayload.prev_clicks = parseInt(ad.prev_clicks||0) + parseInt(ad.clicks||0);
       _updatePayload.prev_conversions = parseInt(ad.prev_conversions||0) + parseInt(ad.conversions||0);
+      _updatePayload.prev_likes = parseInt(ad.prev_likes||0) + parseInt(ad.likes||0);
+      _updatePayload.prev_comments = parseInt(ad.prev_comments||0) + parseInt(ad.comments||0);
+      _updatePayload.prev_follows = parseInt(ad.prev_follows||0) + parseInt(ad.follows||0);
       _updatePayload.spend = 0;
       _updatePayload.current_spend = 0;
       _updatePayload.impressions = 0;
       _updatePayload.clicks = 0;
       _updatePayload.conversions = 0;
+      _updatePayload.likes = 0;
+      _updatePayload.comments = 0;
+      _updatePayload.follows = 0;
     }
     const {error} = await sb.from('pa_ads').update(_updatePayload).eq('id', _approveAdId);
     if(error && !isNetHttpErr(error)){ showToast('هەڵە: '+error.message,'rd'); btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> پەسەندکردن (Approve)'; return; }
