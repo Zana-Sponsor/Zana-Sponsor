@@ -9842,15 +9842,15 @@ async function startFastPayPayment(amountIQD) {
       return;
     }
 
-    showToast('QR ـی FastPay دروست دەکرێت...', '');
-    openFastPayQRLoading(amount);
-
     const orderId =
       'PX' +
       Date.now().toString() +
       Math.floor(Math.random() * 10000)
         .toString()
         .padStart(4, '0');
+
+    showToast('QR ـی FastPay دروست دەکرێت...', '');
+    openFastPayQRLoading(amount, orderId);
 
     const response = await fetch(FASTPAY_ORDER_WEBHOOK, {
       method: 'POST',
@@ -17894,7 +17894,7 @@ html[data-theme="dark"] .pxth-float button.on{background:#2f3a4f;color:#fff}
 body.fpqr-open{overflow:hidden;overscroll-behavior:none}
 #fastPayQrModal{
   position:fixed;inset:0;z-index:999999;display:flex;flex-direction:column;
-  width:100%;height:100vh;height:100dvh;background:var(--w);
+  width:100%;height:100vh;height:100dvh;background:var(--bg);
   opacity:0;visibility:hidden;transform:translateY(100%);
   transition:transform .32s cubic-bezier(.22,.61,.36,1),opacity .18s ease,visibility 0s linear .32s;
   overscroll-behavior:contain;-webkit-tap-highlight-color:transparent
@@ -17903,10 +17903,11 @@ body.fpqr-open{overflow:hidden;overscroll-behavior:none}
 .fpqr-topbar{
   position:relative;z-index:2;display:flex;align-items:center;justify-content:center;
   min-height:56px;padding:calc(8px + env(safe-area-inset-top)) 16px 8px;
-  border-bottom:1px solid var(--b1);background:var(--w);flex:0 0 auto
+  border-bottom:1px solid var(--b1);background:var(--w);flex:0 0 auto;
+  box-shadow:0 1px 0 rgba(15,23,42,.02)
 }
 .fpqr-topbar-title{display:flex;align-items:center;gap:8px;color:var(--dark);font-size:16px;font-weight:800}
-.fpqr-topbar-title i{color:#c62828;font-size:15px}
+.fpqr-topbar-title i{width:27px;height:27px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(198,40,40,.1);color:#c62828;font-size:13px}
 .fpqr-close{
   position:absolute;right:16px;top:calc(8px + env(safe-area-inset-top));
   width:40px;height:40px;display:flex;align-items:center;justify-content:center;
@@ -17914,47 +17915,83 @@ body.fpqr-open{overflow:hidden;overscroll-behavior:none}
   font-size:17px;cursor:pointer;transition:background .16s,transform .16s
 }
 .fpqr-close:active{transform:scale(.94);background:var(--b1)}
-.fpqr-main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:22px 20px calc(22px + env(safe-area-inset-bottom))}
-.fpqr-inner{width:100%;max-width:430px;min-height:100%;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center}
-.fpqr-brand-mark{
-  width:44px;height:44px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;
-  border-radius:15px;background:rgba(198,40,40,.09);color:#c62828;font-size:21px
+.fpqr-main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(20px + env(safe-area-inset-bottom))}
+.fpqr-inner{width:100%;max-width:460px;min-height:100%;margin:0 auto;display:flex;flex-direction:column;align-items:stretch}
+.fpqr-summary{
+  position:relative;overflow:hidden;width:100%;padding:19px;border-radius:24px;color:#fff;
+  background:linear-gradient(145deg,#111827 0%,#1f2937 100%);
+  box-shadow:0 12px 32px rgba(15,23,42,.16);transition:background .25s ease
 }
-.fpqr-heading{margin:0;color:var(--dark);font-size:21px;font-weight:900;line-height:1.35}
-.fpqr-subtitle{margin:5px 0 0;color:var(--mt);font-size:12.5px;line-height:1.8}
+.fpqr-summary:after{content:"";position:absolute;width:150px;height:150px;left:-55px;top:-70px;border-radius:50%;background:rgba(255,255,255,.08);pointer-events:none}
+#fastPayQrModal[data-state="success"] .fpqr-summary{background:linear-gradient(145deg,#087b48 0%,#10a162 100%);box-shadow:0 12px 32px rgba(8,123,72,.22)}
+#fastPayQrModal[data-state="failed"] .fpqr-summary{background:linear-gradient(145deg,#991b1b 0%,#dc2626 100%);box-shadow:0 12px 32px rgba(185,28,28,.22)}
+#fastPayQrModal[data-state="expired"] .fpqr-summary{background:linear-gradient(145deg,#9a4d07 0%,#d97706 100%);box-shadow:0 12px 32px rgba(180,83,9,.2)}
+.fpqr-summary-top{position:relative;z-index:1;display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:11px}
+.fpqr-state-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:16px;background:rgba(255,255,255,.15);font-size:20px;flex-shrink:0}
+.fpqr-summary-copy{min-width:0;text-align:right}
+.fpqr-eyebrow{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.68);margin-bottom:2px}
+.fpqr-heading{margin:0;color:#fff;font-size:17px;font-weight:900;line-height:1.45;white-space:normal}
+.fpqr-state-badge{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 9px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:800;white-space:nowrap}
+.fpqr-amount-block{position:relative;z-index:1;margin-top:17px;padding-top:14px;border-top:1px solid rgba(255,255,255,.16);display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.fpqr-amount-label{font-size:11px;color:rgba(255,255,255,.7);font-weight:700;padding-bottom:4px}
+.fpqr-amount{color:#fff;font-family:'Inter',sans-serif;font-size:27px;font-weight:900;direction:ltr;line-height:1.2;letter-spacing:-.4px}
+.fpqr-subtitle{position:relative;z-index:1;margin:9px 0 0;color:rgba(255,255,255,.76);font-size:11.5px;line-height:1.8;text-align:right}
+.fpqr-payment-card{width:100%;margin-top:13px;padding:17px;border:1px solid var(--b1);border-radius:24px;background:var(--w);box-shadow:0 8px 26px rgba(15,23,42,.055)}
 .fpqr-qr-shell{
-  width:clamp(180px,min(70vw,36vh),300px);height:clamp(180px,min(70vw,36vh),300px);
-  margin:18px auto 15px;padding:12px;display:grid;place-items:center;position:relative;
-  border:1px solid #e6e9ef;border-radius:24px;background:#fff;
-  box-shadow:0 12px 34px rgba(15,23,42,.10)
+  width:clamp(176px,min(64vw,31vh),270px);height:clamp(176px,min(64vw,31vh),270px);
+  margin:0 auto 13px;padding:11px;display:grid;place-items:center;position:relative;
+  border:1px solid #e5e7eb;border-radius:22px;background:#fff;
+  box-shadow:0 9px 28px rgba(15,23,42,.09)
 }
 #fastPayQrImage{display:none;width:100%;height:100%;object-fit:contain;border-radius:12px}
-.fpqr-loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#64748b;font-size:12px;line-height:1.6}
+.fpqr-loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;color:#64748b;font-size:11.5px;line-height:1.7;text-align:center}
 .fpqr-spinner{width:34px;height:34px;border:3px solid #e2e8f0;border-top-color:#c62828;border-radius:50%;animation:fpqr-spin .8s linear infinite}
-.fpqr-error-icon{font-size:36px;color:#dc2626}
-.fpqr-ok{display:flex;align-items:center;justify-content:center;width:78px;height:78px;border-radius:50%;background:rgba(46,125,50,.1);color:#2e7d32;font-size:42px}
-.fpqr-amount{color:var(--dark);font-family:'Inter',sans-serif;font-size:26px;font-weight:900;direction:ltr;line-height:1.3}
-.fpqr-status{min-height:22px;margin:7px 0 12px;font-size:13px;font-weight:800;line-height:1.7}
-.fpqr-hint{width:100%;padding:11px 14px;border:1px solid var(--b1);border-radius:14px;background:var(--bg);color:var(--mt);font-size:11.5px;line-height:1.9}
-.fpqr-actions{width:100%;margin-top:auto;padding-top:20px}
-.fpqr-done{
-  width:100%;height:50px;border:0;border-radius:15px;background:#0e78ff;color:#fff;
-  font-family:'R',sans-serif;font-size:14px;font-weight:800;cursor:pointer;
-  box-shadow:0 7px 20px rgba(14,120,255,.22);transition:transform .16s,opacity .16s
-}
-.fpqr-done:active{transform:scale(.985);opacity:.92}
+.fpqr-result-mark{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;text-align:center;padding:12px}
+.fpqr-result-icon{width:72px;height:72px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:34px}
+.fpqr-result-mark.is-success .fpqr-result-icon{background:#e9f8f0;color:#079455;box-shadow:0 0 0 8px rgba(7,148,85,.06)}
+.fpqr-result-mark.is-failed .fpqr-result-icon{background:#fef0f0;color:#dc2626;box-shadow:0 0 0 8px rgba(220,38,38,.055)}
+.fpqr-result-mark.is-expired .fpqr-result-icon{background:#fff6e7;color:#d97706;box-shadow:0 0 0 8px rgba(217,119,6,.06)}
+.fpqr-result-title{font-size:14px;font-weight:900;color:#111827;line-height:1.5}
+.fpqr-result-text{max-width:210px;font-size:10.5px;color:#64748b;line-height:1.75}
+.fpqr-status{min-height:22px;margin:0 0 10px;text-align:center;font-size:12.5px;font-weight:800;line-height:1.7}
+.fpqr-hint{width:100%;display:flex;align-items:flex-start;gap:8px;padding:11px 12px;border:1px solid var(--b1);border-radius:14px;background:var(--bg);color:var(--mt);font-size:11px;line-height:1.9;text-align:right}
+.fpqr-hint i{margin-top:4px;flex-shrink:0}
+.fpqr-details{width:100%;margin-top:13px;padding:5px 15px;border:1px solid var(--b1);border-radius:22px;background:var(--w);box-shadow:0 7px 22px rgba(15,23,42,.04)}
+.fpqr-details-title{display:flex;align-items:center;gap:7px;padding:13px 0 10px;color:var(--dark);font-size:13px;font-weight:900}
+.fpqr-details-title i{color:#c62828;font-size:12px}
+.fpqr-detail-row{display:flex;align-items:center;gap:10px;min-height:57px;border-top:1px solid var(--b1)}
+.fpqr-detail-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:11px;background:var(--bg);color:var(--mt);font-size:12px;flex-shrink:0}
+.fpqr-detail-copy{flex:1;min-width:0;text-align:right}
+.fpqr-detail-label{display:block;color:var(--mt);font-size:9.5px;font-weight:700;margin-bottom:2px}
+.fpqr-detail-value{display:block;color:var(--dark);font-size:11.5px;font-weight:800;line-height:1.55;overflow-wrap:anywhere}
+.fpqr-detail-value.is-code{font-family:'Inter',monospace;direction:ltr;text-align:right;font-size:10.5px;letter-spacing:.1px}
+.fpqr-copy-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid var(--b1);border-radius:10px;background:var(--bg);color:var(--dark);font-size:11px;cursor:pointer;flex-shrink:0;transition:transform .15s,background .15s}
+.fpqr-copy-btn:active{transform:scale(.93)}
+.fpqr-actions{width:100%;display:flex;flex-direction:column;gap:9px;margin-top:auto;padding-top:15px}
+.fpqr-retry,.fpqr-done{width:100%;height:50px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:15px;font-family:'R',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:transform .16s,opacity .16s}
+.fpqr-retry{display:none;border:0;background:#dc2626;color:#fff;box-shadow:0 7px 20px rgba(220,38,38,.2)}
+.fpqr-done{border:1px solid var(--b1);background:var(--w);color:var(--dark);box-shadow:none}
+#fastPayQrModal[data-state="success"] .fpqr-done{border:0;background:#079455;color:#fff;box-shadow:0 7px 20px rgba(7,148,85,.2)}
+#fastPayQrModal[data-state="failed"] .fpqr-retry,#fastPayQrModal[data-state="expired"] .fpqr-retry{display:flex}
+.fpqr-retry:active,.fpqr-done:active{transform:scale(.985);opacity:.92}
+html[data-theme="dark"] .fpqr-result-title{color:#111827}
+html[data-theme="dark"] .fpqr-detail-icon,html[data-theme="dark"] .fpqr-copy-btn{background:#111}
+html[data-theme="dark"] .fpqr-payment-card,html[data-theme="dark"] .fpqr-details{box-shadow:none}
 @keyframes fpqr-spin{to{transform:rotate(360deg)}}
-@media(max-height:640px){
-  .fpqr-main{padding-top:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
-  .fpqr-brand-mark{width:38px;height:38px;margin-bottom:6px;font-size:18px}
-  .fpqr-heading{font-size:18px}.fpqr-subtitle{margin-top:2px}
-  .fpqr-qr-shell{width:clamp(168px,min(64vw,31vh),230px);height:clamp(168px,min(64vw,31vh),230px);margin:11px auto}
-  .fpqr-actions{padding-top:13px}
+@media(max-width:350px){
+  .fpqr-main{padding-left:12px;padding-right:12px}.fpqr-summary{padding:16px}
+  .fpqr-summary-top{grid-template-columns:43px minmax(0,1fr) auto;gap:8px}.fpqr-state-icon{width:43px;height:43px;border-radius:14px}
+  .fpqr-heading{font-size:15.5px}.fpqr-state-badge{padding:5px 7px;font-size:9px}.fpqr-amount{font-size:24px}
 }
-@media(prefers-reduced-motion:reduce){#fastPayQrModal{transition:none}.fpqr-spinner{animation-duration:1.4s}}
+@media(max-height:640px){
+  .fpqr-main{padding-top:12px;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+  .fpqr-summary{padding-top:15px;padding-bottom:15px}.fpqr-amount-block{margin-top:12px;padding-top:11px}
+  .fpqr-qr-shell{width:168px;height:168px}.fpqr-payment-card{padding:14px}
+}
+@media(prefers-reduced-motion:reduce){#fastPayQrModal{transition:none}.fpqr-spinner{animation:none}}
 </style>
 
-<div id="fastPayQrModal" role="dialog" aria-modal="true" aria-labelledby="fastPayQrTitle" aria-hidden="true">
+<div id="fastPayQrModal" data-state="loading" role="dialog" aria-modal="true" aria-labelledby="fastPayQrTitle" aria-hidden="true">
   <header class="fpqr-topbar">
     <div class="fpqr-topbar-title"><i class="fas fa-bolt"></i><span>FastPay</span></div>
     <button class="fpqr-close" id="fastPayTopCloseBtn" type="button" onclick="closeFastPayQR()" aria-label="داخستن">
@@ -17964,29 +18001,74 @@ body.fpqr-open{overflow:hidden;overscroll-behavior:none}
 
   <main class="fpqr-main">
     <div class="fpqr-inner">
-      <div class="fpqr-brand-mark"><i class="fas fa-qrcode"></i></div>
-      <h2 class="fpqr-heading" id="fastPayQrTitle">پارەدان بە FastPay</h2>
-      <div class="fpqr-subtitle" id="fastPayQrSubtitle">QR ـەکە بە ئەپی FastPay سکان بکە</div>
-
-      <div class="fpqr-qr-shell">
-        <img id="fastPayQrImage" alt="FastPay QR" decoding="async">
-        <div class="fpqr-loader" id="fastPayQrLoader">
-          <span class="fpqr-spinner" aria-hidden="true"></span>
-          <span>QR ـەکەت ئامادە دەکرێت...</span>
+      <section class="fpqr-summary">
+        <div class="fpqr-summary-top">
+          <div class="fpqr-state-icon" id="fastPayStateIcon"><i class="fas fa-circle-notch fa-spin"></i></div>
+          <div class="fpqr-summary-copy">
+            <div class="fpqr-eyebrow">زیادکردنی باڵانس</div>
+            <h2 class="fpqr-heading" id="fastPayQrTitle">QR ـەکەت ئامادە دەکرێت</h2>
+          </div>
+          <div class="fpqr-state-badge" id="fastPayStateBadge"><i class="fas fa-clock"></i><span>ئامادەکردن</span></div>
         </div>
-      </div>
+        <div class="fpqr-amount-block">
+          <div class="fpqr-amount-label">بڕی پارەدان</div>
+          <div class="fpqr-amount" id="fastPayQrAmount">— IQD</div>
+        </div>
+        <div class="fpqr-subtitle" id="fastPayQrSubtitle">پەیوەندی بە FastPay دەکرێت، تکایە چاوەڕێ بکە</div>
+      </section>
 
-      <div class="fpqr-amount" id="fastPayQrAmount"></div>
-      <div id="fastPayOrderId" hidden></div>
-      <div id="fastPayQrText" hidden></div>
-      <div class="fpqr-status" id="fastPayStatusLine" aria-live="polite"></div>
+      <section class="fpqr-payment-card">
+        <div class="fpqr-qr-shell">
+          <img id="fastPayQrImage" alt="FastPay QR" decoding="async">
+          <div class="fpqr-loader" id="fastPayQrLoader">
+            <span class="fpqr-spinner" aria-hidden="true"></span>
+            <span>QR ـەکەت ئامادە دەکرێت...</span>
+          </div>
+        </div>
+        <div id="fastPayQrText" hidden></div>
+        <div class="fpqr-status" id="fastPayStatusLine" aria-live="polite">QR ـەکەت ئامادە دەکرێت...</div>
 
-      <div class="fpqr-hint" id="fastPayHintBox">
-        <i class="fas fa-shield-halved" style="color:#10b981;margin-left:5px"></i>
-        دوای پارەدان باڵانسەکەت خۆکارانە زیاد دەبێت
-      </div>
+        <div class="fpqr-hint" id="fastPayHintBox">
+          <i class="fas fa-shield-halved" style="color:#10b981"></i>
+          <span>دوای سکانکردنی QR و پارەدان، باڵانسەکەت خۆکارانە زیاد دەبێت.</span>
+        </div>
+      </section>
+
+      <section class="fpqr-details" aria-label="وردەکاری مامەڵە">
+        <div class="fpqr-details-title"><i class="fas fa-receipt"></i><span>وردەکاری مامەڵە</span></div>
+        <div class="fpqr-detail-row">
+          <div class="fpqr-detail-icon"><i class="fas fa-hashtag"></i></div>
+          <div class="fpqr-detail-copy">
+            <span class="fpqr-detail-label">ئایدی مامەڵە</span>
+            <span class="fpqr-detail-value is-code" id="fastPayOrderId" dir="ltr">دروست دەکرێت...</span>
+          </div>
+          <button class="fpqr-copy-btn" id="fastPayCopyBtn" type="button" onclick="copyFastPayOrderId()" aria-label="کۆپیکردنی ئایدی مامەڵە"><i class="fas fa-copy"></i></button>
+        </div>
+        <div class="fpqr-detail-row">
+          <div class="fpqr-detail-icon"><i class="fas fa-wallet"></i></div>
+          <div class="fpqr-detail-copy">
+            <span class="fpqr-detail-label">ڕێگای پارەدان</span>
+            <span class="fpqr-detail-value">FastPay — QR ـی خۆکار</span>
+          </div>
+        </div>
+        <div class="fpqr-detail-row">
+          <div class="fpqr-detail-icon"><i class="fas fa-calendar-days"></i></div>
+          <div class="fpqr-detail-copy">
+            <span class="fpqr-detail-label" id="fastPayTimeLabel">کاتی دروستکردن</span>
+            <span class="fpqr-detail-value" id="fastPayCreatedAt">—</span>
+          </div>
+        </div>
+        <div class="fpqr-detail-row">
+          <div class="fpqr-detail-icon"><i class="fas fa-hourglass-half"></i></div>
+          <div class="fpqr-detail-copy">
+            <span class="fpqr-detail-label">ماوەی بەکارهێنانی QR</span>
+            <span class="fpqr-detail-value">١٥ خولەک</span>
+          </div>
+        </div>
+      </section>
 
       <div class="fpqr-actions">
+        <button class="fpqr-retry" id="fastPayRetryBtn" type="button" onclick="retryFastPayPayment()"><i class="fas fa-rotate-right"></i>دووبارە هەوڵدانەوە</button>
         <button class="fpqr-done" id="fastPayDoneBtn" type="button" onclick="closeFastPayQR()">داخستن</button>
       </div>
     </div>
@@ -18007,6 +18089,7 @@ const FP_STATUS_COL = 'gateway_status';     // ستوونی دۆخ
 let _fpPollTimer = null;
 let _fpOrderId   = null;
 let _fpStartedAt = 0;
+let _fpAmount    = 0;
 let _fpPreviousFocus = null;
 
 function _fpOpenScreen(amount) {
@@ -18015,8 +18098,9 @@ function _fpOpenScreen(amount) {
   if (!modal) return false;
 
   if (!modal.classList.contains('on')) _fpPreviousFocus = document.activeElement;
+  _fpAmount = Math.round(Number(amount) || 0);
   if (amtEl) {
-    amtEl.textContent = Math.round(Number(amount) || 0).toLocaleString() + ' IQD';
+    amtEl.textContent = _fpAmount.toLocaleString() + ' IQD';
   }
 
   modal.classList.add('on');
@@ -18025,47 +18109,158 @@ function _fpOpenScreen(amount) {
   return true;
 }
 
-function _fpResetActionButton() {
-  const btn = document.getElementById('fastPayDoneBtn');
-  if (!btn) return;
-  btn.style.background = '#0E78FF';
-  btn.style.boxShadow = '0 7px 20px rgba(14,120,255,.22)';
-  btn.textContent = 'داخستن';
+function _fpSetTransactionDetails(orderId, amount) {
+  const orderEl = document.getElementById('fastPayOrderId');
+  const amtEl = document.getElementById('fastPayQrAmount');
+  const createdEl = document.getElementById('fastPayCreatedAt');
+  const timeLabel = document.getElementById('fastPayTimeLabel');
+  const cleanOrder = String(orderId || '').trim();
+
+  if (orderEl) {
+    orderEl.textContent = cleanOrder || 'دروست دەکرێت...';
+    orderEl.dataset.value = cleanOrder;
+  }
+  if (amtEl) amtEl.textContent = Math.round(Number(amount) || 0).toLocaleString() + ' IQD';
+  if (timeLabel) timeLabel.textContent = 'کاتی دروستکردن';
+  if (createdEl) {
+    try {
+      createdEl.textContent = new Date().toLocaleString('ar-IQ', {dateStyle:'medium', timeStyle:'short'});
+    } catch (_) {
+      createdEl.textContent = new Date().toLocaleString();
+    }
+  }
 }
 
-function openFastPayQRLoading(amount) {
-  if (!_fpOpenScreen(amount)) return;
+function _fpSetVisualState(state, options) {
+  const modal = document.getElementById('fastPayQrModal');
+  const title = document.getElementById('fastPayQrTitle');
+  const sub = document.getElementById('fastPayQrSubtitle');
+  const icon = document.getElementById('fastPayStateIcon');
+  const badge = document.getElementById('fastPayStateBadge');
+  const doneBtn = document.getElementById('fastPayDoneBtn');
+  if (!modal) return;
 
-  clearInterval(_fpPollTimer);
-  _fpPollTimer = null;
-  _fpOrderId = null;
+  const states = {
+    loading: {
+      title:'QR ـەکەت ئامادە دەکرێت',
+      subtitle:'پەیوەندی بە FastPay دەکرێت، تکایە چاوەڕێ بکە',
+      icon:'fa-circle-notch fa-spin', badgeIcon:'fa-clock', badge:'ئامادەکردن'
+    },
+    pending: {
+      title:'QR ـەکە سکان بکە',
+      subtitle:'ئەپی FastPay بکەرەوە و QR ـەکە سکان بکە',
+      icon:'fa-qrcode', badgeIcon:'fa-hourglass-half', badge:'چاوەڕوانی'
+    },
+    success: {
+      title:'پارەدان سەرکەوتوو بوو',
+      subtitle:'پارەدانەکەت تۆمارکرا و باڵانسەکەت زیادکرا',
+      icon:'fa-circle-check', badgeIcon:'fa-check', badge:'سەرکەوتوو'
+    },
+    failed: {
+      title:'پارەدان سەرکەوتوو نەبوو',
+      subtitle:'مامەڵەکە تەواو نەکرا؛ دەتوانیت دووبارە هەوڵ بدەیتەوە',
+      icon:'fa-circle-xmark', badgeIcon:'fa-xmark', badge:'شکست'
+    },
+    expired: {
+      title:'کاتی پارەدان تەواو بوو',
+      subtitle:'ماوەی بەکارهێنانی ئەم QR ـە تەواو بوو',
+      icon:'fa-clock', badgeIcon:'fa-hourglass-end', badge:'بەسەرچوو'
+    }
+  };
+  const cfg = Object.assign({}, states[state] || states.loading, options || {});
+  modal.dataset.state = state;
+  if (title) title.textContent = cfg.title;
+  if (sub) sub.textContent = cfg.subtitle;
+  if (icon) icon.innerHTML = '<i class="fas ' + cfg.icon + '" aria-hidden="true"></i>';
+  if (badge) badge.innerHTML = '<i class="fas ' + cfg.badgeIcon + '" aria-hidden="true"></i><span>' + cfg.badge + '</span>';
+  if (doneBtn) doneBtn.textContent = state === 'success' ? 'تەواو' : 'داخستن';
+}
 
+function _fpResetQrArea() {
   const img = document.getElementById('fastPayQrImage');
   const loader = document.getElementById('fastPayQrLoader');
-  const oldOk = document.getElementById('fastPayOkMark');
-  if (oldOk) oldOk.remove();
+  const result = document.getElementById('fastPayResultMark');
+  if (result) result.remove();
   if (img) {
     img.onload = null;
     img.onerror = null;
     img.removeAttribute('src');
     img.style.display = 'none';
   }
+  if (loader) loader.style.display = 'flex';
+}
+
+function _fpRenderResult(kind, title, message) {
+  const img = document.getElementById('fastPayQrImage');
+  const loader = document.getElementById('fastPayQrLoader');
+  const oldResult = document.getElementById('fastPayResultMark');
+  if (oldResult) oldResult.remove();
+  if (img) img.style.display = 'none';
+  if (loader) loader.style.display = 'none';
+
+  const box = img ? img.parentNode : null;
+  if (!box) return;
+  const result = document.createElement('div');
+  const icon = document.createElement('div');
+  const heading = document.createElement('div');
+  const text = document.createElement('div');
+  const iconMap = {success:'fa-check', failed:'fa-xmark', expired:'fa-clock'};
+  result.id = 'fastPayResultMark';
+  result.className = 'fpqr-result-mark is-' + kind;
+  icon.className = 'fpqr-result-icon';
+  icon.innerHTML = '<i class="fas ' + (iconMap[kind] || 'fa-xmark') + '" aria-hidden="true"></i>';
+  heading.className = 'fpqr-result-title';
+  heading.textContent = title;
+  text.className = 'fpqr-result-text';
+  text.textContent = message;
+  result.append(icon, heading, text);
+  box.appendChild(result);
+}
+
+function _fpSetHint(iconClass, iconColor, message, textColor) {
+  const hint = document.getElementById('fastPayHintBox');
+  if (!hint) return;
+  hint.textContent = '';
+  const icon = document.createElement('i');
+  const text = document.createElement('span');
+  icon.className = 'fas ' + iconClass;
+  icon.style.color = iconColor;
+  icon.setAttribute('aria-hidden', 'true');
+  text.textContent = message;
+  hint.append(icon, text);
+  hint.style.color = textColor || 'var(--mt)';
+}
+
+function _fpSetDetailTime(label) {
+  const labelEl = document.getElementById('fastPayTimeLabel');
+  const valueEl = document.getElementById('fastPayCreatedAt');
+  if (labelEl) labelEl.textContent = label;
+  if (valueEl) {
+    try {
+      valueEl.textContent = new Date().toLocaleString('ar-IQ', {dateStyle:'medium', timeStyle:'short'});
+    } catch (_) {
+      valueEl.textContent = new Date().toLocaleString();
+    }
+  }
+}
+
+function openFastPayQRLoading(amount, orderId) {
+  if (!_fpOpenScreen(amount)) return;
+
+  clearInterval(_fpPollTimer);
+  _fpPollTimer = null;
+  _fpOrderId = orderId || null;
+  _fpStartedAt = Date.now();
+
+  const loader = document.getElementById('fastPayQrLoader');
+  _fpResetQrArea();
   if (loader) {
     loader.style.display = 'flex';
     loader.innerHTML = '<span class="fpqr-spinner" aria-hidden="true"></span><span>QR ـەکەت ئامادە دەکرێت...</span>';
   }
-
-  const sub = document.getElementById('fastPayQrSubtitle');
-  if (sub) {
-    sub.textContent = 'پەیوەندی بە FastPay دەکرێت';
-    sub.style.color = 'var(--mt)';
-  }
-  const hint = document.getElementById('fastPayHintBox');
-  if (hint) {
-    hint.innerHTML = '<i class="fas fa-shield-halved" style="color:#10b981;margin-left:5px"></i> پارەدانەکەت بە شێوەی پارێزراو جێبەجێ دەکرێت';
-    hint.style.color = 'var(--mt)';
-  }
-  _fpResetActionButton();
+  _fpSetTransactionDetails(orderId, amount);
+  _fpSetVisualState('loading');
+  _fpSetHint('fa-shield-halved', '#10b981', 'پارەدانەکەت بە شێوەی پارێزراو لە ڕێگای FastPay جێبەجێ دەکرێت.');
   _fpSetStatus('QR ـەکەت ئامادە دەکرێت...', '#64748b');
 }
 
@@ -18073,7 +18268,6 @@ function openFastPayQR(qrUrl, qrText, orderId, amount) {
   const modal = document.getElementById('fastPayQrModal');
   const img   = document.getElementById('fastPayQrImage');
   const txt   = document.getElementById('fastPayQrText');
-  const oidEl = document.getElementById('fastPayOrderId');
   const loader = document.getElementById('fastPayQrLoader');
 
   if (!modal) { console.error('[FastPay] مۆداڵەکە نەدۆزرایەوە'); return; }
@@ -18081,39 +18275,27 @@ function openFastPayQR(qrUrl, qrText, orderId, amount) {
 
   _fpOrderId   = orderId;
   _fpStartedAt = Date.now();
-
-  /* پاککردنەوەی دۆخی سەرکەوتنی پارەدانی پێشوو */
-  const oldOk = document.getElementById('fastPayOkMark');
-  if (oldOk) oldOk.remove();
-
-  _fpResetActionButton();
-
-  const sub = document.getElementById('fastPayQrSubtitle');
-  if (sub) {
-    sub.textContent = 'QR ـەکە بە ئەپی FastPay سکان بکە';
-    sub.style.color = 'var(--mt)';
-  }
-
-  const hint = document.getElementById('fastPayHintBox');
-  if (hint) {
-    hint.innerHTML = '<i class="fas fa-shield-halved" style="color:#10b981;margin-left:5px"></i> دوای پارەدان باڵانسەکەت خۆکارانە زیاد دەبێت';
-    hint.style.color = 'var(--mt)';
-  }
-
-  if (oidEl) oidEl.textContent = 'Order ID: ' + orderId;
+  _fpSetTransactionDetails(orderId, amount);
+  _fpResetQrArea();
+  _fpSetVisualState('pending');
+  _fpSetHint('fa-shield-halved', '#10b981', 'دوای سکانکردنی QR و پارەدان، باڵانسەکەت خۆکارانە زیاد دەبێت.');
 
   if (img) {
     img.style.display = 'none';
+    if (loader) {
+      loader.style.display = 'flex';
+      loader.innerHTML = '<span class="fpqr-spinner" aria-hidden="true"></span><span>QR بار دەکرێت...</span>';
+    }
     img.onload = function() {
       if (loader) loader.style.display = 'none';
       img.style.display = 'block';
     };
     img.onerror = function() {
-      _fpShowError('وێنەی QR بارنەبوو، تکایە دووبارە هەوڵ بدەوە');
+      _fpShowError('وێنەی QR بارنەبوو، تکایە دووبارە هەوڵ بدەوە', 'create');
     };
     if (qrUrl) img.src = qrUrl;
     else {
-      _fpShowError('QR ـەکە بەردەست نییە، تکایە دووبارە هەوڵ بدەوە');
+      _fpShowError('QR ـەکە بەردەست نییە، تکایە دووبارە هەوڵ بدەوە', 'create');
       return;
     }
   }
@@ -18123,46 +18305,38 @@ function openFastPayQR(qrUrl, qrText, orderId, amount) {
     txt.style.display = 'none';
   }
 
-  _fpSetStatus('چاوەڕوانی پارەدان...', '#64748b');
+  _fpSetStatus('چاوەڕوانی سکانکردن و پارەدان...', '#64748b');
 
   clearInterval(_fpPollTimer);
   _fpPollTimer = setInterval(_fpCheckStatus, 4000);
   _fpCheckStatus();
 }
 
-function _fpShowError(message) {
+function _fpShowError(message, kind) {
   clearInterval(_fpPollTimer);
   _fpPollTimer = null;
+  const failureKind = kind || 'create';
+  const isExpired = failureKind === 'expired';
+  const state = isExpired ? 'expired' : 'failed';
+  const safeMessage = String(message || (isExpired ? 'ماوەی QR تەواو بوو' : 'مامەڵەکە تەواو نەکرا'));
+  const title = isExpired
+    ? 'کاتی QR تەواو بوو'
+    : failureKind === 'failed'
+      ? 'پارەدان سەرکەوتوو نەبوو'
+      : 'QR ـەکە دروست نەکرا';
 
-  const img = document.getElementById('fastPayQrImage');
-  const loader = document.getElementById('fastPayQrLoader');
-  const oldOk = document.getElementById('fastPayOkMark');
-  if (oldOk) oldOk.remove();
-  if (img) img.style.display = 'none';
-  if (loader) {
-    loader.style.display = 'flex';
-    loader.innerHTML = '<i class="fas fa-triangle-exclamation fpqr-error-icon" aria-hidden="true"></i><span>' +
-      String(message || 'نەتوانرا QR دروست بکرێت').replace(/[<>&]/g, function(ch){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[ch];}) +
-      '</span>';
-  }
-
-  const sub = document.getElementById('fastPayQrSubtitle');
-  if (sub) {
-    sub.textContent = 'نەتوانرا QR ـەکە ئامادە بکرێت';
-    sub.style.color = '#dc2626';
-  }
-  const hint = document.getElementById('fastPayHintBox');
-  if (hint) {
-    hint.textContent = 'هیچ پارەیەک لە باڵانسەکەت کەم نەکراوەتەوە';
-    hint.style.color = '#dc2626';
-  }
-  const btn = document.getElementById('fastPayDoneBtn');
-  if (btn) {
-    btn.style.background = '#dc2626';
-    btn.style.boxShadow = '0 7px 20px rgba(220,38,38,.18)';
-    btn.textContent = 'داخستن';
-  }
-  _fpSetStatus('پارەدان دەست پێ نەکرد', '#dc2626');
+  _fpSetVisualState(state, {title:title, subtitle:safeMessage});
+  _fpRenderResult(isExpired ? 'expired' : 'failed', title, safeMessage);
+  _fpSetStatus(isExpired ? 'کاتی مامەڵە بەسەرچوو' : 'مامەڵەکە تەواو نەکرا', isExpired ? '#d97706' : '#dc2626');
+  _fpSetHint(
+    isExpired ? 'fa-clock' : 'fa-circle-info',
+    isExpired ? '#d97706' : '#dc2626',
+    isExpired
+      ? 'بۆ پارەدان QR ـێکی نوێ دروست بکە؛ ئەم QR ـە چیتر کار ناکات.'
+      : 'پارەدان تەواو نەکرا؛ دەتوانیت بە دوگمەی خوارەوە دووبارە هەوڵ بدەیتەوە.',
+    isExpired ? '#9a4d07' : '#b42318'
+  );
+  _fpSetDetailTime(isExpired ? 'کاتی بەسەرچوون' : 'کاتی شکستی مامەڵە');
 }
 
 /* ── دروستکردن/نوێکردنەوەی دێڕی دۆخ ── */
@@ -18188,8 +18362,7 @@ async function _fpCheckStatus() {
 
   /* دوای ١٥ خولەک پشکنین ڕادەوەستێت */
   if (Date.now() - _fpStartedAt > 15 * 60 * 1000) {
-    clearInterval(_fpPollTimer);
-    _fpSetStatus('⌛ کاتی پارەدان تەواو بوو', '#e53935');
+    _fpShowError('ماوەی ١٥ خولەکی ئەم QR ـە تەواو بوو', 'expired');
     return;
   }
 
@@ -18220,11 +18393,9 @@ async function _fpCheckStatus() {
       clearInterval(_fpPollTimer);
       _fpShowSuccess();
     } else if (st === 'DECLINED' || st === 'FAILED' || st === 'CANCELLED') {
-      clearInterval(_fpPollTimer);
-      _fpSetStatus('❌ پارەدانەکە سەرکەوتوو نەبوو', '#e53935');
+      _fpShowError(data.fail_reason || 'پارەدانەکە لەلایەن FastPay ـەوە پەسەند نەکرا', 'failed');
     } else if (st === 'EXPIRED') {
-      clearInterval(_fpPollTimer);
-      _fpSetStatus('⌛ کاتی پارەدان تەواو بوو', '#e53935');
+      _fpShowError('ماوەی بەکارهێنانی ئەم QR ـە تەواو بوو', 'expired');
     }
   } catch (e) {
     console.error('[FastPay poll]', e);
@@ -18233,47 +18404,13 @@ async function _fpCheckStatus() {
 
 /* ── دۆخی سەرکەوتن ── */
 function _fpShowSuccess() {
-  const img = document.getElementById('fastPayQrImage');
-  const txt = document.getElementById('fastPayQrText');
-  const loader = document.getElementById('fastPayQrLoader');
-
-  if (img) img.style.display = 'none';
-  if (txt) txt.style.display = 'none';
-  if (loader) loader.style.display = 'none';
-
-  /* ✅ لە شوێنی QR ــەکە — تاگی img ناسڕێتەوە،
-     تەنها دەشاردرێتەوە و نیشانەیەک لەتەنیشتی زیاد دەکرێت */
-  const box = img ? img.parentNode : null;
-  if (box && !document.getElementById('fastPayOkMark')) {
-    const ok = document.createElement('div');
-    ok.id = 'fastPayOkMark';
-    ok.className = 'fpqr-ok';
-    ok.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i>';
-    box.appendChild(ok);
-  }
-
-  _fpSetStatus('✅ پارەدانەکە سەرکەوتوو بوو — باڵانس زیادکرا', '#2e7d32');
-
-  /* دەقەکان بگۆڕە — ئیتر باسی سکانکردن و چاوەڕوانی ناکەن */
-  const sub = document.getElementById('fastPayQrSubtitle');
-  if (sub) {
-    sub.textContent = 'پارەدانەکەت تۆمارکرا';
-    sub.style.color = '#2e7d32';
-  }
-
-  const hint = document.getElementById('fastPayHintBox');
-  if (hint) {
-    hint.innerHTML = '<i class="fas fa-circle-check" style="margin-left:5px"></i> باڵانسەکەت زیادکرا — دەتوانیت بەردەوام بیت';
-    hint.style.color = '#2e7d32';
-  }
-
-  /* دوگمەی داخستن سەوز دەکەین تا ڕوون بێت کارەکە تەواوە */
-  const btn = document.getElementById('fastPayDoneBtn');
-  if (btn) {
-    btn.style.background = '#2e7d32';
-    btn.style.boxShadow = '0 7px 20px rgba(46,125,50,.18)';
-    btn.textContent = 'تەواو';
-  }
+  clearInterval(_fpPollTimer);
+  _fpPollTimer = null;
+  _fpSetVisualState('success');
+  _fpRenderResult('success', 'پارەدانەکەت تۆمارکرا', 'باڵانسەکەت بە شێوەی خۆکار زیادکرا و ئێستا ئامادەی بەکارهێنانە.');
+  _fpSetStatus('پارەدان سەرکەوتوو بوو — باڵانس زیادکرا', '#079455');
+  _fpSetHint('fa-circle-check', '#079455', 'پارەکە بە سەرکەوتوویی گەیشت و باڵانسەکەت نوێکرایەوە.', '#067647');
+  _fpSetDetailTime('کاتی سەرکەوتنی مامەڵە');
 
   if (typeof showToast === 'function') {
     showToast('✅ باڵانسەکەت زیادکرا', 'ok');
@@ -18281,6 +18418,47 @@ function _fpShowSuccess() {
   if (typeof loadBal === 'function') loadBal();
 
   /* مۆداڵەکە خۆی دانەخرێت — بەکارهێنەر خۆی دایدەخات */
+}
+
+async function copyFastPayOrderId() {
+  const orderEl = document.getElementById('fastPayOrderId');
+  const button = document.getElementById('fastPayCopyBtn');
+  const value = String(orderEl?.dataset?.value || '').trim();
+  if (!value) {
+    if (typeof showToast === 'function') showToast('ئایدی مامەڵە هێشتا ئامادە نییە', 'err');
+    return;
+  }
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(value);
+    } else {
+      const area = document.createElement('textarea');
+      area.value = value;
+      area.setAttribute('readonly', '');
+      area.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand('copy');
+      area.remove();
+    }
+    if (button) {
+      button.innerHTML = '<i class="fas fa-check"></i>';
+      setTimeout(function(){ if (button) button.innerHTML = '<i class="fas fa-copy"></i>'; }, 1300);
+    }
+    if (typeof showToast === 'function') showToast('ئایدی مامەڵە کۆپیکرا', 'ok');
+  } catch (_) {
+    if (typeof showToast === 'function') showToast('کۆپیکردن سەرکەوتوو نەبوو', 'err');
+  }
+}
+
+function retryFastPayPayment() {
+  const amount = _fpAmount;
+  if (!amount || amount < 5000) {
+    if (typeof showToast === 'function') showToast('بڕی پارەدان دروست نییە', 'err');
+    return;
+  }
+  startFastPayPayment(amount);
 }
 
 function closeFastPayQR() {
@@ -18293,9 +18471,10 @@ function closeFastPayQR() {
     modal.setAttribute('aria-hidden', 'true');
   }
   document.body.classList.remove('fpqr-open');
-  if (_fpPreviousFocus && typeof _fpPreviousFocus.focus === 'function') {
+  if (_fpPreviousFocus && typeof _fpPreviousFocus.focus === 'function' && _fpPreviousFocus.offsetParent !== null) {
     try { _fpPreviousFocus.focus({preventScroll:true}); } catch (_) {}
   }
+  _fpAmount = 0;
   _fpPreviousFocus = null;
   if (typeof loadBal === 'function') loadBal();
 }
