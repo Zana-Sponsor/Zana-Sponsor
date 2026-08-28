@@ -4848,22 +4848,6 @@ window.PROXO_SPLASH_MIN_MS = 2600;
             <div class="sc-banner"><div class="sc-banner-btn"></div><div class="sc-banner-btn" style="width:75%;opacity:.7"></div></div>
             <div class="sc-name">Banner</div><div class="sc-sub">بانەر — گرادیێنت</div>
           </div>
-          <!-- هەمان پێنج ستایلی هاوپێچکراو -->
-          <div class="style-card" data-style="pill-glass-dark" onclick="pickStyle(this)">
-            <div class="sc-chk"><i class="fas fa-check"></i></div><div class="sc-zoom"><div class="sc-zoom-inner"><div class="sc-zoom-av" style="background:linear-gradient(135deg,#8b7fe0,#5b62c4)"></div><div class="sc-zoom-btn" style="background:rgba(255,255,255,.25)"></div><div class="sc-zoom-btn" style="width:70%;background:rgba(255,255,255,.15)"></div></div></div><div class="sc-name">Pill Glass Dark</div><div class="sc-sub">شیشەیی و تاریک</div>
-          </div>
-          <div class="style-card" data-style="pill-mint" onclick="pickStyle(this)">
-            <div class="sc-chk"><i class="fas fa-check"></i></div><div class="sc-pill"><div class="sc-pill-btn" style="background:linear-gradient(135deg,#2e8b71,#79bca8)"></div><div class="sc-pill-btn" style="background:linear-gradient(135deg,#25d366,#128c7e)"></div><div class="sc-pill-btn" style="background:linear-gradient(135deg,#229ed9,#2aabee)"></div></div><div class="sc-name">Pill Mint</div><div class="sc-sub">مینتی ئارام</div>
-          </div>
-          <div class="style-card" data-style="pill-sand" onclick="pickStyle(this)">
-            <div class="sc-chk"><i class="fas fa-check"></i></div><div class="sc-pill"><div class="sc-pill-btn" style="background:linear-gradient(135deg,#c8734a,#e6aa88)"></div><div class="sc-pill-btn" style="background:linear-gradient(135deg,#b45309,#f59e0b)"></div><div class="sc-pill-btn" style="background:linear-gradient(135deg,#dc2626,#f97316)"></div></div><div class="sc-name">Pill Sand</div><div class="sc-sub">خۆڵەمێشی گەرم</div>
-          </div>
-          <div class="style-card" data-style="pill-file" onclick="pickStyle(this)">
-            <div class="sc-chk"><i class="fas fa-check"></i></div><div class="sc-pill"><div class="sc-pill-btn" style="background:linear-gradient(135deg,#4a63c8,#8fa4e8)"></div><div class="sc-pill-btn" style="background:linear-gradient(135deg,#229ed9,#2aabee)"></div><div class="sc-pill-btn" style="background:linear-gradient(135deg,#7360f2,#5c4fd6)"></div></div><div class="sc-name">Pill</div><div class="sc-sub">هەمان ستایلی pill.html</div>
-          </div>
-          <div class="style-card" data-style="pill-dark" onclick="pickStyle(this)">
-            <div class="sc-chk"><i class="fas fa-check"></i></div><div class="sc-neon"><div class="sc-neon-row" style="border-color:#8fa4e8"><div class="sc-neon-dot" style="background:#8fa4e8"></div><div class="sc-neon-line" style="background:#8fa4e8"></div></div><div class="sc-neon-row" style="border-color:#25d366"><div class="sc-neon-dot" style="background:#25d366"></div><div class="sc-neon-line" style="background:#25d366"></div></div><div class="sc-neon-row" style="border-color:#2aabee"><div class="sc-neon-dot" style="background:#2aabee"></div><div class="sc-neon-line" style="background:#2aabee"></div></div></div><div class="sc-name">Pill Dark</div><div class="sc-sub">تاریکی شیشەیی</div>
-          </div>
         </div>
 
         <!-- ڕەنگی تەم -->
@@ -10513,7 +10497,7 @@ async function autoSendAssetToTelegram(asset){
     const typeLabels=_isAutoAr
       ?{whatsapp:'واتساب',instagram:'إنستغرام',phone:'هاتف',telegram:'تيليجرام',link:'رابط'}
       :{whatsapp:'واتسئەپ',instagram:'ئینستاگرام',phone:'تەلەفۆن',telegram:'تێلێگرام',link:'لینک'};
-    const styleLabel={classic:'کلاسیک',light:'ڕۆژ',gradient:'گرادیێنت',zoom:'زووم',banner:'بانەر','pill-file':'Pill','pill-mint':'Pill Mint','pill-sand':'Pill Sand','pill-dark':'Pill Dark','pill-glass-dark':'Pill Glass Dark'};
+    const styleLabel={classic:'کلاسیک',light:'ڕۆژ',gradient:'گرادیێنت',zoom:'زووم',banner:'بانەر'};
     const userName=document.getElementById('profName')?.textContent||cu?.email||'کڕیار';
     const caption=_isAutoAr
       ?`أداة جديدة — ProxoAds\n\nالمستخدم: ${userName}\nالاسم: ${asset.name}\nالنوع: ${typeLabels[asset.asset_type]||asset.asset_type}\nالقيمة: ${asset.value}${asset.note?'\nملاحظة: '+asset.note:''}\nالستايل: ${styleLabel[asset.style]||asset.style}\nالوقت: ${new Date().toLocaleString('ar')}`
@@ -10539,7 +10523,7 @@ async function sendAssetToTelegram(){
     const typeLabels=_isSendAr
       ?{whatsapp:'واتساب',instagram:'إنستغرام',phone:'هاتف',telegram:'تيليجرام',link:'رابط'}
       :{whatsapp:'واتسئەپ',instagram:'ئینستاگرام',phone:'تەلەفۆن',telegram:'تێلێگرام',link:'لینک'};
-    const styleLabel={classic:'کلاسیک',light:'ڕۆژ',gradient:'گرادیێنت',zoom:'زووم',banner:'بانەر','pill-file':'Pill','pill-mint':'Pill Mint','pill-sand':'Pill Sand','pill-dark':'Pill Dark','pill-glass-dark':'Pill Glass Dark'};
+    const styleLabel={classic:'کلاسیک',light:'ڕۆژ',gradient:'گرادیێنت',zoom:'زووم',banner:'بانەر'};
     const userName=document.getElementById('profName')?.textContent||cu?.email||'کڕیار';
     const caption=_isSendAr
       ?`أداة جديدة — ProxoAds\n\nالمستخدم: ${userName}\nالاسم: ${lastSavedAsset.name}\nالنوع: ${typeLabels[lastSavedAsset.asset_type]||lastSavedAsset.asset_type}\nالقيمة: ${lastSavedAsset.value}${lastSavedAsset.note?'\nملاحظة: '+lastSavedAsset.note:''}\nالستايل: ${styleLabel[lastSavedAsset.style]||lastSavedAsset.style}\nالوقت: ${new Date().toLocaleString('ar')}`
@@ -12617,16 +12601,6 @@ function updatePLPreview(){
         </div>
       </div>
     </div>`;
-  } else if(['pill-file','pill-mint','pill-sand','pill-dark','pill-glass-dark'].includes(plStyle)){
-    const five={
-      'pill-file':{page:'#E4EBFD',card:'#fff',ink:'#1B2340',muted:'#7A83A6',head:'linear-gradient(135deg,#4A63C8,#8FA4E8)',dark:false},
-      'pill-mint':{page:'#E2F1EC',card:'#fff',ink:'#17342C',muted:'#6E8B80',head:'linear-gradient(135deg,#2E8B71,#79BCA8)',dark:false},
-      'pill-sand':{page:'#FBE9E0',card:'#fff',ink:'#3B2820',muted:'#9C8478',head:'linear-gradient(135deg,#C8734A,#E6AA88)',dark:false},
-      'pill-dark':{page:'#232B45',card:'#2C3454',ink:'#fff',muted:'#98A1BE',head:'linear-gradient(135deg,#2C3552,#1F2740)',dark:true},
-      'pill-glass-dark':{page:'#242B47',card:'rgba(255,255,255,.08)',ink:'#F2F5FF',muted:'#9AA3C2',head:'linear-gradient(135deg,#5B62C4,#8B7FE0)',dark:true}
-    }[plStyle];
-    const fiveBtns=activePlats.map(p=>{const pi=platIcons[p]||{c:'#888',i:'fas fa-link',l:p};return`<div style="display:flex;align-items:center;width:100%;padding:10px;border-radius:50px;background:${five.dark?'rgba(255,255,255,.07)':pi.c};border:1px solid ${five.dark?'rgba(255,255,255,.14)':'transparent'};color:#fff;margin-bottom:8px"><span style="width:30px"></span><span style="flex:1;text-align:center;font-size:12px;font-weight:700">${pi.l}</span><i class="${pi.i}" style="width:30px;text-align:center"></i></div>`;}).join('');
-    wrap.innerHTML=`<div style="padding:12px;background:${five.page}"><div style="background:${five.card};border:1px solid ${five.dark?'rgba(255,255,255,.14)':'#e8eaf0'};border-radius:14px;overflow:hidden;color:${five.ink};font-family:'R',sans-serif"><div style="height:58px;background:${five.head}"></div><div style="padding:0 14px 14px;margin-top:-28px"><div style="width:56px;height:56px;border-radius:50%;border:3px solid ${five.dark?'rgba(255,255,255,.16)':'#fff'};background:${five.dark?'#5b62c4':'#4a63c8'};display:flex;align-items:center;justify-content:center;margin:0 auto 8px;color:#fff;font-size:22px;font-weight:800;overflow:hidden">${av}</div><div style="text-align:center;font-size:14px;font-weight:800">${name}</div>${bio?`<div style="text-align:center;color:${five.muted};font-size:10px;margin-top:4px;line-height:1.6">${bio}</div>`:''}<div style="margin-top:11px">${fiveBtns}</div>${tt?`<div style="text-align:center;color:${five.muted};font-size:10px">@${tt}</div>`:''}</div></div></div>`;
   } else if(plStyle==='pill'||plStyle==='card'||plStyle==='neon'||plStyle==='zoom'||plStyle==='banner'){
     // ── هەموو ٦ ستایلی نوێ ──
     const isNeon=plStyle==='neon';
@@ -14014,28 +13988,6 @@ function buildPageBanner(name,bio,tt,ttUrl,avatar,activeBtns,handlers,theme){
 
 
 
-// ── هەمان پێنج فایلەکەی Pill، بەبێ کاریگەری لە builder ـە کۆنەکان ──
-function buildPagePillVariant(name,bio,tt,ttUrl,avatar,activeBtns,handlers,variant){
-  const cfg={
-    'pill-file':{page:'#E4EBFD',card:'#fff',ink:'#1B2340',muted:'#7A83A6',header:'linear-gradient(135deg,#4A63C8,#8FA4E8)',avatar:'#4A63C8',line:'#D9E1F5'},
-    'pill-mint':{page:'#E2F1EC',card:'#fff',ink:'#17342C',muted:'#6E8B80',header:'linear-gradient(135deg,#2E8B71,#79BCA8)',avatar:'#2E8B71',line:'#CDE5DC'},
-    'pill-sand':{page:'#FBE9E0',card:'#fff',ink:'#3B2820',muted:'#9C8478',header:'linear-gradient(135deg,#C8734A,#E6AA88)',avatar:'#C8734A',line:'#F0D6C8'},
-    'pill-dark':{page:'#232B45',card:'#2C3454',ink:'#fff',muted:'#98A1BE',header:'linear-gradient(135deg,#2C3552,#1F2740)',avatar:'#5B62C4',line:'rgba(255,255,255,.13)',dark:true},
-    'pill-glass-dark':{page:'#242B47',card:'rgba(255,255,255,.08)',ink:'#F2F5FF',muted:'#9AA3C2',header:'linear-gradient(135deg,#5B62C4,#8B7FE0)',avatar:'#5B62C4',line:'rgba(255,255,255,.14)',dark:true,glass:true}
-  }[variant];
-  const bg={wa:'#25d366',vb:'#7360f2',tg:'#229ed9',ig:'linear-gradient(135deg,#833ab4,#fd1d1d,#f09433)',ph:'#2563eb',as:'#dc2626'};
-  const buttons=activeBtns.map((b,i)=>'<a id="'+b.id+'" class="pl-btn'+(i===0?' shine-active':'')+'" style="background:'+(cfg.dark?'rgba(255,255,255,.07)':(bg[b.id]||'#777'))+';border:1px solid '+(cfg.dark?cfg.line:'transparent')+'"><span></span><b>'+b.label+'</b><i class="'+b.icon+'"></i></a>').join('');
-  const bioSafe=(bio||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const p=[];
-  p.push('<!DOCTYPE html><html lang="ku" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+name+'</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><style>');
-  p.push(`@font-face{font-family:'R';src:url('https://raw.githubusercontent.com/Zana-Sponsor/Zana-Sponsor/main/Rabar_021.woff2')}*{box-sizing:border-box;margin:0;padding:0}body{font-family:'R',sans-serif;background:${cfg.page};min-height:100vh;display:flex;justify-content:center}.wrap{width:100%;max-width:430px;min-height:100vh;background:${cfg.card};display:flex;flex-direction:column;${cfg.glass?'backdrop-filter:blur(16px);':''}}.head{height:110px;background:${cfg.header}}.avw{display:flex;justify-content:center;margin-top:-45px;margin-bottom:14px}.av{width:90px;height:90px;border-radius:50%;border:4px solid ${cfg.dark?'rgba(255,255,255,.16)':'#fff'};overflow:hidden;background:${cfg.avatar};display:flex;align-items:center;justify-content:center;color:#fff;font-size:34px}.av img{width:100%;height:100%;object-fit:cover}.profile{text-align:center;padding:0 22px;margin-bottom:24px}.name{font-size:19px;font-weight:700;color:${cfg.ink}}.bio{font-size:14px;color:${cfg.muted};line-height:1.9;margin-top:5px;white-space:pre-line}.buttons{display:flex;flex-direction:column;gap:11px;padding:0 22px}.pl-btn{display:flex;align-items:center;width:100%;padding:15px 14px;border-radius:50px;color:#fff;text-decoration:none;position:relative;overflow:hidden}.pl-btn span,.pl-btn i{width:38px;flex-shrink:0;text-align:center}.pl-btn b{flex:1;text-align:center;font-size:16px}.tt{text-align:center;margin:14px 22px 0;color:${cfg.muted}}.footer{margin-top:auto;text-align:center;padding:55px 20px 24px;color:${cfg.muted};font-size:10px}.footer img{height:15px;display:block;margin:7px auto}.footer a{color:inherit;text-decoration:none}.shine-active:after{content:'';position:absolute;top:0;left:-100%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transform:skewX(-20deg);animation:shine 2.4s ease-in-out infinite}@keyframes shine{to{left:160%}}</style></head><body>`);
-  p.push('<div class="wrap"><div class="head"></div><div class="avw"><div class="av">'+avatar+'</div></div><div class="profile"><div class="name">'+name+'</div>'+(bio?'<div class="bio">'+bioSafe+'</div>':'')+'</div><div class="buttons">'+buttons+'</div>'+(tt?'<div class="tt"><i class="fab fa-tiktok"></i> @'+tt+'</div>':'')+'<div class="footer">ProxoLink<a href="https://www.tiktok.com/@proxo_iq" target="_blank"><img src="https://image2url.com/r2/default/images/1772757087694-7bee9862-8ba7-44c2-9056-a4543f25aa32.webp" alt="Proxo"></a><a href="https://proxopages.com/policy">Privacy Policy</a> | <a href="https://proxopages.com/terms">Terms</a></div></div>');
-  p.push('<script>');
-  p.push("let _url='';function askConfirm(n,u,k){_url=u;if(confirm(k+'؟'))location.href=u;}document.addEventListener('DOMContentLoaded',function(){"+handlers+"});");
-  p.push('</'+'script></body></html>');
-  return p.join('\\n');
-}
-
 // ── Wrapper — routes style name to builder ──
 function buildPLCardHTML(name, bio, tt, platforms, avatar, style, theme, lang){
   const themeMap={
@@ -14084,7 +14036,6 @@ function buildPLCardHTML(name, bio, tt, platforms, avatar, style, theme, lang){
 
   if(style === 'light')   return buildPageLight(name, bio, tt, ttUrl, avatarImg, activeBtns, handlers, tg);
   if(style === 'classic') return buildPageClassic(name, bio, tt, ttUrl, avatarImg, activeBtns, handlers, tg);
-  if(style === 'pill-file'||style === 'pill-mint'||style === 'pill-sand'||style === 'pill-dark'||style === 'pill-glass-dark') return buildPagePillVariant(name, bio, tt, ttUrl, avatarImg, activeBtns, handlers, style);
   if(style === 'pill')    return buildPagePill(name, bio, tt, ttUrl, avatarImg, activeBtns, handlers, tg);
   if(style === 'card')    return buildPageCard(name, bio, tt, ttUrl, avatarImg, activeBtns, handlers, tg);
   if(style === 'neon')    return buildPageNeon(name, bio, tt, ttUrl, avatarImg, activeBtns, handlers, tg);
