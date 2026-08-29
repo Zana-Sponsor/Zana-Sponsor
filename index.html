@@ -7136,7 +7136,7 @@ async function doForgotSavePass(){
     if(!le&&ld?.user){
       try{
         const{data:_ban}=await sb.from('profiles').select('is_banned,ban_reason').eq('id',ld.user.id).single();
-        if(_ban?.is_banned){await sb.auth.signOut();fpShowMsg('C','ئەم هەژمارە باندکراوە'+(_ban.ban_reason?' — '+_ban.ban_reason:''),'err');return;}
+        if(_ban?.is_banned){await paHandleSuspension();return;}
       }catch(_){}
       cu=ld.user;
       cancelForgotStep();
@@ -8316,7 +8316,7 @@ async function boot(){
         .eq('id',cu.id).single();
       if(!_pb)return;
       if(_pb.is_banned){
-        await paKickOut('ئەکاونتەکەت بانکرا'+(_pb.ban_reason?' — '+_pb.ban_reason:''));
+        await paHandleSuspension();
         return;
       }
       if(_pb.force_logout_at){
@@ -9320,7 +9320,7 @@ function paStartGuard(){
       if(!row) return;
       // ١. بانکردن → یەکسەر دەرچوون
       if(row.is_banned){
-        paKickOut('ئەکاونتەکەت بانکرا' + (row.ban_reason ? ' — ' + row.ban_reason : ''));
+        paHandleSuspension();
         return;
       }
       // ٢. دەرکردنی ئادمین (گۆڕینی وشەی نهێنی / بلۆکی IP / دەرکردنی دەستی)
@@ -9360,7 +9360,7 @@ async function paInitialGuard(){
       .select('is_banned,ban_reason,balance_locked,balance_lock_reason,force_logout_at')
       .eq('id',cu.id).single();
     if(p?.is_banned){
-      await paKickOut('ئەکاونتەکەت بانکراوە'+(p.ban_reason?' — '+p.ban_reason:''));
+      await paHandleSuspension();
       return true;
     }
     paApplyBalanceLock(!!p?.balance_locked, p?.balance_lock_reason||'');
@@ -9388,10 +9388,183 @@ const PA_NEUTRAL_BLOCK_MSG = 'هەڵەیەک ڕووی دا، دووبارە هە
 
 function paLockErrMsg(m){
   if(!m) return null;
-  if(String(m).includes('balance_locked')) return PA_NEUTRAL_BLOCK_MSG;
-  if(String(m).includes('ip_banned'))      return PA_NEUTRAL_BLOCK_MSG;
+  if(String(m).includes('balance_locked'))        return PA_NEUTRAL_BLOCK_MSG;
+  if(String(m).includes('ip_banned'))             return PA_NEUTRAL_BLOCK_MSG;
+  if(String(m).includes('ad_submission_blocked')) return PA_NEUTRAL_BLOCK_MSG;
   return null;
 }
+
+
+// ══════════════════════════════════════════════════════════════
+// ══ قفڵی ناردنی ڕیکلام — بێدەنگ ══
+// بەکارهێنەر هەرگیز ناتوانێت بزانێت قفڵکراوە. کلاینت هیچ کات
+// profiles.ads_locked ناخوێنێتەوە — ناتوانێت، چونکە مافی خوێندنەوەی
+// ئەو ستوونە لە داتابەیس لابراوە. تەنها یەک boolean لە RPCـەوە.
+// ══════════════════════════════════════════════════════════════
+
+let _paAdLockCache = { value:null, at:0 };
+const _PA_AD_LOCK_TTL = 15000;
+
+async function paCanSubmitAd(force){
+  if(!cu?.id) return true;
+  const now = Date.now();
+  if(!force && _paAdLockCache.value!==null && now-_paAdLockCache.at < _PA_AD_LOCK_TTL){
+    return _paAdLockCache.value;
+  }
+  try{
+    const { data, error } = await sb.rpc('pa_can_submit_ad');
+    if(error) return true;                 // fail open — داتابەیس خۆی ڕایدەگرێت
+    const allowed = data !== false;
+    _paAdLockCache = { value: allowed, at: now };
+    return allowed;
+  }catch(_){ return true; }
+}
+
+// هەمان ماوەی چاوەڕوانی داواکارییەکی ڕاستەقینەی create_ad_and_deduct.
+// ڕەتکردنەوەی خێرا ئاشکراکەرە.
+function _paStealthDelay(){
+  return new Promise(r=>setTimeout(r, 1600 + Math.floor(Math.random()*1800)));
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// ══ شاشەی ڕاگرتنی هەژمار (Light Mode) ══
+// ══════════════════════════════════════════════════════════════
+
+const PA_SUPPORT_URL = 'https://proxopages.com/support';
+
+async function paHandleSuspension(){
+  if(window.__proxoSuspendedShown) return;
+  window.__proxoSuspendedShown = true;
+
+  let info = null;
+  try{
+    const { data } = await sb.rpc('pa_my_suspension');
+    if(data && data.suspended) info = data;
+  }catch(_){}
+  if(!info){
+    info = { reason:null, banned_at:new Date().toISOString(), case_id:null, appeal_url:null };
+  }
+
+  try{ sessionStorage.setItem('proxo_suspension', JSON.stringify(info)); }catch(_){}
+
+  _paKicked = true;
+  try{ if(_sessHeartbeat) clearInterval(_sessHeartbeat); }catch(_){}
+  try{ if(_paGuardChannel) sb.removeChannel(_paGuardChannel); }catch(_){}
+  try{ sb.removeAllChannels(); }catch(_){}
+  try{ await sb.auth.signOut(); }catch(_){}
+  cu = null;
+  try{
+    Object.keys(localStorage).forEach(function(k){
+      if(/^sb-|supabase/i.test(k)) localStorage.removeItem(k);
+    });
+  }catch(_){}
+
+  paRenderSuspended(info);
+}
+
+function paRenderSuspended(info){
+  if(document.getElementById('proxoSuspended')) return;
+
+  try{
+    Array.from(document.body.children).forEach(function(el){
+      if(el.id!=='proxoSuspended'){ el.style.display='none'; el.setAttribute('aria-hidden','true'); }
+    });
+  }catch(_){}
+
+  var d = info.banned_at ? new Date(info.banned_at) : new Date();
+  if(isNaN(d.getTime())) d = new Date();
+  var pad = function(n){ return String(n).padStart(2,'0'); };
+  var dateStr = pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear();
+  var timeStr = pad(d.getHours())+':'+pad(d.getMinutes());
+  var esc = function(t){ return String(t==null?'':t).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+  var appeal = info.appeal_url || PA_SUPPORT_URL;
+
+  var host = document.createElement('div');
+  host.id = 'proxoSuspended';
+  host.innerHTML = PROXO_SUSPENDED_CSS +
+  '<div class="sus-page"><main class="sus-doc" role="main">'+
+    '<header class="sus-head">'+
+      '<span class="sus-mark">PROXO</span>'+
+      '<span class="sus-state">ڕاگیراوە</span>'+
+    '</header>'+
+    '<h1 class="sus-title">ئەم هەژمارە ڕاگیراوە</h1>'+
+    '<p class="sus-lede">ناتوانیت بچیتە ژوورەوە و ڕیکلامەکانت ڕاگیراون. خوارەوە تۆماری بڕیارەکەیە.</p>'+
+    '<section class="sus-reason" aria-labelledby="sus-reason-h">'+
+      '<h2 class="sus-reason-h" id="sus-reason-h">هۆکار</h2>'+
+      '<p class="sus-reason-body">'+(info.reason?esc(info.reason):'هۆکارێکی وردتر تۆمار نەکراوە.')+'</p>'+
+    '</section>'+
+    '<div class="sus-tear" role="separator" aria-hidden="true"></div>'+
+    '<dl class="sus-record">'+
+      '<div class="sus-row"><dt>بەرواری ڕاگرتن</dt><dd class="num">'+dateStr+'</dd></div>'+
+      '<div class="sus-row"><dt>کاتژمێر</dt><dd class="num">'+timeStr+'</dd></div>'+
+      (info.email?'<div class="sus-row"><dt>هەژمار</dt><dd class="num">'+esc(info.email)+'</dd></div>':'')+
+      (info.case_id?'<div class="sus-row"><dt>ژمارەی دۆسیە</dt><dd class="num sus-case">'+esc(info.case_id)+'</dd></div>':'')+
+    '</dl>'+
+    '<a class="sus-action" href="'+esc(appeal)+'" target="_blank" rel="noopener noreferrer">پەیوەندی بە پشتیوانییەوە بکە</a>'+
+    '<p class="sus-note">ئەگەر پێت وایە ئەمە هەڵەیە، ژمارەی دۆسیەکە لەگەڵ نامەکەت بنێرە.</p>'+
+  '</main></div>';
+
+  document.body.appendChild(host);
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(function(){ host.classList.add('ready'); });
+}
+
+// شاشەکە وەک بەڵگەنامەیەکی دەرکراو دیزاین کراوە نەک پەڕەی هەڵە —
+// ئەپەکە پێشتر بە زمانی وەسڵ دەدوێت (ژمارەی واریز، وەسڵی باڵانس،
+// تۆماری مامەڵە)، بۆیە ڕاگرتنیش وەک تۆمارێکی تر لەو زنجیرەیە دەخوێنرێتەوە.
+// ڕەنگی ئاماژە کاڵ و پرتەقاڵییە نەک سوور: ڕاگرتن دۆخێکە دەکرێت کاری لەسەر
+// بکرێت، سوور وەک بڕیاری کۆتایی دەخوێنرێتەوە.
+const PROXO_SUSPENDED_CSS = '<style>'+
+'#proxoSuspended{--paper:#F2F4F7;--card:#FFFFFF;--ink:#12161F;--ink-2:#5A6478;--hair:#E3E7EE;--signal:#B45309;--signal-bg:#FEF6EC;'+
+'position:fixed;inset:0;z-index:2147483646;background:var(--paper);overflow-y:auto;direction:rtl;'+
+'font-family:R,"Noto Kufi Arabic","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;}'+
+'#proxoSuspended .num{font-family:Inter,"SF Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;direction:ltr;}'+
+'#proxoSuspended .sus-page{min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px 20px;box-sizing:border-box;}'+
+'#proxoSuspended .sus-doc{position:relative;width:100%;max-width:440px;background:var(--card);border:1px solid var(--hair);'+
+'border-radius:20px;padding:34px 30px 30px;box-shadow:0 1px 2px rgba(18,22,31,.04),0 12px 32px -12px rgba(18,22,31,.14);'+
+'opacity:0;transform:translateY(14px);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1);}'+
+'#proxoSuspended.ready .sus-doc{opacity:1;transform:none;}'+
+'#proxoSuspended .sus-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:22px;'+
+'border-bottom:1px solid var(--hair);margin-bottom:24px;}'+
+'#proxoSuspended .sus-mark{font-family:Inter,system-ui,sans-serif;font-weight:800;font-size:12px;letter-spacing:.16em;color:var(--ink-2);}'+
+'#proxoSuspended .sus-state{font-size:11.5px;font-weight:700;color:var(--signal);background:var(--signal-bg);'+
+'border:1px solid rgba(180,83,9,.18);padding:5px 12px;border-radius:999px;}'+
+'#proxoSuspended .sus-title{margin:0 0 10px;font-size:25px;line-height:1.45;font-weight:800;color:var(--ink);letter-spacing:-.01em;}'+
+'#proxoSuspended .sus-lede{margin:0 0 24px;font-size:14px;line-height:1.95;color:var(--ink-2);}'+
+'#proxoSuspended .sus-reason{background:var(--signal-bg);border:1px solid rgba(180,83,9,.16);border-radius:13px;padding:16px 18px;}'+
+'#proxoSuspended .sus-reason-h{margin:0 0 7px;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--signal);text-transform:uppercase;}'+
+'#proxoSuspended .sus-reason-body{margin:0;font-size:14.5px;line-height:1.85;color:var(--ink);font-weight:600;}'+
+'#proxoSuspended .sus-tear{position:relative;height:1px;margin:28px -30px;'+
+'background:repeating-linear-gradient(to left,var(--hair) 0 6px,transparent 6px 12px);}'+
+'#proxoSuspended .sus-tear::before,#proxoSuspended .sus-tear::after{content:"";position:absolute;top:-9px;width:18px;height:18px;'+
+'background:var(--paper);border-radius:50%;}'+
+'#proxoSuspended .sus-tear::before{right:-9px;}#proxoSuspended .sus-tear::after{left:-9px;}'+
+'#proxoSuspended .sus-record{margin:0 0 26px;}'+
+'#proxoSuspended .sus-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:11px 0;'+
+'border-bottom:1px solid var(--hair);opacity:0;transform:translateY(6px);transition:opacity .4s ease,transform .4s ease;}'+
+'#proxoSuspended.ready .sus-row{opacity:1;transform:none;}'+
+'#proxoSuspended.ready .sus-row:nth-child(1){transition-delay:.16s;}'+
+'#proxoSuspended.ready .sus-row:nth-child(2){transition-delay:.22s;}'+
+'#proxoSuspended.ready .sus-row:nth-child(3){transition-delay:.28s;}'+
+'#proxoSuspended.ready .sus-row:nth-child(4){transition-delay:.34s;}'+
+'#proxoSuspended .sus-row:last-child{border-bottom:0;}'+
+'#proxoSuspended .sus-row dt{font-size:13px;color:var(--ink-2);font-weight:600;}'+
+'#proxoSuspended .sus-row dd{margin:0;font-size:13.5px;color:var(--ink);font-weight:700;}'+
+'#proxoSuspended .sus-case{letter-spacing:.06em;color:var(--signal);}'+
+'#proxoSuspended .sus-action{display:block;text-align:center;text-decoration:none;background:var(--ink);color:#fff;'+
+'font-size:14.5px;font-weight:700;font-family:inherit;padding:15px 20px;border-radius:13px;'+
+'transition:background .18s ease,transform .12s ease;}'+
+'#proxoSuspended .sus-action:hover{background:#000;}'+
+'#proxoSuspended .sus-action:active{transform:scale(.985);}'+
+'#proxoSuspended .sus-action:focus-visible{outline:2px solid var(--signal);outline-offset:3px;}'+
+'#proxoSuspended .sus-note{margin:14px 0 0;text-align:center;font-size:12px;line-height:1.8;color:var(--ink-2);}'+
+'@media (max-width:420px){#proxoSuspended .sus-page{padding:24px 14px;}'+
+'#proxoSuspended .sus-doc{padding:28px 22px 24px;border-radius:18px;}'+
+'#proxoSuspended .sus-tear{margin:24px -22px;}#proxoSuspended .sus-title{font-size:22px;}}'+
+'@media (prefers-reduced-motion:reduce){#proxoSuspended .sus-doc,#proxoSuspended .sus-row{transition:none;opacity:1;transform:none;}}'+
+'</style>';
 
 
 // ══════════════════════════════════════════════════════════════
@@ -10896,9 +11069,16 @@ function pickCard(el,id){
       // ── پشکنینی بێدەنگی قفڵی باڵانس ──
       // دووگمەکە وەک ئاسایی کاردەکات و سپینەر دەسووڕێتەوە، پاشان تەنها
       // هەڵەیەکی گشتی دەردەکەوێت. هیچ ئاماژەیەک بە قفڵکردن ناکرێت.
-      if(!await paAssertCanSpend()){
-        await new Promise(r=>setTimeout(r, 700+Math.floor(Math.random()*500)));
-        throw new Error(PA_NEUTRAL_BLOCK_MSG);
+      // ── دەروازەی بێدەنگ: قفڵی باڵانس + قفڵی ناردنی ڕیکلام ──
+      // هەردوو پشکنین پێش چاوەڕوانییەکە دەکرێن تا ماوەکە بۆ هەردوو
+      // هۆکار وەک یەک بێت و جیاوازی نەکرێت.
+      {
+        const _canSpend  = await paAssertCanSpend();
+        const _canSubmit = await paCanSubmitAd(true);
+        if(!_canSpend || !_canSubmit){
+          await _paStealthDelay();
+          throw new Error(PA_NEUTRAL_BLOCK_MSG);
+        }
       }
 
       let _fallbackAdNum=null; // بۆ پاراستنی ژمارەی ڕیکلام کاتێک fallback جووڵاوە
@@ -10974,6 +11154,7 @@ function pickCard(el,id){
           // بەردەوام بە — مامەڵەکە سەرکەوتوو بوو
         }else{
           const msgs={
+            'ad_submission_blocked':PA_NEUTRAL_BLOCK_MSG,
             'balance_locked':PA_NEUTRAL_BLOCK_MSG,
             'insufficient_balance':'موازەنەت بەسنییە، تکایە باڵانس زیاد بکە',
             'wallet_not_found':'جزدانت نەدۆزرایەوە، تکایە دووبارە بچۆ ژوورەوە',
@@ -14410,7 +14591,9 @@ function showReceipt(t){
   const dateStr   = date.toLocaleDateString('ku',{year:'numeric',month:'long',day:'numeric'});
   const timeStr   = date.toLocaleTimeString('ku',{hour:'2-digit',minute:'2-digit'});
   const st        = smMap[t.status]||smMap.pending;
-  const txId      = (t.deposit_number ? '#'+t.deposit_number : ('#'+(t.id||'').toString().slice(0,8).toUpperCase()));
+  const txId      = (t.tx_id || t.legacy_id ||
+                     (t.deposit_number ? '#'+t.deposit_number
+                                       : ('#'+(t.id||'').toString().slice(0,8).toUpperCase())));
   const accentColor = (isDeposit||isRefund)?'#16a34a': isReward?'#d97706': '#dc2626';
   const accentBg    = (isDeposit||isRefund)?'rgba(22,163,74,.1)':isReward?'rgba(245,158,11,.1)':'rgba(220,38,38,.08)';
   const accentBorder= (isDeposit||isRefund)?'rgba(22,163,74,.25)':isReward?'rgba(245,158,11,.25)':'rgba(220,38,38,.2)';
