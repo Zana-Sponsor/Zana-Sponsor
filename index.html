@@ -8209,7 +8209,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   },8000);
   sb.auth.onAuthStateChange((_,s)=>{
     if(s?.user&&!cu){cu=s.user;_hideSessionLoader();}
-    else if(!s&&cu){cu=null;showAuth();}
+    else if(!s&&cu){
+      cu=null;
+      // paHandleSuspension owns navigation while it signs the suspended user out.
+      if(!window.__proxoSuspensionFlow)showAuth();
+    }
   });
 });
 
@@ -8226,11 +8230,7 @@ async function boot(){
       .eq('id', cu.id)
       .single();
     if (_bp?.is_banned) {
-      await sb.auth.signOut();
-      cu = null;
-      proxoHideSplash();
-      showAuth();
-      showAmsg('ئەکاونتەکەت بانکراوە' + (_bp.ban_reason ? ' — ' + _bp.ban_reason : ''), 'err');
+      await paHandleSuspension();
       return;
     }
     _paBalanceLocked = !!_bp?.balance_locked;
@@ -9434,20 +9434,31 @@ function _paStealthDelay(){
 const PA_SUPPORT_URL = 'https://proxopages.com/support';
 
 async function paHandleSuspension(){
-  if(window.__proxoSuspendedShown) return;
-  window.__proxoSuspendedShown = true;
+  if(window.__proxoSuspensionHandling) return true;
+  window.__proxoSuspensionHandling = true;
 
   let info = null;
   try{
-    const { data } = await sb.rpc('pa_my_suspension');
+    // Atomic claim: the database returns show_notice=true to exactly one caller
+    // and records ban_notice_read_at in the same transaction.
+    const { data, error } = await sb.rpc('pa_claim_my_suspension');
+    if(error) throw error;
     if(data && data.suspended) info = data;
   }catch(_){}
   if(!info){
-    info = { reason:null, banned_at:new Date().toISOString(), case_id:null, appeal_url:null };
+    // A failed atomic claim must never create a repeating full-screen notice.
+    // The read-only RPC is only used to decide whether this session is banned.
+    try{
+      const { data } = await sb.rpc('pa_my_suspension');
+      if(data && data.suspended) info = Object.assign({}, data, {show_notice:false});
+    }catch(_){}
+  }
+  if(!info){
+    window.__proxoSuspensionHandling = false;
+    return false;
   }
 
-  try{ sessionStorage.setItem('proxo_suspension', JSON.stringify(info)); }catch(_){}
-
+  window.__proxoSuspensionFlow = true;
   _paKicked = true;
   try{ if(_sessHeartbeat) clearInterval(_sessHeartbeat); }catch(_){}
   try{ if(_paGuardChannel) sb.removeChannel(_paGuardChannel); }catch(_){}
@@ -9460,11 +9471,20 @@ async function paHandleSuspension(){
     });
   }catch(_){}
 
-  paRenderSuspended(info);
+  if(info.show_notice === true){
+    paRenderSuspended(info);
+  }else{
+    window.location.replace('/login');
+  }
+  return true;
 }
 
 function paRenderSuspended(info){
   if(document.getElementById('proxoSuspended')) return;
+  window.__proxoSuspendedShown = true;
+
+  // Refreshing the one-time notice intentionally lands on the login page.
+  try{ window.history.replaceState({}, document.title, '/login'); }catch(_){}
 
   try{
     Array.from(document.body.children).forEach(function(el){
