@@ -11714,6 +11714,9 @@ async function refreshAdLockBadge(){
 .fd-ed{cursor:text;position:relative;}
 .fd-on .fd-ed{background:rgba(8,145,178,.05);box-shadow:inset 0 0 0 1px rgba(8,145,178,.18);border-radius:6px;}
 .fd-on .fd-ed:hover{background:rgba(8,145,178,.12);}
+#fdWrap.fd-on td,#fdWrap.fd-on td *,#fdWrap .fd-on td,#fdWrap .fd-on td *{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none;}
+#fdWrap.fd-on td .fd-inp,#fdWrap .fd-on td .fd-inp{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
+#fdWrap td{touch-action:manipulation;}
 .fd-inp{width:100%;min-width:80px;padding:6px 8px;border:1.5px solid #0891b2;border-radius:8px;background:#fff;font-family:'Inter',sans-serif;font-size:12px;color:var(--dark);outline:none;direction:ltr;}
 .fd-sticky{position:sticky;right:0;background:var(--w);z-index:2;box-shadow:-6px 0 8px -6px rgba(0,0,0,.12);}
 tr:hover .fd-sticky{background:#fafbfc;}
@@ -11977,6 +11980,8 @@ function fdEditCell(td,id,key){
   const ad=_fdAds.find(x=>x.id===id);
   if(!ad)return;
   _fdEditingCell=td;
+  // سڕینەوەی هەڵبژاردنی دەق — بەبێ ئەمە Chrome ی مۆبایل پۆپ-ئەپی گەڕان دەردەخات
+  try{const s=window.getSelection&&window.getSelection();if(s&&s.removeAllRanges)s.removeAllRanges();}catch(_){}
   const raw=ad[key];
   const old=td.innerHTML;
 
@@ -12009,7 +12014,12 @@ function fdEditCell(td,id,key){
     if(e.key==='Enter'){e.preventDefault();commit();}
     if(e.key==='Escape'){e.preventDefault();cancel();}
   });
-  inp.addEventListener('blur',commit);
+  const openedAt=Date.now();
+  inp.addEventListener('blur',()=>{
+    // لەسەر مۆبایل هەندێک جار کیبۆرد یەکسەر blur دروست دەکات — کەمێک چاوەڕێ دەکەین
+    if(Date.now()-openedAt<400){setTimeout(()=>{if(!done)inp.focus();},0);return;}
+    commit();
+  });
   if(col.t==='sel')inp.addEventListener('change',commit);
 }
 
