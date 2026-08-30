@@ -12016,9 +12016,9 @@ function fdEditCell(td,id,key){
 function _fdCast(key,val){
   const col=FD_COLS.find(c=>c.k===key)||{};
   if(val===''||val==null)return (col.t==='n'||col.t==='f'||col.t==='m')?0:null;
-  if(FD_INT_COLS.has(key))return _fdInt(val);
-  if(col.t==='n')return _fdInt(val);
-  if(col.t==='f'||col.t==='m')return _fdNum(val);
+  // ژمارەکانی ئامار هەرگیز نەرێنی نابن
+  if(FD_INT_COLS.has(key)||col.t==='n')return Math.max(0,_fdInt(val));
+  if(col.t==='f'||col.t==='m')return Math.max(0,_fdNum(val));
   return val;
 }
 
