@@ -1949,8 +1949,8 @@ tr:hover td{background:rgba(28,35,51,.015);}
         <h3><i class="fas fa-table-list" style="margin-left:8px;color:#0891b2"></i>هەموو داتای ڕیکلامەکان — یەک پەڕە</h3>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <div class="act-btn" onclick="fdToggleColsPanel()"><i class="fas fa-table-columns"></i> ستوونەکان</div>
-          <div class="act-btn" onclick="fdExportCsv()"><i class="fas fa-file-csv"></i> CSV</div>
-          <div class="act-btn" style="background:rgba(22,163,74,.08);color:#16a34a;border-color:rgba(22,163,74,.25)" onclick="fdExportXlsx()"><i class="fas fa-file-excel"></i> XLSX</div>
+          <div class="act-btn" style="background:rgba(22,163,74,.08);color:#16a34a;border-color:rgba(22,163,74,.25)" onclick="exportAdsBulkReport('xlsx')"><i class="fas fa-file-excel"></i> Excel</div>
+          <div class="act-btn" style="background:rgba(8,145,178,.08);color:#0891b2;border-color:rgba(8,145,178,.25)" onclick="exportAdsBulkReport('csv')"><i class="fas fa-file-csv"></i> CSV</div>
           <div class="act-btn dark" onclick="loadFullData()"><i class="fas fa-rotate-right"></i> نوێکردنەوە</div>
         </div>
       </div>
@@ -4462,7 +4462,7 @@ async function showAdDetail(id){
       ${a.tiktok_ad_id&&['active','paused','scheduled','completed'].includes(a.status)?`<div class="act-btn" style="flex:1;background:rgba(37,99,235,.08);color:#2563eb;border-color:rgba(37,99,235,.25)" onclick="openEditTikTokModal('${a.id}')"><i class="fab fa-tiktok"></i> دەستکاری TikTok ID</div>`:''}
       ${!a.needs_update?`<div class="act-btn" style="flex:1;background:rgba(219,39,119,.08);color:#db2777;border-color:rgba(219,39,119,.25)" onclick="openAdUpdateRequest('${a.id}')"><i class="fas fa-pen"></i> ناردنی داواکاری نوێکردنەوە</div>`:''}
     </div>
-    <div class="act-btn" style="width:100%;justify-content:center;margin-top:10px;background:rgba(22,163,74,.08);color:#16a34a;border-color:rgba(22,163,74,.25)" onclick="exportAdXlsx('${a.id}')"><i class="fas fa-file-excel"></i> پاشەکەوتکردنی هەموو زانیارییەکان (XLSX)</div>
+    <div class="act-btn" style="width:100%;justify-content:center;margin-top:10px;background:rgba(22,163,74,.08);color:#16a34a;border-color:rgba(22,163,74,.25)" onclick="openExportPicker('${a.id}')"><i class="fas fa-file-export"></i> دەرهێنانی ڕاپۆرت (Excel یان CSV)</div>
     <div style="font-size:10.5px;color:var(--mt);font-weight:700;margin:18px 0 8px;text-align:center;letter-spacing:.3px">⚠️ ناوچەی مەترسیدار</div>
     <div class="act-btn" style="width:100%;justify-content:center;background:transparent;border:1.5px solid var(--rd);color:var(--rd)" onclick="deleteAdRecord('${a.id}')"><i class="fas fa-trash"></i> سڕینەوەی ڕیکلام بە تەواوی</div>`;
   openMo('moAdDetail');
@@ -4699,7 +4699,7 @@ function renderAdsDataTable(q=''){
         <td style="font-size:10px;white-space:nowrap;direction:ltr">${a.data_updated_at?`<span style="color:#0891b2;font-weight:700">${_fdFmtDT(a.data_updated_at)}</span><div style="font-size:9px;color:var(--mt);direction:rtl">${_fdAgo(a.data_updated_at)}</div>`:'<span style="color:var(--mt)">—</span>'}</td>
         <td style="font-size:10px;color:var(--mt);white-space:nowrap">${new Date(a.created_at).toLocaleDateString('ku')}</td>
         <td style="font-size:10px;color:var(--mt);white-space:nowrap;direction:ltr">${a.start_date?(()=>{const d=new Date(a.start_date);const hasTime=a.start_date.length>10;return d.toLocaleDateString('en-GB')+(hasTime?'<br><span style="color:#0891b2;font-weight:700">'+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+'</span>':'')})():'—'}<br><span style="opacity:.7">${a.end_date||'—'}</span></td>
-        <td onclick="event.stopPropagation()"><div style="display:flex;gap:5px"><div class="act-btn" style="padding:5px 9px;font-size:11px;background:rgba(8,145,178,.08);color:#0891b2;border-color:rgba(8,145,178,.25)" onclick="openEditAdData('${a.id}')" title="دەستکاری داتا"><i class="fas fa-pen"></i></div><div class="act-btn" style="padding:5px 9px;font-size:11px;background:rgba(22,163,74,.08);color:#16a34a;border-color:rgba(22,163,74,.25)" onclick="exportAdXlsx('${a.id}')" title="پاشەکەوتکردن وەک XLSX"><i class="fas fa-file-excel"></i></div></div></td>
+        <td onclick="event.stopPropagation()"><div style="display:flex;gap:5px"><div class="act-btn" style="padding:5px 9px;font-size:11px;background:rgba(8,145,178,.08);color:#0891b2;border-color:rgba(8,145,178,.25)" onclick="openEditAdData('${a.id}')" title="دەستکاری داتا"><i class="fas fa-pen"></i></div><div class="act-btn" style="padding:5px 9px;font-size:11px;background:rgba(22,163,74,.08);color:#16a34a;border-color:rgba(22,163,74,.25)" onclick="openExportPicker('${a.id}')" title="دەرهێنانی ڕاپۆرت"><i class="fas fa-file-excel"></i></div></div></td>
       </tr>`;
     }).join('')}</tbody></table>`;
 
@@ -11695,6 +11695,38 @@ async function refreshAdLockBadge(){
   </div>
 </div>
 
+<!-- ══ EXPORT FORMAT PICKER ══ -->
+<div class="overlay" id="moExportPicker">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-hdr">
+      <h3><i class="fas fa-file-export" style="margin-left:8px;color:#0891b2"></i>دەرهێنانی ڕاپۆرت</h3>
+      <div class="modal-close" onclick="closeMo('moExportPicker')"><i class="fas fa-xmark"></i></div>
+    </div>
+    <div id="expPickerInfo" style="background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:11px 14px;margin-bottom:16px"></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div onclick="expRun('xlsx')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid rgba(22,163,74,.25);background:rgba(22,163,74,.06);border-radius:14px;cursor:pointer">
+        <div style="width:42px;height:42px;border-radius:12px;background:rgba(22,163,74,.12);display:flex;align-items:center;justify-content:center;font-size:19px;color:#16a34a;flex-shrink:0"><i class="fas fa-file-excel"></i></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:800;color:var(--dark)">Excel (.xlsx)</div>
+          <div style="font-size:11px;color:var(--mt);margin-top:2px">ڕاپۆرتێکی ڕێکخراوی کوردی بۆ خوێندنەوە</div>
+        </div>
+        <i class="fas fa-arrow-left" style="color:#16a34a"></i>
+      </div>
+      <div onclick="expRun('csv')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid rgba(8,145,178,.25);background:rgba(8,145,178,.06);border-radius:14px;cursor:pointer">
+        <div style="width:42px;height:42px;border-radius:12px;background:rgba(8,145,178,.12);display:flex;align-items:center;justify-content:center;font-size:19px;color:#0891b2;flex-shrink:0"><i class="fas fa-file-csv"></i></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:800;color:var(--dark)">CSV (.csv)</div>
+          <div style="font-size:11px;color:var(--mt);margin-top:2px">داتای تەخت بۆ شیکردنەوە و سیستەمی تر</div>
+        </div>
+        <i class="fas fa-arrow-left" style="color:#0891b2"></i>
+      </div>
+    </div>
+    <div style="font-size:10.5px;color:var(--mt);margin-top:14px;text-align:center;line-height:1.7">
+      هەردوو فایلەکە هەمان بەها بەکاردەهێنن. خانەی بەتاڵ واتە ئەو داتایە لە TikTok ـەوە سینک نەکراوە.
+    </div>
+  </div>
+</div>
+
 <!-- ══ EDIT AD DATA ══ -->
 <div class="overlay" id="moEditAdData">
   <div class="modal" style="max-width:620px">
@@ -11705,7 +11737,7 @@ async function refreshAdLockBadge(){
     <div id="eadHead" style="background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:11px 14px;margin-bottom:14px"></div>
     <div id="eadFields"></div>
     <div id="eadMsg" style="display:none;margin-top:12px;padding:9px 12px;border-radius:10px;font-size:12.5px;font-weight:600"></div>
-    <button class="modal-btn" style="background:rgba(22,163,74,.1);color:#16a34a;border:1.5px solid rgba(22,163,74,.25)" onclick="exportAdXlsx(_eadId)"><i class="fas fa-file-excel"></i> پاشەکەوتکردن وەک XLSX</button>
+    <button class="modal-btn" style="background:rgba(22,163,74,.1);color:#16a34a;border:1.5px solid rgba(22,163,74,.25)" onclick="openExportPicker(_eadId)"><i class="fas fa-file-export"></i> دەرهێنانی ڕاپۆرت</button>
     <button class="modal-btn dark" id="eadSaveBtn" onclick="saveAdDataEdit()"><i class="fas fa-floppy-disk"></i> پاشەکەوتکردن</button>
   </div>
 </div>
@@ -11714,8 +11746,13 @@ async function refreshAdLockBadge(){
 .fd-ed{cursor:text;position:relative;}
 .fd-on .fd-ed{background:rgba(8,145,178,.05);box-shadow:inset 0 0 0 1px rgba(8,145,178,.18);border-radius:6px;}
 .fd-on .fd-ed:hover{background:rgba(8,145,178,.12);}
-#fdWrap.fd-on td,#fdWrap.fd-on td *,#fdWrap .fd-on td,#fdWrap .fd-on td *{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none;}
-#fdWrap.fd-on td .fd-inp,#fdWrap .fd-on td .fd-inp{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
+/* ڕێگری لە Touch-to-Search ی Chrome — سەری ستوون و خانەکان هەردووکیان */
+#fdWrap,#fdWrap table,#fdWrap th,#fdWrap td,#fdWrap th *,#fdWrap td *{
+  -webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;
+  -webkit-touch-callout:none;}
+#fdWrap .fd-inp,#fdWrap input,#fdWrap select{
+  -webkit-user-select:text!important;-moz-user-select:text!important;user-select:text!important;
+  -webkit-touch-callout:default;}
 #fdWrap td{touch-action:manipulation;}
 .fd-inp{width:100%;min-width:80px;padding:6px 8px;border:1.5px solid #0891b2;border-radius:8px;background:#fff;font-family:'Inter',sans-serif;font-size:12px;color:var(--dark);outline:none;direction:ltr;}
 .fd-sticky{position:sticky;right:0;background:var(--w);z-index:2;box-shadow:-6px 0 8px -6px rgba(0,0,0,.12);}
@@ -11959,7 +11996,7 @@ function fdRender(){
       <div style="display:flex;gap:5px">
         <div class="act-btn" style="padding:5px 9px;font-size:11px;background:rgba(8,145,178,.08);color:#0891b2;border-color:rgba(8,145,178,.25)" onclick="openEditAdData('${a.id}')" title="دەستکاری"><i class="fas fa-pen"></i></div>
         <div class="act-btn" style="padding:5px 9px;font-size:11px" onclick="showAdDetail('${a.id}')" title="وردەکاری"><i class="fas fa-eye"></i></div>
-        <div class="act-btn" style="padding:5px 9px;font-size:11px;background:rgba(22,163,74,.08);color:#16a34a;border-color:rgba(22,163,74,.25)" onclick="exportAdXlsx('${a.id}')" title="پاشەکەوتکردن وەک XLSX"><i class="fas fa-file-excel"></i></div>
+        <div class="act-btn" style="padding:5px 9px;font-size:11px;background:rgba(22,163,74,.08);color:#16a34a;border-color:rgba(22,163,74,.25)" onclick="openExportPicker('${a.id}')" title="دەرهێنانی ڕاپۆرت"><i class="fas fa-file-excel"></i></div>
       </div></td></tr>`;
   }).join('');
 
@@ -12168,224 +12205,656 @@ function fdExportCsv(){
 
 
 <script>
-/* ══════════════════════════════════════════════════════════════
-   دەرهێنانی XLSX — هەموو زانیاری یەک ڕیکلام یان لیستی پاڵێوراو
-   ══════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════
+   ڕاپۆرتی ڕیکلام — یەک ئۆبجێکتی نۆرماڵایزکراو بۆ هەردوو XLSX و CSV
+   بەهاکان هەرگیز لەنێوان دوو فایلەکەدا جیاواز نابن، چونکە هەردووکیان
+   لە buildNormalizedAdReport() ـەوە دێن.
+   ══════════════════════════════════════════════════════════════════════ */
 
-const XLS_USD_IQD = 1800;
+const RPT_CURRENCY   = 'USD';
+const RPT_USD_IQD    = 1800;
 
-function _xN(v){const x=parseFloat(v);return Number.isFinite(x)?x:0;}
-function _xI(v){const x=parseInt(v,10);return Number.isFinite(x)?x:0;}
-function _xTot(a,k){return _xI(a[k])+_xI(a['prev_'+k]);}
-function _xDate(v){return v?String(v).slice(0,10):'—';}
-function _xTxt(v){return (v==null||v==='')?'—':String(v);}
-function _xR2(v){return Math.round(_xN(v)*100)/100;}
+/* مێترکانی کە ووۆرکفلۆی کۆن (پێش synced_metrics) بەڕاستی دەیهێنان */
+const RPT_LEGACY_METRICS = ['spend','impressions','clicks','conversions','likes','comments','follows'];
+/* مێترکانی نوێ — تەنها لەدوای ووۆرکفلۆی نوێوە ڕاستەقینەن */
+const RPT_METRIC_KEYS = ['spend','impressions','reach','video_views','profile_visits','clicks',
+                         'likes','comments','shares','follows','conversions'];
 
-/* هێنانی ڕیکلامەکە لە کاشەوە، ئەگەر نەبوو لە Supabase */
-async function _xGetAd(id){
+/* ── یاریدەدەرە بنەڕەتییەکان ─────────────────────────────────────────── */
+function _rNum(v){ if(v===null||v===undefined||v==='')return null; const n=parseFloat(v); return Number.isFinite(n)?n:null; }
+function _rInt(v){ if(v===null||v===undefined||v==='')return null; const n=parseInt(v,10); return Number.isFinite(n)?n:null; }
+function _rTxt(v){ if(v===null||v===undefined)return null; const s=String(v).trim(); return s===''?null:s; }
+function _rBool(v){ return (v===true||v===false)?v:null; }
+
+/* کۆکردنەوە کە null دەپارێزێت: null + null = null، بەڵام 0 + null = 0 */
+function _rSum(a,b){ if(a===null&&b===null)return null; return (a||0)+(b||0); }
+
+/* ڕێکخستنی بەروار بۆ ISO 8601 لەگەڵ زۆنی کاتی */
+function _rIso(v){
+  if(!v)return null;
+  const s=String(v);
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;          // بەرواری ڕەها
+  const d=new Date(s);
+  if(isNaN(d))return null;
+  const off=-d.getTimezoneOffset();
+  const sg=off>=0?'+':'-', ab=Math.abs(off);
+  const p=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+
+         p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds())+
+         sg+p(Math.floor(ab/60))+':'+p(ab%60);
+}
+function _rDateObj(v){ if(!v)return null; const d=new Date(v); return isNaN(d)?null:d; }
+
+/* age_groups بە پایپ — لەگەڵ پاراستن لە داتای تێکچوو وەک "[" */
+function _rAgeGroups(ad){
+  let v = ad.age_groups!=null?ad.age_groups:(ad.target_age!=null?ad.target_age:ad.target_ages);
+  if(v==null)return null;
+  if(typeof v==='string'){
+    const t=v.trim();
+    if(t===''||t==='['||t===']'||t==='[]')return null;
+    if(t.startsWith('[')){ try{ v=JSON.parse(t); }catch(_){ return t; } }
+    else return t;
+  }
+  if(Array.isArray(v)){
+    const c=v.map(x=>String(x).trim()).filter(Boolean);
+    return c.length?c.join('|'):null;
+  }
+  return _rTxt(v);
+}
+
+/* ── پڕۆڤێنانس: ئایا ئەم مێتریکە بەڕاستی لە TikTok ـەوە هاتووە؟ ───────
+   synced_metrics بوونی هەیە -> تەنها ئەوانەی تێدایە ڕاستەقینەن.
+   synced_metrics نییە (ڕیکلامی کۆن) -> تەنها مێترکانی ووۆرکفلۆی کۆن،
+   ئەویش تەنها ئەگەر last_sync هەبێت. ئەوانی تر بەتاڵ دەمێننەوە. */
+function _rMetricSynced(ad,key){
+  const list=ad.synced_metrics;
+  if(Array.isArray(list))return list.indexOf(key)!==-1;
+  if(typeof list==='string'&&list.trim()!==''){
+    return list.replace(/[{}"]/g,'').split(',').map(s=>s.trim()).indexOf(key)!==-1;
+  }
+  if(!ad.last_sync)return false;
+  return RPT_LEGACY_METRICS.indexOf(key)!==-1;
+}
+
+/* بەهایەکی گەورەتر لە سفر هەرگیز بەخۆکار دروست نابێت — بەڵگەی ئەوەیە
+   کە بەڕاستی لە TikTok ـەوە هاتووە، تەنانەت ئەگەر synced_metrics نەبێت.
+   (ووۆرکفلۆی کۆن provenance ناتۆمارێت، بەڵام ژمارە ڕاستەقینەکان دەنووسێت.) */
+function _rMetricReal(ad,key,prevKey,cast){
+  if(!ad.last_sync)return false;          // هەرگیز سینک نەکراوە — هیچ بەهایەک ڕاستەقینە نییە
+  if(_rMetricSynced(ad,key))return true;
+  const c=cast(ad[key]), p=cast(ad[prevKey]);
+  return (c!==null&&c>0)||(p!==null&&p>0);
+}
+
+/* بەهای مێتریک: ئەگەر سینک نەکرابێت -> null، نەک سفری ساختە */
+function _rMetric(ad,key,prevKey,isFloat){
+  const cast=isFloat?_rNum:_rInt;
+  const synced=_rMetricReal(ad,key,prevKey,cast);
+  const cur = synced?(cast(ad[key])===null?0:cast(ad[key])):null;
+  const prevRaw=cast(ad[prevKey]);
+  // بەهای پێشوو تەنها کاتێک ڕاستەقینەیە کە بەڕاستی تۆمارکرابێت.
+  // ئەگەر مێتریکەکە هەرگیز سینک نەکرابێت، سفری بنەڕەتیی داتابەیس بەهای ڕاستەقینە نییە
+  // بۆیە دەبێتە null — نەک سفرێکی ساختە کە کۆی گشتی هەڵە دەکات.
+  let prev;
+  if(prevRaw===null)            prev = synced?0:null;
+  else if(!synced&&prevRaw===0) prev = null;
+  else                          prev = prevRaw;
+  return {cur,prev,tot:_rSum(cur,prev)};
+}
+
+/* ── دروستکردنی ئۆبجێکتی نۆرماڵایزکراو ──────────────────────────────── */
+function buildNormalizedAdReport(ad, profile, opts){
+  opts=opts||{};
+  const scope=opts.scope||'admin';          // 'admin' یان 'user'
+  const isAdmin=scope==='admin';
+  const prof=profile||ad.profiles||null;
+
+  const M={};
+  M.spend          = _rMetric(ad,'spend','prev_spend',true);
+  M.impressions    = _rMetric(ad,'impressions','prev_impressions');
+  M.reach          = _rMetric(ad,'reach','prev_reach');
+  M.video_views    = _rMetric(ad,'video_views','prev_video_views');
+  M.profile_visits = _rMetric(ad,'profile_visits','prev_profile_visits');
+  M.clicks         = _rMetric(ad,'clicks','prev_clicks');
+  M.likes          = _rMetric(ad,'likes','prev_likes');
+  M.comments       = _rMetric(ad,'comments','prev_comments');
+  M.shares         = _rMetric(ad,'shares','prev_shares');
+  M.follows        = _rMetric(ad,'follows','prev_follows');
+  M.conversions    = _rMetric(ad,'conversions','prev_conversions');
+
+  const spendT=M.spend.tot, imprT=M.impressions.tot, clickT=M.clicks.tot, convT=M.conversions.tot;
+  const targetBudget=_rNum(ad.target_budget);
+
+  // ── KPI: هەمیشە لە کۆی گشتییەوە، هەرگیز لە ڕێژە کۆکراوەکانەوە ──
+  const kpi=(cond,fn)=>cond?fn():null;
+  const budget_used_percent = kpi(targetBudget!==null&&targetBudget>0&&spendT!==null,
+                                  ()=>spendT/targetBudget*100);
+  const ctr_percent         = kpi(imprT!==null&&imprT>0&&clickT!==null,
+                                  ()=>clickT/imprT*100);
+  const cpc                 = kpi(clickT!==null&&clickT>0&&spendT!==null,
+                                  ()=>spendT/clickT);
+  const cpm                 = kpi(imprT!==null&&imprT>0&&spendT!==null,
+                                  ()=>spendT/imprT*1000);
+  const cvr_percent         = kpi(clickT!==null&&clickT>0&&convT!==null,
+                                  ()=>convT/clickT*100);
+  const cost_per_conversion = kpi(convT!==null&&convT>0&&spendT!==null,
+                                  ()=>spendT/convT);
+
+  // ── باری ناوخۆیی بەرامبەر باری TikTok — هەرگیز تێکەڵ ناکرێن ──
+  const ttOp  = _rTxt(ad.tiktok_operation_status);
+  const ttSec = _rTxt(ad.tiktok_secondary_status);
+  const ttAt  = _rIso(ad.tiktok_status_synced_at);
+  const hasTT = !!(ttOp||ttSec||ttAt);
+
+  const pub=(typeof _adminPublicAdId==='function')?_adminPublicAdId(ad):(ad.public_ad_id||ad.ad_number);
+
+  return {
+    _ad: ad, _profile: prof, _scope: scope, _metrics: M,
+
+    report_generated_at:      _rIso(new Date()),
+    public_ad_id:             _rTxt(pub),
+    supabase_id:              isAdmin?_rTxt(ad.id):null,
+    legacy_ad_number:         _rTxt(ad.legacy_ad_number),
+    title:                    _rTxt(ad.title),
+    goal:                     _rTxt(ad.goal),
+
+    internal_status:          _rTxt(ad.status),
+    internal_status_label:    ad.status?((typeof statusKu==='function')?statusKu(ad.status):ad.status):null,
+    status_source:            'supabase',
+    tiktok_operation_status:  ttOp,
+    tiktok_secondary_status:  ttSec,
+    tiktok_status_synced_at:  ttAt,
+    _tiktok_status_available: hasTT,
+
+    tiktok_ad_id:             _rTxt(ad.tiktok_ad_id),
+    previous_tiktok_ad_id:    _rTxt(ad.previous_tiktok_ad_id),
+    tiktok_campaign_id:       _rTxt(ad.tiktok_campaign_id),
+    video_link:               _rTxt(ad.tiktok_url||ad.video_link),
+
+    user_id:                  isAdmin?_rTxt(ad.user_id):null,
+    user_full_name:           _rTxt(prof&&prof.full_name),
+    user_email:               isAdmin?_rTxt(prof&&prof.email):null,
+
+    gender:                   _rTxt(ad.target_gender||ad.gender),
+    age_groups:               _rAgeGroups(ad),
+    location:                 _rTxt(ad.target_location||ad.location),
+
+    currency:                 RPT_CURRENCY,
+    total_budget:             _rNum(ad.total_budget!=null?ad.total_budget:ad.budget),
+    target_budget:            targetBudget,
+    daily_budget:             _rNum(ad.daily_budget),
+
+    spend_current:            M.spend.cur,
+    spend_previous:           M.spend.prev,
+    spend_total:              M.spend.tot,
+    budget_used_percent:      budget_used_percent,
+
+    impressions_current:      M.impressions.cur,
+    impressions_previous:     M.impressions.prev,
+    impressions_total:        M.impressions.tot,
+    reach_current:            M.reach.cur,
+    reach_previous:           M.reach.prev,
+    reach_total:              M.reach.tot,
+    video_views_current:      M.video_views.cur,
+    video_views_previous:     M.video_views.prev,
+    video_views_total:        M.video_views.tot,
+    profile_visits_current:   M.profile_visits.cur,
+    profile_visits_previous:  M.profile_visits.prev,
+    profile_visits_total:     M.profile_visits.tot,
+    clicks_current:           M.clicks.cur,
+    clicks_previous:          M.clicks.prev,
+    clicks_total:             M.clicks.tot,
+    likes_current:            M.likes.cur,
+    likes_previous:           M.likes.prev,
+    likes_total:              M.likes.tot,
+    comments_current:         M.comments.cur,
+    comments_previous:        M.comments.prev,
+    comments_total:           M.comments.tot,
+    shares_current:           M.shares.cur,
+    shares_previous:          M.shares.prev,
+    shares_total:             M.shares.tot,
+    follows_current:          M.follows.cur,
+    follows_previous:         M.follows.prev,
+    follows_total:            M.follows.tot,
+    conversions_current:      M.conversions.cur,
+    conversions_previous:     M.conversions.prev,
+    conversions_total:        M.conversions.tot,
+
+    ctr_percent:              ctr_percent,
+    cpc:                      cpc,
+    cpm:                      cpm,
+    cvr_percent:              cvr_percent,
+    cost_per_conversion:      cost_per_conversion,
+
+    created_at:               _rIso(ad.created_at),
+    start_date:               _rIso(ad.start_date),
+    end_date:                 _rIso(ad.end_date),
+    data_updated_at:          _rIso(ad.data_updated_at),
+    last_sync:                _rIso(ad.last_sync),
+    final_metrics_synced_at:  _rIso(ad.final_metrics_synced_at),
+
+    needs_update:             isAdmin?_rBool(ad.needs_update):null,
+    update_field:             isAdmin?_rTxt(ad.update_field):null,
+    update_reason:            isAdmin?_rTxt(ad.update_reason):null,
+    update_requested_at:      isAdmin?_rIso(ad.update_requested_at):null,
+    update_submitted_at:      isAdmin?_rIso(ad.update_submitted_at):null,
+    reject_reason:            isAdmin?_rTxt(ad.reject_reason):null,
+    stop_reason:              isAdmin?_rTxt(ad.stop_reason):null,
+    feedback_rating:          isAdmin?_rInt(ad.feedback_rating):null,
+    feedback_comment:         isAdmin?_rTxt(ad.feedback_comment):null,
+  };
+}
+
+/* ── ستوونەکانی CSV — ڕیزبەندی جێگیر ──────────────────────────────────
+   f: جۆری فۆرمات — i=تەواو، m=دراو، p=ڕێژە، r=نرخی وردی بچووک، s=دەق،
+      d=بەروار، b=بووڵی */
+const RPT_COLUMNS=[
+  {k:'report_generated_at',     l:'کاتی دروستکردنی ڕاپۆرت',      f:'d'},
+  {k:'public_ad_id',            l:'ئایدی گشتی',                  f:'s'},
+  {k:'supabase_id',             l:'ئایدی ناوخۆیی (UUID)',        f:'s', adm:1},
+  {k:'legacy_ad_number',        l:'ژمارەی کۆن',                  f:'s'},
+  {k:'title',                   l:'ناونیشان',                    f:'s'},
+  {k:'goal',                    l:'ئامانج',                      f:'s'},
+  {k:'internal_status',         l:'باری ناوخۆیی',                f:'s'},
+  {k:'internal_status_label',   l:'باری ناوخۆیی (کوردی)',        f:'s'},
+  {k:'status_source',           l:'سەرچاوەی بار',                f:'s'},
+  {k:'tiktok_operation_status', l:'باری کارپێکردنی TikTok',      f:'s'},
+  {k:'tiktok_secondary_status', l:'باری لاوەکی TikTok',          f:'s'},
+  {k:'tiktok_status_synced_at', l:'کاتی سینکی باری TikTok',      f:'d'},
+  {k:'tiktok_ad_id',            l:'TikTok Ad ID',                f:'s'},
+  {k:'previous_tiktok_ad_id',   l:'TikTok Ad ID ی پێشوو',        f:'s'},
+  {k:'tiktok_campaign_id',      l:'TikTok Campaign ID',          f:'s'},
+  {k:'video_link',              l:'لینکی ڤیدیۆ',                 f:'s', url:1},
+  {k:'user_id',                 l:'ئایدی بەکارهێنەر',            f:'s', adm:1},
+  {k:'user_full_name',          l:'ناوی بەکارهێنەر',             f:'s'},
+  {k:'user_email',              l:'ئیمەیل',                      f:'s', adm:1},
+  {k:'gender',                  l:'ڕەگەز',                       f:'s'},
+  {k:'age_groups',              l:'گروپی تەمەن',                 f:'s'},
+  {k:'location',                l:'شوێن',                        f:'s'},
+  {k:'currency',                l:'دراو',                        f:'s'},
+  {k:'total_budget',            l:'بودجەی گشتی',                 f:'m'},
+  {k:'target_budget',           l:'بودجەی ئامانج',               f:'m'},
+  {k:'daily_budget',            l:'بودجەی ڕۆژانە',               f:'m'},
+  {k:'spend_current',           l:'خەرجی ئێستا',                 f:'m'},
+  {k:'spend_previous',          l:'خەرجی پێشوو',                 f:'m'},
+  {k:'spend_total',             l:'کۆی خەرجکراو',                f:'m'},
+  {k:'budget_used_percent',     l:'ڕێژەی بەکارهێنانی بودجە %',   f:'p'},
+  {k:'impressions_current',     l:'ئیمپرێشنی ئێستا',             f:'i'},
+  {k:'impressions_previous',    l:'ئیمپرێشنی پێشوو',             f:'i'},
+  {k:'impressions_total',       l:'کۆی ئیمپرێشن',                f:'i'},
+  {k:'reach_current',           l:'ڕیچی ئێستا',                  f:'i'},
+  {k:'reach_previous',          l:'ڕیچی پێشوو',                  f:'i'},
+  {k:'reach_total',             l:'کۆی ڕیچ',                     f:'i'},
+  {k:'video_views_current',     l:'ڤیدیۆ ڤیوسی ئێستا',           f:'i'},
+  {k:'video_views_previous',    l:'ڤیدیۆ ڤیوسی پێشوو',           f:'i'},
+  {k:'video_views_total',       l:'کۆی ڤیدیۆ ڤیوس',              f:'i'},
+  {k:'profile_visits_current',  l:'سەردانی پڕۆفایلی ئێستا',      f:'i'},
+  {k:'profile_visits_previous', l:'سەردانی پڕۆفایلی پێشوو',      f:'i'},
+  {k:'profile_visits_total',    l:'کۆی سەردانی پڕۆفایل',         f:'i'},
+  {k:'clicks_current',          l:'کلیکی ئێستا',                 f:'i'},
+  {k:'clicks_previous',         l:'کلیکی پێشوو',                 f:'i'},
+  {k:'clicks_total',            l:'کۆی کلیک',                    f:'i'},
+  {k:'likes_current',           l:'لایکی ئێستا',                 f:'i'},
+  {k:'likes_previous',          l:'لایکی پێشوو',                 f:'i'},
+  {k:'likes_total',             l:'کۆی لایک',                    f:'i'},
+  {k:'comments_current',        l:'کۆمێنتی ئێستا',               f:'i'},
+  {k:'comments_previous',       l:'کۆمێنتی پێشوو',               f:'i'},
+  {k:'comments_total',          l:'کۆی کۆمێنت',                  f:'i'},
+  {k:'shares_current',          l:'شەیری ئێستا',                 f:'i'},
+  {k:'shares_previous',         l:'شەیری پێشوو',                 f:'i'},
+  {k:'shares_total',            l:'کۆی شەیر',                    f:'i'},
+  {k:'follows_current',         l:'فۆڵۆی ئێستا',                 f:'i'},
+  {k:'follows_previous',        l:'فۆڵۆی پێشوو',                 f:'i'},
+  {k:'follows_total',           l:'کۆی فۆڵۆ',                    f:'i'},
+  {k:'conversions_current',     l:'کۆنڤێرشنی ئێستا',             f:'i'},
+  {k:'conversions_previous',    l:'کۆنڤێرشنی پێشوو',             f:'i'},
+  {k:'conversions_total',       l:'کۆی کۆنڤێرشن',                f:'i'},
+  {k:'ctr_percent',             l:'CTR %',                       f:'p'},
+  {k:'cpc',                     l:'CPC',                         f:'r'},
+  {k:'cpm',                     l:'CPM',                         f:'r'},
+  {k:'cvr_percent',             l:'CVR %',                       f:'p'},
+  {k:'cost_per_conversion',     l:'تێچووی هەر کۆنڤێرشنێک',       f:'r'},
+  {k:'created_at',              l:'بەرواری دروستکردن',           f:'d'},
+  {k:'start_date',              l:'بەرواری دەستپێک',             f:'d'},
+  {k:'end_date',                l:'بەرواری کۆتایی',              f:'d'},
+  {k:'data_updated_at',         l:'دوایین نوێکردنەوەی داتا',     f:'d'},
+  {k:'last_sync',               l:'دوایین سینک',                 f:'d'},
+  {k:'final_metrics_synced_at', l:'سینکی کۆتایی مێترەکان',       f:'d'},
+  {k:'needs_update',            l:'داواکاری نوێکردنەوە',         f:'b', adm:1},
+  {k:'update_field',            l:'خانەی نوێکردنەوە',            f:'s', adm:1},
+  {k:'update_reason',           l:'هۆکاری نوێکردنەوە',           f:'s', adm:1},
+  {k:'update_requested_at',     l:'کاتی داواکاری',               f:'d', adm:1},
+  {k:'update_submitted_at',     l:'کاتی ناردن',                  f:'d', adm:1},
+  {k:'reject_reason',           l:'هۆکاری ڕەتکردنەوە',           f:'s', adm:1},
+  {k:'stop_reason',             l:'هۆکاری وەستان',               f:'s', adm:1},
+  {k:'feedback_rating',         l:'خاڵی فیدباک',                 f:'i', adm:1},
+  {k:'feedback_comment',        l:'کۆمێنتی فیدباک',              f:'s', adm:1},
+];
+
+function _rptColumns(scope){
+  return (scope==='user')?RPT_COLUMNS.filter(c=>!c.adm):RPT_COLUMNS;
+}
+
+/* ژمارە بۆ CSV: خاڵی دەیی، بێ $ و % و جیاکەرەوەی هەزار */
+function _rptCsvNumber(v,f){
+  if(v===null||v===undefined)return '';
+  if(f==='i')return String(Math.round(v));
+  if(f==='m'||f==='p')return v.toFixed(2);
+  if(f==='r')return (Math.abs(v)<1?v.toFixed(4):v.toFixed(2));
+  return String(v);
+}
+
+function _rptCsvCell(rep,c){
+  const v=rep[c.k];
+  if(v===null||v===undefined)return '';
+  if(c.f==='b')return v?'true':'false';
+  if(['i','m','p','r'].indexOf(c.f)!==-1)return _rptCsvNumber(v,c.f);
+  return String(v);
+}
+
+/* RFC 4180 */
+function _rptCsvEscape(s){
+  s=String(s===null||s===undefined?'':s);
+  return /[",\r\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+}
+
+/* ── دروستکردنی CSV ─────────────────────────────────────────────────── */
+function generateCsvReport(reports,opts){
+  opts=opts||{};
+  const scope=opts.scope||(reports[0]&&reports[0]._scope)||'admin';
+  const cols=_rptColumns(scope);
+  const lines=[cols.map(c=>_rptCsvEscape(c.k)).join(',')];
+  reports.forEach(r=>lines.push(cols.map(c=>_rptCsvEscape(_rptCsvCell(r,c))).join(',')));
+  return '\uFEFF'+lines.join('\r\n')+'\r\n';   // BOM بۆ ئێکسڵ + CRLF
+}
+
+function _rptDownload(content,filename,mime){
+  const blob=new Blob([content],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+/* ── خانەی XLSX بەپێی جۆر ───────────────────────────────────────────── */
+function _rptXlCell(v,f,opt){
+  opt=opt||{};
+  if(v===null||v===undefined)return {v:'—',t:'s'};
+  if(f==='b')return {v:v?'بەڵێ':'نەخێر',t:'s'};
+  if(f==='d'){
+    const d=_rDateObj(v);
+    if(!d)return {v:String(v),t:'s'};
+    const dateOnly=/^\d{4}-\d{2}-\d{2}$/.test(String(v));
+    return {v:d,t:'d',z:dateOnly?'yyyy-mm-dd':'yyyy-mm-dd hh:mm'};
+  }
+  if(f==='i')return {v:Math.round(v),t:'n',z:'#,##0'};
+  if(f==='m')return {v:v,t:'n',z:'#,##0.00'};
+  if(f==='p')return {v:v,t:'n',z:'0.00"%"'};
+  if(f==='r')return {v:v,t:'n',z:(Math.abs(v)<1?'0.0000':'#,##0.00')};
+  const cell={v:String(v),t:'s'};                 // ئایدییەکان وەک دەق
+  if(opt.url&&/^https?:\/\//i.test(String(v)))cell.l={Target:String(v),Tooltip:String(v)};
+  return cell;
+}
+
+function _rptAutoWidth(rows,cols){
+  const w=[];
+  for(let c=0;c<cols;c++){
+    let m=10;
+    rows.forEach(r=>{const x=r[c];const s=(x&&typeof x==='object')?(x.v instanceof Date?'2026-08-30 00:00':String(x.v)):String(x==null?'':x);
+      m=Math.max(m,s.length+2);});
+    w.push({wch:Math.min(m,52)});
+  }
+  return w;
+}
+
+function _rptSafeName(s){return String(s||'ad').replace(/[\\\/:\*\?\[\]"']/g,'').replace(/\s+/g,'_').slice(0,40);}
+function _rptToday(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+
+/* ── XLSX بۆ یەک ڕیکلام — دوو شیت ──────────────────────────────────── */
+const RPT_SECTIONS=[
+  {t:'زانیاری ڕیکلام', keys:['public_ad_id','legacy_ad_number','supabase_id','title','goal',
+      'tiktok_ad_id','previous_tiktok_ad_id','tiktok_campaign_id','video_link',
+      'gender','age_groups','location']},
+  {t:'بەکارهێنەر', keys:['user_full_name','user_email','user_id']},
+  {t:'باری ڕیکلام', keys:['internal_status_label','internal_status','status_source',
+      'tiktok_operation_status','tiktok_secondary_status','tiktok_status_synced_at']},
+  {t:'بودجە و خەرجی', keys:['currency','total_budget','target_budget','daily_budget',
+      'spend_current','spend_previous','spend_total','budget_used_percent']},
+  {t:'کارایی', keys:['impressions_current','impressions_previous','impressions_total',
+      'reach_current','reach_previous','reach_total',
+      'video_views_current','video_views_previous','video_views_total',
+      'profile_visits_current','profile_visits_previous','profile_visits_total',
+      'clicks_current','clicks_previous','clicks_total',
+      'ctr_percent','cpc','cpm']},
+  {t:'کارلێک', keys:['likes_current','likes_previous','likes_total',
+      'comments_current','comments_previous','comments_total',
+      'shares_current','shares_previous','shares_total',
+      'follows_current','follows_previous','follows_total']},
+  {t:'کۆنڤێرشن', keys:['conversions_current','conversions_previous','conversions_total',
+      'cvr_percent','cost_per_conversion']},
+  {t:'بەروارەکان', keys:['created_at','start_date','end_date',
+      'data_updated_at','last_sync','final_metrics_synced_at','report_generated_at']},
+  {t:'نوێکردنەوە و تێبینی', keys:['needs_update','update_field','update_reason',
+      'update_requested_at','update_submitted_at','reject_reason','stop_reason',
+      'feedback_rating','feedback_comment'], adm:1},
+];
+
+/* تێبینی بۆ خانە بەتاڵەکان — بۆچی داتاکە نییە */
+function _rptNote(rep,key){
+  const c=RPT_COLUMNS.find(x=>x.k===key);
+  if(!c)return '';
+  const v=rep[key];
+  if(key==='ctr_percent'&&v===null)      return 'ئیمپرێشن نییە';
+  if(key==='cpc'&&v===null)              return 'کلیک نییە';
+  if(key==='cvr_percent'&&v===null)      return 'کلیک نییە';
+  if(key==='cpm'&&v===null)              return 'ئیمپرێشن نییە';
+  if(key==='cost_per_conversion'&&v===null) return 'کۆنڤێرشن نییە';
+  if(key==='budget_used_percent'&&v===null) return 'بودجەی ئامانج دانەنراوە';
+  if(v===null&&/_(current|previous|total)$/.test(key)) return 'لە TikTok ـەوە سینک نەکراوە';
+  if(key.indexOf('tiktok_')===0&&key!=='tiktok_ad_id'&&key!=='tiktok_campaign_id'
+     &&key!=='tiktok_status_synced_at'&&v===null) return 'باری TikTok سینک نەکراوە';
+  if(key==='status_source')              return 'سەرچاوەی ئەم بارە';
+  return '';
+}
+
+function generateXlsxReport(rep){
+  const scope=rep._scope||'admin';
+  const wb=XLSX.utils.book_new();
+  wb.Workbook={Views:[{RTL:true}]};
+
+  const rows=[[{v:'زانیاری',t:'s'},{v:'بەها',t:'s'},{v:'تێبینی',t:'s'}]];
+  RPT_SECTIONS.forEach(sec=>{
+    if(sec.adm&&scope!=='admin')return;
+    const keys=sec.keys.filter(k=>{
+      const c=RPT_COLUMNS.find(x=>x.k===k);
+      return c&&(scope==='admin'||!c.adm);
+    });
+    if(!keys.length)return;
+    rows.push([{v:sec.t,t:'s'},{v:'',t:'s'},{v:'',t:'s'}]);
+    keys.forEach(k=>{
+      const c=RPT_COLUMNS.find(x=>x.k===k);
+      rows.push([{v:c.l,t:'s'},_rptXlCell(rep[k],c.f,{url:c.url}),{v:_rptNote(rep,k),t:'s'}]);
+    });
+  });
+  const ws1=XLSX.utils.aoa_to_sheet(rows,{cellDates:true});
+  ws1['!cols']=_rptAutoWidth(rows,3);
+  XLSX.utils.book_append_sheet(wb,ws1,'زانیاری ڕیکلام');
+
+  // شیتی دووەم تەنها بۆ ئادمین — ناوی ڕەسەنی ستوونەکانی Supabase
+  if(scope==='admin'){
+    const ad=rep._ad||{};
+    const raw=[[{v:'ستوونی Supabase',t:'s'},{v:'بەهای ڕەسەن',t:'s'}]];
+    Object.keys(ad).filter(k=>k!=='profiles'&&k.charAt(0)!=='_').sort().forEach(k=>{
+      let v=ad[k];
+      if(v&&typeof v==='object')v=JSON.stringify(v);
+      raw.push([{v:k,t:'s'},{v:v==null?'':String(v),t:'s'}]);
+    });
+    const prof=rep._profile;
+    if(prof){
+      raw.push([{v:'',t:'s'},{v:'',t:'s'}]);
+      ['id','full_name','email'].forEach(k=>{
+        if(prof[k]!==undefined)raw.push([{v:'profiles.'+k,t:'s'},{v:String(prof[k]==null?'':prof[k]),t:'s'}]);
+      });
+    }
+    const ws2=XLSX.utils.aoa_to_sheet(raw,{cellDates:true});
+    ws2['!cols']=_rptAutoWidth(raw,2);
+    XLSX.utils.book_append_sheet(wb,ws2,'Raw Data');
+  }
+  return wb;
+}
+
+/* ── XLSX بۆ چەند ڕیکلام — یەک شیتی تەخت ──────────────────────────── */
+function generateXlsxBulkReport(reports,opts){
+  opts=opts||{};
+  const scope=opts.scope||(reports[0]&&reports[0]._scope)||'admin';
+  const cols=_rptColumns(scope);
+  const wb=XLSX.utils.book_new();
+  wb.Workbook={Views:[{RTL:true}]};
+  const rows=[cols.map(c=>({v:c.l,t:'s'}))];
+  reports.forEach(r=>rows.push(cols.map(c=>_rptXlCell(r[c.k],c.f,{url:c.url}))));
+  const ws=XLSX.utils.aoa_to_sheet(rows,{cellDates:true});
+  ws['!cols']=_rptAutoWidth(rows,cols.length);
+  ws['!freeze']={xSplit:0,ySplit:1};
+  ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:rows.length-1,c:cols.length-1}})};
+  XLSX.utils.book_append_sheet(wb,ws,'ڕاپۆرتی ڕیکلامەکان');
+  // شیتی ناوەکان: لەیبڵی کوردی <-> ناوی ماشینی
+  const map=[[{v:'لەیبڵ',t:'s'},{v:'ناوی ستوون',t:'s'}]];
+  cols.forEach(c=>map.push([{v:c.l,t:'s'},{v:c.k,t:'s'}]));
+  const wsm=XLSX.utils.aoa_to_sheet(map);
+  wsm['!cols']=_rptAutoWidth(map,2);
+  XLSX.utils.book_append_sheet(wb,wsm,'Fields');
+  return wb;
+}
+</script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   ڕووکاری دەرهێنان — Excel (.xlsx) و CSV (.csv)
+   هەردووکیان لە buildNormalizedAdReport() ـەوە دێن
+   ══════════════════════════════════════════════════════════════════════ */
+
+let _expTargetId=null;
+
+function _expReady(){
+  if(typeof XLSX==='undefined'){
+    showToast('کتێبخانەی ئێکسڵ بار نەبووە — پەڕەکە نوێ بکەرەوە','rd');
+    return false;
+  }
+  return true;
+}
+
+/* هێنانی ڕیکلام لە کاشەوە، ئەگەر نەبوو لە Supabase */
+async function _expFetchAd(id){
   let a=(typeof _fdAds!=='undefined'?_fdAds:[]).find(x=>x.id===id)
      || (typeof _allAdsData!=='undefined'?(_allAdsData||[]):[]).find(x=>x.id===id)
      || (typeof allAds!=='undefined'?(allAds||[]):[]).find(x=>x.id===id);
   if(a&&a.profiles)return a;
   const{data,error}=await sb.from('pa_ads').select('*').eq('id',id).maybeSingle();
   if(error||!data)return a||null;
-  let prof=a?.profiles||null;
+  let prof=(a&&a.profiles)||null;
   if(!prof&&data.user_id){
-    const{data:p}=await sb.from('profiles').select('id,full_name,email,phone,balance').eq('id',data.user_id).maybeSingle();
+    // تەنها ئەو خانانەی پێویستن — هیچ داتایەکی دارایی یان نهێنی
+    const{data:p}=await sb.from('profiles').select('id,full_name,email').eq('id',data.user_id).maybeSingle();
     prof=p||null;
   }
   return {...data,profiles:prof};
 }
 
-/* دروستکردنی ڕیزەکانی شیتی سەرەکی */
-function _xBuildRows(a){
-  const impr=_xTot(a,'impressions'), clicks=_xTot(a,'clicks'), conv=_xTot(a,'conversions');
-  const spend=_xN(a.spend)+_xN(a.prev_spend);
-  const budget=_xN(a.budget);
-  const ctr=impr>0?(clicks/impr*100):_xN(a.ctr);
-  const cpc=clicks>0?(spend/clicks):_xN(a.cpc);
-  const cpm=impr>0?(spend/impr*1000):_xN(a.cpm);
-  const cvr=clicks>0?(conv/clicks*100):_xN(a.conversion_rate);
-  const cpa=conv>0?(spend/conv):_xN(a.cost_per_conversion);
-  const days=(typeof calcAdDays==='function')?calcAdDays(a.start_date,a.end_date):null;
-  const goals={messages:'نامە',engagement:'کارلێک',views:'بینین'};
-
-  const R=[];
-  const H=t=>R.push([t,'','']);
-  const L=(k,v,note)=>R.push([k,v,note==null?'':note]);
-
-  H('زانیاری ڕیکلام');
-  L('ئایدی گشتی', _xTxt(typeof _adminPublicAdId==='function'?_adminPublicAdId(a):a.ad_number));
-  L('ژمارەی ڕیکلام', _xTxt(a.ad_number));
-  L('UUID', _xTxt(a.id));
-  L('ناونیشان', _xTxt(a.title));
-  L('باری', (typeof statusKu==='function')?statusKu(a.status):_xTxt(a.status), _xTxt(a.status));
-  L('ئامانج', goals[a.goal]||_xTxt(a.goal));
-  L('TikTok Ad ID', _xTxt(a.tiktok_ad_id));
-  L('TikTok Ad ID ی پێشوو', _xTxt(a.previous_tiktok_ad_id));
-  L('Campaign ID', _xTxt(a.tiktok_campaign_id));
-  L('لینکی ڤیدیۆ', _xTxt(a.tiktok_url||a.video_link));
-  L('کۆدی ڤیدیۆ', _xTxt(a.video_code));
-  L('ڕەگەز', _xTxt(a.target_gender||a.gender));
-  L('تەمەن', _xTxt(Array.isArray(a.target_age)?a.target_age.join(', '):(a.target_ages||a.target_age)));
-  L('شوێن', _xTxt(a.target_location||a.location));
-
-  H('بەکارهێنەر');
-  L('ناو', _xTxt(a.profiles?.full_name));
-  L('ئیمەیل', _xTxt(a.profiles?.email));
-  L('مۆبایل', _xTxt(a.profiles?.phone));
-  L('ئایدی بەکارهێنەر', _xTxt(a.user_id));
-
-  H('بودجە و خەرجی');
-  L('بودجەی گشتی ($)', _xR2(budget), _xR2(budget*XLS_USD_IQD)+' IQD');
-  L('بودجەی ئامانج ($)', _xR2(a.target_budget));
-  L('بودجەی ڕۆژانە ($)', _xR2(a.daily_budget));
-  L('خەرجکراوی ئێستا ($)', _xR2(a.spend));
-  L('خەرجکراوی پێشوو ($)', _xR2(a.prev_spend));
-  L('کۆی خەرجکراو ($)', _xR2(spend), _xR2(spend*XLS_USD_IQD)+' IQD');
-  L('ڕێژەی خەرجکردن (%)', budget>0?_xR2(spend/budget*100):0);
-  L('ماوەی ڕیکلام (ڕۆژ)', days||'—');
-  L('داشکاندنی ئاست (%)', _xR2(a.level_discount_percent));
-  L('داشکاندنی ئاست (IQD)', _xR2(a.level_discount_iqd));
-  L('کۆدی داشکاندن', _xTxt(a.promo_code));
-
-  H('کارایی');
-  L('ئیمپرێشن (ئێستا)', _xI(a.impressions));
-  L('ئیمپرێشن (پێشوو)', _xI(a.prev_impressions));
-  L('کۆی ئیمپرێشن', impr);
-  L('ڕیچ', _xTot(a,'reach'));
-  L('ڤیدیۆ ڤیوس (ئێستا)', _xI(a.video_views));
-  L('ڤیدیۆ ڤیوس (پێشوو)', _xI(a.prev_video_views));
-  L('کۆی ڤیدیۆ ڤیوس', _xTot(a,'video_views'));
-  L('سەردانی پڕۆفایل (ئێستا)', _xI(a.profile_visits));
-  L('سەردانی پڕۆفایل (پێشوو)', _xI(a.prev_profile_visits));
-  L('کۆی سەردانی پڕۆفایل', _xTot(a,'profile_visits'));
-  L('کلیک (ئێستا)', _xI(a.clicks));
-  L('کلیک (پێشوو)', _xI(a.prev_clicks));
-  L('کۆی کلیک', clicks);
-  L('CTR (%)', _xR2(ctr), 'کلیک ÷ ئیمپرێشن');
-  L('CPC ($)', _xR2(cpc), 'خەرجکراو ÷ کلیک');
-  L('CPM ($)', _xR2(cpm), 'تێچووی ١٠٠٠ بینین');
-
-  H('کارلێک');
-  L('لایک (ئێستا)', _xI(a.likes));
-  L('کۆی لایک', _xTot(a,'likes'));
-  L('کۆمێنت (ئێستا)', _xI(a.comments));
-  L('کۆی کۆمێنت', _xTot(a,'comments'));
-  L('شەیر (ئێستا)', _xI(a.shares));
-  L('کۆی شەیر', _xTot(a,'shares'));
-  L('فۆڵۆ (ئێستا)', _xI(a.follows));
-  L('کۆی فۆڵۆ', _xTot(a,'follows'));
-
-  H('کۆنڤێرشن');
-  L('کۆنڤێرشن (ئێستا)', _xI(a.conversions));
-  L('کۆنڤێرشن (پێشوو)', _xI(a.prev_conversions));
-  L('کۆی کۆنڤێرشن', conv);
-  L('CVR (%)', _xR2(cvr), 'کۆنڤێرشن ÷ کلیک');
-  L('تێچووی هەر کۆنڤێرشنێک ($)', _xR2(cpa), 'خەرجکراو ÷ کۆنڤێرشن');
-
-  H('بەروارەکان');
-  L('بەرواری دروستکردن', a.created_at?_fdFmtDT(a.created_at):'—');
-  L('دەستپێک', _xDate(a.start_date), _xTxt(a.start_time));
-  L('کۆتایی', _xDate(a.end_date));
-  L('دوایین نوێکردنەوەی داتا', a.data_updated_at?_fdFmtDT(a.data_updated_at):'—', a.data_updated_at?_fdAgo(a.data_updated_at):'');
-  L('دوایین سینک', a.last_sync?_fdFmtDT(a.last_sync):'—');
-  L('سینکی کۆتایی مێترەکان', a.final_metrics_synced_at?_fdFmtDT(a.final_metrics_synced_at):'—');
-
-  H('زیاتر');
-  L('هۆکاری ڕەتکردنەوە', _xTxt(a.reject_reason));
-  L('هۆکاری وەستان', _xTxt(a.stop_reason));
-  L('خاڵی فیدباک', a.feedback_rating?a.feedback_rating+'/5':'—');
-  L('کۆمێنتی فیدباک', _xTxt(a.feedback_comment));
-  L('داواکاری نوێکردنەوە', a.needs_update?'بەڵێ':'نەخێر', _xTxt(a.update_reason));
-
-  return R;
-}
-
-function _xAutoWidth(rows,cols){
-  const w=[];
-  for(let c=0;c<cols;c++){
-    let m=10;
-    rows.forEach(r=>{const v=r[c];if(v!=null)m=Math.max(m,String(v).length+2);});
-    w.push({wch:Math.min(m,55)});
+/* ── کردنەوەی هەڵبژاردەی فۆرمات ─────────────────────────────────────── */
+function openExportPicker(id){
+  _expTargetId=id||null;
+  const box=document.getElementById('expPickerInfo');
+  if(box){
+    const a=(typeof _fdAds!=='undefined'?_fdAds:[]).find(x=>x.id===id)
+         || (typeof _allAdsData!=='undefined'?(_allAdsData||[]):[]).find(x=>x.id===id);
+    box.innerHTML=id
+      ? `<div style="font-size:12px;font-weight:800;color:#0891b2">${_fdEsc(a?(typeof _adminPublicAdIdLabel==='function'?_adminPublicAdIdLabel(a):''):'')}</div>
+         <div style="font-size:13px;font-weight:700;color:var(--dark);margin-top:2px">${_fdEsc(a&&a.title||'—')}</div>`
+      : `<div style="font-size:13px;font-weight:700;color:var(--dark)">هەموو ئەو ڕیکلامانەی ئێستا پیشان دراون</div>`;
   }
-  return w;
+  openMo('moExportPicker');
 }
 
-function _xSafeName(s){
-  return String(s||'ad').replace(/[\\\/:\*\?\[\]"']/g,'').replace(/\s+/g,'_').slice(0,40);
+async function expRun(fmt){
+  closeMo('moExportPicker');
+  if(_expTargetId)await exportAdReport(_expTargetId,fmt);
+  else await exportAdsBulkReport(fmt);
 }
 
-/* ── دەرهێنانی یەک ڕیکلام ─────────────────────────────────── */
-async function exportAdXlsx(id){
-  if(typeof XLSX==='undefined'){showToast('کتێبخانەی XLSX بار نەبووە — پەڕەکە نوێ بکەرەوە','rd');return;}
+/* ── دەرهێنانی یەک ڕیکلام ───────────────────────────────────────────── */
+async function exportAdReport(id,fmt,scope){
+  if(!_expReady())return;
+  scope=scope||'admin';
   showToast('⏳ ئامادەکردنی فایل...','');
-  const a=await _xGetAd(id);
-  if(!a){showToast('ڕیکلامەکە نەدۆزرایەوە','rd');return;}
+  const ad=await _expFetchAd(id);
+  if(!ad){showToast('ڕیکلامەکە نەدۆزرایەوە','rd');return;}
 
-  const wb=XLSX.utils.book_new();
-  wb.Workbook={Views:[{RTL:true}]};
+  const rep=buildNormalizedAdReport(ad,ad.profiles,{scope:scope});
+  const name='ad_'+_rptSafeName(rep.public_ad_id||ad.id.slice(0,8))+'_'+_rptToday();
 
-  // شیتی ١ — زانیاری ڕێکخراو
-  const rows=[['زانیاری','بەها','تێبینی'],...(_xBuildRows(a))];
-  const ws1=XLSX.utils.aoa_to_sheet(rows);
-  ws1['!cols']=_xAutoWidth(rows,3);
-  XLSX.utils.book_append_sheet(wb,ws1,'زانیاری ڕیکلام');
-
-  // شیتی ٢ — ڕیزی خاو (هەموو ستوونەکانی داتابەیس)
-  const raw=[['ستوون','بەها']];
-  Object.keys(a).filter(k=>k!=='profiles').sort().forEach(k=>{
-    let v=a[k];
-    if(v&&typeof v==='object')v=JSON.stringify(v);
-    raw.push([k,v==null?'':v]);
-  });
-  if(a.profiles){
-    raw.push(['','']);
-    raw.push(['— profiles —','']);
-    Object.keys(a.profiles).filter(k=>k!=='avatar_b64').forEach(k=>raw.push(['profiles.'+k,a.profiles[k]==null?'':a.profiles[k]]));
+  if(fmt==='csv'){
+    _rptDownload(generateCsvReport([rep],{scope:scope}),name+'.csv','text/csv;charset=utf-8;');
+    showToast('✅ CSV دابەزێنرا','gr');
+  }else{
+    XLSX.writeFile(generateXlsxReport(rep),name+'.xlsx',{cellDates:true});
+    showToast('✅ ئێکسڵ دابەزێنرا','gr');
   }
-  const ws2=XLSX.utils.aoa_to_sheet(raw);
-  ws2['!cols']=_xAutoWidth(raw,2);
-  XLSX.utils.book_append_sheet(wb,ws2,'Raw Data');
-
-  const label=(typeof _adminPublicAdId==='function'?_adminPublicAdId(a):'')||a.ad_number||a.id.slice(0,8);
-  XLSX.writeFile(wb,'ad_'+_xSafeName(label)+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  showToast('✅ فایلی XLSX دابەزێنرا','gr');
 }
 
-/* ── دەرهێنانی لیستی پاڵێوراو ─────────────────────────────── */
-function fdExportXlsx(){
-  if(typeof XLSX==='undefined'){showToast('کتێبخانەی XLSX بار نەبووە — پەڕەکە نوێ بکەرەوە','rd');return;}
+/* ── دەرهێنانی لیستی پاڵێوراو ───────────────────────────────────────── */
+function _expCurrentList(){
   const q=(document.getElementById('fdSearch')?.value||'').trim().toLowerCase().replace(/^#+/,'');
-  let list=_fdAds;
-  if(_fdFilter!=='all')list=list.filter(a=>a.status===_fdFilter);
-  list=list.filter(a=>_fdMatch(a,q));
-  if(!list.length){showToast('هیچ داتایەک نییە بۆ دەرهێنان','rd');return;}
-
-  const cols=_fdCols();
-  const head=cols.map(c=>c.l);
-  const rows=[head];
-  list.forEach(a=>rows.push(cols.map(c=>{
-    const v=_fdVal(a,c);
-    if(v==null||v==='')return '';
-    if(c.t==='n')return _xI(v);
-    if(c.t==='f'||c.t==='m')return _xR2(v);
-    if(c.t==='dt')return _fdFmtDT(v);
-    if(c.t==='d')return String(v).slice(0,10);
-    if(c.t==='sel')return _fdSelLabel(c,v);
-    return String(v);
-  })));
-
-  const wb=XLSX.utils.book_new();
-  wb.Workbook={Views:[{RTL:true}]};
-  const ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=_xAutoWidth(rows,head.length);
-  ws['!freeze']={xSplit:0,ySplit:1};
-  ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:rows.length-1,c:head.length-1}})};
-  XLSX.utils.book_append_sheet(wb,ws,'هەموو ڕیکلامەکان');
-  XLSX.writeFile(wb,'ads_full_data_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  showToast('✅ '+list.length+' ڕیکلام دابەزێنرا','gr');
+  let list=(typeof _fdAds!=='undefined'?_fdAds:[])||[];
+  if(typeof _fdFilter!=='undefined'&&_fdFilter!=='all')list=list.filter(a=>a.status===_fdFilter);
+  if(typeof _fdMatch==='function')list=list.filter(a=>_fdMatch(a,q));
+  return list;
 }
+
+async function exportAdsBulkReport(fmt,scope){
+  if(!_expReady())return;
+  scope=scope||'admin';
+  const list=_expCurrentList();
+  if(!list.length){showToast('هیچ داتایەک نییە بۆ دەرهێنان','rd');return;}
+  const reps=list.map(a=>buildNormalizedAdReport(a,a.profiles,{scope:scope}));
+  const name='ads_report_'+_rptToday();
+
+  if(fmt==='csv'){
+    _rptDownload(generateCsvReport(reps,{scope:scope}),name+'.csv','text/csv;charset=utf-8;');
+  }else{
+    XLSX.writeFile(generateXlsxBulkReport(reps,{scope:scope}),name+'.xlsx',{cellDates:true});
+  }
+  showToast('✅ '+list.length+' ڕیکلام دابەزێنرا ('+(fmt==='csv'?'CSV':'ئێکسڵ')+')','gr');
+}
+
+/* ناوە کۆنەکان — بۆ ئەوەی هیچ دوگمەیەکی پێشوو نەشکێت */
+function exportAdXlsx(id){ return exportAdReport(id,'xlsx'); }
+function fdExportXlsx(){ return exportAdsBulkReport('xlsx'); }
+function fdExportCsv(){ return exportAdsBulkReport('csv'); }
+
+/* ── ڕێگری لە پۆپ-ئەپی گەڕانی Chrome لەکاتی دەستکاری ───────────────── */
+/* لەسەر Android Chrome، پەنجەی درێژ contextmenu دروست دەکات و دوای ئەو
+   باری گەڕانی گووگڵ دەردەکەوێت — لە مۆدی دەستکاری ڕایدەگرین. */
+document.addEventListener('contextmenu',function(e){
+  if(typeof _fdEdit==='undefined'||!_fdEdit)return;
+  const wrap=document.getElementById('fdWrap');
+  if(!wrap||!wrap.contains(e.target))return;
+  const tag=(e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='select'||tag==='textarea')return;
+  e.preventDefault();
+});
+
+document.addEventListener('selectionchange',function(){
+  if(typeof _fdEdit==='undefined'||!_fdEdit)return;
+  const s=window.getSelection&&window.getSelection();
+  if(!s||s.isCollapsed||!s.anchorNode)return;
+  const wrap=document.getElementById('fdWrap');
+  if(!wrap)return;
+  const node=s.anchorNode.nodeType===1?s.anchorNode:s.anchorNode.parentNode;
+  if(!node||!wrap.contains(node))return;
+  const tag=(node.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='select'||tag==='textarea')return;
+  try{s.removeAllRanges();}catch(_){}
+});
 </script>
 
 </body>
