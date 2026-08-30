@@ -660,6 +660,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-item" onclick="goPage('materials')"><i class="fas fa-id-card" style="color:#7c3aed"></i> کەرەستەی پەیوەندی</div>
     <div class="sb-section">دارایی</div>
     <div class="sb-item" onclick="goPage('revenue')"><i class="fas fa-chart-line" style="color:#16a34a"></i> داهاتی ڕیکلامەکان</div>
+    <div class="sb-item" onclick="goPage('pricing')"><i class="fas fa-money-bill-transfer" style="color:#16a34a"></i> نرخی ئاڵوگۆڕی دراو</div>
     <div class="sb-section">سیستەم</div>
     <div class="sb-item" onclick="goPage('otp')"><i class="fas fa-key" style="color:#eab308"></i> کۆدەکانی OTP <span class="sb-badge" id="sbOtpCount">0</span></div>
     <div class="sb-item" onclick="goPage('maintenance')"><i class="fas fa-triangle-exclamation" style="color:#ef4444"></i> ڕاگرتنی پەڕەکە</div>
@@ -1990,6 +1991,68 @@ tr:hover td{background:rgba(28,35,51,.015);}
       </div>
     </div>
 
+
+    <!-- ══ نرخی ئاڵوگۆڕی دراو ══ -->
+    <div class="pg" id="pgPricing">
+      <div class="sec-hdr" style="flex-wrap:wrap;gap:10px">
+        <h3><i class="fas fa-money-bill-transfer" style="margin-left:8px;color:#16a34a"></i>نرخی ئاڵوگۆڕی دراو</h3>
+        <div class="act-btn dark" onclick="loadPricing()"><i class="fas fa-rotate-right"></i> نوێکردنەوە</div>
+      </div>
+
+      <div class="info-box" style="margin-bottom:16px;border-right:3px solid #16a34a">
+        <i class="fas fa-info-circle" style="margin-left:6px;color:#16a34a"></i>
+        نرخی گشتی بۆ هەموو ڕیکلام و باڵانسەکان بەکاردێت. دەتوانیت بۆ ڕیکلامێکی دیاریکراو نرخێکی جیاواز دابنێیت —
+        ئەو کاتە نرخی تایبەتی ئەو ڕیکلامە پێشەنگە. هەر گۆڕانکارییەک <strong>ڕاستەوخۆ</strong> لە پانێڵ و ئەپی بەکارهێنەراندا دەردەکەوێت.
+      </div>
+
+      <!-- نرخی گشتی -->
+      <div style="background:var(--w);border:1px solid var(--b1);border-radius:16px;padding:18px 20px;margin-bottom:16px">
+        <div style="font-size:13px;font-weight:800;color:var(--dark);margin-bottom:4px">
+          <i class="fas fa-globe" style="margin-left:6px;color:#0891b2"></i>نرخی گشتی
+        </div>
+        <div style="font-size:11px;color:var(--mt);margin-bottom:14px">بۆ هەموو ڕیکلامەکان و باڵانسی بەکارهێنەران</div>
+
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="font-size:15px;font-weight:900;color:var(--dark);font-family:'Inter'">$1 =</div>
+          <input id="prcGlobal" type="number" step="1" min="1" placeholder="1800"
+            style="width:150px;padding:11px 13px;background:var(--bg);border:1.5px solid var(--b1);border-radius:12px;font-family:'Inter';font-size:17px;font-weight:900;color:var(--tx);outline:none;direction:ltr"
+            oninput="prcPreview()">
+          <div style="font-size:15px;font-weight:900;color:var(--dark)">IQD</div>
+          <button class="act-btn dark" style="padding:10px 20px" onclick="savePricingGlobal()">
+            <i class="fas fa-floppy-disk"></i> پاشەکەوتکردن
+          </button>
+        </div>
+
+        <div id="prcPreview" style="font-size:12px;color:var(--mt);margin-top:12px;line-height:1.9"></div>
+        <div id="prcMsg" style="display:none;margin-top:10px;padding:9px 12px;border-radius:10px;font-size:12.5px;font-weight:600"></div>
+        <div id="prcCurrent" style="font-size:11px;color:var(--mt);margin-top:10px;padding-top:10px;border-top:1px solid var(--b1)"></div>
+      </div>
+
+      <!-- نرخی تایبەت بۆ ڕیکلامەکان -->
+      <div style="background:var(--w);border:1px solid var(--b1);border-radius:16px;padding:18px 20px">
+        <div style="font-size:13px;font-weight:800;color:var(--dark);margin-bottom:4px">
+          <i class="fas fa-rectangle-ad" style="margin-left:6px;color:#7c3aed"></i>نرخی تایبەت بۆ ڕیکلامێک
+        </div>
+        <div style="font-size:11px;color:var(--mt);margin-bottom:14px">
+          گەڕان بە ئایدی، ناونیشان، ناو یان ئیمەیل. بەتاڵ بەری بۆ گەڕانەوە بۆ نرخی گشتی.
+        </div>
+
+        <input id="prcAdSearch" class="tbl-search" placeholder="گەڕان بۆ ڕیکلام..." oninput="prcRenderAds()"
+          style="width:100%;margin-bottom:12px">
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <div class="chip on" data-prcf="all" onclick="prcFilter(this)">هەموو</div>
+          <div class="chip yw" data-prcf="custom" onclick="prcFilter(this)">نرخی تایبەتیان هەیە</div>
+          <div class="chip gr" data-prcf="active" onclick="prcFilter(this)">چالاک</div>
+          <div class="chip bl" data-prcf="completed" onclick="prcFilter(this)">تەواوبوو</div>
+        </div>
+
+        <div id="prcAdsWrap" class="tbl-scroll">
+          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 </div><!-- /main -->
 
@@ -2684,6 +2747,125 @@ tr:hover td{background:rgba(28,35,51,.015);}
   </div>
 </div>
 
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   PX RATE — نرخی ئاڵوگۆڕی دراو ($1 = X IQD)
+   • نرخی گشتی لە pa_settings.iqd_per_usd
+   • نرخی تایبەت بۆ هەر ڕیکلامێک لە pa_ads.usd_iqd_rate
+   • بە Realtime نوێ دەبێتەوە — بێ نوێکردنەوەی پەڕە
+   ══════════════════════════════════════════════════════════════════════ */
+(function(){
+  var DEFAULT_RATE = 1800;
+  var _rate        = DEFAULT_RATE;
+  var _loaded      = false;
+  var _listeners   = [];
+
+  function _clean(v){
+    if(v===null||v===undefined) return null;
+    var s=String(v).replace(/[^0-9.]/g,'');
+    var n=parseFloat(s);
+    return (Number.isFinite(n)&&n>0)?n:null;
+  }
+
+  /* نرخی گشتی */
+  function rate(){ return _rate; }
+
+  /* نرخی کاریگەر — ئەگەر ڕیکلامێک نرخی تایبەتی هەبێت، ئەوە بەکاردێت */
+  function adRate(ad){
+    if(ad&&typeof ad==='object'){
+      var r=_clean(ad.usd_iqd_rate);
+      if(r) return r;
+    }
+    return _rate;
+  }
+
+  /* USD → IQD */
+  function toIQD(usd, ad){
+    var n=parseFloat(usd);
+    if(!Number.isFinite(n)) n=0;
+    return Math.round(n*adRate(ad));
+  }
+
+  /* IQD → USD */
+  function toUSD(iqd, ad){
+    var n=parseFloat(iqd);
+    if(!Number.isFinite(n)) n=0;
+    return n/adRate(ad);
+  }
+
+  /* بۆ مامەڵەکان: نرخی تۆمارکراوی خۆی پێشەنگە بۆ ئەوەی مێژوو نەگۆڕێت */
+  function txToIQD(tx){
+    var n=parseFloat(tx&&tx.amount);
+    if(!Number.isFinite(n)) n=0;
+    var r=_clean(tx&&(tx.fx_rate!=null?tx.fx_rate:(tx.meta&&tx.meta.usd_iqd_rate)));
+    return Math.round(n*(r||_rate));
+  }
+
+  function fmtIQD(usd, ad){ return toIQD(usd,ad).toLocaleString()+' IQD'; }
+
+  function onChange(fn){ if(typeof fn==='function') _listeners.push(fn); }
+
+  function _set(next, silent){
+    var n=_clean(next);
+    if(!n||n===_rate) return false;
+    _rate=n;
+    if(!silent){
+      _listeners.forEach(function(fn){ try{ fn(_rate); }catch(e){ console.warn('PXRate listener',e); } });
+    }
+    return true;
+  }
+
+  /* بارکردن + گوێگرتنی Realtime */
+  async function init(client){
+    var sbc = client || (typeof sb!=='undefined'?sb:null);
+    if(!sbc) return _rate;
+    try{
+      var res = await sbc.from('pa_settings').select('value').eq('key','iqd_per_usd').maybeSingle();
+      if(res && res.data) _set(res.data.value, !_loaded);
+    }catch(e){ console.warn('PXRate load failed, using default', e); }
+    _loaded = true;
+
+    try{
+      sbc.channel('px_rate_rt')
+        .on('postgres_changes',
+            {event:'*', schema:'public', table:'pa_settings', filter:'key=eq.iqd_per_usd'},
+            function(payload){
+              var v = payload && payload.new && payload.new.value;
+              if(_set(v)) console.log('PXRate → '+_rate);
+            })
+        .subscribe();
+    }catch(e){ console.warn('PXRate realtime failed', e); }
+
+    return _rate;
+  }
+
+  window.PXRate = {
+    init: init,
+    rate: rate,
+    adRate: adRate,
+    toIQD: toIQD,
+    toUSD: toUSD,
+    txToIQD: txToIQD,
+    fmtIQD: fmtIQD,
+    onChange: onChange,
+    _set: _set,
+    DEFAULT: DEFAULT_RATE
+  };
+
+  /* کورتکراوەکان — بۆ ئەوەی کۆدی ئێستا کەمترین گۆڕانی بوێت */
+  /* IQD_RATE ی کۆن — ئێستا زیندووە و لەگەڵ نرخی نوێ دەگۆڕێت */
+  try{
+    Object.defineProperty(window,'IQD_RATE',{get:function(){return _rate;},configurable:true});
+  }catch(e){}
+
+  window.pxRate   = rate;
+  window.pxIQD    = toIQD;
+  window.pxUSD    = toUSD;
+  window.pxTxIQD  = txToIQD;
+})();
+</script>
+
 <script>
 // ══ CONFIG ══
 const SB_URL='https://cojchkwssmasiejcgvbk.supabase.co';
@@ -2714,6 +2896,14 @@ function closeSidebar(){
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded',()=>{
   sb=window.supabase.createClient(SB_URL,SB_KEY);
+  // ── نرخی ئاڵوگۆڕ: بارکردن + نوێکردنەوەی ڕاستەوخۆ لە هەموو دیمەنەکاندا ──
+  if(window.PXRate){
+    PXRate.init(sb).then(()=>{ try{ pxRerenderPanel(); }catch(_){} });
+    PXRate.onChange((r)=>{
+      try{ pxRerenderPanel(); }catch(_){}
+      try{ showToast('نرخی دراو نوێ کرایەوە: $1 = '+r.toLocaleString()+' IQD','gr'); }catch(_){}
+    });
+  }
   updateClock();
   setInterval(updateClock,60000);
   sb.auth.getSession().then(async({data:{session}})=>{
@@ -2817,6 +3007,7 @@ const pageConfig={
   challenges:{title:'چاڵنجەکان و ئاست',sub:'بەڕێوەبردنی چاڵنج و ئاستی بەکارهێنەران',load:loadChallenges},
   requests:{title:'داواکاریەکانی جزدان',sub:'داواکاریەکانی بارکردن و کەمکردنی باڵانس (Firebase)'},
   revenue:{title:'داهاتی ڕیکلامەکان',sub:'پیوانەی داهات، تێچوو و قازانجی ڕیکلامەکان',load:loadRevenue},
+  pricing:{title:'نرخی ئاڵوگۆڕی دراو',sub:'دانانی نرخی $1 = X IQD — گشتی بۆ هەموو ڕیکلامەکان یان تایبەت بۆ هەر ڕیکلامێک',load:()=>loadPricing()},
   maintenance:{title:'ڕاگرتنی پەڕەکە',sub:'کردنەوە و داخستنی ئەپلیکەیشن بۆ بەکارهێنەران',load:loadMaintenance},
   adLock:{title:'قفڵی ناردنی ڕیکلام',sub:'ڕاگرتنی ناردنی ڕیکلام بۆ هەموو بەکارهێنەران یان کەسانێکی دیاریکراو',load:loadAdLock},
   appAnnouncement:{title:'ئاگاداری گشتی',sub:'ئاگاداری و ئەپدەیت بۆ هەموو بەکارهێنەران',load:loadAppAnnouncement},
@@ -2973,7 +3164,7 @@ async function loadDashboardStats(){
   const totalBal=(wallets||[]).reduce((s,r)=>s+parseFloat(r.balance||0),0);
   const totalCoins=(coins||[]).reduce((s,r)=>s+parseInt(r.coins_balance||0),0);
   document.getElementById('stUsers').textContent=users||0;
-  document.getElementById('stBalance').textContent=Math.round(totalBal*1800).toLocaleString()+' IQD';
+  document.getElementById('stBalance').textContent=Math.round(totalBal*pxRate()).toLocaleString()+' IQD';
   document.getElementById('stPending').textContent=pendDeps?.length||0;
   document.getElementById('stAds').textContent=ads||0;
   document.getElementById('stBanned').textContent=banned||0;
@@ -3023,7 +3214,7 @@ async function loadDashDeposits(){
         <div style="font-size:11px;color:var(--mt);direction:ltr">${d.profiles?.email||'—'}</div>
       </div>
       <div style="text-align:left">
-        <div style="font-size:14px;font-weight:800;color:var(--dark);font-family:'Inter',sans-serif">${Math.round(parseFloat(d.amount||0)*1800).toLocaleString()} IQD</div>
+        <div style="font-size:14px;font-weight:800;color:var(--dark);font-family:'Inter',sans-serif">${Math.round(parseFloat(d.amount||0)*pxRate()).toLocaleString()} IQD</div>
         <span class="badge ${depStatusKey(d)}" style="font-size:9.5px">${depStatusKu(d)}</span>
       </div>
     </div>`).join('');
@@ -3157,7 +3348,7 @@ function renderUsers(q=''){
         <div class="mini-av">${u.avatar_b64?`<img src="${u.avatar_b64}">`:(u.full_name||u.email||'?')[0].toUpperCase()}</div>
         <div><div class="user-cell-name">${u.full_name||'بێ ناو'}</div><div class="user-cell-email">${u.email||'—'}</div></div>
       </div></td>
-      <td><span style="font-family:'Inter';font-weight:800;color:var(--gr)">${Math.round(parseFloat(u.pa_wallets?.balance||0)*1800).toLocaleString()} IQD</span></td>
+      <td><span style="font-family:'Inter';font-weight:800;color:var(--gr)">${Math.round(parseFloat(u.pa_wallets?.balance||0)*pxRate()).toLocaleString()} IQD</span></td>
       <td><span style="font-family:'Inter';font-weight:700;color:#d97706">${parseInt(u.pa_coins?.coins_balance||0).toLocaleString()}</span></td>
       <td><span class="badge ${u.is_banned?'banned':'approved'}">${u.is_banned?'بانکراو':'چالاک'}</span></td>
       <td style="font-size:11px;color:var(--mt)">${new Date(u.created_at).toLocaleDateString('ku')}</td>
@@ -3183,7 +3374,7 @@ function renderUsers(q=''){
         <span class="badge ${u.is_banned?'banned':'approved'}">${u.is_banned?'بانکراو':'چالاک'}</span>
       </div>
       <div class="user-card-meta">
-        <div class="user-card-stat gr"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(u.pa_wallets?.balance||0)*1800).toLocaleString()} IQD</div>
+        <div class="user-card-stat gr"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(u.pa_wallets?.balance||0)*pxRate()).toLocaleString()} IQD</div>
         <div class="user-card-stat yw"><i class="fas fa-coins" style="font-size:10px"></i> ${parseInt(u.pa_coins?.coins_balance||0).toLocaleString()}</div>
         <div class="user-card-date"><i class="fas fa-calendar" style="font-size:9px;opacity:.5;margin-left:3px"></i>${new Date(u.created_at).toLocaleDateString('ku')}</div>
       </div>
@@ -3277,14 +3468,14 @@ async function showUserDetail(uid){
   document.getElementById('userDetailContent').innerHTML=`
     <div class="detail-row"><span class="lbl">ناو</span><span class="val">${u.full_name||'بێ ناو'}</span></div>
     <div class="detail-row"><span class="lbl">ئیمەیل</span><span class="val">${u.email||'—'}</span></div>
-    <div class="detail-row"><span class="lbl">باڵانس</span><span class="val" style="color:var(--gr)">${Math.round(parseFloat(u.pa_wallets?.balance||0)*1800).toLocaleString()} IQD</span></div>
+    <div class="detail-row"><span class="lbl">باڵانس</span><span class="val" style="color:var(--gr)">${Math.round(parseFloat(u.pa_wallets?.balance||0)*pxRate()).toLocaleString()} IQD</span></div>
     <div class="detail-row"><span class="lbl">کۆین</span><span class="val" style="color:#d97706">${parseInt(u.pa_coins?.coins_balance||0).toLocaleString()}</span></div>
     <div class="detail-row"><span class="lbl">باری ئەکاونت</span><span class="val"><span class="badge ${u.is_banned?'banned':'approved'}">${u.is_banned?'بانکراو':'چالاک'}</span></span></div>
     <div class="detail-row"><span class="lbl">بەرواری تۆمارکردن</span><span class="val">${new Date(u.created_at).toLocaleDateString('ku')}</span></div>
     <div class="detail-row"><span class="lbl">ژمارەی مۆبایل</span><span class="val" style="font-family:'Inter',sans-serif;direction:ltr">${u.phone||'<span style=\"color:var(--rd);font-size:11px\">نەداوە</span>'}</span></div>
     <div class="detail-row"><span class="lbl">User ID</span><span class="val" style="font-family:monospace;font-size:10px">${u.id}</span></div>
     ${ads?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین ڕیکلامەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${ads.map(a=>`<div onclick="showAdDetail('${a.id}')" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${_adminPublicAdIdLabel(a)} — ${a.title}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${a.status}">${statusKu(a.status)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
-    ${txs?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین مامەڵەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${txs.map(t=>`<div onclick="showDepDetail(_udetTxMap['${t.id}'])" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Math.round(parseFloat(t.amount)*1800).toLocaleString()} IQD — ${t.method||_txTypeKu(t.type,t.note).lbl}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${depStatusKey(t)}">${depStatusKu(t)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
+    ${txs?.length?`<div class="sep"></div><div style="font-size:12px;font-weight:700;color:var(--mt);margin-bottom:8px">دواترین مامەڵەکان <span style="font-weight:500;opacity:.7">(کلیک بۆ وردەکاری)</span></div>${txs.map(t=>`<div onclick="showDepDetail(_udetTxMap['${t.id}'])" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 6px;font-size:12px;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:8px;transition:background .15s" onmouseover="this.style.background='rgba(37,99,235,.05)'" onmouseout="this.style.background=''"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${Math.round(parseFloat(t.amount)*pxRate()).toLocaleString()} IQD — ${t.method||_txTypeKu(t.type,t.note).lbl}</span><span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span class="badge ${depStatusKey(t)}">${depStatusKu(t)}</span><i class="fas fa-chevron-left" style="font-size:9px;color:var(--mt)"></i></span></div>`).join('')}`:''}
     <div class="sep"></div>
     <div style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:10px;display:flex;align-items:center;gap:6px">
       <i class="fas fa-history" style="color:var(--bl)"></i> سێشنە دوایینەکان
@@ -3466,7 +3657,7 @@ function searchAddBalUser(q){
           <div style="font-size:13px;font-weight:700;color:var(--dark)">${_nEsc(u.full_name||'بێ ناو')}</div>
           <div style="font-size:11px;color:var(--mt);direction:ltr">${_nEsc(u.email||'—')}</div>
         </div>
-        <div style="margin-right:auto;font-size:11px;font-weight:700;color:var(--gr)">${Math.round(parseFloat(u.balance_usd||0)*1800).toLocaleString()} IQD</div>
+        <div style="margin-right:auto;font-size:11px;font-weight:700;color:var(--gr)">${Math.round(parseFloat(u.balance_usd||0)*pxRate()).toLocaleString()} IQD</div>
       </div>`).join('');
     res.style.display='block';
   },240);
@@ -3532,7 +3723,7 @@ function searchDeductUser(q){
           <div style="font-size:13px;font-weight:700;color:var(--dark)">${_nEsc(u.full_name||'بێ ناو')}</div>
           <div style="font-size:11px;color:var(--mt);direction:ltr">${_nEsc(u.email||'—')}</div>
         </div>
-        <div style="margin-right:auto;font-size:11px;font-weight:700;color:var(--gr)">${Math.round(parseFloat(u.balance_usd||0)*1800).toLocaleString()} IQD</div>
+        <div style="margin-right:auto;font-size:11px;font-weight:700;color:var(--gr)">${Math.round(parseFloat(u.balance_usd||0)*pxRate()).toLocaleString()} IQD</div>
       </div>`).join('');
     res.style.display='block';
   },240);
@@ -3569,7 +3760,7 @@ async function _loadBalInfo(uid,prefix){
     // فۆڵباک — ئەگەر دوایین مامەڵە balance_after ی نەبوو، ڕاستەوخۆ لە pa_wallets وەربگیرێت
     try{
       const{data:wallet}=await sb.from('pa_wallets').select('balance').eq('user_id',uid).single();
-      balEl.textContent=Math.round(parseFloat(wallet?.balance||0)*1800).toLocaleString()+' IQD';
+      balEl.textContent=Math.round(parseFloat(wallet?.balance||0)*pxRate()).toLocaleString()+' IQD';
     }catch(e){
       balEl.textContent='0 IQD';
     }
@@ -3578,7 +3769,7 @@ async function _loadBalInfo(uid,prefix){
     const isNeg=['withdrawal','ad_deduction','ad_purchase','spent','admin_deduct'].includes(lastTx.type)||(lastTx.type==='admin_adjustment'&&(lastTx.note||'').includes('وەرگرتن'));
     const sign=isNeg?'-':'+';
     const dateStr=new Date(lastTx.created_at).toLocaleDateString('ku');
-    txEl.innerHTML=`<span style="color:${isNeg?'var(--rd)':'var(--gr)'}">${sign}${Math.round(parseFloat(lastTx.amount||0)*1800).toLocaleString()} IQD</span> — ${_txTypeKu(lastTx.type,lastTx.note).lbl}<br><span style="color:var(--mt);font-weight:500">${dateStr}</span>`;
+    txEl.innerHTML=`<span style="color:${isNeg?'var(--rd)':'var(--gr)'}">${sign}${Math.round(parseFloat(lastTx.amount||0)*pxRate()).toLocaleString()} IQD</span> — ${_txTypeKu(lastTx.type,lastTx.note).lbl}<br><span style="color:var(--mt);font-weight:500">${dateStr}</span>`;
   } else {
     txEl.textContent='هیچ مامەڵەیەک نییە';
   }
@@ -3592,7 +3783,7 @@ async function _loadBalInfo(uid,prefix){
 // دووگمەی ئاگادارکردنەوە تەنها نۆتیفیکەیشن و پوش و ئیمەیل ڕادەگرێت.
 // ڕیزی pa_transactions هەمیشە دەنووسرێت — گۆڕانکارییەکی باڵانس کە
 // لە لێجەردا نەبینرێت کێشەیەکی گەورەترە لەوەی بەکارهێنەر ئاگادار نەکرێتەوە.
-const IQD_RATE=1800;
+/* IQD_RATE لە PXRate ـەوە دێت — زیندووە و بە Realtime دەگۆڕێت */
 
 async function _applyBalanceChange(o){
   const amtUSD=o.amountIQD/IQD_RATE;
@@ -3801,7 +3992,7 @@ function renderTxLog(){
           <div class="mini-av" style="width:30px;height:30px;font-size:11px">${(t.profiles?.full_name||t.profiles?.email||'?')[0].toUpperCase()}</div>
           <div><div class="user-cell-name" style="font-size:12px">${t.profiles?.full_name||'—'}</div><div class="user-cell-email">${t.profiles?.email||'—'}</div></div>
         </div></td>
-        <td><span style="font-family:'Inter';font-weight:800;color:${amtColor}">${amtSign}${Math.round(parseFloat(t.amount||0)*1800).toLocaleString()} IQD</span></td>
+        <td><span style="font-family:'Inter';font-weight:800;color:${amtColor}">${amtSign}${Math.round(parseFloat(t.amount||0)*pxRate()).toLocaleString()} IQD</span></td>
         <td><span class="badge ${tt.cls}" style="font-size:10px">${tt.lbl}</span></td>
         <td><span class="badge ${depStatusKey(t)}" style="font-size:10px">${depStatusKu(t)||'—'}</span></td>
         <td style="font-size:11px;color:var(--mt);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td>
@@ -3823,7 +4014,7 @@ function renderTxLog(){
         <span class="badge ${tt.cls}" style="font-size:10px">${tt.lbl}</span>
       </div>
       <div class="dep-card-meta">
-        <div class="user-card-stat" style="color:${amtColor};font-family:'Inter';font-weight:800">${amtSign}${Math.round(parseFloat(t.amount||0)*1800).toLocaleString()} IQD</div>
+        <div class="user-card-stat" style="color:${amtColor};font-family:'Inter';font-weight:800">${amtSign}${Math.round(parseFloat(t.amount||0)*pxRate()).toLocaleString()} IQD</div>
         <div class="user-card-stat" style="font-size:11px;color:var(--mt)">${t.note||'—'}</div>
         <div class="user-card-date">${new Date(t.created_at).toLocaleDateString('ku')}</div>
       </div>
@@ -3877,7 +4068,7 @@ function renderDepTable(list,mini){
         <div class="mini-av">${d.profiles?.avatar_b64?`<img src="${d.profiles.avatar_b64}">`:(d.profiles?.full_name||d.profiles?.email||'?')[0].toUpperCase()}</div>
         <div><div class="user-cell-name">${d.profiles?.full_name||'—'}</div><div class="user-cell-email">${d.profiles?.email||'—'}</div></div>
       </div></td>
-      <td><span style="font-family:'Inter';font-weight:800;color:var(--gr)">${Math.round(parseFloat(d.amount)*1800).toLocaleString()} IQD</span></td>
+      <td><span style="font-family:'Inter';font-weight:800;color:var(--gr)">${Math.round(parseFloat(d.amount)*pxRate()).toLocaleString()} IQD</span></td>
       <td style="font-size:12px;font-weight:700">${mn[d.method]||d.method||'—'}</td>
       <td><span class="badge ${depStatusKey(d)}">${depStatusKu(d)}</span></td>
       <td style="font-size:11px;color:var(--mt)">${new Date(d.created_at).toLocaleDateString('ku')}</td>
@@ -3899,7 +4090,7 @@ function renderDepTable(list,mini){
         <span class="badge ${depStatusKey(d)}">${depStatusKu(d)}</span>
       </div>
       <div class="dep-card-meta">
-        <div class="user-card-stat gr"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(d.amount)*1800).toLocaleString()} IQD</div>
+        <div class="user-card-stat gr"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(d.amount)*pxRate()).toLocaleString()} IQD</div>
         <div class="user-card-stat" style="font-size:11px">${mn[d.method]||d.method||'—'}</div>
         <div class="user-card-date">${new Date(d.created_at).toLocaleDateString('ku')}</div>
       </div>
@@ -3917,7 +4108,7 @@ function showDepDetail(d){
   document.getElementById('depDetailContent').innerHTML=`
     <div class="detail-row"><span class="lbl">بەکارهێنەر</span><span class="val">${d.profiles?.full_name||'—'}</span></div>
     <div class="detail-row"><span class="lbl">ئیمەیل</span><span class="val">${d.profiles?.email||'—'}</span></div>
-    <div class="detail-row"><span class="lbl">بڕ</span><span class="val" style="color:var(--gr)">${Math.round(parseFloat(d.amount)*1800).toLocaleString()} IQD</span></div>
+    <div class="detail-row"><span class="lbl">بڕ</span><span class="val" style="color:var(--gr)">${Math.round(parseFloat(d.amount)*pxRate()).toLocaleString()} IQD</span></div>
     <div class="detail-row"><span class="lbl">ڕێگای پارەدان</span><span class="val">${mn[d.method]||d.method||'—'}</span></div>
     <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${depStatusKey(d)}">${depStatusKu(d)}</span></span></div>
     <div class="detail-row"><span class="lbl">ژمارەی مامەڵە</span><span class="val">${txRefHtml(d)}</span></div>
@@ -3955,19 +4146,19 @@ async function deleteTxRecord(id){
 }
 
 async function approveDeposit(id,userId,amount){
-  confirm2('پەسەندکردنی پارەدان',`ئایا دەتەوێت ${Math.round(parseFloat(amount)*1800).toLocaleString()} IQD زیاد بکەیت؟`,
+  confirm2('پەسەندکردنی پارەدان',`ئایا دەتەوێت ${Math.round(parseFloat(amount)*pxRate()).toLocaleString()} IQD زیاد بکەیت؟`,
     'fas fa-check-circle','var(--gr)',async()=>{
       await sb.from('pa_wallets').upsert({user_id:userId,balance:0},{onConflict:'user_id',ignoreDuplicates:true});
       const{data:w,error:e2}=await sb.from('pa_wallets').select('balance').eq('user_id',userId).single();
       if(e2 && !isNetHttpErr(e2)){showToast('هەڵەی بارکردنی باڵانس: '+e2.message,'rd');return;}
       const oldBal=parseFloat(w?.balance||0);
       const newBal=oldBal+parseFloat(amount);
-      const{error:e1}=await safeUpdateTx(id,{status:'approved',balance_before:Math.round(oldBal*1800),balance_after:Math.round(newBal*1800)});
+      const{error:e1}=await safeUpdateTx(id,{status:'approved',balance_before:Math.round(oldBal*pxRate()),balance_after:Math.round(newBal*pxRate())});
       if(e1){showToast('هەڵە: '+e1.message,'rd');return;}
       const{error:e3}=await sb.from('pa_wallets').update({balance:newBal,updated_at:new Date().toISOString()}).eq('user_id',userId);
       if(e3 && !isNetHttpErr(e3)){showToast('هەڵەی نوێکردنەوەی باڵانس: '+e3.message,'rd');return;}
       const _dpLang = await _getUserLang(userId).catch(()=>'ku');
-      const _dpN = _txNotifTexts('deposit_approved', _dpLang, {amtIQD: Math.round(parseFloat(amount)*1800)});
+      const _dpN = _txNotifTexts('deposit_approved', _dpLang, {amtIQD: Math.round(parseFloat(amount)*pxRate())});
       await sb.from('pa_notifications').insert({user_id:userId,type:'deposit_approved',title:_dpN.title,body:_dpN.body,is_read:false});
       showToast('✅ پارەدان پەسەندکرا','gr');
       // ── Firebase realtime sync ──
@@ -3984,8 +4175,8 @@ async function approveDeposit(id,userId,amount){
               action:'balance_receipt',
               email:prof.email,
               userName:prof.full_name||prof.email||'بەکارهێنەر',
-              amount:String(Math.round(parseFloat(amount)*1800)),
-              newBalance:String(Math.round(newBal*1800)),
+              amount:String(Math.round(parseFloat(amount)*pxRate())),
+              newBalance:String(Math.round(newBal*pxRate())),
               note:'داواکاریەکەت پەسەندکرا'
             })
           });
@@ -4031,12 +4222,14 @@ function _adRefundActionHtml(a,compact=false){
   const already=a.refunded_at!=null;
   const amount=already?_refundNum(a.refunded_amount):_adRefundRemaining(a);
   if(already){
-    return `<div class="act-btn" aria-disabled="true" style="${compact?'padding:5px 9px;font-size:10.5px;':'width:100%;justify-content:center;'}background:rgba(22,163,74,.08);color:#16a34a;border-color:rgba(22,163,74,.24);cursor:default"><i class="fas fa-circle-check"></i> $${amount.toFixed(2)} گەڕێندراوە</div>`;
+    const _dIQD=(typeof pxIQD==='function'?pxIQD(amount,a):Math.round(amount*1800));
+    return `<div class="act-btn" aria-disabled="true" style="${compact?'padding:5px 9px;font-size:10.5px;':'width:100%;justify-content:center;'}background:rgba(22,163,74,.08);color:#16a34a;border-color:rgba(22,163,74,.24);cursor:default"><i class="fas fa-circle-check"></i> $${amount.toFixed(2)}${compact?'':' ('+_dIQD.toLocaleString()+' IQD)'} گەڕێندراوە</div>`;
   }
   if(amount<0.01){
     return `<div class="act-btn" aria-disabled="true" style="${compact?'padding:5px 9px;font-size:10.5px;':'width:100%;justify-content:center;'}background:var(--bg);color:var(--mt);border-color:var(--b1);cursor:default;opacity:.82"><i class="fas fa-coins"></i> بودجەی خەرجنەکراو نییە</div>`;
   }
-  return `<div class="act-btn" role="button" data-refund-ad="${a.id}" style="${compact?'padding:5px 9px;font-size:10.5px;':'width:100%;justify-content:center;'}background:rgba(6,182,212,.09);color:#0891b2;border-color:rgba(8,145,178,.28)" onclick="event.stopPropagation();refundAdUnspentBudget('${a.id}',this)" title="گەڕاندنەوەی بودجەی خەرجنەکراو بۆ باڵانسی بەکارهێنەر"><i class="fas fa-rotate-left"></i> ${compact?'$'+amount.toFixed(2):'$'+amount.toFixed(2)+' گەڕاندنەوە'}</div>`;
+  const _rIQD=(typeof pxIQD==='function'?pxIQD(amount,a):Math.round(amount*1800));
+  return `<div class="act-btn" role="button" data-refund-ad="${a.id}" style="${compact?'padding:5px 9px;font-size:10.5px;':'width:100%;justify-content:center;'}background:rgba(6,182,212,.09);color:#0891b2;border-color:rgba(8,145,178,.28)" onclick="event.stopPropagation();refundAdUnspentBudget('${a.id}',this)" title="گەڕاندنەوەی بودجەی خەرجنەکراو بۆ باڵانسی بەکارهێنەر — ${_rIQD.toLocaleString()} IQD"><i class="fas fa-rotate-left"></i> ${compact?'$'+amount.toFixed(2):'$'+amount.toFixed(2)+' ('+_rIQD.toLocaleString()+' IQD) گەڕاندنەوە'}</div>`;
 }
 function _completedAnalyticsCard(a){
   if(!a||a.status!=='completed')return'';
@@ -4141,7 +4334,7 @@ function renderAdsTable(q=''){
       <td style="font-size:13px;font-weight:700">${a.title||'—'}</td>
       <td style="font-size:12px;color:var(--mt)">${a.profiles?.full_name||'—'}<br><span style="font-size:10px">${a.profiles?.email||'—'}</span></td>
       <td>
-        <div style="font-family:'Inter';font-weight:800;color:var(--rd);font-size:12px">${Math.round(parseFloat(a.budget||0)*1800).toLocaleString()} IQD</div>
+        <div style="font-family:'Inter';font-weight:800;color:var(--rd);font-size:12px">${Math.round(parseFloat(a.budget||0)*pxRate()).toLocaleString()} IQD</div>
         <div style="font-family:'Inter';font-size:12px;font-weight:800;color:#16a34a">$${parseFloat(a.budget||0).toFixed(2)}</div>
         ${(()=>{const _d=calcAdDays(a.start_date,a.end_date);return _d?'<span style="font-size:10.5px;font-weight:700;color:#0891b2"><i class=\"fas fa-clock\" style=\"font-size:9px;margin-left:3px\"></i>'+_d+' ڕۆژ</span>':''})()}
       </td>
@@ -4176,7 +4369,7 @@ function renderAdsTable(q=''){
         </div>
       </div>
       <div class="ad-card-meta">
-        <div class="user-card-stat rd"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(a.budget||0)*1800).toLocaleString()} IQD &nbsp;<span style="color:#16a34a;font-weight:800">${parseFloat(a.budget||0).toFixed(2)}</span>${(()=>{const _d=calcAdDays(a.start_date,a.end_date);return _d?' &nbsp;<span style=\"color:#0891b2;font-weight:800\">'+_d+' ڕۆژ</span>':''})()}</div>
+        <div class="user-card-stat rd"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(a.budget||0)*pxRate()).toLocaleString()} IQD &nbsp;<span style="color:#16a34a;font-weight:800">${parseFloat(a.budget||0).toFixed(2)}</span>${(()=>{const _d=calcAdDays(a.start_date,a.end_date);return _d?' &nbsp;<span style=\"color:#0891b2;font-weight:800\">'+_d+' ڕۆژ</span>':''})()}</div>
         <div class="user-card-stat" style="font-size:11px">${gs[a.goal]||a.goal||'—'}</div>
         <div class="user-card-date"><i class="fas fa-calendar-alt" style="font-size:9px;margin-left:3px"></i>${new Date(a.created_at).toLocaleDateString('ku')} &nbsp;<span style="font-family:'Inter';direction:ltr">${new Date(a.created_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span></div>
         ${a.status==='scheduled'&&(a.start_date||a.start_time)?`<div style="display:flex;align-items:center;gap:5px;background:rgba(8,145,178,.07);border:1px solid rgba(8,145,178,.2);border-radius:8px;padding:4px 9px;margin-top:4px"><i class="fas fa-clock" style="font-size:10px;color:#0891b2"></i><span style="font-size:11px;color:#0891b2;font-weight:700;font-family:Inter">کات بۆ دانراو: ${a.start_date||''} ${a.start_time||''}</span></div>`:''}
@@ -4357,7 +4550,7 @@ async function showAdDetail(id){
   }catch(e){adIdHistory=[];}
 
   const adPrice=parseFloat(a.budget||0);
-  const IQD_RATE=1800;
+  const IQD_RATE=pxRate();
   const fmtIQD=v=>(Math.round(v*IQD_RATE)).toLocaleString()+' IQD';
   const originalIQD=Math.round(adPrice*IQD_RATE);
   const finalIQD=Math.max(0,originalIQD-Math.round(discountIQD));
@@ -4418,7 +4611,7 @@ async function showAdDetail(id){
     <div class="ad-performance-grid">
       ${_metricCard('fa-hand-pointer','کلیک',adClicks.toLocaleString(),'#f59e0b','rgba(245,158,11,.10)',_prevNote(adPrevClicks))}
       ${_metricCard('fa-eye','بینین',adViews.toLocaleString(),'#2563eb','rgba(37,99,235,.09)',_prevNote(adPrevViews))}
-      ${_metricCard('fa-coins','خەرجکراو','$'+adSpent.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),'#7c3aed','rgba(124,58,237,.09)',adPrevSpent>0?_prevNote(adPrevSpent,'$'):Math.round(adSpent*1800).toLocaleString()+' د.ع')}
+      ${_metricCard('fa-coins','خەرجکراو','$'+adSpent.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),'#7c3aed','rgba(124,58,237,.09)',adPrevSpent>0?_prevNote(adPrevSpent,'$'):Math.round(adSpent*pxRate()).toLocaleString()+' د.ع')}
       ${_metricCard('fa-bullseye','کۆنڤێرشن',adConv.toLocaleString(),'#8b5cf6','rgba(139,92,246,.10)',adPrevConv>0?'پێشوو: '+adPrevConv.toLocaleString()+' · ئێستا: '+adCurConv.toLocaleString():(adConv>0?'CVR '+adCVR.toFixed(1)+'% · CPA $'+adCPA.toFixed(2):'کۆی گشتی'))}
       ${_metricCard('fa-tower-broadcast','CPM',adViews>0?'$'+adCPM.toFixed(2):'—','#db2777','rgba(219,39,119,.10)',adPrevViews>0?'ID ی ئێستا: $'+adCurCPM.toFixed(2):'بۆ هەر 1000 بینین')}
       ${_metricCard('fa-heart','لایک',adLikes.toLocaleString(),'#e11d48','rgba(225,29,72,.09)',_prevNote(adPrevLikes))}
@@ -4428,7 +4621,7 @@ async function showAdDetail(id){
     <div style="background:var(--bg);border:1px solid var(--b1);border-radius:12px;padding:12px;margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
         <span style="font-size:12px;font-weight:700;color:var(--dark)"><i class="fas fa-coins" style="margin-left:5px;color:var(--yw)"></i>بودجەی خەرجکراو</span>
-        <span style="font-family:'Inter';font-weight:900;font-size:14px;color:${adSpent>0?'var(--yw)':'var(--mt)'}">${Math.round(adSpent*1800).toLocaleString()} IQD <span style="font-size:11px;font-weight:600;color:var(--mt)">/ ${Math.round(adPrice*1800).toLocaleString()} IQD</span></span>
+        <span style="font-family:'Inter';font-weight:900;font-size:14px;color:${adSpent>0?'var(--yw)':'var(--mt)'}">${Math.round(adSpent*pxRate()).toLocaleString()} IQD <span style="font-size:11px;font-weight:600;color:var(--mt)">/ ${Math.round(adPrice*pxRate()).toLocaleString()} IQD</span></span>
       </div>
       <div style="height:8px;background:var(--b1);border-radius:8px;overflow:hidden">
         <div style="height:100%;width:${adSpentPct}%;background:${adSpentPct>=90?'var(--rd)':adSpentPct>=50?'var(--yw)':'var(--gr)'};border-radius:8px;transition:width .4s"></div>
@@ -4693,7 +4886,7 @@ function renderAdsDataTable(q=''){
   if(!list.length){wrap.innerHTML='<div class="empty"><i class="fas fa-rectangle-ad"></i><p>هیچ ڕیکلامێک نەدۆزرایەوە</p></div>';return;}
   const gs={messages:'نامە',engagement:'کارلێک',views:'ڤیووو'};
   const fmtN=v=>parseInt(v||0).toLocaleString();
-  const fmtIQD=v=>(Math.round(parseFloat(v||0)*1800)).toLocaleString()+' IQD';
+  const fmtIQD=v=>(Math.round(parseFloat(v||0)*pxRate())).toLocaleString()+' IQD';
   const totSpend=a=>Math.max(parseFloat(a.spend||0),parseFloat(a.current_spend||0))+parseFloat(a.prev_spend||0);
   const totImpr=a=>parseInt(a.impressions||0)+parseInt(a.prev_impressions||0);
   const totClicks=a=>parseInt(a.clicks||0)+parseInt(a.prev_clicks||0);
@@ -4880,7 +5073,7 @@ function renderAdsDataTable(q=''){
       </div>
       <!-- Budget row -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <div style="font-size:11px;color:var(--mt)">بودجەی گشتی<div style="font-size:13px;font-weight:800;color:var(--rd);font-family:'Inter'">${budget>0?Math.round(budget*1800).toLocaleString()+' IQD':'—'}</div></div>
+        <div style="font-size:11px;color:var(--mt)">بودجەی گشتی<div style="font-size:13px;font-weight:800;color:var(--rd);font-family:'Inter'">${budget>0?Math.round(budget*pxRate()).toLocaleString()+' IQD':'—'}</div></div>
         <div style="font-size:11px;color:var(--mt)">Spend<div style="font-size:13px;font-weight:800;color:${spent>0?'var(--yw)':'var(--mt)'};font-family:'Inter'">${spent>0?'$'+spent.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—'}</div></div>
       </div>
       ${budget>0&&spent>0?`<div style="height:5px;background:var(--b1);border-radius:5px;overflow:hidden;margin-bottom:4px"><div style="height:100%;width:${pct}%;background:${pct>=90?'var(--rd)':pct>=50?'var(--yw)':'var(--gr)'};border-radius:5px"></div></div><div style="font-size:10px;color:var(--mt);margin-bottom:8px">${pct}% خەرجکراوە</div>`:''}
@@ -5198,7 +5391,7 @@ function bmRender(){
     const thumb = t
       ? `<img src="${_bmEsc(t)}" style="width:100%;height:100%;object-fit:cover">`
       : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--mt2)"><i class="fas fa-image" style="font-size:20px"></i></div>`;
-    const iqd = Math.round(parseFloat(a.spend||0)*1800).toLocaleString();
+    const iqd = Math.round(parseFloat(a.spend||0)*pxRate()).toLocaleString();
     return `
     <div style="display:flex;gap:14px;align-items:flex-start;padding:14px;border-bottom:1px solid var(--b1)">
       <div style="display:flex;flex-direction:column;gap:4px;align-items:center;flex-shrink:0">
@@ -5384,7 +5577,7 @@ async function loadApprovalWorkflow(){
       <td style="font-size:13px;font-weight:700">${a.title||'—'}</td>
       <td style="font-size:12px;color:var(--mt)">${a.profiles?.full_name||'—'}<br><span style="font-size:10px">${a.profiles?.email||'—'}</span></td>
       <td>
-        <div style="font-family:'Inter';font-weight:800;color:var(--rd);font-size:12px">${Math.round(parseFloat(a.budget||0)*1800).toLocaleString()} IQD</div>
+        <div style="font-family:'Inter';font-weight:800;color:var(--rd);font-size:12px">${Math.round(parseFloat(a.budget||0)*pxRate()).toLocaleString()} IQD</div>
         <div style="font-family:'Inter';font-size:12px;font-weight:800;color:#16a34a">$${parseFloat(a.budget||0).toFixed(2)}</div>
       </td>
       <td style="font-size:11px">${gs[a.goal]||a.goal||'—'}</td>
@@ -5407,7 +5600,7 @@ async function loadApprovalWorkflow(){
         <span class="badge ${a.status==='review'?'review':'pending'}">${a.status==='review'?'لەژێر پێداچوونەوەدایە':'چاوەڕوان'}</span>
       </div>
       <div class="ad-card-meta">
-        <div class="user-card-stat rd"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(a.budget||0)*1800).toLocaleString()} IQD &nbsp;<span style="color:#16a34a;font-weight:800">${parseFloat(a.budget||0).toFixed(2)}</span></div>
+        <div class="user-card-stat rd"><i class="fas fa-coins" style="font-size:10px"></i> ${Math.round(parseFloat(a.budget||0)*pxRate()).toLocaleString()} IQD &nbsp;<span style="color:#16a34a;font-weight:800">${parseFloat(a.budget||0).toFixed(2)}</span></div>
         <div class="user-card-stat" style="font-size:11px">${gs[a.goal]||a.goal||'—'}</div>
         <div class="user-card-date">${new Date(a.created_at).toLocaleDateString('ku')}</div>
       </div>
@@ -5529,7 +5722,7 @@ function openApproveModal(adId){
   // Populate info
   document.getElementById('approveAdTitle').textContent = ad.title || (ad.ad_number ? 'ڕیکلامی '+_adminPublicAdIdLabel(ad) : '—');
   document.getElementById('approveAdUser').textContent = (ad.profiles?.full_name||'—') + ' · ' + (ad.profiles?.email||'—');
-  document.getElementById('approveAdBudget').textContent = Math.round(_approveAdBudget * 1800).toLocaleString() + ' IQD';
+  document.getElementById('approveAdBudget').textContent = Math.round(_approveAdBudget *pxRate()).toLocaleString() + ' IQD';
   document.getElementById('approveAdUSD').textContent = '$' + _approveAdBudget.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   document.getElementById('approveTikTokId').value = ad.tiktok_ad_id || '';
   document.getElementById('approveCampaignId').value = ad.tiktok_campaign_id || '';
@@ -5735,7 +5928,7 @@ async function confirmReject(){
         const oldRefBal=parseFloat(rw?.balance||0);
         const newRefBal=oldRefBal+refundUSD;
         await sb.from('pa_wallets').update({balance:newRefBal,updated_at:new Date().toISOString()}).eq('user_id',adObj.user_id);
-        const refundIQD=Math.round(refundUSD*1800);
+        const refundIQD=Math.round(refundUSD*pxRate());
         await sb.from('pa_transactions').insert({
           user_id:adObj.user_id,
           amount:refundUSD,
@@ -5744,8 +5937,8 @@ async function confirmReject(){
           status:'approved',
           ad_number:adObj.ad_number||null,
           note:`گەڕانەوەی پارەی ڕیکلام ${_adminPublicAdIdLabel(adObj)} — ${refundIQD.toLocaleString()} IQD`,
-          balance_before:Math.round(oldRefBal*1800),
-          balance_after:Math.round(newRefBal*1800)
+          balance_before:Math.round(oldRefBal*pxRate()),
+          balance_after:Math.round(newRefBal*pxRate())
         });
         const _rfLang = await _getUserLang(adObj.user_id).catch(()=>'ku');
         const _rfN = _txNotifTexts('refund_rejected_ad', _rfLang, {amtIQD: refundIQD, adNum: _adminPublicAdId(adObj)||null});
@@ -5775,7 +5968,7 @@ async function confirmReject(){
   amount_usd:refundUSD.toFixed(2),
   ad_number:adObj.ad_number||null,
   reason:reason||'',
-  newBalance: Math.round(newRefBal * 1800).toLocaleString('en'), // ✅ زیادکرا
+  newBalance: Math.round(newRefBal *pxRate()).toLocaleString('en'), // ✅ زیادکرا
   timestamp:new Date().toISOString(),
   app:'ProxoPanel'
 })
@@ -8524,7 +8717,7 @@ async function notifyNewAdTelegram(adData){
     if(ages.length)ageText=ages.join('، ');
   }catch(_){}
 
-  const budgetIQD = Math.round(parseFloat(adData.budget||0)*1800).toLocaleString();
+  const budgetIQD = Math.round(parseFloat(adData.budget||0)*pxRate()).toLocaleString();
   const adIdFull  = String(adData.id||'');
   const adIdShort = adIdFull.length>20 ? adIdFull.slice(-20) : adIdFull;
   const adNum     = adData.ad_number ? `#${adData.ad_number}` : '—';
@@ -8565,7 +8758,7 @@ const AD_COST_RATE_IQD = 1388.7;
 function getAdPricing(budgetUSD){
   const usd = parseFloat(budgetUSD)||0;
   const tierUSD = usd >= 20 ? 20 : 10;
-  const sale = tierUSD * 1800;
+  const sale = tierUSD *pxRate();
   const cost = Math.round(tierUSD * AD_COST_RATE_IQD);
   return {type:'$'+tierUSD+' Ad', sale, cost, profit: sale-cost};
 }
@@ -9231,7 +9424,7 @@ async function _fbSyncBalance(uid, newBalUSD) {
   try {
     const db = getFbAdminDb();
     if (!db || !uid) return;
-    const iqd = Math.round(parseFloat(newBalUSD||0) * 1800);
+    const iqd = Math.round(parseFloat(newBalUSD||0) *pxRate());
     await db.ref('wallets/' + uid + '/balance').set(iqd);
     await db.ref('realtime_triggers/' + uid + '/balance').set({ timestamp: Date.now(), balIQD: iqd });
   } catch(e) { /* silent */ }
@@ -9338,13 +9531,13 @@ async function approveReq(reqId,userId,amount,type){
     const oldBal=parseFloat(snap.val()||0);
     const newBal=type==='deposit'?oldBal+amount:Math.max(0,oldBal-amount);
     await balRef.set(newBal);
-    // ── Sync Supabase pa_wallets (balance in USD = IQD/1800) ──
+    // ── Sync Supabase pa_wallets (balance in USD = IQD/pxRate()) ──
     try{
       await sb.from('pa_wallets').upsert({user_id:userId,balance:0},{onConflict:'user_id',ignoreDuplicates:true});
-      await sb.from('pa_wallets').update({balance:newBal/1800,updated_at:new Date().toISOString()}).eq('user_id',userId);
+      await sb.from('pa_wallets').update({balance:newBal/pxRate(),updated_at:new Date().toISOString()}).eq('user_id',userId);
       await sb.from('pa_transactions').insert({
         user_id:userId,
-        amount:amount/1800,
+        amount:amount/pxRate(),
         type:type==='deposit'?'admin_adjustment':'admin_deduct',
         status:'approved',
         note:(type==='deposit'?'Firebase بارکردنی':'Firebase کەمکردنی')+' ئادمین — '+amtIqd+' IQD',
@@ -11919,6 +12112,7 @@ const FD_COLS=[
   {k:'refund_tx_id',         l:'Refund TXID',     g:'ids', t:'s', ro:1, mono:1},
 
   {k:'budget',        l:'بودجەی گشتی', g:'money', t:'m', w:'#16a34a'},
+  {k:'usd_iqd_rate',  l:'نرخی تایبەت ($1=IQD)', g:'money', t:'f', w:'#7c3aed'},
   {k:'target_budget', l:'بودجەی ئامانج',g:'money',t:'m'},
   {k:'spend',         l:'خەرجکراو',    g:'money', t:'m', w:'#f59e0b'},
   {k:'current_spend', l:'خەرجی ئێستا', g:'money', t:'m'},
@@ -12226,7 +12420,7 @@ let _eadId=null;
 
 const EAD_SECTIONS=[
   {t:'بنەڕەتی',      keys:['title','status','goal','tiktok_ad_id','previous_tiktok_ad_id','tiktok_campaign_id']},
-  {t:'بودجە و خەرجی',keys:['budget','target_budget','spend','current_spend','prev_spend']},
+  {t:'بودجە و خەرجی',keys:['budget','target_budget','spend','current_spend','prev_spend','usd_iqd_rate']},
   {t:'کارایی',       keys:['impressions','reach','video_views','profile_visits','clicks','ctr','cpc','cpm']},
   {t:'کارلێک',       keys:['likes','comments','shares','follows']},
   {t:'کۆنڤێرشن',     keys:['conversions','conversion_rate','cost_per_conversion']},
@@ -12993,6 +13187,163 @@ document.addEventListener('selectionchange',function(){
   if(tag==='input'||tag==='select'||tag==='textarea')return;
   try{s.removeAllRanges();}catch(_){}
 });
+</script>
+
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   نرخی ئاڵوگۆڕ — ڕووکاری ئادمین
+   ══════════════════════════════════════════════════════════════════════ */
+
+let _prcAds=[], _prcFilter='all';
+
+function _prcNum(v){ const n=parseFloat(v); return Number.isFinite(n)&&n>0?n:null; }
+function _prcEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+async function loadPricing(){
+  // ── نرخی گشتی ──
+  const{data:s}=await sb.from('pa_settings').select('value,updated_at').eq('key','iqd_per_usd').maybeSingle();
+  const cur=_prcNum(s&&s.value)||(window.PXRate?PXRate.rate():1800);
+  const inp=document.getElementById('prcGlobal');
+  if(inp)inp.value=cur;
+  const curEl=document.getElementById('prcCurrent');
+  if(curEl){
+    curEl.innerHTML='نرخی چالاکی ئێستا: <strong style="color:#16a34a;font-family:\'Inter\'">$1 = '
+      +cur.toLocaleString()+' IQD</strong>'
+      +(s&&s.updated_at?' · دوایین گۆڕان: '+_fdFmtDT(s.updated_at):'');
+  }
+  prcPreview();
+
+  // ── ڕیکلامەکان ──
+  const wrap=document.getElementById('prcAdsWrap');
+  if(wrap)wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>';
+  const{data:ads,error}=await sb.from('pa_ads')
+    .select('id,public_ad_id,ad_number,title,status,budget,usd_iqd_rate,user_id,created_at')
+    .order('created_at',{ascending:false}).limit(500);
+  if(error){
+    if(wrap)wrap.innerHTML='<div class="empty"><i class="fas fa-exclamation-triangle" style="color:var(--rd)"></i><p>هەڵە: '+_prcEsc(error.message)+'</p></div>';
+    return;
+  }
+  const uids=[...new Set((ads||[]).map(a=>a.user_id).filter(Boolean))];
+  const{data:profs}=await(uids.length
+    ? sb.from('profiles').select('id,full_name,email').in('id',uids)
+    : Promise.resolve({data:[]}));
+  const pm={}; (profs||[]).forEach(p=>{pm[p.id]=p;});
+  _prcAds=(ads||[]).map(a=>({...a,profiles:pm[a.user_id]||null}));
+  prcRenderAds();
+}
+
+function prcPreview(){
+  const el=document.getElementById('prcPreview');
+  if(!el)return;
+  const r=_prcNum(document.getElementById('prcGlobal')?.value);
+  if(!r){ el.innerHTML='<span style="color:var(--rd);font-weight:700">نرخەکە دەبێت ژمارەیەکی گەورەتر لە سفر بێت</span>'; return; }
+  const ex=[1,5,10,20,50];
+  el.innerHTML='<span style="color:var(--mt)">نموونە:</span> '+ex.map(u=>
+    '<span style="display:inline-block;background:var(--bg);border:1px solid var(--b1);border-radius:8px;padding:3px 9px;margin:2px 3px;font-family:\'Inter\';font-size:11.5px;font-weight:700;direction:ltr">$'
+    +u+' = '+Math.round(u*r).toLocaleString()+' IQD</span>').join('');
+}
+
+async function savePricingGlobal(){
+  const msg=document.getElementById('prcMsg');
+  const show=(t,ok)=>{ msg.style.display='block';
+    msg.style.background=ok?'rgba(22,163,74,.08)':'rgba(220,38,38,.08)';
+    msg.style.color=ok?'#16a34a':'var(--rd)'; msg.textContent=t; };
+  const r=_prcNum(document.getElementById('prcGlobal').value);
+  if(!r) return show('نرخەکە دەبێت ژمارەیەکی گەورەتر لە سفر بێت',false);
+
+  const{error}=await sb.from('pa_settings')
+    .upsert({key:'iqd_per_usd',value:String(r),updated_at:new Date().toISOString()},{onConflict:'key'});
+  if(error) return show('هەڵە: '+error.message,false);
+
+  // نوێکردنەوەی ڕاستەوخۆ لەم پانێڵەدا (Realtime بۆ ئەوانی تر)
+  if(window.PXRate) PXRate._set(r);
+  show('✅ نرخەکە پاشەکەوت کرا — $1 = '+r.toLocaleString()+' IQD',true);
+  showToast('✅ نرخی نوێ چالاک کرا لە هەموو شوێنێک','gr');
+  loadPricing();
+}
+
+function prcFilter(el){
+  if(el){ document.querySelectorAll('[data-prcf]').forEach(x=>x.classList.remove('on'));
+    el.classList.add('on'); _prcFilter=el.dataset.prcf; }
+  prcRenderAds();
+}
+
+function prcRenderAds(){
+  const wrap=document.getElementById('prcAdsWrap');
+  if(!wrap)return;
+  const q=(document.getElementById('prcAdSearch')?.value||'').trim().toLowerCase().replace(/^#+/,'');
+  let list=_prcAds;
+  if(_prcFilter==='custom')      list=list.filter(a=>_prcNum(a.usd_iqd_rate));
+  else if(_prcFilter!=='all')    list=list.filter(a=>a.status===_prcFilter);
+  if(q) list=list.filter(a=>[a.public_ad_id,a.ad_number,a.title,a.profiles?.full_name,a.profiles?.email]
+    .join(' ').toLowerCase().includes(q));
+
+  if(!list.length){ wrap.innerHTML='<div class="empty"><i class="fas fa-magnifying-glass"></i><p>هیچ ڕیکلامێک نەدۆزرایەوە</p></div>'; return; }
+
+  const g=window.PXRate?PXRate.rate():1800;
+  const rows=list.slice(0,200).map(a=>{
+    const own=_prcNum(a.usd_iqd_rate);
+    const eff=own||g;
+    const budget=parseFloat(a.budget||0)||0;
+    return `<tr>
+      <td style="font-family:monospace;font-size:11.5px;color:#0891b2;font-weight:800;white-space:nowrap">${_prcEsc(_adminPublicAdIdLabel(a))}</td>
+      <td style="font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${_prcEsc(a.title||'—')}</td>
+      <td style="font-size:11px;color:var(--mt);white-space:nowrap">${_prcEsc(a.profiles?.full_name||'—')}</td>
+      <td><span class="badge ${_prcEsc(a.status)}">${_prcEsc(statusKu(a.status))}</span></td>
+      <td style="font-family:'Inter';font-weight:800;direction:ltr;white-space:nowrap">$${budget.toFixed(2)}</td>
+      <td style="white-space:nowrap">
+        <input type="number" step="1" min="0" placeholder="${g}" value="${own||''}"
+          onchange="prcSaveAdRate('${a.id}',this.value,this)"
+          style="width:105px;padding:6px 9px;border:1.5px solid ${own?'#7c3aed':'var(--b1)'};border-radius:9px;background:${own?'rgba(124,58,237,.05)':'var(--bg)'};font-family:'Inter';font-size:12.5px;font-weight:800;color:var(--tx);outline:none;direction:ltr">
+      </td>
+      <td style="font-family:'Inter';font-weight:800;direction:ltr;white-space:nowrap;color:${own?'#7c3aed':'var(--mt)'}">
+        ${Math.round(budget*eff).toLocaleString()} IQD
+        <div style="font-size:9px;color:var(--mt);font-weight:600">${own?'نرخی تایبەت':'نرخی گشتی'} · ${eff.toLocaleString()}</div>
+      </td>
+      <td>${own?`<div class="act-btn" style="padding:5px 9px;font-size:11px" onclick="prcSaveAdRate('${a.id}','',null)" title="گەڕانەوە بۆ نرخی گشتی"><i class="fas fa-rotate-left"></i></div>`:''}</td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML=`<table><thead><tr>
+      <th>ئایدی</th><th>ناونیشان</th><th>بەکارهێنەر</th><th>باری</th>
+      <th>بودجە ($)</th><th>نرخی تایبەت</th><th>نرخی IQD</th><th></th>
+    </tr></thead><tbody>${rows}</tbody></table>`
+    + (list.length>200?`<div style="text-align:center;padding:10px;font-size:11px;color:var(--mt)">${list.length-200} ڕیکلامی تر — گەڕان بەکاربهێنە</div>`:'');
+}
+
+async function prcSaveAdRate(id,val,el){
+  const r=String(val||'').trim()===''?null:_prcNum(val);
+  if(val&&String(val).trim()!==''&&!r){ showToast('نرخەکە دەبێت ژمارەیەکی گەورەتر لە سفر بێت','rd'); return; }
+  const{error}=await sb.from('pa_ads').update({usd_iqd_rate:r}).eq('id',id);
+  if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
+  const ad=_prcAds.find(x=>x.id===id); if(ad)ad.usd_iqd_rate=r;
+  [(typeof _fdAds!=='undefined'?_fdAds:null),
+   (typeof _allAdsData!=='undefined'?_allAdsData:null),
+   (typeof allAds!=='undefined'?allAds:null)].forEach(arr=>{
+    const x=(arr||[]).find(y=>y.id===id); if(x)x.usd_iqd_rate=r;
+  });
+  showToast(r?('✅ نرخی تایبەت دانرا: $1 = '+r.toLocaleString()+' IQD'):'✅ گەڕایەوە بۆ نرخی گشتی','gr');
+  prcRenderAds();
+  pxRerenderPanel();
+}
+
+/* ══ نوێکردنەوەی هەموو دیمەنە کراوەکان دوای گۆڕانی نرخ ══ */
+function pxRerenderPanel(){
+  const T=(fn)=>{ try{ fn(); }catch(_){} };
+  T(()=>{ if(typeof fdRender==='function'&&typeof _fdAds!=='undefined'&&_fdAds.length){ _fdStats(); fdRender(); } });
+  T(()=>{ if(typeof renderAdsDataTable==='function'&&typeof _allAdsData!=='undefined'&&_allAdsData.length){
+            if(typeof _renderAdsDataStats==='function')_renderAdsDataStats();
+            renderAdsDataTable((document.getElementById('adsDataSearch')?.value||'').toLowerCase()); } });
+  T(()=>{ if(typeof renderAdsTable==='function'&&typeof allAds!=='undefined'&&allAds.length) renderAdsTable(); });
+  T(()=>{ if(typeof prcRenderAds==='function'&&_prcAds.length) prcRenderAds(); });
+  const vis=(id)=>{ const e=document.getElementById(id); return e&&e.classList.contains('on'); };
+  T(()=>{ if(vis('pgDashboard')&&typeof loadDashboard==='function') loadDashboard(); });
+  T(()=>{ if(vis('pgUsers')&&typeof loadUsers==='function') loadUsers(); });
+  T(()=>{ if(vis('pgTxlog')&&typeof loadTxLog==='function') loadTxLog(); });
+  T(()=>{ if(vis('pgDeposits')&&typeof loadDeposits==='function') loadDeposits(); });
+  T(()=>{ if(vis('pgRevenue')&&typeof loadRevenue==='function') loadRevenue(); });
+}
 </script>
 
 </body>
