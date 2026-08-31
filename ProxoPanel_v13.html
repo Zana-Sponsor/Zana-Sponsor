@@ -1496,7 +1496,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
       </div>
       <div class="info-box" style="margin-bottom:14px">
         <i class="fas fa-circle-info" style="margin-left:6px;color:#16a34a"></i>
-        ئەم داشکاندنە خۆکارە و بۆ ڕیکلامێکی <strong>نرخی دیاریکراو</strong> جێبەجێ دەبێت (بۆ نموونە: تەنها ڕیکلامی 18,500 IQD) — پێویست بە کۆد نییە. دەتوانیت بیکەیت بۆ هەموو بەکارهێنەران یان تەنها یەکێک، کاتی دەستپێک/کۆتایی و سنووری بەکارهێنانی هەر بەکارهێنەرێک دیاری بکەیت.
+        ئەم داشکاندنە خۆکارە و بۆ ڕیکلامێکی <strong>نرخی دیاریکراو</strong> جێبەجێ دەبێت (بۆ نموونە: تەنها ڕیکلامی 18,000 IQD) — پێویست بە کۆد نییە. دەتوانیت بیکەیت بۆ هەموو بەکارهێنەران یان تەنها یەکێک، کاتی دەستپێک/کۆتایی و سنووری بەکارهێنانی هەر بەکارهێنەرێک دیاری بکەیت.
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
         <div class="stat-card" style="background:rgba(22,163,74,.06);border-color:rgba(22,163,74,.2)">
@@ -2001,9 +2001,27 @@ tr:hover td{background:rgba(28,35,51,.015);}
 
       <div class="info-box" style="margin-bottom:16px;border-right:3px solid #16a34a">
         <i class="fas fa-info-circle" style="margin-left:6px;color:#16a34a"></i>
-        نرخی هەر ڕیکلامێک بە دینار = <strong>بودجەی ڕیکلام × نرخی دۆلار</strong>.
-        نرخی گشتی بۆ هەموو ڕیکلامەکان کاردەکات، بەڵام دەتوانیت بۆ ڕیکلامێکی دیاریکراو نرخێکی تایبەت دابنێیت.
-        هەر گۆڕانکارییەک <strong>یەکسەر</strong> لە داتابەیس (<code>pa_ads.price_iqd</code>) و لە پانێڵدا دەنووسرێت — بێ نوێکردنەوەی پەڕە.
+        نرخی هەر ڕیکلامێک بە دینار = <strong>بودجەی خزمەتگوزاری بە دۆلار × نرخی فرۆشتنی دۆلار</strong>.
+        ڕیزبەندی نرخەکان: <strong>نرخی تایبەتی ڕیکلام ← نرخی خزمەتگوزاری ← نرخی گشتی</strong>.
+        هەر گۆڕانکارییەک <strong>یەکسەر</strong> لە <code>pa_ads.price_iqd</code>، پانێڵی ئادمین و ئەپی کڕیاردا دەردەکەوێت — بێ نوێکردنەوەی پەڕە.
+      </div>
+
+      <!-- نرخ بەپێی جۆری خزمەتگوزاری -->
+      <div style="background:var(--w);border:1px solid var(--b1);border-radius:16px;padding:18px 20px;margin-bottom:16px">
+        <div style="font-size:13px;font-weight:800;color:var(--dark);margin-bottom:4px">
+          <i class="fas fa-layer-group" style="margin-left:6px;color:#7c3aed"></i>نرخی تایبەت بەپێی جۆری خزمەتگوزاری
+        </div>
+        <div style="font-size:11px;color:var(--mt);margin-bottom:14px">
+          نموونە: TikTok = 1,800 IQD و Instagram = 1,750 IQD. ڕیکلامەکانی ئەو خزمەتگوزارییە یەکسەر نوێ دەبنەوە.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;align-items:end">
+          <div><label class="modal-lbl" style="margin-top:0">کۆدی خزمەتگوزاری</label><input id="apServiceType" class="minp" value="tiktok" placeholder="tiktok" dir="ltr" style="margin-bottom:0"></div>
+          <div><label class="modal-lbl" style="margin-top:0">ناوی پیشاندان</label><input id="apServiceName" class="minp" value="TikTok" placeholder="TikTok" style="margin-bottom:0"></div>
+          <div><label class="modal-lbl" style="margin-top:0">$1 = X IQD</label><input id="apServiceRate" class="minp" type="number" min="1" max="1000000" step="1" placeholder="1800" dir="ltr" style="margin-bottom:0;font-family:'Inter';font-weight:800"></div>
+          <button class="act-btn dark" style="height:43px;justify-content:center" onclick="apSaveServiceRate()"><i class="fas fa-plus"></i> پاشەکەوتکردنی نرخ</button>
+        </div>
+        <div id="apServiceMsg" style="display:none;margin-top:10px;padding:9px 12px;border-radius:10px;font-size:12.5px;font-weight:600"></div>
+        <div id="apServicesWrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:9px;margin-top:14px"></div>
       </div>
 
       <!-- نرخی گشتی -->
@@ -2040,7 +2058,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
           <i class="fas fa-rectangle-ad" style="margin-left:6px;color:#7c3aed"></i>نرخی تایبەت بۆ ڕیکلامێکی دیاریکراو
         </div>
         <div style="font-size:11px;color:var(--mt);margin-bottom:14px">
-          خانەکە بەتاڵ بەرە بۆ گەڕانەوە بۆ نرخی گشتی
+          جۆری خزمەتگوزاری دیاری بکە، یان نرخێکی تایبەت بۆ تەنها ئەم ڕیکلامە دابنێ. خانەی نرخ بەتاڵ بکە بۆ میراتگرتن لە نرخەکەی خزمەتگوزاری/گشتی.
         </div>
 
         <input id="apSearch" class="tbl-search" placeholder="گەڕان بە ئایدی، ناونیشان، ناو یان ئیمەیل..."
@@ -2411,7 +2429,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
     </div>
     <div class="field-wrap">
       <label class="modal-lbl" style="margin-top:0">نرخی ئامانجی ڕیکلام (IQD) <span style="color:var(--rd)">*</span></label>
-      <input class="minp" type="number" id="ddTargetPrice" placeholder="بۆ نموونە: 18500" min="1" step="1" dir="ltr" style="font-family:'Inter'" oninput="clearFieldErr('ddTargetPrice')">
+      <input class="minp" type="number" id="ddTargetPrice" placeholder="بۆ نموونە: 18000" min="1" step="1" dir="ltr" style="font-family:'Inter'" oninput="clearFieldErr('ddTargetPrice')">
       <div class="field-err" id="ddTargetPrice-err">نرخی ئامانج پڕ بکەرەوە</div>
       <div style="font-size:11px;color:var(--mt);margin-top:5px">داشکاندنەکە تەنها بۆ ڕیکلامێک جێبەجێ دەبێت کە نرخی سەرەکی (پێش هەموو داشکاندنێک) بەرامبەر ئەم بڕە بێت</div>
     </div>
@@ -2892,7 +2910,7 @@ const pageConfig={
   challenges:{title:'چاڵنجەکان و ئاست',sub:'بەڕێوەبردنی چاڵنج و ئاستی بەکارهێنەران',load:loadChallenges},
   requests:{title:'داواکاریەکانی جزدان',sub:'داواکاریەکانی بارکردن و کەمکردنی باڵانس (Firebase)'},
   revenue:{title:'داهاتی ڕیکلامەکان',sub:'پیوانەی داهات، تێچوو و قازانجی ڕیکلامەکان',load:loadRevenue},
-  adPricing:{title:'نرخی ڕیکلامەکان',sub:'دانانی نرخی دۆلار بۆ دینار — گشتی بۆ هەموو ڕیکلامەکان یان تایبەت بۆ هەر ڕیکلامێک',load:()=>loadAdPricing()},
+  adPricing:{title:'نرخی ڕیکلامەکان',sub:'نرخی گشتی، نرخی جۆری خزمەتگوزاری و نرخی تایبەتی هەر ڕیکلامێک — بە Realtime',load:()=>loadAdPricing()},
   pricing:{title:'نرخی ئاڵوگۆڕی دراو',sub:'دانانی نرخی $1 = X IQD — گشتی بۆ هەموو ڕیکلامەکان یان تایبەت بۆ هەر ڕیکلامێک',load:()=>loadPricing()},
   maintenance:{title:'ڕاگرتنی پەڕەکە',sub:'کردنەوە و داخستنی ئەپلیکەیشن بۆ بەکارهێنەران',load:loadMaintenance},
   adLock:{title:'قفڵی ناردنی ڕیکلام',sub:'ڕاگرتنی ناردنی ڕیکلام بۆ هەموو بەکارهێنەران یان کەسانێکی دیاریکراو',load:loadAdLock},
@@ -4963,7 +4981,7 @@ function renderAdsDataTable(q=''){
       </div>
       <!-- Budget row -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <div style="font-size:11px;color:var(--mt)">بودجەی گشتی<div style="font-size:13px;font-weight:800;color:var(--rd);font-family:'Inter'">${budget>0?Math.round(budget*1800).toLocaleString()+' IQD':'—'}</div></div>
+        <div style="font-size:11px;color:var(--mt)">بودجەی گشتی<div style="font-size:13px;font-weight:800;color:var(--rd);font-family:'Inter'">${budget>0?adPriceIQD(a).toLocaleString()+' IQD':'—'}</div></div>
         <div style="font-size:11px;color:var(--mt)">Spend<div style="font-size:13px;font-weight:800;color:${spent>0?'var(--yw)':'var(--mt)'};font-family:'Inter'">${spent>0?'$'+spent.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'—'}</div></div>
       </div>
       ${budget>0&&spent>0?`<div style="height:5px;background:var(--b1);border-radius:5px;overflow:hidden;margin-bottom:4px"><div style="height:100%;width:${pct}%;background:${pct>=90?'var(--rd)':pct>=50?'var(--yw)':'var(--gr)'};border-radius:5px"></div></div><div style="font-size:10px;color:var(--mt);margin-bottom:8px">${pct}% خەرجکراوە</div>`:''}
@@ -8607,7 +8625,7 @@ async function notifyNewAdTelegram(adData){
     if(ages.length)ageText=ages.join('، ');
   }catch(_){}
 
-  const budgetIQD = Math.round(parseFloat(adData.budget||0)*1800).toLocaleString();
+  const budgetIQD = adPriceIQD(adData).toLocaleString();
   const adIdFull  = String(adData.id||'');
   const adIdShort = adIdFull.length>20 ? adIdFull.slice(-20) : adIdFull;
   const adNum     = adData.ad_number ? `#${adData.ad_number}` : '—';
@@ -8648,7 +8666,7 @@ const AD_COST_RATE_IQD = 1388.7;
 function getAdPricing(budgetUSD){
   const usd = parseFloat(budgetUSD)||0;
   const tierUSD = usd >= 20 ? 20 : 10;
-  const sale = tierUSD *1800;
+  const sale = Math.round(tierUSD * (_adRate||1800));
   const cost = Math.round(tierUSD * AD_COST_RATE_IQD);
   return {type:'$'+tierUSD+' Ad', sale, cost, profit: sale-cost};
 }
@@ -8673,10 +8691,10 @@ function _revParseType(adType){
 
 // ══════════════════════════════════════════════════════════════
 // ══ SPONSORSHIP TIER PRICING — نرخی سپۆنسەری بەپێی پلە ══
-// ڕێژەی گۆڕینەوە: ١٠ دۆلار = ١٨,٥٠٠ دینار (١ دۆلار = ١,٨٥٠ دینار)
+// ڕێژەی گۆڕینەوە: ١٠ دۆلار = ١٨,٠٠٠ دینار (١ دۆلار = ١,٨٠٠ دینار)
 // پلەکان: Bronze (بێ داشکاندن) / Silver (%٥) / Diamond (%١٠) / Diamond+ (%١٥)
 // ══════════════════════════════════════════════════════════════
-const SPONSOR_EXCHANGE_RATE_IQD = 1850; // 1 USD = 1,850 IQD (10 USD = 18,500 IQD)
+const SPONSOR_EXCHANGE_RATE_IQD = 1800; // 1 USD = 1,800 IQD (10 USD = 18,000 IQD)
 
 const SPONSOR_TIER_DISCOUNTS = {
   'Bronze':   0,
@@ -8688,7 +8706,7 @@ const SPONSOR_TIER_DISCOUNTS = {
 /**
  * Calculates the final sponsorship price in IQD for a given user tier and
  * sponsorship amount (in USD), applying the tier's discount on top of the
- * fixed 1,850 IQD/USD exchange rate.
+ * live admin-defined IQD/USD rate (1,800 IQD/USD by default).
  *
  * @param {'Bronze'|'Silver'|'Diamond'|'Diamond+'} tier - the user's membership tier
  * @param {number} amountUSD - the sponsorship amount in USD
@@ -8708,14 +8726,15 @@ function calculateSponsorshipPrice(tier, amountUSD){
   const discountPercent = SPONSOR_TIER_DISCOUNTS[normalizedTier];
 
   const usd = Math.max(0, parseFloat(amountUSD) || 0);
-  const basePriceIQD = usd * SPONSOR_EXCHANGE_RATE_IQD;
+  const liveRate=_adRate||SPONSOR_EXCHANGE_RATE_IQD;
+  const basePriceIQD = usd * liveRate;
   const discountIQD = basePriceIQD * discountPercent;
   const finalPriceIQD = Math.round(basePriceIQD - discountIQD);
 
   return {
     tier: normalizedTier,
     amountUSD: usd,
-    exchangeRate: SPONSOR_EXCHANGE_RATE_IQD,
+    exchangeRate: liveRate,
     discountPercent: discountPercent * 100,
     basePriceIQD: Math.round(basePriceIQD),
     discountIQD: Math.round(discountIQD),
@@ -12002,7 +12021,11 @@ const FD_COLS=[
   {k:'refund_tx_id',         l:'Refund TXID',     g:'ids', t:'s', ro:1, mono:1},
 
   {k:'budget',        l:'بودجەی گشتی', g:'money', t:'m', w:'#16a34a'},
+  {k:'service_type',  l:'جۆری خزمەتگوزاری', g:'money', t:'s', ro:1, w:'#0891b2'},
+  {k:'service_budget_usd',l:'بودجەی خزمەتگوزاری ($)',g:'money',t:'m',ro:1,w:'#0891b2'},
   {k:'usd_iqd_rate',  l:'نرخی تایبەت ($1=IQD)', g:'money', t:'f', w:'#7c3aed'},
+  {k:'effective_usd_iqd_rate',l:'نرخی کاریگەر ($1=IQD)',g:'money',t:'f',ro:1,w:'#7c3aed'},
+  {k:'pricing_source',l:'سەرچاوەی نرخ',g:'money',t:'s',ro:1},
   {k:'price_iqd',     l:'نرخ بە دینار (IQD)',   g:'money', t:'n', w:'#16a34a', ro:1},
   {k:'target_budget', l:'بودجەی ئامانج',g:'money',t:'m'},
   {k:'spend',         l:'خەرجکراو',    g:'money', t:'m', w:'#f59e0b'},
@@ -13204,7 +13227,7 @@ function apPreview(){
   const el=document.getElementById('apPreview'); if(!el)return;
   const r=_apNum(document.getElementById('apGlobal')?.value);
   if(!r){ el.innerHTML='<span style="color:var(--rd);font-weight:700">نرخەکە دەبێت لە سفر گەورەتر بێت</span>'; return; }
-  el.innerHTML='<span style="color:var(--mt)">نموونەی نرخی ڕیکلام:</span> '+[10,20,50,100].map(u=>
+  el.innerHTML='<span style="color:var(--mt)">نموونەی نرخی ڕیکلام:</span> '+[10,20,50,100,200,500,1000].map(u=>
     '<span style="display:inline-block;background:var(--bg);border:1px solid var(--b1);border-radius:8px;padding:3px 9px;margin:2px 3px;font-family:\'Inter\';font-size:11.5px;font-weight:700;direction:ltr">$'
     +u+' = '+Math.round(u*r).toLocaleString()+' IQD</span>').join('');
 }
@@ -13317,6 +13340,35 @@ async function apSaveRate(id,val,el){
   apRender(); apStats();
   adRateRefreshViews(false);
 }
+</script>
+
+<script>
+/* Ad Service Pricing Management v2 — global → service → per-ad */
+let _apServiceRates=[],_apRateMap=Object.create(null),_apPricingRt=null,_apRtTimer=null;
+function _apServiceKey(v){const k=String(v||'tiktok').trim().toLowerCase();return k&&k!=='*'?k:'tiktok';}
+function _apServiceName(k){const r=_apRateMap[_apServiceKey(k)];return r?.display_name||_apServiceKey(k).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+function _apSetRates(rows){_apServiceRates=(rows||[]).filter(r=>r&&r.is_active!==false);_apRateMap=Object.create(null);_apServiceRates.forEach(r=>_apRateMap[r.service_type]=r);_adRate=_apNum(_apRateMap['*']?.rate_iqd_per_usd)||1800;}
+async function _apLoadRates(client){const{data,error}=await(client||sb).from('pa_ad_pricing_rates').select('service_type,display_name,rate_iqd_per_usd,is_active,updated_at').order('service_type');if(error)throw error;_apSetRates(data||[]);}
+function adRateFor(ad){return _apNum(ad?.usd_iqd_rate)||_apNum(_apRateMap[_apServiceKey(ad?.service_type)]?.rate_iqd_per_usd)||_adRate||1800;}
+function adServiceBudgetUSD(ad){const direct=_apNum(ad?.service_budget_usd);if(direct!==null)return direct;const total=_apNum(ad?.total_budget);if(total!==null)return total;const daily=_apNum(ad?.daily_budget),days=_apNum(ad?.days);if(daily!==null&&days!==null)return daily*days;const b=parseFloat(ad?.budget);return Number.isFinite(b)&&b>=0?b:0;}
+function adPriceIQD(ad){const p=parseFloat(ad?.price_iqd);return Number.isFinite(p)&&p>=0?Math.round(p):Math.round(adServiceBudgetUSD(ad)*adRateFor(ad));}
+function adPriceLabel(ad){return adPriceIQD(ad).toLocaleString()+' IQD';}
+function _apMerge(id,patch){[_apAds,(typeof _fdAds!=='undefined'?_fdAds:null),(typeof _allAdsData!=='undefined'?_allAdsData:null),(typeof allAds!=='undefined'?allAds:null)].forEach(a=>{const r=(a||[]).find(x=>x.id===id);if(r)Object.assign(r,patch||{});});}
+async function adRateInit(client){const c=client||sb;if(!c)return;try{await _apLoadRates(c);}catch(e){console.warn(e)}if(_apPricingRt)try{await c.removeChannel(_apPricingRt)}catch(_){};_apPricingRt=c.channel('pa_ad_service_pricing_rt').on('postgres_changes',{event:'*',schema:'public',table:'pa_ad_pricing_rates'},()=>{clearTimeout(_apRtTimer);_apRtTimer=setTimeout(async()=>{try{await _apLoadRates(c);await adRateRefreshViews(true)}catch(e){console.warn(e)}},80)}).on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads'},p=>{if(p.new?.id){_apMerge(p.new.id,p.new);try{apRender();apStats()}catch(_){}}}).subscribe();adRateRefreshViews(false);}
+async function adRateRefreshViews(refetch){if(refetch){const ids=[...new Set([...(typeof allAds!=='undefined'?(allAds||[]):[]),...(typeof _allAdsData!=='undefined'?(_allAdsData||[]):[]),...(typeof _fdAds!=='undefined'?(_fdAds||[]):[]),...(_apAds||[])].map(a=>a?.id).filter(Boolean))];if(ids.length){const{data}=await sb.from('pa_ads').select('id,service_type,service_budget_usd,total_budget,daily_budget,days,budget,usd_iqd_rate,effective_usd_iqd_rate,pricing_source,price_iqd,price_updated_at').in('id',ids);(data||[]).forEach(r=>_apMerge(r.id,r));}}const input=document.getElementById('apGlobal');if(input&&document.activeElement!==input)input.value=_adRate;const cur=document.getElementById('apCurrent');if(cur)cur.innerHTML='نرخی گشتیی چالاک: <strong style="color:#16a34a;font-family:Inter">$1 = '+_adRate.toLocaleString()+' IQD</strong>';try{apRenderServices();apRender();apStats()}catch(_){};try{if(typeof fdRender==='function')fdRender()}catch(_){};}
+async function loadAdPricing(){const wrap=document.getElementById('apWrap');if(wrap)wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>';try{const[,res]=await Promise.all([_apLoadRates(sb),sb.from('pa_ads').select('*').order('created_at',{ascending:false}).limit(500)]);if(res.error)throw res.error;const ads=res.data||[],ids=[...new Set(ads.map(a=>a.user_id).filter(Boolean))];const pr=ids.length?await sb.from('profiles').select('id,full_name,email').in('id',ids):{data:[]};const m={};(pr.data||[]).forEach(p=>m[p.id]=p);_apAds=ads.map(a=>({...a,profiles:m[a.user_id]||null}));document.getElementById('apGlobal').value=_adRate;apPreview();adRateRefreshViews(false)}catch(e){if(wrap)wrap.innerHTML='<div class="empty"><p>هەڵە: '+_apEsc(e.message)+'</p></div>'}}
+function apPreview(){const el=document.getElementById('apPreview');if(!el)return;const r=_apNum(document.getElementById('apGlobal')?.value);el.innerHTML=!r?'<span style="color:var(--rd)">نرخێکی دروست بنووسە</span>':[10,20,50,100,200,500,1000].map(u=>'<span style="display:inline-block;padding:3px 9px;margin:2px;background:var(--bg);border-radius:8px;font-family:Inter">$'+u+' = '+Math.round(u*r).toLocaleString()+' IQD</span>').join('');}
+function apRenderServices(){const w=document.getElementById('apServicesWrap');if(!w)return;const rows=_apServiceRates.filter(r=>r.service_type!=='*');w.innerHTML=rows.length?rows.map(r=>'<div style="border:1px solid rgba(124,58,237,.18);background:rgba(124,58,237,.04);border-radius:12px;padding:12px"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>'+_apEsc(r.display_name||r.service_type)+'</b><div style="font:10px monospace;color:var(--mt)">'+_apEsc(r.service_type)+'</div></div><strong style="font-family:Inter;color:#7c3aed;direction:ltr">$1 = '+Number(r.rate_iqd_per_usd).toLocaleString()+' IQD</strong></div><div style="display:flex;justify-content:flex-end;gap:7px;margin-top:9px"><button class="act-btn" onclick="apEditService(\''+r.service_type+'\')"><i class="fas fa-pen"></i></button><button class="act-btn rd" onclick="apDeleteServiceRate(\''+r.service_type+'\')"><i class="fas fa-trash"></i></button></div></div>').join(''):'<div style="grid-column:1/-1;padding:12px;border:1px dashed var(--b1);border-radius:11px;color:var(--mt);text-align:center">هیچ نرخێکی خزمەتگوزاری دانەنراوە.</div>';}
+function apEditService(k){const r=_apRateMap[k];if(!r)return;document.getElementById('apServiceType').value=k;document.getElementById('apServiceName').value=r.display_name||'';document.getElementById('apServiceRate').value=r.rate_iqd_per_usd;}
+function apStats(){const e=document.getElementById('apStats');if(!e)return;const c=(i,col,v,l)=>'<div style="background:var(--w);border:1px solid var(--b1);border-radius:14px;padding:13px 15px"><div style="font-size:17px;font-weight:900;color:'+col+';font-family:Inter">'+v+'</div><div style="font-size:10.5px;color:var(--mt)">'+l+'</div></div>';e.innerHTML=c('', '#16a34a','$1 = '+_adRate.toLocaleString(),'نرخی گشتی')+c('','#0891b2',_apServiceRates.filter(r=>r.service_type!=='*').length,'نرخی خزمەتگوزاری')+c('','#7c3aed',_apAds.filter(a=>_apNum(a.usd_iqd_rate)).length,'نرخی تایبەتی ڕیکلام')+c('','#f59e0b',_apAds.reduce((s,a)=>s+adPriceIQD(a),0).toLocaleString()+' IQD','کۆی نرخی زیندوو');}
+function _apOptions(cur){return[...new Set(['tiktok',..._apServiceRates.filter(r=>r.service_type!=='*').map(r=>r.service_type),_apServiceKey(cur)])].map(k=>'<option value="'+k+'"'+(_apServiceKey(cur)===k?' selected':'')+'>'+_apEsc(_apServiceName(k))+'</option>').join('');}
+function apRender(){const w=document.getElementById('apWrap');if(!w)return;const q=(document.getElementById('apSearch')?.value||'').toLowerCase();let list=_apAds;if(_apFilter==='custom')list=list.filter(a=>_apNum(a.usd_iqd_rate));else if(_apFilter!=='all')list=list.filter(a=>a.status===_apFilter);if(q)list=list.filter(a=>[a.public_ad_id,a.ad_number,a.title,a.service_type,a.profiles?.full_name,a.profiles?.email].join(' ').toLowerCase().includes(q));document.getElementById('apCount').textContent=list.length+' لە '+_apAds.length;if(!list.length){w.innerHTML='<div class="empty"><p>هیچ ڕیکلامێک نەدۆزرایەوە</p></div>';return}w.innerHTML='<table><thead><tr><th>ئایدی</th><th>ناونیشان</th><th>خزمەتگوزاری</th><th>بودجە ($)</th><th>نرخی تایبەت</th><th>نرخ بە دینار</th><th></th></tr></thead><tbody>'+list.slice(0,200).map(a=>{const own=_apNum(a.usd_iqd_rate),rate=adRateFor(a);return '<tr><td style="font-family:monospace">'+_apEsc(_adminPublicAdIdLabel(a))+'</td><td>'+_apEsc(a.title||'—')+'</td><td><select onchange="apSaveServiceType(\''+a.id+'\',this.value,this)" style="padding:6px;border:1px solid var(--b1);border-radius:8px">'+_apOptions(a.service_type)+'</select></td><td style="font-family:Inter">$'+adServiceBudgetUSD(a).toFixed(2)+'</td><td><input type="number" min="1" max="1000000" placeholder="'+rate+'" value="'+(own||'')+'" onchange="apSaveRate(\''+a.id+'\',this.value,this)" style="width:100px;padding:6px;border:1px solid var(--b1);border-radius:8px"></td><td><b style="color:#16a34a;font-family:Inter">'+adPriceLabel(a)+'</b><div style="font-size:9px;color:var(--mt)">$1 = '+rate.toLocaleString()+'</div></td><td>'+(own?'<button class="act-btn" onclick="apSaveRate(\''+a.id+'\',\'\',null)"><i class="fas fa-rotate-left"></i></button>':'')+'</td></tr>'}).join('')+'</tbody></table>';}
+function _apMsg(id,t,ok){const e=document.getElementById(id);if(!e)return;e.style.display='block';e.style.background=ok?'rgba(22,163,74,.08)':'rgba(220,38,38,.08)';e.style.color=ok?'#16a34a':'var(--rd)';e.textContent=t;}
+async function saveAdPriceRate(){const r=_apNum(document.getElementById('apGlobal')?.value);if(!r||r>1e6)return _apMsg('apMsg','نرخێکی دروست بنووسە',false);const{data,error}=await sb.rpc('pa_admin_set_ad_pricing_rate',{p_service_type:'*',p_rate_iqd_per_usd:r,p_display_name:'Global'});if(error)return _apMsg('apMsg','هەڵە: '+error.message,false);await _apLoadRates(sb);await adRateRefreshViews(true);_apMsg('apMsg','✅ نرخی گشتی پاشەکەوت کرا؛ '+(data?.updated_ads||0)+' ڕیکلام نوێ کرایەوە',true);}
+async function apSaveServiceRate(){const k=String(document.getElementById('apServiceType')?.value||'').trim().toLowerCase(),n=document.getElementById('apServiceName')?.value?.trim(),r=_apNum(document.getElementById('apServiceRate')?.value);if(!/^[a-z][a-z0-9_-]{0,39}$/.test(k)||!r||r>1e6)return _apMsg('apServiceMsg','کۆد یان نرخ دروست نییە',false);const{data,error}=await sb.rpc('pa_admin_set_ad_pricing_rate',{p_service_type:k,p_rate_iqd_per_usd:r,p_display_name:n||null});if(error)return _apMsg('apServiceMsg','هەڵە: '+error.message,false);await _apLoadRates(sb);await adRateRefreshViews(true);_apMsg('apServiceMsg','✅ نرخ پاشەکەوت کرا؛ '+(data?.updated_ads||0)+' ڕیکلام نوێ کرایەوە',true);}
+async function apDeleteServiceRate(k){if(!confirm('نرخی '+_apServiceName(k)+' بسڕدرێتەوە؟'))return;const{error}=await sb.rpc('pa_admin_delete_ad_pricing_rate',{p_service_type:k});if(error)return _apMsg('apServiceMsg','هەڵە: '+error.message,false);await _apLoadRates(sb);await adRateRefreshViews(true);}
+async function apSaveRate(id,v,el){const raw=String(v??'').trim(),r=raw===''?null:_apNum(raw);if(raw&&!r)return showToast('نرخ دروست نییە','rd');if(el)el.disabled=true;const{data,error}=await sb.rpc('pa_admin_set_ad_pricing_override',{p_ad_id:id,p_rate_iqd_per_usd:r});if(el)el.disabled=false;if(error)return showToast('هەڵە: '+error.message,'rd');if(data?.ok)_apMerge(id,{usd_iqd_rate:data.ad_override_rate,effective_usd_iqd_rate:data.effective_rate,pricing_source:data.pricing_source,service_budget_usd:data.service_budget_usd,price_iqd:data.price_iqd});apRender();apStats();showToast('✅ نرخ یەکسەر نوێ کرایەوە','gr');}
+async function apSaveServiceType(id,k,el){if(el)el.disabled=true;const{data,error}=await sb.rpc('pa_admin_set_ad_service_type',{p_ad_id:id,p_service_type:k});if(el)el.disabled=false;if(error)return showToast('هەڵە: '+error.message,'rd');if(data?.ok)_apMerge(id,{service_type:data.service_type,usd_iqd_rate:data.ad_override_rate,effective_usd_iqd_rate:data.effective_rate,pricing_source:data.pricing_source,service_budget_usd:data.service_budget_usd,price_iqd:data.price_iqd});apRender();apStats();showToast('✅ خزمەتگوزاری و نرخ نوێ کرایەوە','gr');}
 </script>
 
 </body>

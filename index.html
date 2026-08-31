@@ -72,8 +72,25 @@ src="https://www.facebook.com/tr?id=986943520933161&ev=PageView&noscript=1"
 
 
 <script>
+// ══ AD SERVICE PRICING — Supabase source of truth ══
+// Priority: per-ad override → service override → global (*) → 1800.
+// Wallet accounting keeps its existing 1,800 conversion; this is the selling
+// rate for ad services only.
+let ARC_IQD_RATE=1800;
+const PA_AD_DEFAULT_SERVICE='tiktok';
+let _paAdPricingRows=[],_paAdPricingMap=Object.create(null),_paAdPricingChannel=null,_paAdPricingReloadTimer=null;
+function _paAdPositive(v){const n=parseFloat(v);return Number.isFinite(n)&&n>0?n:null;}
+function _paAdServiceKey(v){const k=String(v||PA_AD_DEFAULT_SERVICE).trim().toLowerCase();return k&&k!=='*'?k:PA_AD_DEFAULT_SERVICE;}
+function _paAdSetPricingRows(rows){_paAdPricingRows=(rows||[]).filter(r=>r&&r.is_active!==false);_paAdPricingMap=Object.create(null);_paAdPricingRows.forEach(r=>_paAdPricingMap[r.service_type]=r);ARC_IQD_RATE=_paAdPositive(_paAdPricingMap['*']?.rate_iqd_per_usd)||1800;if(typeof SPONSOR_EXCHANGE_RATE_IQD!=='undefined')SPONSOR_EXCHANGE_RATE_IQD=ARC_IQD_RATE;}
+function _paAdRateFor(adOrService){const ad=adOrService&&typeof adOrService==='object'?adOrService:null;return _paAdPositive(ad?.usd_iqd_rate)||_paAdPositive(_paAdPricingMap[_paAdServiceKey(ad?ad.service_type:adOrService)]?.rate_iqd_per_usd)||ARC_IQD_RATE||1800;}
+function _paAdBudgetUSD(ad){const direct=_paAdPositive(ad?.service_budget_usd);if(direct!==null)return direct;const total=_paAdPositive(ad?.total_budget);if(total!==null)return total;const daily=_paAdPositive(ad?.daily_budget),days=_paAdPositive(ad?.days);if(daily!==null&&days!==null)return daily*days;const b=parseFloat(ad?.budget);return Number.isFinite(b)&&b>=0?b:0;}
+function _paAdPriceIQD(ad){const p=parseFloat(ad?.price_iqd);return Number.isFinite(p)&&p>=0?Math.round(p):Math.round(_paAdBudgetUSD(ad)*_paAdRateFor(ad));}
+async function _paAdLoadPricingRows(){if(typeof sb==='undefined'||!sb)return;const{data,error}=await sb.from('pa_ad_pricing_rates').select('service_type,display_name,rate_iqd_per_usd,is_active,updated_at').order('service_type');if(error)throw error;_paAdSetPricingRows(data||[]);}
+function _paAdMergeLiveRow(row){if(!row?.id)return;if(typeof allAds!=='undefined'){const a=(allAds||[]).find(x=>x.id===row.id);if(a)Object.assign(a,row)}if(typeof _currentSheetAd!=='undefined'&&_currentSheetAd?.id===row.id)Object.assign(_currentSheetAd,row);}
+async function _paAdRefreshPriceViews(refetch){const label=document.getElementById('bdSellingRate');if(label)label.textContent='$1 = '+_paAdRateFor(PA_AD_DEFAULT_SERVICE).toLocaleString()+' IQD';try{if(typeof updateBudgetDisplay==='function')updateBudgetDisplay();if(typeof arcOnBudget==='function')arcOnBudget();const page=document.getElementById('pgMyads');if(refetch&&cu?.id&&page?.classList.contains('on'))await loadMyAds();else if(typeof renderAds==='function'&&typeof allAds!=='undefined'&&allAds.length)renderAds();if(typeof _currentSheetAd!=='undefined'&&_currentSheetAd&&document.getElementById('adSheetOv')?.classList.contains('on')){const{data}=await sb.from('pa_ads').select('*').eq('id',_currentSheetAd.id).maybeSingle();if(data){_paAdMergeLiveRow(data);await showAdDetail(_currentSheetAd)}}}catch(e){console.warn(e)}}
+async function _paPricingInit(){if(typeof sb==='undefined'||!sb)return;try{await _paAdLoadPricingRows()}catch(e){console.warn(e)}if(_paAdPricingChannel)try{await sb.removeChannel(_paAdPricingChannel)}catch(_){};_paAdPricingChannel=sb.channel('pa_client_ad_pricing_rt').on('postgres_changes',{event:'*',schema:'public',table:'pa_ad_pricing_rates'},()=>{clearTimeout(_paAdPricingReloadTimer);_paAdPricingReloadTimer=setTimeout(async()=>{try{await _paAdLoadPricingRows();await _paAdRefreshPriceViews(true)}catch(e){console.warn(e)}},80)});if(cu?.id)_paAdPricingChannel.on('postgres_changes',{event:'UPDATE',schema:'public',table:'pa_ads',filter:'user_id=eq.'+cu.id},p=>{if(p.new?.id){_paAdMergeLiveRow(p.new);try{renderAds()}catch(_){}}});_paAdPricingChannel.subscribe();await _paAdRefreshPriceViews(false);}
+
 // ══ AD REACH CALCULATOR LOGIC ══
-const ARC_IQD_RATE=1800;
 const ARC_CATS={
   A:{name:'Sales & Messages',nameKu:'فرۆشتن و نامەکان',nameAr:'مبيعات ورسائل',cpmLow:.15,cpmHigh:.20},
   B:{name:'Engagement & Views',nameKu:'ئینگێجمنت و بینین',nameAr:'تفاعل ومشاهدات',cpmLow:.12,cpmHigh:.15}
@@ -4670,6 +4687,7 @@ window.PROXO_SPLASH_MIN_MS = 2600;
         <span class="cstep">٦</span>
       </div>
       <div class="create-price-box">
+        <div class="create-price-row"><span class="create-price-lbl">نرخی فرۆشتنی دۆلار</span><span id="bdSellingRate" class="create-price-val" dir="ltr">$1 = 1,800 IQD</span></div>
         <div class="create-price-row">
           <span class="create-price-lbl">نرخی سپۆنسەر</span>
           <span id="bdSponsor" class="create-price-val">15,417 IQD</span>
@@ -4692,7 +4710,7 @@ window.PROXO_SPLASH_MIN_MS = 2600;
         </div>
         <div class="create-price-total">
           <span id="bdTotalLbl" style="font-size:13px;font-weight:800;color:var(--dark)">کۆی گشتی (1 ڕۆژ)</span>
-          <span id="bdTotal" style="font-size:15px;font-weight:900;color:var(--dark);font-family:'Inter',sans-serif">18,500 IQD</span>
+          <span id="bdTotal" style="font-size:15px;font-weight:900;color:var(--dark);font-family:'Inter',sans-serif">18,000 IQD</span>
         </div>
       </div>
       <button class="create-submit" id="submitBtn" onclick="submitAd()" style="margin-top:16px">
@@ -6260,7 +6278,7 @@ function shareRefLink(){
 let sb, cu=null, aMode='login';
 let _deviceFp='', _deviceLocalId='';
 let _txMap={};
-let budget=18500, days=1, dailyCost=18500, dailyUSD=10, budgetTier=0, tierIndex=0, depAmt=50;
+let budget=18000, days=1, dailyCost=18000, dailyUSD=10, budgetTier=0, tierIndex=0, depAmt=50;
 let _levelDiscountPercent=0, _levelDiscountName='';
 
 // ── داشکاندنی ئاست بۆ ڕیکلام/سپۆنسەری: بەپێی ئاستی خاڵی بەکارهێنەر ──
@@ -8245,7 +8263,7 @@ async function boot(){
   document.getElementById('bnav').style.display='block';
   _lcUpdateFabVisibility();
   const _avb=document.getElementById('authVersionBar');if(_avb)_avb.style.display='none';
-  await Promise.all([loadAppSectionLocks(), ensureWallet(), ensureCoinsWallet()]);
+  await Promise.all([loadAppSectionLocks(), ensureWallet(), ensureCoinsWallet(), _paPricingInit()]);
   await Promise.all([loadBal(), loadCoins()]);
   loadProfile();
   loadSidebarUser();
@@ -9820,7 +9838,7 @@ function goPage(p, updateUrl = true){
   if(p==='support')loadChat();
   if(p==='profile'){loadBal();loadReferralSection();loadProfile();}
   if(p==='home'){loadCoins();}
-  if(p==='create'){selectedAssetId=null;cardId=null;goal='messages';days=1;dailyUSD=10;dailyCost=18500;budget=18500;budgetTier=0;tierIndex=0;gender='all';adLocation='all';document.querySelectorAll('.loc-chips-wrap .fchip').forEach(function(x){x.classList.toggle('on',x.dataset.loc==='all');});document.querySelectorAll('.gender-pill').forEach(function(x){x.classList.toggle('on',x.dataset.gen==='all');});document.querySelectorAll('.bud-daily-btn').forEach((b,i)=>{b.classList.toggle('sel',i===0);});clearAssetSel&&clearAssetSel();document.querySelectorAll('.card-pick').forEach(x=>x.classList.remove('sel'));document.querySelectorAll('.goal-tab,.goal-tab-v2,.gseg-opt').forEach(x=>x.classList.toggle('on',x.dataset.g==='messages'));setTimeout(function(){if(typeof _animGoalPill==='function')_animGoalPill();if(typeof _animGenDark==='function')_animGenDark();if(typeof _animLocDark==='function')_animLocDark();},60);var _ani=document.getElementById('adNameTitle');var _nd2=new Date();if(_ani)_ani.value='New Ad '+_nd2.toLocaleDateString('en-GB').replace(/\//g,'/');var _tl2=document.getElementById('todayLbl');if(_tl2)_tl2.textContent=_nd2.toLocaleDateString('en-GB').replace(/\//g,'/');const _al=document.getElementById('adLink');if(_al)_al.value='';const _ac=document.getElementById('adCode');if(_ac)_ac.value='';const _pi=document.getElementById('promoCodeInp');if(_pi)_pi.value='';if(typeof clearPromoResult==='function')clearPromoResult();_levelDiscountPercent=0;_levelDiscountName='';if(typeof _directDiscountApplied!=='undefined'){_directDiscountApplied=null;}const _ddr=document.getElementById('bdDirectDiscountRow');if(_ddr)_ddr.style.display='none';updateBudgetDisplay();loadAssetsForDropdown();if(typeof _loadAdLevelDiscount==='function')_loadAdLevelDiscount();}
+  if(p==='create'){selectedAssetId=null;cardId=null;goal='messages';days=1;dailyUSD=10;dailyCost=18000;budget=18000;budgetTier=0;tierIndex=0;gender='all';adLocation='all';document.querySelectorAll('.loc-chips-wrap .fchip').forEach(function(x){x.classList.toggle('on',x.dataset.loc==='all');});document.querySelectorAll('.gender-pill').forEach(function(x){x.classList.toggle('on',x.dataset.gen==='all');});document.querySelectorAll('.bud-daily-btn').forEach((b,i)=>{b.classList.toggle('sel',i===0);});clearAssetSel&&clearAssetSel();document.querySelectorAll('.card-pick').forEach(x=>x.classList.remove('sel'));document.querySelectorAll('.goal-tab,.goal-tab-v2,.gseg-opt').forEach(x=>x.classList.toggle('on',x.dataset.g==='messages'));setTimeout(function(){if(typeof _animGoalPill==='function')_animGoalPill();if(typeof _animGenDark==='function')_animGenDark();if(typeof _animLocDark==='function')_animLocDark();},60);var _ani=document.getElementById('adNameTitle');var _nd2=new Date();if(_ani)_ani.value='New Ad '+_nd2.toLocaleDateString('en-GB').replace(/\//g,'/');var _tl2=document.getElementById('todayLbl');if(_tl2)_tl2.textContent=_nd2.toLocaleDateString('en-GB').replace(/\//g,'/');const _al=document.getElementById('adLink');if(_al)_al.value='';const _ac=document.getElementById('adCode');if(_ac)_ac.value='';const _pi=document.getElementById('promoCodeInp');if(_pi)_pi.value='';if(typeof clearPromoResult==='function')clearPromoResult();_levelDiscountPercent=0;_levelDiscountName='';if(typeof _directDiscountApplied!=='undefined'){_directDiscountApplied=null;}const _ddr=document.getElementById('bdDirectDiscountRow');if(_ddr)_ddr.style.display='none';updateBudgetDisplay();loadAssetsForDropdown();if(typeof _loadAdLevelDiscount==='function')_loadAdLevelDiscount();}
   if(p==='txhistory')loadTxHistory();
   if(p==='tutorials')loadTutorials();
   if(p==='promocodes')loadPromocodesPage();
@@ -10311,7 +10329,7 @@ async function loadTx(){
     const _adRef=t.ad_public_id?('#'+String(t.ad_public_id).replace(/^#/,'')):'';
     const lbl=isAdminDeduct?'بڕدرا لەلایەن ئادمینەوە'
       :isReward?'خەڵاتی تیروپشکی هەفتانە'
-      :isRefundTx?('گەڕاندنەوەی باڵانس'+(_adRef?' — '+_adRef:''))
+      :isRefundTx?('گەڕاندنەوەی باڵانس (Balance Refund)'+(_adRef?' — '+_adRef:''))
       :t.status==='approved'&&t.type!=='withdrawal'?'زیادکردنی باڵانس لەلایەن ئادمینەوە'
       :(mn[t.method]||'—');
     const icoClass=isAdminDeduct?'tx-out':isReward?'tx-reward':'tx-in';
@@ -10344,8 +10362,7 @@ function _animateEstVal(el, newText){
 }
 
 function updateEstResults(){
-  const totalBudget = budget; // IQD
-  const budgetUSD   = totalBudget /1800; // 1 USD = 1800 IQD
+  const budgetUSD = Math.max(0,(parseFloat(dailyUSD)||0)*(parseFloat(days)||1));
 
   const viewsVal    = document.getElementById('estViewsVal');
   const clicksRow   = document.getElementById('estClicksRow');
@@ -10378,14 +10395,14 @@ function updateEstResults(){
 }
 
 // ═══ AD BUDGET (USD DAILY SYSTEM) ═══
-function getAdRate(usd){ return usd<=10 ? 1850 : 1800; }
+function getAdRate(){return _paAdRateFor(PA_AD_DEFAULT_SERVICE);}
 
 // ══════════════════════════════════════════════════════════════
 // ══ SPONSORSHIP TIER PRICING — نرخی سپۆنسەری بەپێی پلە ══
-// ڕێژەی گۆڕینەوە: ١٠ دۆلار = ١٨,٥٠٠ دینار (١ دۆلار = ١,٨٥٠ دینار)
+// ڕێژەی گۆڕینەوە: ١٠ دۆلار = ١٨,٠٠٠ دینار (١ دۆلار = ١,٨٠٠ دینار)
 // پلەکان: Bronze (بێ داشکاندن) / Silver (%٥) / Diamond (%١٠) / Diamond+ (%١٥)
 // ══════════════════════════════════════════════════════════════
-const SPONSOR_EXCHANGE_RATE_IQD = 1850; // 1 USD = 1,850 IQD (10 USD = 18,500 IQD)
+let SPONSOR_EXCHANGE_RATE_IQD = 1800; // synchronized from Supabase Realtime
 
 const SPONSOR_TIER_DISCOUNTS = {
   'Bronze':   0,
@@ -10397,7 +10414,7 @@ const SPONSOR_TIER_DISCOUNTS = {
 /**
  * Calculates the final sponsorship price in IQD for a given user tier and
  * sponsorship amount (in USD), applying the tier's discount on top of the
- * fixed 1,850 IQD/USD exchange rate.
+ * live admin-defined IQD/USD rate (1,800 IQD/USD by default).
  *
  * @param {'Bronze'|'Silver'|'Diamond'|'Diamond+'} tier - the user's membership tier
  * @param {number} amountUSD - the sponsorship amount in USD
@@ -10417,14 +10434,15 @@ function calculateSponsorshipPrice(tier, amountUSD){
   const discountPercent = SPONSOR_TIER_DISCOUNTS[normalizedTier];
 
   const usd = Math.max(0, parseFloat(amountUSD) || 0);
-  const basePriceIQD = usd * SPONSOR_EXCHANGE_RATE_IQD;
+  const liveRate=getAdRate();
+  const basePriceIQD = usd * liveRate;
   const discountIQD = basePriceIQD * discountPercent;
   const finalPriceIQD = Math.round(basePriceIQD - discountIQD);
 
   return {
     tier: normalizedTier,
     amountUSD: usd,
-    exchangeRate: SPONSOR_EXCHANGE_RATE_IQD,
+    exchangeRate: liveRate,
     discountPercent: discountPercent * 100,
     basePriceIQD: Math.round(basePriceIQD),
     discountIQD: Math.round(discountIQD),
@@ -10477,6 +10495,7 @@ function updateBudgetDisplay(){
 
   // بودجەی ڕۆژانە
   const dud=document.getElementById('dailyUSDDisp'); if(dud)dud.textContent='$'+dailyUSD;
+  const rateLabel=document.getElementById('bdSellingRate');if(rateLabel)rateLabel.textContent='$1 = '+rate.toLocaleString()+' IQD';
   // ڕۆژ
   const dd=document.getElementById('daysDisp'); if(dd)dd.textContent=days;
   // کۆی بودجە — تەنها دۆلار
@@ -11135,7 +11154,9 @@ function pickCard(el,id){
         p_location      : adLocation,
         p_tier_usd      : dailyUSD||null,
         p_price_iqd     : Math.round(finalTotal),
-        p_duration_days : days
+        p_duration_days : days,
+        p_service_type  : PA_AD_DEFAULT_SERVICE,
+        p_service_budget_usd: _totalUSD
       });
       const _adNum =
   '007' +
@@ -11154,6 +11175,11 @@ function pickCard(el,id){
             video_code:document.getElementById('adCode').value.trim()||null,
             video_link:link||null,
             budget:finalTotal/1800,
+            daily_budget:dailyUSD||null,
+            total_budget:_totalUSD,
+            days,
+            service_type:PA_AD_DEFAULT_SERVICE,
+            service_budget_usd:_totalUSD,
             card_id:cardId||null,
             asset_id:goal==='messages'?(selectedAssetId||null):null,
             start_date:document.getElementById('adDate').value||null,
@@ -11781,8 +11807,9 @@ function renderAds(){
     let endDateStr='—';
     if(ad.end_date){
       endDateStr=ad.end_date;
-    }else if(ad.start_date&&ad.budget){
-      const _days=Math.max(1,Math.round(parseFloat(ad.budget)*1800/36000));
+    }else if(ad.start_date){
+      const _savedDays=parseInt(ad.days,10),_dailyUsd=parseFloat(ad.daily_budget||0);
+      const _days=Math.max(1,Number.isFinite(_savedDays)&&_savedDays>0?_savedDays:(_dailyUsd>0?Math.round(_paAdBudgetUSD(ad)/_dailyUsd):1));
       const sd=new Date(ad.start_date);
       sd.setDate(sd.getDate()+_days);
       endDateStr=sd.toISOString().split('T')[0];
@@ -12207,13 +12234,14 @@ async function showAdDetail(ad){
     .maybeSingle();
   var usage=usageRes.data;
 
-  var finalTotal=Math.round(parseFloat(ad.budget||0)*1800);
+  var finalTotal=_paAdPriceIQD(ad);
   var discountIQD=usage?Math.round(parseFloat(usage.discount_applied||0)):0;
   var levelDiscIQD2=Math.round(parseFloat(ad.level_discount_iqd||0));
   var levelDiscPct2=parseFloat(ad.level_discount_percent||0);
   var levelDiscName2=ad.level_name_at_purchase||'';
-  var originalTotal=finalTotal+discountIQD+levelDiscIQD2;
-  var days=Math.max(1,Math.round(originalTotal/36000));
+  var serviceBudgetUSD=_paAdBudgetUSD(ad);
+  var savedDays=parseInt(ad.days,10),dailyBudgetUSD=parseFloat(ad.daily_budget||0);
+  var days=Math.max(1,Number.isFinite(savedDays)&&savedDays>0?savedDays:(dailyBudgetUSD>0?Math.round(serviceBudgetUSD/dailyBudgetUSD):1));
 
   var endDateStr='—';
   if(ad.start_date){
@@ -12258,15 +12286,14 @@ async function showAdDetail(ad){
 
   if(ad.reject_reason) h+='<div style="background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.12);border-radius:10px;padding:9px 12px;margin-top:10px;font-size:11.5px;color:rgba(185,28,28,.8);line-height:1.7"><i class="fas fa-circle-exclamation" style="margin-left:6px;opacity:.65;font-size:11px"></i>'+ad.reject_reason+'</div>';
   h+='<div class="ad-detail-section-title"><i class="fas fa-receipt"></i><span>وردەکاری نرخ</span></div>';
-  // pa_ads.budget is the existing persisted ad-price field (stored in USD).
-  // Convert that stored value to IQD only for presentation; never invent a fallback price.
-  var basePriceUSD=Number(ad&&ad.budget);
-  var hasBasePrice=Number.isFinite(basePriceUSD)&&basePriceUSD>=0;
-  var basePriceIQD=hasBasePrice?Math.round(basePriceUSD*ARC_IQD_RATE):null;
-  var serviceFeeIQD=basePriceIQD===null?null:Math.round(basePriceIQD*0.20);
-  var grandTotalIQD=basePriceIQD===null?null:basePriceIQD+serviceFeeIQD;
+  // price_iqd is the live database quote. Do not add another fee on top.
+  var grandTotalIQD=_paAdPriceIQD(ad);
+  var basePriceIQD=Math.round(grandTotalIQD/1.20);
+  var serviceFeeIQD=grandTotalIQD-basePriceIQD;
+  var liveAdRate=_paAdRateFor(ad);
   var formatPriceIQD=function(value){return value===null?'نرخ بەردەست نییە':value.toLocaleString('en-US')+' د.ع';};
   h+='<div class="ad-price-box ad-price-box-modern">';
+  h+='<div class="ad-price-row"><span>نرخی فرۆشتنی دۆلار</span><span dir="ltr">$1 = '+liveAdRate.toLocaleString('en-US')+' IQD</span></div>';
   h+='<div class="ad-price-row"><span>نرخی ڕیکلام <span class="price-split-badge">80%</span></span><span>'+formatPriceIQD(basePriceIQD)+'</span></div>';
   h+='<div class="ad-price-row"><span class="service-fee-label">تێچووی خزمەتگوزاری <span class="price-split-badge">20%</span><button type="button" class="service-fee-info-btn" onclick="event.stopPropagation();openServiceFeeInfo()" aria-label="تێچووی خزمەتگوزاری">!</button></span><span>'+formatPriceIQD(serviceFeeIQD)+'</span></div>';
   h+='<div class="ad-price-row ad-price-grand-total"><span>کۆی گشتی (د.ع)</span><span>'+formatPriceIQD(grandTotalIQD)+'</span></div>';
@@ -14382,9 +14409,9 @@ async function loadNotifications(){
     // ── گەڕانەوەی پارە ──
     refund:            {ico:'fas fa-rotate-left',         cls:'notif-gr', title:'پارەکەت گەڕایەوە 🔄'},
     refund_rejected_ad:{ico:'fas fa-rotate-left',         cls:'notif-gr', title:'پارەی ڕیکلامی ڕەتکراو گەڕایەوە 💸'},
-    ad_unspent_refund: {ico:'fas fa-rotate-left',         cls:'notif-gr', title:'گەڕاندنەوەی باڵانس — بودجەی خەرجنەکراو 💸'},
-    refund_unspent_budget:{ico:'fas fa-rotate-left',      cls:'notif-gr', title:'گەڕاندنەوەی باڵانس — بودجەی خەرجنەکراو 💸'},
-    balance_refund:    {ico:'fas fa-rotate-left',         cls:'notif-gr', title:'گەڕاندنەوەی باڵانس 💸'},
+    ad_unspent_refund: {ico:'fas fa-rotate-left',         cls:'notif-gr', title:'گەڕاندنەوەی باڵانس (Balance Refund) — بودجەی خەرجنەکراو 💸'},
+    refund_unspent_budget:{ico:'fas fa-rotate-left',      cls:'notif-gr', title:'گەڕاندنەوەی باڵانس (Balance Refund) — بودجەی خەرجنەکراو 💸'},
+    balance_refund:    {ico:'fas fa-rotate-left',         cls:'notif-gr', title:'گەڕاندنەوەی باڵانس (Balance Refund) 💸'},
     // ── داشکاندن ──
     direct_discount:   {ico:'fas fa-fire',                cls:'notif-gr', title:'داشکاندنی نوێ 🔥'},
     // ── ئامراز ──
@@ -14914,7 +14941,8 @@ async function loadTxHistory(){
   // مامەڵەی هاوتایان لە pa_transactions نییە (بۆ داتای کۆن پێش ئەم نوێکردنەوەیە) ──
   const _adSpendNumbers = new Set(txItems.filter(t=>t.kind==='spend' && t.ad_number!=null).map(t=>String(t.ad_number)));
   const spendItems = ads.filter(a=>!_adSpendNumbers.has(String(a.ad_number))).map(a=>{
-    const amtIQD = Math.round(parseFloat(a.budget||0)*1800);
+    const charged=parseFloat(a.charged_price_iqd);
+    const amtIQD = Number.isFinite(charged)&&charged>=0?Math.round(charged):Math.round(parseFloat(a.budget||0)*1800);
     const adLabel = 'ڕیکلامی نوێ' + (a.ad_number?' — '+_publicAdIdLabel(a):'');
     return {id:a.id, kind:'spend', label:adLabel,
       sub:'',
@@ -17254,7 +17282,7 @@ async function _loadLevelsPointsExamples() {
   if (!wrap) return;
   const examples = (typeof TIERS !== 'undefined' && TIERS && TIERS.length)
     ? TIERS.slice(0, 4).map(t => ({ iqd: t.iqd, pts: t.usd }))
-    : [{ iqd: 18500, pts: 10 }, { iqd: 36000, pts: 20 }];
+    : [{ iqd: 18000, pts: 10 }, { iqd: 36000, pts: 20 }];
   wrap.innerHTML = examples.map(e =>
     '<div class="levels-point-row">' +
       '<span class="levels-point-iqd">' + e.iqd.toLocaleString() + ' IQD</span>' +
