@@ -624,7 +624,7 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
   border-radius:22px 22px 0 0; border:1px solid var(--border); border-bottom:none;
   padding:10px 0 max(18px, env(safe-area-inset-bottom)); box-shadow:var(--shadow-lg);
   transform:translateY(100%); transition:transform .24s var(--ease-soft);
-  max-height:78vh; display:flex; flex-direction:column; will-change:transform;
+  max-height:78vh; min-height:0; display:flex; flex-direction:column; overflow:hidden; will-change:transform;
 }
 .sheet-overlay.open .sheet{ transform:translateY(0); }
 .sheet-grabber{ width:38px; height:4px; border-radius:var(--radius-full); background:var(--border-strong); margin:0 auto 14px; }
@@ -632,7 +632,12 @@ input[type="file"].input::file-selector-button:hover{ background:var(--border-st
 .sheet-head h3{ font-size:var(--fs-md); font-weight:var(--fw-bold); }
 .sheet-close{ width:32px; height:32px; border-radius:var(--radius-full); border:none; background:var(--surface-2); color:var(--text-muted); display:flex; align-items:center; justify-content:center; cursor:pointer; }
 .sheet-close:hover{ background:var(--surface-hover); color:var(--text); }
-.sheet-body{ overflow-y:auto; padding:6px var(--space-3) var(--space-2); }
+.sheet-body{
+  flex:1 1 auto; min-height:0; max-height:100%; overflow-y:auto; overflow-x:hidden;
+  padding:6px var(--space-3) var(--space-2);
+  -webkit-overflow-scrolling:touch; overscroll-behavior:contain; touch-action:pan-y;
+  scrollbar-gutter:stable;
+}
 
 .sheet-option{
   width:100%; display:flex; align-items:center; gap:13px; padding:12px 12px; border:none;
@@ -1290,26 +1295,33 @@ function openPicker(which){
   // wallet currently selected as the source. A closed direction is not offered.
   const fromVal = document.getElementById('from').value;
   const curVal = document.getElementById(which==='from'?'from':'receiveVia').value;
-  const opts = which==='from'
-    ? FROM_OPTIONS.filter(k => k===curVal || getWalletInfo(k).locked || allowedReceiveOptions(k).length>0)
-    : allowedReceiveOptions(fromVal);
+  // Show every wallet enabled for this direction. Availability is displayed
+  // inside the sheet instead of silently removing wallets from the list.
+  // This keeps the list complete and lets the user scroll through all entries.
+  const opts = which==='from' ? FROM_OPTIONS : RECEIVE_OPTIONS;
   document.getElementById('pickerSheetTitle').textContent = which==='from' ? 'لە کوێوە دەنێریت' : 'وەرگرتن لە';
   const body = document.getElementById('pickerSheetBody');
-  if(which!=='from' && !opts.length){
-    const fromLbl = (METHOD_META[fromVal] && METHOD_META[fromVal].label) || fromVal;
-    body.innerHTML = '<div class="picker-empty">لە ئێستادا هیچ واڵێتێک نییە کە بتوانیت لە '+escHtml(fromLbl)+'ەوە بۆی بگۆڕیت.<br>تکایە واڵێتێکی تر بۆ ناردن هەڵبژێرە.</div>';
+  if(!opts.length){
+    body.innerHTML = '<div class="picker-empty">هیچ واڵێتێک بۆ ئەم بەشە زیاد نەکراوە.</div>';
     openSheet(document.getElementById('pickerSheet'));
     return;
   }
   body.innerHTML = opts.map(key=>{
-    const m = METHOD_META[key]; const sel = key===curVal;
-    const locked = getWalletInfo(key).locked;
-    return '<button type="button" class="sheet-option'+(sel?' selected':'')+(locked?' locked-option':'')+'"'
-      + (locked ? ' disabled' : ' onclick="selectPickerOption(\''+key+'\')"')
+    const m = METHOD_META[key]; if(!m) return '';
+    const sel = key===curVal;
+    const walletLocked = getWalletInfo(key).locked;
+    const sameWallet = which!=='from' && key===fromVal;
+    const routeClosed = which!=='from' && !sameWallet && !routeAllowed(fromVal,key);
+    const unavailable = walletLocked || sameWallet || routeClosed;
+    const reason = walletLocked ? 'بەردەست نییە'
+      : sameWallet ? 'هەمان واڵێت هەڵبژێردراوە'
+      : routeClosed ? 'ئەم ڕێڕەوە داخراوە' : '';
+    return '<button type="button" class="sheet-option'+(sel?' selected':'')+(unavailable?' locked-option':'')+'"'
+      + (unavailable ? ' disabled' : ' onclick="selectPickerOption(\''+key+'\')"')
       + '>'
       + methodIconHTML(key)
-      + '<span class="sheet-option-text"><span class="sheet-option-name">'+m.label+'</span>'
-      + (locked?'<span class="sheet-option-sub">بەردەست نییە</span>':'')+'</span>'
+      + '<span class="sheet-option-text"><span class="sheet-option-name">'+escHtml(m.label)+'</span>'
+      + (reason?'<span class="sheet-option-sub">'+reason+'</span>':'')+'</span>'
       + '<span class="sheet-option-check"><svg class="icn icn-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.8l4.3 4.3L19 7.5"/></svg></span>'
       + '</button>';
   }).join('');
