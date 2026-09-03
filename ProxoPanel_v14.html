@@ -746,7 +746,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
       </div>
       <div class="tbl-wrap">
         <div class="tbl-filter">
-          <input class="tbl-search" id="userSearch" placeholder="گەڕانی ناو یان ئیمەیل..." oninput="filterUsers()">
+          <input class="tbl-search" id="userSearch" placeholder="گەڕان بە ناو، ئیمەیل یان ژمارەی دۆسیە (SUS-…)" oninput="filterUsers()">
           <div class="chip on" data-uf="all" onclick="filterUsers(this)">هەموو</div>
           <div class="chip" data-uf="active" onclick="filterUsers(this)">چالاک</div>
           <div class="chip rd" data-uf="banned" onclick="filterUsers(this)">بانکراو</div>
@@ -3152,8 +3152,31 @@ function _lockLeft(u){
 function _userStatusBadge(u){
   if(_isLocked(u))
     return `<span class="badge pending" title="هەوڵی هەڵە: ${u.failed_login_attempts||0}"><i class="fas fa-lock" style="font-size:9px;margin-left:3px"></i>قفڵکراو ${_lockLeft(u)}</span>`;
-  if(u.is_banned)return '<span class="badge banned">بانکراو</span>';
+  if(u.is_banned){
+    const cid=u.ban_case_id?` ${u.ban_case_id}`:'';
+    const ttl=u.ban_reason?` — ${String(u.ban_reason).replace(/"/g,'&quot;')}`:'';
+    return `<span class="badge banned" title="ژمارەی دۆسیە: ${u.ban_case_id||'—'}${ttl}">بانکراو<span style="font-family:'Inter',monospace;font-size:9.5px;opacity:.8;margin-right:4px;letter-spacing:.03em">${cid}</span></span>`;
+  }
   return '<span class="badge approved">چالاک</span>';
+}
+
+// ══ ژمارەی دۆسیەی ڕاگرتن ══
+// هەر بانکردنێک ژمارەیەکی تایبەتی خۆی هەیە (SUS-XXXXXXXX). بەکارهێنەر
+// هەمان ژمارە لەسەر شاشەی ڕاگرتن دەبینێت، بۆیە کاتێک پەیوەندی بە
+// پشتیوانییەوە دەکات ئادمین دەتوانێت ڕاستەوخۆ بیدۆزێتەوە: ژمارەکە
+// لە خانەی گەڕاندا بنووسە. مێژووی هەموو کەیسەکان لە pa_ban_cases
+// دەمێنێتەوە، تەنانەت دوای ئازادکردنیش.
+function copyCaseId(cid){
+  if(!cid)return;
+  try{
+    navigator.clipboard.writeText(cid);
+    showToast('📋 ژمارەی دۆسیە کۆپی کرا: '+cid,'gr');
+  }catch(e){ showToast('کۆپی نەکرا','rd'); }
+}
+function _caseChip(u){
+  if(!u||!u.is_banned||!u.ban_case_id)return '';
+  return `<span onclick="event.stopPropagation();copyCaseId('${u.ban_case_id}')" title="کلیک بۆ کۆپیکردن" style="display:inline-flex;align-items:center;gap:4px;font-family:'Inter',monospace;font-size:10px;font-weight:700;color:var(--pu);background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.16);border-radius:6px;padding:1px 6px;cursor:pointer;letter-spacing:.03em">
+    <i class="fas fa-hashtag" style="font-size:8px"></i>${u.ban_case_id}</span>`;
 }
 
 const _profileCache=new Map();
@@ -3204,6 +3227,8 @@ async function loadUsers(opts){
     id:r.id, full_name:r.full_name, email:r.email, phone:r.phone,
     is_banned:r.is_banned, ads_locked:r.ads_locked, created_at:r.created_at,
     locked_until:r.locked_until, failed_login_attempts:r.failed_login_attempts,
+    ban_case_id:r.ban_case_id, ban_reason:r.ban_reason,
+    banned_at:r.banned_at, banned_ip:r.banned_ip,
     avatar_b64:null, _has_avatar:r.has_avatar,
     pa_wallets:{balance:r.balance_usd},
     pa_coins:{coins_balance:r.coins}
@@ -3277,7 +3302,7 @@ function renderUsers(q=''){
       <td style="color:var(--mt);font-size:11px">${i+1}</td>
       <td><div class="user-cell">
         <div class="mini-av">${u.avatar_b64?`<img src="${u.avatar_b64}">`:(u.full_name||u.email||'?')[0].toUpperCase()}</div>
-        <div><div class="user-cell-name">${u.full_name||'بێ ناو'}</div><div class="user-cell-email">${u.email||'—'}</div></div>
+        <div><div class="user-cell-name">${u.full_name||'بێ ناو'}</div><div class="user-cell-email">${u.email||'—'}</div>${_caseChip(u)}</div>
       </div></td>
       <td><span style="font-family:'Inter';font-weight:800;color:var(--gr)">${Math.round(parseFloat(u.pa_wallets?.balance||0)*1800).toLocaleString()} IQD</span></td>
       <td><span style="font-family:'Inter';font-weight:700;color:#d97706">${parseInt(u.pa_coins?.coins_balance||0).toLocaleString()}</span></td>
@@ -3302,6 +3327,7 @@ function renderUsers(q=''){
         <div class="user-card-info">
           <div class="user-card-name">${u.full_name||'بێ ناو'}</div>
           <div class="user-card-email">${u.email||'—'}</div>
+          ${_caseChip(u)}
         </div>
         ${_userStatusBadge(u)}
       </div>
@@ -3404,6 +3430,19 @@ async function showUserDetail(uid){
     <div class="detail-row"><span class="lbl">باڵانس</span><span class="val" style="color:var(--gr)">${Math.round(parseFloat(u.pa_wallets?.balance||0)*1800).toLocaleString()} IQD</span></div>
     <div class="detail-row"><span class="lbl">کۆین</span><span class="val" style="color:#d97706">${parseInt(u.pa_coins?.coins_balance||0).toLocaleString()}</span></div>
     <div class="detail-row"><span class="lbl">باری ئەکاونت</span><span class="val">${_userStatusBadge(u)}</span></div>
+    ${u.is_banned?`
+    <div style="background:rgba(124,58,237,.05);border:1.5px solid rgba(124,58,237,.14);border-radius:13px;padding:12px 14px;margin:10px 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">
+        <span style="font-size:11px;font-weight:700;color:var(--pu)">ژمارەی دۆسیەی ڕاگرتن</span>
+        <span onclick="copyCaseId('${u.ban_case_id||''}')" style="font-family:'Inter',monospace;font-size:14px;font-weight:800;color:var(--pu);letter-spacing:.05em;cursor:pointer" title="کلیک بۆ کۆپیکردن">${u.ban_case_id||'—'} <i class="fas fa-copy" style="font-size:10px;opacity:.6"></i></span>
+      </div>
+      <div style="font-size:11.5px;color:var(--mt);line-height:1.9">
+        <div>هۆکار: <b style="color:var(--dark)">${u.ban_reason?String(u.ban_reason).replace(/</g,'&lt;'):'تۆمار نەکراوە'}</b></div>
+        <div>بەروار: <b style="color:var(--dark)">${u.banned_at?new Date(u.banned_at).toLocaleString('ku'):'—'}</b></div>
+        ${u.banned_ip?`<div style="color:var(--rd)">⚠ IP بلۆککراو: <b style="font-family:'Inter',monospace;direction:ltr">${u.banned_ip}</b></div>`:''}
+      </div>
+      <div id="banHist_${u.id}" style="font-size:11px;color:var(--mt);margin-top:8px"></div>
+    </div>`:''}
     ${_isLocked(u)?`<div class="detail-row"><span class="lbl">قفڵی چوونەژوورەوە</span><span class="val" style="font-size:11.5px">تا ${new Date(u.locked_until).toLocaleString('ku')} — ${u.failed_login_attempts||0} هەوڵی هەڵە</span></div>`:''}
     <div class="detail-row"><span class="lbl">بەرواری تۆمارکردن</span><span class="val">${new Date(u.created_at).toLocaleDateString('ku')}</span></div>
     <div class="detail-row"><span class="lbl">ژمارەی مۆبایل</span><span class="val" style="font-family:'Inter',sans-serif;direction:ltr">${u.phone||'<span style=\"color:var(--rd);font-size:11px\">نەداوە</span>'}</span></div>
@@ -3441,6 +3480,23 @@ async function showUserDetail(uid){
       <div class="act-btn ${u.is_banned?'gr':'rd'}" style="flex:1" onclick="toggleBan('${u.id}',${u.is_banned});closeMo('moUser')">${u.is_banned?'<i class="fas fa-unlock"></i> بانەکردنەوە':'<i class="fas fa-ban"></i> بانکردن'}</div>
     </div>`;
   openMo('moUser');
+  // ── مێژووی کەیسەکانی ڕاگرتن ──
+  if(u.is_banned&&u.ban_case_id){
+    (async()=>{
+      try{
+        const{data:hist}=await sb.from('pa_ban_cases')
+          .select('action,reason,admin_email,created_at')
+          .eq('user_id',uid).order('created_at',{ascending:false}).limit(6);
+        const el=document.getElementById('banHist_'+uid);
+        if(!el||!hist?.length)return;
+        el.innerHTML='<div style="border-top:1px solid rgba(124,58,237,.14);padding-top:7px">'+
+          hist.map(h=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:2px 0">
+            <span>${h.action==='ban'?'⛔ بانکرا':'✅ ئازادکرا'}${h.admin_email?' — '+h.admin_email:''}</span>
+            <span style="font-family:'Inter';font-size:10px;opacity:.7">${new Date(h.created_at).toLocaleDateString('ku')}</span>
+          </div>`).join('')+'</div>';
+      }catch(e){}
+    })();
+  }
   // بارکردنی ئاستی بەکارهێنەر
   (async()=>{
     try{
@@ -3510,19 +3566,20 @@ async function toggleBan(uid,isBanned){
     isBanned?'ئایا دەتەوێت بانەکردن هەڵبیگریتەوە؟':'ئایا دەتەوێت ئەم بەکارهێنەرە بان بکەی؟',
     isBanned?'fas fa-unlock':'fas fa-ban',isBanned?'var(--gr)':'var(--rd)',
     async()=>{
-      const{error:_banErr}=await sb.rpc('pa_admin_set_ban',{
+      // ⚠ بێ فالبەکی `sb.from('profiles').update(...)`.
+      // ئەو ستوونانە لەلایەن `trg_pa_protect_profile_cols`ـەوە پارێزراون،
+      // بۆیە نوێکردنەوەی ڕاستەوخۆ بێدەنگ پشتگوێ دەخرا و توستی سەرکەوتن
+      // پیشان دەدرا لەکاتێکدا هیچ نەگۆڕابوو — ئەمە ئەو کێشەیە بوو کە
+      // «ئازادم کرد بەڵام هەر دەڵێت باندیت». RPCـەکە تاقە ڕێگایە.
+      const{data:_banRes,error:_banErr}=await sb.rpc('pa_admin_set_ban',{
         p_user_id:uid,
         p_banned:!isBanned,
         p_reason:reason,
         p_appeal_url:null
       });
       if(_banErr){
-        // فالبەک بۆ نوێکردنەوەی ڕاستەوخۆ ئەگەر RPCـەکە هێشتا دانەمەزراوە
-        await sb.from('profiles').update({
-          is_banned:!isBanned,
-          ban_reason:isBanned?null:reason,
-          banned_at:isBanned?null:new Date().toISOString()
-        }).eq('id',uid);
+        showToast('هەڵە: نەگۆڕدرا — '+_banErr.message,'rd');
+        return;
       }
       invalidateProfileCache(uid);
       await sb.from('pa_notifications').insert({user_id:uid,type:isBanned?'general':'warning',
@@ -3531,7 +3588,14 @@ async function toggleBan(uid,isBanned){
       // ── Firebase realtime push (بانکردن/بانەکردنەوە) ──
       _fbPushNotif(uid,isBanned?'ئەکاونتت دووبارە چالاکبوو ✅':'ئەکاونتت بانکرا ⛔',isBanned?'ئادمین ئەکاونتەکەت دووبارە چالاک کردەوە.':'ئادمین ئەکاونتەکەت بانی کردووە.',isBanned?'general':'warning');
       _fbTriggerProfile(uid);
-      showToast(isBanned?'✅ بانەکردن هەڵگیرا':'✅ بەکارهێنەر بانکرا','gr');
+      if(isBanned){
+        const _ips=(_banRes&&_banRes.lifted_ips)||[];
+        showToast('✅ ئازادکرا'+(_ips.length?` — بلۆکی IP لابرا (${_ips.join(', ')})`:''),'gr');
+      }else{
+        const _cid=(_banRes&&_banRes.case_id)||'';
+        showToast('✅ بانکرا — ژمارەی دۆسیە: '+_cid,'rd');
+        if(_cid)copyCaseId(_cid);
+      }
       loadUsers({force:true});
     });
 }

@@ -9492,11 +9492,13 @@ async function paHandleSuspension(){
     });
   }catch(_){}
 
-  if(info.show_notice === true){
-    paRenderSuspended(info);
-  }else{
-    window.location.replace('/login');
-  }
+  // ⚠ پێشتر: تەنها یەکەم جار شاشەکە پیشان دەدرا، دواتر بێدەنگ ڕەوانەی
+  // /login دەکرا. ئەنجامەکەی: بەکارهێنەری ڕاگیراو دەچووە ژوورەوە و
+  // یەکسەر بەبێ هیچ پەیامێک دەگەڕایەوە بۆ لاپەڕەی چوونەژوورەوە —
+  // «بەبێ هۆ ناتوانم بچمە ژوورەوە». ئێستا هەموو جارێک شاشەکە
+  // پیشان دەدرێت لەگەڵ ژمارەی دۆسیە. `show_notice` تەنها ئەوە
+  // دیاری دەکات کە ئایا ئەمە یەکەم بینینێکە یان نا.
+  paRenderSuspended(info);
   return true;
 }
 
@@ -9521,6 +9523,7 @@ function paRenderSuspended(info){
   var esc = function(t){ return String(t==null?'':t).replace(/[&<>"']/g,function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
   var appeal = info.appeal_url || PA_SUPPORT_URL;
+  var caseId = info.case_id || '';
 
   var host = document.createElement('div');
   host.id = 'proxoSuspended';
@@ -9541,7 +9544,7 @@ function paRenderSuspended(info){
       '<div class="sus-row"><dt>بەرواری ڕاگرتن</dt><dd class="num">'+dateStr+'</dd></div>'+
       '<div class="sus-row"><dt>کاتژمێر</dt><dd class="num">'+timeStr+'</dd></div>'+
       (info.email?'<div class="sus-row"><dt>هەژمار</dt><dd class="num">'+esc(info.email)+'</dd></div>':'')+
-      (info.case_id?'<div class="sus-row"><dt>ژمارەی دۆسیە</dt><dd class="num sus-case">'+esc(info.case_id)+'</dd></div>':'')+
+      '<div class="sus-row"><dt>ژمارەی دۆسیە</dt><dd class="num sus-case">'+esc(caseId||'—')+'</dd></div>'+
     '</dl>'+
     '<a class="sus-action" href="'+esc(appeal)+'" target="_blank" rel="noopener noreferrer">پەیوەندی بە پشتیوانییەوە بکە</a>'+
     '<p class="sus-note">ئەگەر پێت وایە ئەمە هەڵەیە، ژمارەی دۆسیەکە لەگەڵ نامەکەت بنێرە.</p>'+
