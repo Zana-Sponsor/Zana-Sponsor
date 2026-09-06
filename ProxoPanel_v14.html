@@ -5916,6 +5916,7 @@ async function confirmReject(){
   const _rejectBtn=document.getElementById('rejectSubmitBtn');
   if(_rejectBtn?.disabled) return; // جلوگیری از اجرای چندباره
   if(_rejectBtn){ _rejectBtn.disabled=true; _rejectBtn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> چاوەڕوانبە...'; }
+  const _resetRejectBtn=()=>{ if(_rejectBtn){ _rejectBtn.disabled=false; _rejectBtn.innerHTML='<i class="fas fa-times"></i> ڕەتکردنەوە'; } };
   const id=document.getElementById('rejectTargetId').value;
   const type=document.getElementById('rejectTargetType').value;
   const reason=document.getElementById('rejectReasonTxt').value.trim();
@@ -5928,7 +5929,7 @@ async function confirmReject(){
     let{error:_re1}=await safeUpdateTx(id,{status:'rejected',reject_reason:reason,note:'ڕەتکرا: '+reason});
     if(_re1){
       const{error:_re2}=await safeUpdateTx(id,{status:'rejected',note:'ڕەتکرا: '+reason});
-      if(_re2){showToast('هەڵە: '+_re2.message,'rd');return;}
+      if(_re2){_resetRejectBtn();showToast('هەڵە: '+_re2.message,'rd');return;}
     }
     const res={error:null};
     const dep=allDeposits.find(d=>d.id===id);
@@ -5949,14 +5950,37 @@ async function confirmReject(){
   } else {
     // دۆزینەوەی ئۆبجێکتی ڕیکلام
     const adObj=allAds.find(a=>a.id===id)||_approvalPendingAds.find(a=>a.id===id);
-    // ڕیکلامی ڕەتکراو پاشەکەوت ناکرێت — تەنها دەسڕدرێتەوە دوای گەڕاندنەوەی بودجە
+    // ✅ چاککرا: ڕیکلامی ڕەتکراو ئیتر ناسڕدرێتەوە — تەنها status → 'rejected' و هۆکارەکە پاشەکەوت دەکرێت
+    if(adObj && adObj.status==='rejected'){
+      _resetRejectBtn(); closeMo('moRejectReason');
+      showToast('ئەم ڕیکلامە پێشتر ڕەتکراوەتەوە','rd'); return;
+    }
     let rejected = false;
     try{
-      const {error:e1}=await sb.from('pa_ads').delete().eq('id',id);
-      if(!e1) rejected=true;
-      else if(!isNetHttpErr(e1)){showToast('هەڵە: '+e1.message,'rd');return;}
-    }catch(ex){ if(!isNetHttpErr(ex)){showToast('هەڵە: '+ex.message,'rd');return;} }
-    if(!rejected) return;
+      let {data:_rrows,error:e1}=await sb.from('pa_ads')
+        .update({status:'rejected',reject_reason:reason})
+        .eq('id',id).neq('status','rejected').select('id');
+      // ئەگەر ستوونی reject_reason لە داتابەیس نەبوو — بەبێ ئەو هەوڵ بدەرەوە
+      if(e1 && /reject_reason/i.test(e1.message||'')){
+        const _r2=await sb.from('pa_ads').update({status:'rejected'}).eq('id',id).neq('status','rejected').select('id');
+        _rrows=_r2.data; e1=_r2.error;
+      }
+      if(e1){
+        if(!isNetHttpErr(e1)){ _resetRejectBtn(); showToast('هەڵە: '+e1.message,'rd'); return; }
+      }else if(!_rrows || !_rrows.length){
+        // هیچ ڕیزێک نەگۆڕا — واتە پێشتر ڕەتکراوەتەوە (ڕێگری لە گەڕاندنەوەی دووبارەی پارە)
+        _resetRejectBtn(); closeMo('moRejectReason');
+        showToast('ئەم ڕیکلامە پێشتر ڕەتکراوەتەوە','rd');
+        loadAds(); loadApprovalWorkflow(); loadAdBadge(); return;
+      }else rejected=true;
+    }catch(ex){ if(!isNetHttpErr(ex)){ _resetRejectBtn(); showToast('هەڵە: '+ex.message,'rd'); return; } }
+    if(!rejected){ _resetRejectBtn(); return; }
+    // نوێکردنەوەی کۆپیە ناوخۆییەکان تا ڕووکار دەستبەجێ نوێ بێتەوە
+    [(typeof allAds!=='undefined'?allAds:null),(typeof _allAdsData!=='undefined'?_allAdsData:null)].forEach(arr=>{
+      if(!Array.isArray(arr))return;
+      const _i=arr.findIndex(a=>a.id===id);
+      if(_i>-1)arr[_i]={...arr[_i],status:'rejected',reject_reason:reason};
+    });
     // گەڕانەوەی بودجە بۆ باڵانسی بەکارهێنەر کاتێک ڕیکلام ڕەتدەکرێت
     if(adObj?.user_id && parseFloat(adObj?.budget||0)>0){
       try{
@@ -6013,6 +6037,8 @@ async function confirmReject(){
             });
           }
         }catch(_whErr){/* silent */}
+        // تۆمارکردنی گەڕاندنەوە لەسەر ڕیکلامەکە — ڕێگری لە گەڕاندنەوەی دووبارە
+        try{ await sb.from('pa_ads').update({refunded_amount:refundUSD,refunded_at:new Date().toISOString()}).eq('id',id); }catch(_){}
       }catch(_refErr){console.warn('Refund failed:',_refErr);}
     }
     // ── گەڕانەوەی کۆدی داشکاندن ئەگەر بەکارهێنراوبوو ──
@@ -6085,7 +6111,7 @@ async function confirmReject(){
   const _rb=document.getElementById('rejectSubmitBtn');
   if(_rb){ _rb.disabled=false; _rb.innerHTML='<i class="fas fa-times"></i> ڕەتکردنەوە'; }
   closeMo('moRejectReason');
-  showToast('✅ ڕیکلامەکە ڕەتکرا','gr');
+  showToast(type==='deposit'?'✅ داواکاریەکە ڕەتکرا':'✅ ڕیکلامەکە ڕەتکرا — بە حاڵەتی «ڕەتکراو» ماوەتەوە','gr');
 }
 
 // ══ داواکاری نوێکردنەوەی خانەی ڕیکلام (Admin → User) ══
