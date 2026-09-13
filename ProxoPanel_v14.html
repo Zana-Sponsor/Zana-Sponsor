@@ -295,6 +295,33 @@ tr:hover td{background:rgba(28,35,51,.015);}
 .banner-prev-sub{font-size:12px;opacity:.6;}
 .banner-prev-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 18px;background:rgba(255,255,255,.15);border-radius:20px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.2);}
 
+/* ══ POPUP MANAGEMENT ══ */
+.popup-admin-layout{display:grid;grid-template-columns:minmax(300px,410px) minmax(0,1fr);gap:16px;align-items:start;}
+.popup-panel-card{background:var(--w);border:1px solid var(--b1);border-radius:18px;padding:20px;min-width:0;}
+.popup-form-card{position:sticky;top:84px;}
+.popup-upload{display:flex;align-items:center;justify-content:center;min-height:210px;border:1.5px dashed var(--b2);border-radius:15px;background:var(--bg);overflow:hidden;cursor:pointer;position:relative;transition:border-color .2s,background .2s;}
+.popup-upload:hover{border-color:var(--bl);background:rgba(37,99,235,.035);}
+.popup-upload img{width:100%;height:260px;object-fit:contain;background:#0f172a;display:block;}
+.popup-upload-empty{text-align:center;color:var(--mt2);padding:28px 18px;font-size:12.5px;line-height:1.7;}
+.popup-upload-empty i{display:block;font-size:28px;color:var(--bl);margin-bottom:9px;}
+.popup-list-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.popup-item{border:1px solid var(--b1);border-radius:16px;overflow:hidden;background:var(--w);min-width:0;}
+.popup-item-img{height:180px;background:#0f172a;position:relative;overflow:hidden;}
+.popup-item-img img{width:100%;height:100%;object-fit:contain;display:block;}
+.popup-item-status{position:absolute;top:10px;right:10px;backdrop-filter:blur(8px);box-shadow:0 2px 10px rgba(0,0,0,.12);}
+.popup-item-body{padding:13px;}
+.popup-meta-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--b1);font-size:11.5px;}
+.popup-meta-row:last-child{border-bottom:none;}
+.popup-meta-row span:first-child{color:var(--mt);white-space:nowrap;}
+.popup-meta-row strong{color:var(--dark);font-weight:700;text-align:left;overflow-wrap:anywhere;}
+.popup-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px;}
+.popup-viewer-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:14px;}
+.popup-viewer-stat{padding:11px;background:var(--bg);border:1px solid var(--b1);border-radius:12px;text-align:center;min-width:0;}
+.popup-viewer-stat strong{display:block;font-family:'Inter',sans-serif;font-size:17px;color:var(--dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.popup-viewer-stat span{display:block;font-size:10px;color:var(--mt);margin-top:4px;}
+@media(max-width:1050px){.popup-admin-layout{grid-template-columns:1fr;}.popup-form-card{position:static;}.popup-list-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:650px){.popup-panel-card{padding:15px;}.popup-list-grid{grid-template-columns:1fr;}.popup-item-img{height:210px;}.popup-viewer-summary{grid-template-columns:1fr;}.popup-viewer-stat{text-align:right;display:flex;align-items:center;justify-content:space-between;}.popup-viewer-stat span{margin-top:0;}}
+
 /* ══ REALTIME DOT ══ */
 .rt-dot{width:8px;height:8px;border-radius:50%;background:var(--gr);display:inline-block;animation:pulse 1.5s infinite;margin-left:6px;}
 @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.3);opacity:.7}}
@@ -651,6 +678,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-section">ئامرازەکان</div>
     <div class="sb-item" onclick="goPage('notifications')"><i class="fas fa-bell"></i> ناردنی ئاگاداری<span class="sb-notif-badge" id="adminNotifBadge"></span></div>
     <div class="sb-item" onclick="goPage('banners')"><i class="fas fa-ad"></i> بانەری ڕیکلام</div>
+    <div class="sb-item" onclick="goPage('popups')"><i class="fas fa-window-restore" style="color:#38bdf8"></i> پۆپ ئەپ و ئامارەکان</div>
     <div class="sb-item" onclick="goPage('promo')"><i class="fas fa-tag" style="color:#f472b6"></i> کۆدی داشکاندن</div>
     <div class="sb-item" onclick="goPage('voucher')"><i class="fas fa-ticket" style="color:#f59e0b"></i> کۆدی ڤاوچەر</div>
     <div class="sb-item" onclick="goPage('version')"><i class="fas fa-rocket"></i> بەڕێوەبردنی ڤێرژن</div>
@@ -958,6 +986,71 @@ tr:hover td{background:rgba(28,35,51,.015);}
         </div>
         <div id="fbBannerList" style="display:flex;flex-direction:column;gap:10px">
           <div class="empty"><i class="fas fa-images"></i><p>هیچ بانەرێک نییە</p></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══ POPUP MANAGEMENT ══ -->
+    <div class="pg" id="pgPopups">
+      <div class="sec-hdr">
+        <h3><i class="fas fa-window-restore" style="margin-left:8px;color:#0ea5e9"></i>پۆپ ئەپ و ئامارەکانی بینین</h3>
+        <div class="sec-hdr-right">
+          <button class="act-btn bl" onclick="loadPopupsAdmin()"><i class="fas fa-rotate-right"></i> نوێکردنەوە</button>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-ico bl"><i class="fas fa-window-restore"></i></div><div><div class="stat-val" id="popupStatTotal">0</div><div class="stat-lbl">هەموو پۆپ ئەپەکان</div></div></div>
+        <div class="stat-card"><div class="stat-ico gr"><i class="fas fa-circle-check"></i></div><div><div class="stat-val" id="popupStatActive">0</div><div class="stat-lbl">چالاکی ئێستا</div></div></div>
+        <div class="stat-card"><div class="stat-ico pu"><i class="fas fa-eye"></i></div><div><div class="stat-val" id="popupStatViews">0</div><div class="stat-lbl">کۆی هەموو بینینەکان</div></div></div>
+        <div class="stat-card"><div class="stat-ico yw"><i class="fas fa-user-group"></i></div><div><div class="stat-val" id="popupStatUsers">0</div><div class="stat-lbl">بینەری جیاواز</div></div></div>
+      </div>
+
+      <div class="popup-admin-layout">
+        <div class="popup-panel-card popup-form-card" id="popupFormCard">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px">
+            <div>
+              <div style="font-size:15px;font-weight:800;color:var(--dark)" id="popupFormTitle">دروستکردنی پۆپ ئەپی نوێ</div>
+              <div style="font-size:11px;color:var(--mt);margin-top:3px">وێنەکە لە Supabase Storage هەڵدەگیرێت</div>
+            </div>
+            <button class="act-btn dark" id="popupCancelEditBtn" onclick="popupResetForm()" style="display:none"><i class="fas fa-xmark"></i> هەڵوەشاندنەوە</button>
+          </div>
+
+          <label class="modal-lbl" style="margin-top:0">وێنەی پۆپ ئەپ <span style="color:var(--rd)">*</span></label>
+          <label class="popup-upload" for="popupImageInp">
+            <div class="popup-upload-empty" id="popupUploadEmpty"><i class="fas fa-cloud-arrow-up"></i><b>وێنەیەک هەڵبژێرە</b><br>JPEG، PNG یان WebP — زۆرترین 4MB</div>
+            <img id="popupImagePreview" alt="پێشبینی پۆپ ئەپ" style="display:none">
+            <input type="file" id="popupImageInp" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="popupImageChanged(this)">
+          </label>
+
+          <label class="modal-lbl">لینکی دەستلێدان <span style="font-size:10px;color:var(--mt)">(ئارەزووکاری)</span></label>
+          <input class="minp" id="popupLinkInp" type="url" dir="ltr" placeholder="https://example.com" style="text-align:left;font-family:'Inter',sans-serif;font-size:13px">
+
+          <div class="modal-row">
+            <div><label class="modal-lbl">کاتی دەستپێک</label><input class="minp" id="popupStartInp" type="datetime-local" dir="ltr" style="font-family:'Inter',sans-serif;font-size:12px"></div>
+            <div><label class="modal-lbl">کاتی کۆتایی <span style="font-size:10px;color:var(--mt)">(ئارەزووکاری)</span></label><input class="minp" id="popupEndInp" type="datetime-local" dir="ltr" style="font-family:'Inter',sans-serif;font-size:12px"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--bg);border:1px solid var(--b1);border-radius:13px;margin-top:14px">
+            <div><div style="font-size:13px;font-weight:700;color:var(--dark)">چالاک بێت</div><div style="font-size:10.5px;color:var(--mt);margin-top:2px">بەپێی کاتی دەستپێک و کۆتایی پیشان دەدرێت</div></div>
+            <label class="sw-label"><input type="checkbox" id="popupActiveChk" checked><span class="sw-slider"></span></label>
+          </div>
+
+          <button class="modal-btn dark" id="popupSaveBtn" onclick="savePopup()"><i class="fas fa-paper-plane"></i> بڵاوکردنەوەی پۆپ ئەپ</button>
+          <div class="info-box" style="margin-top:13px;border-right-color:#0ea5e9"><i class="fas fa-shield-halved" style="margin-left:6px;color:#0ea5e9"></i>هەر بەکارهێنەرێک تەنها یەک جار ئەم پۆپ ئەپە دەبینێت؛ بینینەکە بە هەژمارەکەیەوە تۆمار دەبێت، نەک بە مۆبایل.</div>
+        </div>
+
+        <div class="popup-panel-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+            <div><div style="font-size:14px;font-weight:800;color:var(--dark)">پۆپ ئەپە هەیەکان</div><div style="font-size:10.5px;color:var(--mt);margin-top:2px"><span id="popupListCount">0</span> تۆمار</div></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="chip on" id="popupFilterAll" onclick="setPopupFilter('all')">هەموو</button>
+              <button class="chip gr" id="popupFilterActive" onclick="setPopupFilter('active')">چالاک</button>
+              <button class="chip" id="popupFilterInactive" onclick="setPopupFilter('inactive')">ناچالاک/بەسەرچوو</button>
+            </div>
+          </div>
+          <div id="popupList" class="popup-list-grid"><div class="loading" style="grid-column:1/-1"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div></div>
         </div>
       </div>
     </div>
@@ -2709,6 +2802,30 @@ tr:hover td{background:rgba(28,35,51,.015);}
   </div>
 </div>
 
+<!-- ══ POPUP VIEW ANALYTICS MODAL ══ -->
+<div class="overlay" id="moPopupViews">
+  <div class="modal" style="max-width:780px">
+    <div class="modal-hdr">
+      <h3 id="popupViewsModalTitle"><i class="fas fa-chart-column" style="margin-left:8px;color:#0ea5e9"></i>ئامارەکانی پۆپ ئەپ</h3>
+      <div class="modal-close" onclick="closeMo('moPopupViews')"><i class="fas fa-xmark"></i></div>
+    </div>
+    <div id="popupViewsHero" style="display:none;align-items:center;gap:12px;margin-bottom:14px;padding:10px;background:var(--bg);border:1px solid var(--b1);border-radius:13px">
+      <img id="popupViewsImage" alt="پۆپ ئەپ" style="width:58px;height:72px;object-fit:contain;background:#0f172a;border-radius:9px;flex-shrink:0">
+      <div style="min-width:0"><div id="popupViewsId" dir="ltr" style="font-family:'Inter',sans-serif;font-size:10px;color:var(--mt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div><div id="popupViewsWindow" style="font-size:11px;color:var(--mt2);margin-top:5px"></div></div>
+    </div>
+    <div class="popup-viewer-summary">
+      <div class="popup-viewer-stat"><strong id="popupViewsTotal">0</strong><span>کۆی بینەران</span></div>
+      <div class="popup-viewer-stat"><strong id="popupViewsFirst">—</strong><span>یەکەم بینین</span></div>
+      <div class="popup-viewer-stat"><strong id="popupViewsLast">—</strong><span>دوایین بینین</span></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+      <input class="tbl-search" id="popupViewsSearch" type="search" placeholder="گەڕان بە ناو، ئیمەیل، ژمارە یان User ID..." oninput="renderPopupViewers()">
+      <button class="act-btn gr" id="popupExportBtn" onclick="exportPopupViewsCsv()" disabled><i class="fas fa-file-csv"></i> CSV</button>
+    </div>
+    <div class="tbl-wrap tbl-scroll" id="popupViewsBody"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div></div>
+  </div>
+</div>
+
 <!-- ══ PASSWORD MODAL ══ -->
 <div class="overlay" id="moUserPassword">
   <div class="modal" style="max-width:420px">
@@ -2906,6 +3023,7 @@ const pageConfig={
   voucher:{title:'کۆدەکانی ڤاوچەر',sub:'دروستکردن و بەڕێوەبردنی کۆدەکانی ڤاوچەر (بارکردنی باڵانس)',load:async()=>{await Promise.all([loadVouchers(),loadSignupGiftConfig()])}},
   notifications:{title:'ناردنی ئاگاداری',sub:'ناردن بۆ بەکارهێنەران',load:loadNotifHistory},
   banners:{title:'بانەری وێنەیی',sub:'بانەری وێنەیی Firebase'},
+  popups:{title:'پۆپ ئەپ و ئامارەکان',sub:'دروستکردن، کات‌بەندی و بینینی ئاماری وردی هەر پۆپ ئەپ',load:loadPopupsAdmin},
   support:{title:'پشتیوانی',sub:'گفتوگۆی بەکارهێنەران',load:loadSupportUsers},
   version:{title:'بەڕێوەبردنی ڤێرژن',sub:'نوێکردنەوەی ئەپلیکەیشن',load:loadVersion},
   challenges:{title:'چاڵنجەکان و ئاست',sub:'بەڕێوەبردنی چاڵنج و ئاستی بەکارهێنەران',load:loadChallenges},
@@ -3031,6 +3149,23 @@ function setupRealtime(){
       if(_curPage==='users')loadUsers();
     })
     .on('postgres_changes',{event:'*',schema:'public',table:'pa_banners'},()=>{})
+    .on('postgres_changes',{event:'*',schema:'public',table:'pa_popups'},()=>{
+      if(_curPage==='popups'){
+        clearTimeout(window._popupRtTimer);
+        window._popupRtTimer=setTimeout(loadPopupsAdmin,180);
+      }
+    })
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'pa_popup_views'},payload=>{
+      if(_curPage==='popups'){
+        const view=payload.new;
+        if(view?.id&&!_popupViewRows.some(v=>v.id===view.id)){
+          _popupViewRows.unshift(view);
+          document.getElementById('popupStatViews').textContent=_popupViewRows.length.toLocaleString();
+          document.getElementById('popupStatUsers').textContent=new Set(_popupViewRows.map(v=>v.user_id)).size.toLocaleString();
+          renderPopupList();
+        }
+      }
+    })
     .on('postgres_changes',{event:'*',schema:'public',table:'pa_notifications'},()=>{
       updateAdminNotifBadge();
       if(_curPage==='notifications')loadNotifHistory();
@@ -10101,6 +10236,356 @@ async function saveUserStory() {
     setTimeout(()=>{ msgEl.style.display='none'; }, 3000);
   } catch(e) { showToast('هەڵە: '+e.message,'rd'); }
   finally { if (btn) { btn.disabled=false; btn.innerHTML='<i class="fas fa-save"></i> پاشەکەوتکردن و بڵاوکردنەوە'; } }
+}
+
+// ════════════════════════════════════════════════════════════════
+// POPUP MANAGEMENT + DATABASE VIEW ANALYTICS
+// ════════════════════════════════════════════════════════════════
+const POPUP_BUCKET = 'popup-images';
+const POPUP_MAX_FILE_BYTES = 4 * 1024 * 1024;
+const POPUP_ALLOWED_TYPES = new Set(['image/jpeg','image/png','image/webp']);
+let _popupRows = [];
+let _popupViewRows = [];
+let _popupViewerRows = [];
+let _popupFile = null;
+let _popupObjectUrl = '';
+let _popupEditingId = null;
+let _popupEditingImageUrl = '';
+let _popupFilter = 'all';
+let _popupLoadSeq = 0;
+
+function _popupEsc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+function _popupFormatDate(value, short=false) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleString('en-GB', short
+    ? {day:'2-digit',month:'2-digit',year:'numeric'}
+    : {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+function _popupLocalInputValue(value) {
+  const date = value ? new Date(value) : new Date();
+  if (Number.isNaN(date.getTime())) return '';
+  const pad = n => String(n).padStart(2,'0');
+  return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function _popupStatus(row) {
+  const now = Date.now();
+  const start = row.starts_at ? new Date(row.starts_at).getTime() : 0;
+  const end = row.ends_at ? new Date(row.ends_at).getTime() : null;
+  if (!row.is_active) return {key:'inactive',label:'ناچالاک',cls:'paused'};
+  if (Number.isFinite(start) && start > now) return {key:'scheduled',label:'کات بۆ دانراوە',cls:'scheduled'};
+  if (end && end <= now) return {key:'expired',label:'بەسەرچووە',cls:'expired'};
+  return {key:'active',label:'چالاک',cls:'active'};
+}
+
+async function _popupFetchAllPopups() {
+  const out = [], size = 1000;
+  for (let from=0;;from+=size) {
+    const {data,error} = await sb.from('pa_popups').select('id,image_url,link,is_active,starts_at,ends_at,created_at,updated_at').order('created_at',{ascending:false}).range(from,from+size-1);
+    if (error) throw error;
+    out.push(...(data||[]));
+    if (!data || data.length < size) return out;
+  }
+}
+
+async function _popupFetchAllViews(popupId=null) {
+  const out = [], size = 1000;
+  for (let from=0;;from+=size) {
+    let query = sb.from('pa_popup_views').select('id,popup_id,user_id,viewed_at').order('viewed_at',{ascending:false});
+    if (popupId) query = query.eq('popup_id',popupId);
+    const {data,error} = await query.range(from,from+size-1);
+    if (error) throw error;
+    out.push(...(data||[]));
+    if (!data || data.length < size) return out;
+  }
+}
+
+async function loadPopupsAdmin() {
+  const list = document.getElementById('popupList');
+  if (!list) return;
+  const seq = ++_popupLoadSeq;
+  list.innerHTML = '<div class="loading" style="grid-column:1/-1"><i class="fas fa-circle-notch fa-spin"></i> بارکردن...</div>';
+  try {
+    const [popups,views] = await Promise.all([_popupFetchAllPopups(),_popupFetchAllViews()]);
+    if (seq !== _popupLoadSeq) return;
+    _popupRows = popups;
+    _popupViewRows = views;
+    const nowActive = popups.filter(p => _popupStatus(p).key === 'active').length;
+    document.getElementById('popupStatTotal').textContent = popups.length.toLocaleString();
+    document.getElementById('popupStatActive').textContent = nowActive.toLocaleString();
+    document.getElementById('popupStatViews').textContent = views.length.toLocaleString();
+    document.getElementById('popupStatUsers').textContent = new Set(views.map(v=>v.user_id)).size.toLocaleString();
+    if (!_popupEditingId && !document.getElementById('popupStartInp').value) document.getElementById('popupStartInp').value = _popupLocalInputValue();
+    renderPopupList();
+  } catch(error) {
+    list.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-triangle-exclamation"></i><p>هەڵە لە بارکردنی پۆپ ئەپەکان</p><p style="font-size:10.5px;margin-top:6px">${_popupEsc(error.message)}</p></div>`;
+    showToast('هەڵەی بارکردنی پۆپ ئەپەکان: '+error.message,'rd');
+  }
+}
+
+function setPopupFilter(filter) {
+  _popupFilter = filter;
+  ['All','Active','Inactive'].forEach(name => document.getElementById('popupFilter'+name)?.classList.remove('on'));
+  document.getElementById('popupFilter'+(filter==='active'?'Active':filter==='inactive'?'Inactive':'All'))?.classList.add('on');
+  renderPopupList();
+}
+
+function renderPopupList() {
+  const list = document.getElementById('popupList');
+  if (!list) return;
+  const counts = {};
+  _popupViewRows.forEach(v => { counts[v.popup_id] = (counts[v.popup_id]||0)+1; });
+  const rows = _popupRows.filter(p => {
+    const key = _popupStatus(p).key;
+    if (_popupFilter === 'active') return key === 'active' || key === 'scheduled';
+    if (_popupFilter === 'inactive') return key === 'inactive' || key === 'expired';
+    return true;
+  });
+  document.getElementById('popupListCount').textContent = rows.length.toLocaleString();
+  if (!rows.length) {
+    list.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="fas fa-window-restore"></i><p>هیچ پۆپ ئەپێک نییە</p></div>';
+    return;
+  }
+  list.innerHTML = rows.map(p => {
+    const status = _popupStatus(p), views = counts[p.id]||0;
+    const link = p.link ? `<a href="${_popupEsc(p.link)}" target="_blank" rel="noopener noreferrer" style="color:var(--bl);direction:ltr;text-align:left;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${_popupEsc(p.link)}</a>` : '<strong>بێ لینک</strong>';
+    return `<article class="popup-item">
+      <div class="popup-item-img"><img src="${_popupEsc(p.image_url)}" alt="پۆپ ئەپ" loading="lazy"><span class="badge ${status.cls} popup-item-status">${status.label}</span></div>
+      <div class="popup-item-body">
+        <div class="popup-meta-row"><span>بینین</span><strong style="font-family:'Inter',sans-serif;color:var(--pu)">${views.toLocaleString()} <i class="fas fa-eye" style="font-size:10px"></i></strong></div>
+        <div class="popup-meta-row"><span>دروستکراوە</span><strong dir="ltr">${_popupFormatDate(p.created_at)}</strong></div>
+        <div class="popup-meta-row"><span>دەستپێک</span><strong dir="ltr">${_popupFormatDate(p.starts_at)}</strong></div>
+        <div class="popup-meta-row"><span>کۆتایی</span><strong dir="ltr">${_popupFormatDate(p.ends_at)}</strong></div>
+        <div class="popup-meta-row"><span>لینک</span>${link}</div>
+        <div class="popup-actions">
+          <button class="act-btn pu" onclick="openPopupViews('${p.id}')"><i class="fas fa-chart-column"></i> ئامار</button>
+          <button class="act-btn bl" onclick="editPopup('${p.id}')"><i class="fas fa-pen"></i> دەستکاری</button>
+          <button class="act-btn ${p.is_active?'yw':'gr'}" onclick="togglePopup('${p.id}',${p.is_active})"><i class="fas fa-${p.is_active?'pause':'play'}"></i> ${p.is_active?'ناچالاککردن':'چالاککردن'}</button>
+          <button class="act-btn rd" onclick="deletePopup('${p.id}')"><i class="fas fa-trash"></i> سڕینەوە</button>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function popupImageChanged(input) {
+  const file = input.files?.[0] || null;
+  if (!file) return;
+  if (!POPUP_ALLOWED_TYPES.has(file.type)) {
+    showToast('تەنها JPEG، PNG یان WebP قبوڵە','rd'); input.value=''; return;
+  }
+  if (file.size > POPUP_MAX_FILE_BYTES) {
+    showToast('قەبارەی وێنەکە نابێت لە 4MB زیاتر بێت','rd'); input.value=''; return;
+  }
+  _popupFile = file;
+  if (_popupObjectUrl) URL.revokeObjectURL(_popupObjectUrl);
+  _popupObjectUrl = URL.createObjectURL(file);
+  const img = document.getElementById('popupImagePreview');
+  img.src = _popupObjectUrl; img.style.display='block';
+  document.getElementById('popupUploadEmpty').style.display='none';
+}
+
+function popupResetForm(scroll=true) {
+  _popupEditingId = null;
+  _popupEditingImageUrl = '';
+  _popupFile = null;
+  if (_popupObjectUrl) URL.revokeObjectURL(_popupObjectUrl);
+  _popupObjectUrl = '';
+  const fileInput = document.getElementById('popupImageInp'); if (fileInput) fileInput.value='';
+  const img = document.getElementById('popupImagePreview'); if (img) { img.removeAttribute('src'); img.style.display='none'; }
+  document.getElementById('popupUploadEmpty').style.display='block';
+  document.getElementById('popupLinkInp').value='';
+  document.getElementById('popupStartInp').value=_popupLocalInputValue();
+  document.getElementById('popupEndInp').value='';
+  document.getElementById('popupActiveChk').checked=true;
+  document.getElementById('popupFormTitle').textContent='دروستکردنی پۆپ ئەپی نوێ';
+  document.getElementById('popupSaveBtn').innerHTML='<i class="fas fa-paper-plane"></i> بڵاوکردنەوەی پۆپ ئەپ';
+  document.getElementById('popupCancelEditBtn').style.display='none';
+  if (scroll) document.getElementById('popupFormCard')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function editPopup(id) {
+  const row = _popupRows.find(p=>p.id===id);
+  if (!row) return;
+  _popupEditingId = row.id;
+  _popupEditingImageUrl = row.image_url;
+  _popupFile = null;
+  if (_popupObjectUrl) URL.revokeObjectURL(_popupObjectUrl);
+  _popupObjectUrl='';
+  document.getElementById('popupImageInp').value='';
+  const img = document.getElementById('popupImagePreview'); img.src=row.image_url; img.style.display='block';
+  document.getElementById('popupUploadEmpty').style.display='none';
+  document.getElementById('popupLinkInp').value=row.link||'';
+  document.getElementById('popupStartInp').value=_popupLocalInputValue(row.starts_at);
+  document.getElementById('popupEndInp').value=row.ends_at?_popupLocalInputValue(row.ends_at):'';
+  document.getElementById('popupActiveChk').checked=!!row.is_active;
+  document.getElementById('popupFormTitle').textContent='دەستکاریکردنی پۆپ ئەپ';
+  document.getElementById('popupSaveBtn').innerHTML='<i class="fas fa-floppy-disk"></i> پاشەکەوتکردنی گۆڕانکاری';
+  document.getElementById('popupCancelEditBtn').style.display='inline-flex';
+  document.getElementById('popupFormCard')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function _popupStoragePath(publicUrl) {
+  try {
+    const url = new URL(publicUrl), project = new URL(SB_URL);
+    if (url.host !== project.host) return null;
+    const marker = `/storage/v1/object/public/${POPUP_BUCKET}/`;
+    const at = url.pathname.indexOf(marker);
+    return at < 0 ? null : decodeURIComponent(url.pathname.slice(at+marker.length));
+  } catch(_) { return null; }
+}
+
+async function _popupRemoveStorageUrl(publicUrl) {
+  const path = _popupStoragePath(publicUrl);
+  if (!path) return null;
+  const {error} = await sb.storage.from(POPUP_BUCKET).remove([path]);
+  return error;
+}
+
+async function savePopup() {
+  const editing = !!_popupEditingId;
+  if (!editing && !_popupFile) { showToast('تکایە وێنەی پۆپ ئەپ هەڵبژێرە','rd'); return; }
+  let link = document.getElementById('popupLinkInp').value.trim() || null;
+  if (link) {
+    try {
+      const parsed = new URL(link);
+      if (!['http:','https:'].includes(parsed.protocol)) throw new Error('protocol');
+      link = parsed.toString();
+    } catch(_) { showToast('لینکەکە دروست نییە؛ دەبێت بە http یان https دەست پێ بکات','rd'); return; }
+  }
+  const startRaw = document.getElementById('popupStartInp').value;
+  const endRaw = document.getElementById('popupEndInp').value;
+  const startDate = startRaw ? new Date(startRaw) : new Date();
+  const endDate = endRaw ? new Date(endRaw) : null;
+  if (Number.isNaN(startDate.getTime()) || (endDate && Number.isNaN(endDate.getTime()))) { showToast('کات و بەروارەکان دروست نین','rd'); return; }
+  if (endDate && endDate <= startDate) { showToast('کاتی کۆتایی دەبێت دوای کاتی دەستپێک بێت','rd'); return; }
+
+  const btn = document.getElementById('popupSaveBtn');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> پاشەکەوتکردن...';
+  let uploadedPath = null, imageUrl = _popupEditingImageUrl;
+  try {
+    if (_popupFile) {
+      const ext = {'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[_popupFile.type];
+      const token = (crypto.randomUUID?.() || Math.random().toString(36).slice(2));
+      uploadedPath = `${adminUser.id}/${Date.now()}-${token}.${ext}`;
+      const {data:upload,error:uploadError} = await sb.storage.from(POPUP_BUCKET).upload(uploadedPath,_popupFile,{contentType:_popupFile.type,cacheControl:'31536000',upsert:false});
+      if (uploadError) throw uploadError;
+      const {data:publicData} = sb.storage.from(POPUP_BUCKET).getPublicUrl(upload.path);
+      imageUrl = publicData?.publicUrl;
+      if (!imageUrl) throw new Error('لینکی گشتی وێنە دروست نەبوو');
+    }
+    const payload = {image_url:imageUrl,link,is_active:document.getElementById('popupActiveChk').checked,starts_at:startDate.toISOString(),ends_at:endDate?endDate.toISOString():null,updated_at:new Date().toISOString()};
+    const result = editing
+      ? await sb.from('pa_popups').update(payload).eq('id',_popupEditingId).select('id').single()
+      : await sb.from('pa_popups').insert(payload).select('id').single();
+    if (result.error) throw result.error;
+    if (editing && uploadedPath && _popupEditingImageUrl && _popupEditingImageUrl !== imageUrl) await _popupRemoveStorageUrl(_popupEditingImageUrl);
+    showToast(editing?'✅ پۆپ ئەپ نوێکرایەوە':'✅ پۆپ ئەپ بڵاوکرایەوە','gr');
+    popupResetForm(false);
+    await loadPopupsAdmin();
+  } catch(error) {
+    if (uploadedPath) await sb.storage.from(POPUP_BUCKET).remove([uploadedPath]);
+    showToast('هەڵە: '+error.message,'rd');
+  } finally {
+    btn.disabled=false;
+    if (_popupEditingId) btn.innerHTML='<i class="fas fa-floppy-disk"></i> پاشەکەوتکردنی گۆڕانکاری';
+    else btn.innerHTML='<i class="fas fa-paper-plane"></i> بڵاوکردنەوەی پۆپ ئەپ';
+  }
+}
+
+async function togglePopup(id,isActive) {
+  const {error} = await sb.from('pa_popups').update({is_active:!isActive,updated_at:new Date().toISOString()}).eq('id',id);
+  if (error) { showToast('هەڵە: '+error.message,'rd'); return; }
+  showToast(isActive?'✅ پۆپ ئەپ ناچالاک کرا':'✅ پۆپ ئەپ چالاک کرا','gr');
+  await loadPopupsAdmin();
+}
+
+function deletePopup(id) {
+  const row = _popupRows.find(p=>p.id===id);
+  if (!row) return;
+  confirm2('سڕینەوەی پۆپ ئەپ','پۆپ ئەپ و هەموو تۆمارەکانی بینینی بە هەمیشەیی دەسڕێنەوە. دڵنیایت؟','fas fa-trash','var(--rd)',async()=>{
+    const {error} = await sb.from('pa_popups').delete().eq('id',id);
+    if (error) { showToast('هەڵە: '+error.message,'rd'); return; }
+    const storageError = await _popupRemoveStorageUrl(row.image_url);
+    showToast(storageError?'پۆپ ئەپ سڕایەوە، بەڵام وێنەکە لە Storage نەسڕایەوە':'✅ پۆپ ئەپ و ئامارەکانی سڕایەوە',storageError?'rd':'gr');
+    if (_popupEditingId===id) popupResetForm(false);
+    await loadPopupsAdmin();
+  });
+}
+
+async function openPopupViews(id) {
+  const row = _popupRows.find(p=>p.id===id);
+  if (!row) return;
+  _popupViewerRows=[];
+  document.getElementById('popupViewsSearch').value='';
+  document.getElementById('popupExportBtn').disabled=true;
+  document.getElementById('popupViewsModalTitle').innerHTML='<i class="fas fa-chart-column" style="margin-left:8px;color:#0ea5e9"></i>ئامارەکانی پۆپ ئەپ';
+  document.getElementById('popupViewsHero').style.display='flex';
+  document.getElementById('popupViewsImage').src=row.image_url;
+  document.getElementById('popupViewsId').textContent=row.id;
+  document.getElementById('popupViewsWindow').textContent=`${_popupFormatDate(row.starts_at)} ← ${_popupFormatDate(row.ends_at)}`;
+  document.getElementById('popupViewsTotal').textContent='…';
+  document.getElementById('popupViewsFirst').textContent='—';
+  document.getElementById('popupViewsLast').textContent='—';
+  document.getElementById('popupViewsBody').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i> بارکردنی هەموو بینەران...</div>';
+  openMo('moPopupViews');
+  try {
+    const views = await _popupFetchAllViews(id);
+    const ids = [...new Set(views.map(v=>v.user_id).filter(Boolean))];
+    const profiles = [];
+    for (let i=0;i<ids.length;i+=100) {
+      const {data,error} = await sb.from('profiles').select('id,full_name,email,phone').in('id',ids.slice(i,i+100));
+      if (error) throw error;
+      profiles.push(...(data||[]));
+    }
+    const profileMap = Object.fromEntries(profiles.map(p=>[p.id,p]));
+    _popupViewerRows = views.map(v=>({...v,profile:profileMap[v.user_id]||null}));
+    document.getElementById('popupViewsTotal').textContent=views.length.toLocaleString();
+    document.getElementById('popupViewsFirst').textContent=views.length?_popupFormatDate(views[views.length-1].viewed_at,true):'—';
+    document.getElementById('popupViewsLast').textContent=views.length?_popupFormatDate(views[0].viewed_at,true):'—';
+    document.getElementById('popupExportBtn').disabled=!views.length;
+    renderPopupViewers();
+  } catch(error) {
+    document.getElementById('popupViewsBody').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${_popupEsc(error.message)}</p></div>`;
+  }
+}
+
+function renderPopupViewers() {
+  const body = document.getElementById('popupViewsBody');
+  if (!body) return;
+  const q = (document.getElementById('popupViewsSearch')?.value||'').trim().toLowerCase();
+  const rows = _popupViewerRows.filter(v => {
+    const p=v.profile||{};
+    return !q || [p.full_name,p.email,p.phone,v.user_id].some(x=>String(x||'').toLowerCase().includes(q));
+  });
+  if (!rows.length) {
+    body.innerHTML='<div class="empty"><i class="fas fa-eye-slash"></i><p>هیچ بینەرێک نەدۆزرایەوە</p></div>';
+    return;
+  }
+  body.innerHTML=`<table style="min-width:720px"><thead><tr><th>#</th><th>بەکارهێنەر</th><th>ئیمەیل</th><th>ژمارە</th><th>User ID</th><th>کاتی بینین</th></tr></thead><tbody>${rows.map((v,i)=>{
+    const p=v.profile||{}, name=p.full_name||'بێ ناو', initial=(name||p.email||'?')[0].toUpperCase();
+    return `<tr><td>${i+1}</td><td><div class="user-cell"><div class="mini-av">${_popupEsc(initial)}</div><div class="user-cell-name">${_popupEsc(name)}</div></div></td><td dir="ltr" style="font-family:'Inter',sans-serif;font-size:11px">${_popupEsc(p.email||'—')}</td><td dir="ltr" style="font-family:'Inter',sans-serif;font-size:11px">${_popupEsc(p.phone||'—')}</td><td dir="ltr" style="font-family:'Inter',sans-serif;font-size:9.5px;color:var(--mt)">${_popupEsc(v.user_id)}</td><td dir="ltr" style="font-family:'Inter',sans-serif;font-size:11px">${_popupFormatDate(v.viewed_at)}</td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+
+function exportPopupViewsCsv() {
+  if (!_popupViewerRows.length) return;
+  const quote = value => {
+    let safe = String(value??'');
+    if (/^[=+\-@]/.test(safe)) safe = "'"+safe;
+    return `"${safe.replace(/"/g,'""')}"`;
+  };
+  const lines = [['Name','Email','Phone','User ID','Viewed at'],..._popupViewerRows.map(v=>[v.profile?.full_name||'',v.profile?.email||'',v.profile?.phone||'',v.user_id,v.viewed_at])].map(row=>row.map(quote).join(','));
+  const blob = new Blob(['\uFEFF'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download=`popup-views-${new Date().toISOString().slice(0,10)}.csv`; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
 async function savePhoneRequired(chk) {
