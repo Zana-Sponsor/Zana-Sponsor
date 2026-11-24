@@ -347,6 +347,7 @@ tr:hover td{background:rgba(28,35,51,.015);}
     <div class="sb-item active" onclick="goPage('dashboard')"><i class="fas fa-chart-pie"></i> داشبۆرد</div>
     <div class="sb-item" onclick="goPage('orders')"><i class="fas fa-money-bill-transfer"></i> ئۆردەرەکان <span class="sb-badge yw" id="sbOrdersCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('accounts')"><i class="fas fa-users"></i> هەژمارەکان</div>
+    <div class="sb-item" onclick="goPage('kyc')"><i class="fas fa-id-card" style="color:#0891b2"></i> پشتڕاستکردنەوەی ناسنامە <span class="sb-badge yw" id="sbKycCount" style="display:none">0</span></div>
     <div class="sb-section">ڕێکخستن</div>
     <div class="sb-item" onclick="goPage('wallets')"><i class="fas fa-wallet" style="color:#16a34a"></i> واڵێتەکان</div>
     <div class="sb-item" onclick="goPage('rates')"><i class="fas fa-percent" style="color:#f59e0b"></i> نرخ و کرێ</div>
@@ -444,6 +445,16 @@ tr:hover td{background:rgba(28,35,51,.015);}
         <div class="tbl-scroll tbl-wrap-scroll-target" id="accountsTableWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
+      </div>
+    </div>
+
+
+    <!-- ══ IDENTITY VERIFICATION ══ -->
+    <div class="pg" id="pgKyc">
+      <div class="sec-hdr"><h3>پشتڕاستکردنەوەی ناسنامە</h3><div class="act-btn dark" onclick="loadKycAdmin()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div></div>
+      <div class="tbl-wrap">
+        <div class="tbl-filter"><input class="tbl-search" id="kycSearch" placeholder="گەڕان بە ناو، ئیمەیل یان ژمارەی بەڵگە..." oninput="renderKycAdmin()"><div class="chip on" data-kf="pending" onclick="setKycFilter(this)">چاوەڕوان</div><div class="chip" data-kf="approved" onclick="setKycFilter(this)">پەسەندکرا</div><div class="chip" data-kf="rejected" onclick="setKycFilter(this)">ڕەتکراوە</div><div class="chip" data-kf="all" onclick="setKycFilter(this)">هەموو</div></div>
+        <div class="tbl-scroll" id="kycTableWrap"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
       </div>
     </div>
 
@@ -564,6 +575,10 @@ tr:hover td{background:rgba(28,35,51,.015);}
 
   </div>
 </div>
+
+
+<!-- ══ KYC DETAIL MODAL ══ -->
+<div class="overlay" id="moKycDetail"><div class="modal wide"><div class="modal-hdr"><h3>وردەکاری پشتڕاستکردنەوە</h3><div class="modal-close" onclick="closeMo('moKycDetail')"><i class="fas fa-xmark"></i></div></div><div id="kycDetailContent"></div><div class="act-grp" style="margin-top:16px"><button class="act-btn gr" id="kycApproveBtn"><i class="fas fa-check"></i> پەسەندکردن</button><button class="act-btn rd" id="kycRejectBtn"><i class="fas fa-times"></i> ڕەتکردنەوە</button></div></div></div>
 
 <!-- ══ ORDER DETAIL MODAL ══ -->
 <div class="overlay" id="moOrderDetail">
@@ -993,6 +1008,7 @@ const pageConfig = {
   notifications:{ title:'ئاگادارییەکان', sub:'ناردنی ئاگاداری و بینینی مێژوو', load: ()=>loadNotifPage() },
   announcement:{ title:'بانەری ئاگاداری', sub:'ئاگاداری گشتی سەرەوەی ئەپەکە', load: ()=>loadAnnouncement() },
   otp:{ title:'کۆدەکانی OTP', sub:'بینین و بەڕێوەبردنی کۆدەکانی دڵنیاکردنەوە', load: ()=>loadOtp() },
+  kyc:{ title:'پشتڕاستکردنەوەی ناسنامە', sub:'پشکنین و پەسەندکردنی زانیاری و بەڵگەکانی بەکارهێنەر', load: ()=>loadKycAdmin() },
 };
 let _curPage='dashboard';
 function goPage(p){
@@ -2293,6 +2309,17 @@ async function saveAnnouncement(){
     showToast('هەڵە: '+e.message,'rd');
   }finally{ btn.disabled=false; }
 }
+</script>
+
+<script>
+// ═══ IDENTITY VERIFICATION ADMIN ═══
+let allKyc=[], kycFilter='pending';
+function setKycFilter(el){ document.querySelectorAll('[data-kf]').forEach(x=>x.classList.remove('on')); el.classList.add('on'); kycFilter=el.dataset.kf; loadKycAdmin(); }
+async function loadKycAdmin(){ const wrap=document.getElementById('kycTableWrap'); if(!wrap)return; wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>'; try{ const {data,error}=await sb.rpc('ex_admin_kyc_list',{p_filter:kycFilter,p_query:null,p_limit:300}); if(error)throw error; allKyc=data||[]; const n=allKyc.filter(x=>x.status==='pending').length; const b=document.getElementById('sbKycCount'); if(b){b.textContent=n;b.style.display=n?'inline-flex':'none';} renderKycAdmin(); }catch(e){wrap.innerHTML='<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: '+esc(e.message)+'</p></div>';}}
+function renderKycAdmin(){ const q=(document.getElementById('kycSearch')?.value||'').toLowerCase(); let list=allKyc.filter(x=>!q||[x.full_legal_name,x.account_name,x.user?.full_name,x.user?.email,x.document_number].some(v=>String(v||'').toLowerCase().includes(q))); const wrap=document.getElementById('kycTableWrap'); if(!list.length){wrap.innerHTML='<div class="empty"><i class="fas fa-id-card"></i><p>هیچ تۆمارێک نییە</p></div>';return;} wrap.innerHTML='<table><thead><tr><th>بەکارهێنەر</th><th>ناوی ناسنامە</th><th>جۆر</th><th>ڕووخسار</th><th>باری</th><th>بەروار</th><th>کردار</th></tr></thead><tbody>'+list.map(x=>'<tr><td><b>'+esc(x.user?.full_name||'—')+'</b><br><small>'+esc(x.user?.email||'')+'</small></td><td>'+esc(x.full_legal_name)+'</td><td>'+esc(x.document_type==='national_id'?'ناسنامە':'مۆڵەت')+'</td><td>'+esc(x.face?.status||'queued')+'</td><td><span class="badge '+(x.status==='approved'?'approved':x.status==='rejected'?'rejected':'pending')+'">'+esc(x.status)+'</span></td><td>'+new Date(x.submitted_at).toLocaleDateString('ku')+'</td><td><div class="act-btn dark" onclick="openKycDetail(&quot;${x.id}&quot;)"><i class="fas fa-eye"></i> بینین</div></td></tr>').join('')+'</tbody></table>';
+}
+async function openKycDetail(id){ const x=allKyc.find(v=>String(v.id)===String(id)); if(!x)return; const urls={}; for(const k of ['front_image_path','back_image_path','selfie_image_path']){if(x[k]){const r=await sb.storage.from('identity-documents').createSignedUrl(x[k],300); if(!r.error)urls[k]=r.data.signedUrl;}} const o=await sb.rpc('ex_admin_kyc_ocr_result',{p_verification_id:id}); const ocr=o.data||{}; document.getElementById('kycDetailContent').innerHTML='<div class="detail-row"><span class="lbl">بەکارهێنەر</span><span class="val">'+esc(x.user?.full_name||'—')+' — '+esc(x.user?.email||'')+'</span></div><div class="detail-row"><span class="lbl">ناوی یاسایی</span><span class="val">'+esc(x.full_legal_name)+'</span></div><div class="detail-row"><span class="lbl">ژمارەی بەڵگە</span><span class="val">'+esc(x.document_number)+'</span></div><div class="detail-row"><span class="lbl">OCR</span><span class="val">'+esc(ocr.status||'not_queued')+' / '+esc(ocr.extracted_full_legal_name||'—')+'</span></div><div class="detail-row"><span class="lbl">پشکنینی ڕووخسار</span><span class="val">'+esc(x.face?.status||'queued')+(x.face?.face_detected?' — ڕووخسار دۆزرایەوە':'')+'</span></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">'+Object.entries(urls).map(([k,u])=>'<div style="text-align:center"><img src="'+esc(u)+'" style="width:120px;height:90px;object-fit:cover;border-radius:10px;border:1px solid var(--b1)"><small style="display:block">'+(k==='selfie_image_path'?'selfie':k.replace('_image_path',''))+'</small></div>').join('')+'</div>'; document.getElementById('kycApproveBtn').onclick=()=>reviewKyc(id,'approve',''); document.getElementById('kycRejectBtn').onclick=()=>{const r=prompt('هۆکاری ڕەتکردنەوە بنووسە (کەمترین ٣ پیت):','');if(r!==null)reviewKyc(id,'reject',r)}; openMo('moKycDetail'); }
+async function reviewKyc(id,decision,reason){ if(decision==='reject'&&reason.trim().length<3){showToast('هۆکار کەمتر لە ٣ پیتە','rd');return;} try{ const {error}=await sb.rpc('ex_admin_kyc_review',{p_verification_id:id,p_decision:decision,p_reason:reason||null,p_confirm_name_change:false}); if(error)throw error; closeMo('moKycDetail'); showToast(decision==='approve'?'ناسنامە پەسەندکرا':'ناسنامە ڕەتکرایەوە',decision==='approve'?'gr':'rd'); loadKycAdmin(); }catch(e){showToast('هەڵەی پەسەندکردن: '+e.message,'rd');} }
 </script>
 
 <script>
