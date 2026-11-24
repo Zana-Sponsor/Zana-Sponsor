@@ -2049,6 +2049,7 @@ async function startApp(user){
   document.getElementById('adminBtn').style.display=curProfile?.is_admin?'flex':'none';
   await loadWallets();
   await loadRates();
+  await loadServiceFee();
   pickInitialWallets();
   refreshTrigger('from');
   refreshTrigger('receiveVia');
@@ -2056,6 +2057,7 @@ async function startApp(user){
   updatePlaceholder();
   subscribeWalletsUser();
   subscribeRatesUser();
+  subscribeServiceFeeUser();
   await loadHistory();
   await loadNotifications();
   await loadKycStatus();
@@ -2099,6 +2101,20 @@ function subscribeWalletsUser(){
       updateWallet();
       updatePlaceholder();
     }).subscribe();
+}
+let SERVICE_FEE={type:'fee_percent',value:0,active:false};
+let _serviceFeeChannel=null;
+async function loadServiceFee(){
+  try{
+    const {data,error}=await sb.rpc('ex_service_fee_get');
+    if(!error && data) SERVICE_FEE={type:data.fee_type||'fee_percent',value:Number(data.fee_value)||0,active:!!data.is_active};
+  }catch(e){}
+}
+function subscribeServiceFeeUser(){
+  if(_serviceFeeChannel) return;
+  _serviceFeeChannel=sb.channel('ex_service_fee_user')
+    .on('postgres_changes',{event:'*',schema:'public',table:'ex_service_fee_config'},async()=>{await loadServiceFee();calc();})
+    .subscribe();
 }
 let _ratesChannel = null;
 function subscribeRatesUser(){
@@ -2274,6 +2290,12 @@ function calc(){
     // A multiplier under 1 (Korek/Asiacell style transfers) is a straight cut off
     // the amount, so it reads as a rate — "کرێ: 15%" — rather than an amount.
     if(r.value<1) feeTxt='کرێ: '+fmtPct(100-r.value*100)+'%';
+  }
+  if(SERVICE_FEE.active && SERVICE_FEE.value>0 && final>0){
+    const serviceFee=SERVICE_FEE.type==='fee_percent' ? final*SERVICE_FEE.value/100 : SERVICE_FEE.value;
+    final=Math.max(0,final-serviceFee);
+    const serviceText=SERVICE_FEE.type==='fee_percent' ? 'کرێی خزمەتگوزاری: '+fmtPct(SERVICE_FEE.value) : 'کرێی خزمەتگوزاری: '+formatNum(Math.floor(serviceFee))+' IQD';
+    feeTxt=feeTxt ? feeTxt+' · '+serviceText : serviceText;
   }
   totalEl.innerText=formatNum(Math.floor(final))+' IQD';
   feeEl.innerText=feeTxt;

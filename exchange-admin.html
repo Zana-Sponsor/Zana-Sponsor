@@ -475,6 +475,16 @@ tr:hover td{background:rgba(28,35,51,.015);}
         <h3>نرخی گۆڕینەوە و کرێ</h3>
         <div class="act-btn dark" onclick="openRateModal(null)"><i class="fas fa-plus"></i> زیادکردنی ڕێگا</div>
       </div>
+      <div class="tbl-wrap" style="padding:18px;margin-bottom:16px">
+        <div class="sec-hdr" style="margin-bottom:12px"><h3><i class="fas fa-hand-holding-dollar" style="margin-left:8px;color:var(--yw)"></i>کرێی خزمەتگوزاریی گشتی</h3><span id="serviceFeeStatus" class="fee-toggle-note" style="margin:0">چاوەڕوانی...</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div><label class="modal-lbl">جۆری کرێ</label><select class="msel" id="serviceFeeType" onchange="updateServiceFeeHint()"><option value="fee_percent">ڕێژەی سەدی (%)</option><option value="fee_fixed">بڕی جێگیر (د.ع)</option></select></div>
+          <div><label class="modal-lbl">بەها</label><input class="minp" type="number" min="0" step="0.01" id="serviceFeeValue" dir="ltr" placeholder="0.00"></div>
+        </div>
+        <div class="fee-toggle-note" id="serviceFeeHint">لە کۆیی بڕی وەرگیراو کەم دەکرێتەوە.</div>
+        <div class="mswitch-row"><span>کرێی خزمەتگوزاری چالاکە</span><label class="mswitch"><input type="checkbox" id="serviceFeeActive"><span class="track"></span></label></div>
+        <button class="modal-btn dark" id="serviceFeeSaveBtn" onclick="saveServiceFee()"><i class="fas fa-check"></i> پاشەکەوتکردنی کرێی خزمەتگوزاری</button>
+      </div>
       <div class="tbl-wrap">
         <div class="tbl-scroll" id="ratesTableWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
@@ -1004,7 +1014,7 @@ const pageConfig = {
   orders:{ title:'ئۆردەرەکان', sub:'پەسەندکردن و ڕەتکردنەوەی داواکارییە گۆڕینەوەکان', load: ()=>loadOrders() },
   accounts:{ title:'هەژمارەکان', sub:'بەڕێوەبردنی هەژمارەکانی بەکارهێنەران', load: ()=>loadAccounts() },
   wallets:{ title:'واڵێتەکان', sub:'زیادکردن، قوفڵکردن و دەستکاریکردنی واڵێتەکانی وەرگرتنی پارە', load: ()=>loadWalletsAdmin() },
-  rates:{ title:'نرخ و کرێ', sub:'ڕێکخستنی نرخی گۆڕینەوە و کرێی هەر ڕێگایەک', load: ()=>loadRates() },
+  rates:{ title:'نرخ و کرێ', sub:'ڕێکخستنی نرخ، کرێی هەر ڕێگا و کرێی خزمەتگوزاریی گشتی', load: ()=>Promise.all([loadRates(),loadServiceFee()]) },
   notifications:{ title:'ئاگادارییەکان', sub:'ناردنی ئاگاداری و بینینی مێژوو', load: ()=>loadNotifPage() },
   announcement:{ title:'بانەری ئاگاداری', sub:'ئاگاداری گشتی سەرەوەی ئەپەکە', load: ()=>loadAnnouncement() },
   otp:{ title:'کۆدەکانی OTP', sub:'بینین و بەڕێوەبردنی کۆدەکانی دڵنیاکردنەوە', load: ()=>loadOtp() },
@@ -1603,6 +1613,43 @@ function subscribeRatesAdmin(){
   _ratesAdminChannel = sb.channel('ex_rates_admin')
     .on('postgres_changes', {event:'*',schema:'public',table:'ex_rates'}, ()=>{ if(_curPage==='rates') loadRates(); })
     .subscribe();
+}
+let _serviceFeeAdminChannel=null;
+async function loadServiceFee(){
+  const status=document.getElementById('serviceFeeStatus');
+  try{
+    const {data,error}=await sb.rpc('ex_service_fee_get');
+    if(error) throw error;
+    document.getElementById('serviceFeeType').value=data?.fee_type||'fee_percent';
+    document.getElementById('serviceFeeValue').value=Number(data?.fee_value||0);
+    document.getElementById('serviceFeeActive').checked=!!data?.is_active;
+    status.textContent=data?.is_active?'چالاکە':'ناچالاکە';
+    status.style.color=data?.is_active?'var(--gr)':'var(--mt)';
+    updateServiceFeeHint();
+  }catch(e){ status.textContent='نەخوێندرایەوە'; status.style.color='var(--rd)'; }
+  subscribeServiceFeeAdmin();
+}
+function subscribeServiceFeeAdmin(){
+  if(_serviceFeeAdminChannel) return;
+  _serviceFeeAdminChannel=sb.channel('ex_service_fee_admin')
+    .on('postgres_changes',{event:'*',schema:'public',table:'ex_service_fee_config'},()=>{if(_curPage==='rates') loadServiceFee();})
+    .subscribe();
+}
+function updateServiceFeeHint(){
+  const type=document.getElementById('serviceFeeType').value;
+  document.getElementById('serviceFeeHint').textContent=type==='fee_percent'?'بڕی کرێ لە کۆیی وەرگیراو بە ڕێژەی سەدی کەم دەکرێتەوە.':'ئەم بڕەی جێگیرە لە کۆیی وەرگیراو کەم دەکرێتەوە.';
+}
+async function saveServiceFee(){
+  const type=document.getElementById('serviceFeeType').value;
+  const value=parseFloat(document.getElementById('serviceFeeValue').value);
+  const active=document.getElementById('serviceFeeActive').checked;
+  if(!Number.isFinite(value)||value<0||(type==='fee_percent'&&value>100)){showToast(type==='fee_percent'?'بەها دەبێت لە ٠ تا ١٠٠ بێت':'بەهای دروست بنووسە','rd');return;}
+  const btn=document.getElementById('serviceFeeSaveBtn'); btn.disabled=true;
+  const {error}=await sb.rpc('ex_admin_service_fee_update',{p_fee_type:type,p_fee_value:value,p_is_active:active});
+  btn.disabled=false;
+  if(error){await handleDbWriteError(error);return;}
+  showToast('کرێی خزمەتگوزاری پاشەکەوتکرا','gr');
+  await loadServiceFee();
 }
 // Method options for the rate From/To selects: the original fixed methods (kept so
 // existing rates like Korek/USDT — which have no ex_wallets row — still edit correctly)
